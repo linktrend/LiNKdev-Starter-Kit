@@ -1,0 +1,9 @@
+{
+  "app": "Hikari",
+  "type": "web + mobile (Next.js + Expo)",
+  "backend": "Supabase",
+  "payments": "Stripe (web), RevenueCat (mobile)",
+  "analytics": "PostHog, Sentry",
+  "automation": "n8n",
+  "goal": "Launch a functional MVP within 3 weeks with Visit→Signup→Paid funnel wired"
+}

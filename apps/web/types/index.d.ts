@@ -1,7 +1,7 @@
 import { User } from './main';
 import type { Icon } from 'lucide-react';
 
-import { Icons } from '@/components/icons';
+import { icons as Icons } from '@/components/icons';
 
 export type NavItem = {
   title: string;

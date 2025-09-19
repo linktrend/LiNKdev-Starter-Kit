@@ -66,7 +66,7 @@ pnpm install
     ``` 
     - This will print the following keys that we will use in our environment variables. Copy these values and paste them in your `.env.local` file: 
     ```bash title=".env.local"
-    API URL: http://127.0.0.1:54321 # NEXT_PUBLIC_SUPABASE_URL 
+    API URL: https://your-project-ref.supabase.co # NEXT_PUBLIC_SUPABASE_URL 
     anon key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ******xad # NEXT_PUBLIC_SUPABASE_ANON_KEY 
     service_role key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9*******sad # SUPABASE_SERVICE_ROLE_KEY 
     ```
@@ -171,7 +171,7 @@ pnpm install
 By now your environment variables should look like this:
 
 ```bash title=".env"
-SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI="http://127.0.0.1:54321/auth/v1/callback"
+SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI="https://your-project-ref.supabase.co/auth/v1/callback"
 SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID="Ov23li********Q"
 SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET="96e4**************************34d"
 ```
@@ -181,7 +181,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 # These environment variables are used for Supabase Local Dev
 NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR************************************WNReilDMblYTn_I0"
-NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"
+NEXT_PUBLIC_SUPABASE_URL="https://your-project-ref.supabase.co"
 SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1Ni******************************************Zx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
 
 # Get these from Stripe dashboard

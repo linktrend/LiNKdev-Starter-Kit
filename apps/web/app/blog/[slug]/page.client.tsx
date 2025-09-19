@@ -8,7 +8,7 @@ import {
 } from '@radix-ui/react-tooltip';
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 export function Control({ url }: { url: string }): React.ReactElement {
   const [open, setOpen] = useState(false);
@@ -20,14 +20,11 @@ export function Control({ url }: { url: string }): React.ReactElement {
   return (
     <TooltipProvider>
       <Tooltip open={open} onOpenChange={setOpen}>
-        <TooltipTrigger
-          className={cn(
-            buttonVariants({ className: 'gap-2', variant: 'secondary' })
-          )}
-          onClick={onClick}
-        >
-          <Share className="size-4" />
-          Share Post
+        <TooltipTrigger asChild>
+          <Button variant="secondary" className="gap-2" onClick={onClick}>
+            <Share className="size-4" />
+            Share Post
+          </Button>
         </TooltipTrigger>
         <TooltipContent className="rounded-lg border bg-popover p-2 text-sm text-popover-foreground">
           Copied

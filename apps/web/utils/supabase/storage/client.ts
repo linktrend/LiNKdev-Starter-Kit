@@ -38,7 +38,8 @@ export const uploadImage = async ({ file, bucket, folder }: UploadProps) => {
     return { imageUrl: "", error: error.message };
   }
 
-  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${bucket}/${data?.path}`;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+  const imageUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${data?.path}`;
   console.log(`Image uploaded successfully: ${imageUrl}`);
 
   return { imageUrl, error: "" };

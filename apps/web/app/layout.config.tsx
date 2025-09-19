@@ -1,5 +1,4 @@
 import { type BaseLayoutProps, type DocsLayoutProps } from 'fumadocs-ui/layout';
-import { pageTree } from './source';
 
 // shared configuration
 export const baseOptions: BaseLayoutProps = {
@@ -15,5 +14,8 @@ export const baseOptions: BaseLayoutProps = {
 // docs layout configuration
 export const docsOptions: DocsLayoutProps = {
   ...baseOptions,
-  tree: pageTree
+  tree: {
+    name: 'Documentation',
+    children: []
+  }
 };

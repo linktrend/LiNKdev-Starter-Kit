@@ -6,7 +6,11 @@ import {
   ShoppingCart,
   Users2,
   Inbox,
-  FileText
+  FileText,
+  User,
+  Building2,
+  Database,
+  HelpCircle
 } from 'lucide-react';
 
 export interface NavItem {
@@ -22,11 +26,19 @@ export const iconComponents = {
   FileText,
   Package,
   Users2,
-  LineChart
+  LineChart,
+  User,
+  Building2,
+  Database,
+  HelpCircle
 };
 
 export const navConfig = [
   { href: '/dashboard', icon: 'Inbox', label: 'Dashboard' },
+  { href: '/profile', icon: 'User', label: 'Profile' },
+  { href: '/records', icon: 'Database', label: 'Records' },
+  { href: '/org/org-1', icon: 'Building2', label: 'Organization' },
+  { href: '/help', icon: 'HelpCircle', label: 'Help' },
   // { href: '/dashboard/posts', icon: 'FileText', label: 'Posts' },
   {
     href: '/dashboard/customer',

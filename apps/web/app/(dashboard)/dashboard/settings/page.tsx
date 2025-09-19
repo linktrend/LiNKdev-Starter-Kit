@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { Icons } from '@/components/icons';
+import { icons as Icons } from '@/components/icons';
 import { AtSign, Bell, EyeOff, X } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -144,19 +144,19 @@ export default function SettingsPage() {
                   <SelectContent>
                     <SelectItem value="light">
                       <div className="flex items-center">
-                        <Icons.sun className="mr-2 h-4 w-4" />
+                        <Icons.Sun className="mr-2 h-4 w-4" />
                         <span>Light</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="dark">
                       <div className="flex items-center">
-                        <Icons.moon className="mr-2 h-4 w-4" />
+                        <Icons.Moon className="mr-2 h-4 w-4" />
                         <span>Dark</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="system">
                       <div className="flex items-center">
-                        <Icons.laptop className="mr-2 h-4 w-4" />
+                        <Icons.Laptop className="mr-2 h-4 w-4" />
                         <span>System</span>
                       </div>
                     </SelectItem>

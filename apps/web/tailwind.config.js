@@ -1,5 +1,6 @@
 const { fontFamily } = require('tailwindcss/defaultTheme');
 import { createPreset } from 'fumadocs-ui/tailwind-plugin';
+import designTokens from './design/DESIGN_TOKENS.json';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -45,18 +46,53 @@ module.exports = {
     },
     extend: {
       spacing: {
+        // Design token spacing values
+        2: 'var(--space-2)',
+        4: 'var(--space-4)',
+        6: 'var(--space-6)',
+        8: 'var(--space-8)',
+        12: 'var(--space-12)',
+        16: 'var(--space-16)',
+        24: 'var(--space-24)',
+        // Legacy values
         128: '32rem'
       },
       backgroundImage: {
         'pattern-12': "url('/patterns/12.svg')"
       },
       colors: {
-        border: 'hsl(var(--border))',
+        // Design token colors
+        background: 'hsl(var(--color-background))',
+        foreground: 'hsl(var(--color-foreground))',
+        muted: {
+          DEFAULT: 'hsl(var(--color-muted))',
+          foreground: 'hsl(var(--color-muted-foreground))'
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--color-primary))',
+          foreground: 'hsl(var(--color-primary-foreground))'
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--color-secondary))',
+          foreground: 'hsl(var(--color-secondary-foreground))'
+        },
+        border: 'hsl(var(--color-border))',
+        ring: 'hsl(var(--color-ring))',
+        success: {
+          DEFAULT: 'hsl(var(--color-success))',
+          foreground: 'hsl(var(--color-success-foreground))'
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--color-warning))',
+          foreground: 'hsl(var(--color-warning-foreground))'
+        },
+        danger: {
+          DEFAULT: 'hsl(var(--color-danger))',
+          foreground: 'hsl(var(--color-danger-foreground))'
+        },
+        // Legacy colors for compatibility
         input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
         violetColor: 'rgb(33, 134, 234)',
-        foreground: 'hsl(var(--foreground))',
         pricingBackground: 'rgb(39, 45, 52)',
         customColor: 'rgb(76, 45, 235)',
         statsColor: 'rgb(39, 45, 52)',
@@ -64,21 +100,9 @@ module.exports = {
         blackColor: 'rgb(21, 24, 27)',
         white: 'rgb(255, 255, 255)',
         greenColor: 'rgb(95, 207, 192)',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))'
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))'
-        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
           DEFAULT: 'hsl(var(--accent))',
@@ -96,9 +120,13 @@ module.exports = {
         ollabot: 'hsl(var(--ollabot))'
       },
       borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
-        sm: 'calc(var(--radius) - 4px)',
+        // Design token radius values
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        pill: 'var(--radius-pill)',
+        // Legacy values for compatibility
         '4xl': '2rem', // 32px
         '5xl': '2.5rem', // 40px
         '6xl': '3rem' // 48px
@@ -106,6 +134,28 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
         heading: ['var(--font-heading)', ...fontFamily.sans]
+      },
+      fontSize: {
+        // Design token font sizes
+        xs: 'var(--font-size-xs)',
+        sm: 'var(--font-size-sm)',
+        base: 'var(--font-size-base)',
+        lg: 'var(--font-size-lg)',
+        xl: 'var(--font-size-xl)',
+        '2xl': 'var(--font-size-2xl)',
+        '3xl': 'var(--font-size-3xl)'
+      },
+      fontWeight: {
+        // Design token font weights
+        regular: 'var(--font-weight-regular)',
+        medium: 'var(--font-weight-medium)',
+        semibold: 'var(--font-weight-semibold)'
+      },
+      zIndex: {
+        // Design token z-index values
+        dropdown: 'var(--z-dropdown)',
+        modal: 'var(--z-modal)',
+        toast: 'var(--z-toast)'
       },
       keyframes: {
         'accordion-down': {

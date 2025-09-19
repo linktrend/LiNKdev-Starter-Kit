@@ -21,6 +21,7 @@ The all-in-one starter kit for building high-performance SaaS applications using
 - ⼬ **tRPC** - Included a guide on how to add a very lean trpc router for your api. You just need to add 3 folders, and 1 file.
 - ⚙️ **Local Development**: Develop locally with Supabase, Docker, and a set of custom commands
 - 📚 **Documentation & Blog**: Utilize MDX compiler from the open-source project Fumadocs for documentation and blog content.
+- 🏢 **Organizations & Invitations**: Complete workspace management with role-based access control (RBAC), member invitations, and organization switching.
 
 ## 🎬 Demo
 
@@ -49,6 +50,46 @@ Before going live, archive all test mode Stripe products. Switch Stripe from tes
 ### **2. Redeploy**
 
 After updating environment variables, redeploy your application through Vercel.
+
+## 🏢 Organizations & Invitations Module
+
+The Hikari template includes a complete **Organizations & Invitations** module for multi-tenant applications:
+
+### Features
+- **Multi-tenant Workspaces**: Create and manage multiple organizations
+- **Role-Based Access Control (RBAC)**: Four permission levels (Owner, Admin, Editor, Viewer)
+- **Member Management**: Invite, accept, update roles, and remove team members
+- **Organization Switching**: Seamless switching between workspaces
+- **Invitation System**: Email-based invitations with expiry and status tracking
+- **Offline Mode**: Works without external services for template development
+
+### Roles & Permissions
+- **Owner**: Full access to organization and all features
+- **Admin**: Can manage members and invites, view all content
+- **Editor**: Can view and edit content, cannot manage members
+- **Viewer**: Can only view content, cannot make changes
+
+### API Endpoints
+All organization functionality is available through tRPC procedures:
+- `org.createOrg` - Create new organization
+- `org.listOrgs` - List user's organizations
+- `org.setCurrent` - Set current workspace
+- `org.listMembers` - List organization members
+- `org.invite` - Send member invitation
+- `org.acceptInvite` - Accept invitation
+- `org.updateMemberRole` - Update member role
+- `org.removeMember` - Remove member
+
+### UI Routes
+- `/settings/organization` - Organization settings dashboard
+- `/settings/organization/members` - Member management
+- `/settings/organization/invite` - Send invitations
+
+### Template Mode
+The module includes graceful degradation for template development:
+- Set `TEMPLATE_OFFLINE=1` to enable offline mode
+- Mock data and in-memory storage for development
+- No external service dependencies required
 
 ## 📚 Additional Features
 

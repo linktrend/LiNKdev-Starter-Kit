@@ -1,0 +1,943 @@
+openapi: 3.0.3
+info:
+  title: Hikari API
+  description: |
+    Public REST API for Hikari - A comprehensive starter kit for web applications.
+    
+    This API provides access to core functionality including organizations, records, scheduling, billing, and audit logs.
+    
+    ## Authentication
+    All endpoints require a valid JWT bearer token in the Authorization header and an organization ID in the X-Org-ID header.
+    
+    ## Rate Limiting
+    API requests are rate limited per IP address and organization. Rate limit headers are included in responses.
+    
+    ## Idempotency
+    Mutating operations (POST, PATCH, DELETE) support idempotency keys via the Idempotency-Key header.
+    
+    ## Pagination
+    List endpoints support cursor-based pagination using the `limit` and `cursor` query parameters.
+    
+    ## Offline Mode
+    When running in template mode, the API returns deterministic mock data for development purposes.
+  version: 1.0.0
+  contact:
+    name: Hikari Support
+    email: support@hikari.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.hikari.dev/v1
+    description: Production server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+  - OrgHeader: []
+
+paths:
+  /orgs:
+    get:
+      tags:
+        - Organizations
+      summary: List organizations
+      description: Get all organizations the authenticated user is a member of
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      responses:
+        '200':
+          description: List of organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      tags:
+        - Organizations
+      summary: Create organization
+      description: Create a new organization
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrgRequest'
+      responses:
+        '201':
+          description: Organization created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /records:
+    get:
+      tags:
+        - Records
+      summary: List records
+      description: Get records with optional filtering and pagination
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: type_id
+          in: query
+          description: Filter by record type ID
+          schema:
+            type: string
+            format: uuid
+        - name: q
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of records to return (1-100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          description: Cursor for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRecordsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      tags:
+        - Records
+      summary: Create record
+      description: Create a new record
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRecordRequest'
+      responses:
+        '201':
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /records/{id}:
+    get:
+      tags:
+        - Records
+      summary: Get record
+      description: Get a single record by ID
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Record ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Record details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    patch:
+      tags:
+        - Records
+      summary: Update record
+      description: Update a record
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Record ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecordRequest'
+      responses:
+        '200':
+          description: Record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    delete:
+      tags:
+        - Records
+      summary: Delete record
+      description: Delete a record
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Record ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /reminders:
+    get:
+      tags:
+        - Scheduling
+      summary: List reminders
+      description: Get reminders with optional filtering and pagination
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: record_id
+          in: query
+          description: Filter by record ID
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [pending, sent, completed, snoozed, cancelled]
+        - name: priority
+          in: query
+          description: Filter by priority
+          schema:
+            type: string
+            enum: [low, medium, high, urgent]
+        - name: q
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of reminders to return (1-100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          description: Cursor for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of reminders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRemindersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      tags:
+        - Scheduling
+      summary: Create reminder
+      description: Create a new reminder
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReminderRequest'
+      responses:
+        '201':
+          description: Reminder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /reminders/{id}/complete:
+    post:
+      tags:
+        - Scheduling
+      summary: Complete reminder
+      description: Mark a reminder as completed
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Reminder ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Reminder completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /billing/subscription:
+    get:
+      tags:
+        - Billing
+      summary: Get subscription
+      description: Get organization subscription details
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      responses:
+        '200':
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /billing/checkout:
+    post:
+      tags:
+        - Billing
+      summary: Create checkout session
+      description: Create a Stripe checkout session for subscription
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCheckoutRequest'
+      responses:
+        '201':
+          description: Checkout session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /audit:
+    get:
+      tags:
+        - Audit
+      summary: List audit logs
+      description: Get audit logs with optional filtering and pagination
+      security:
+        - BearerAuth: []
+        - OrgHeader: []
+      parameters:
+        - name: q
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: entity_type
+          in: query
+          description: Filter by entity type
+          schema:
+            type: string
+            enum: [org, record, reminder, subscription, member, invite, schedule, automation]
+        - name: action
+          in: query
+          description: Filter by action
+          schema:
+            type: string
+            enum: [created, updated, deleted, completed, cancelled, invited, accepted, rejected, role_changed, removed, started, stopped, failed, succeeded]
+        - name: actor_id
+          in: query
+          description: Filter by actor ID
+          schema:
+            type: string
+            format: uuid
+        - name: from
+          in: query
+          description: Filter from date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Filter to date (ISO 8601)
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Number of logs to return (1-100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          description: Cursor for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of audit logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from Supabase authentication
+    OrgHeader:
+      type: apiKey
+      in: header
+      name: X-Org-ID
+      description: Organization ID for scoping requests
+
+  schemas:
+    # Organization schemas
+    CreateOrgRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Organization name
+          example: "Acme Corp"
+
+    OrgResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Organization ID
+        name:
+          type: string
+          description: Organization name
+        owner_id:
+          type: string
+          format: uuid
+          description: Owner user ID
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+
+    # Record schemas
+    CreateRecordRequest:
+      type: object
+      required:
+        - type_id
+        - data
+      properties:
+        type_id:
+          type: string
+          format: uuid
+          description: Record type ID
+        org_id:
+          type: string
+          format: uuid
+          description: Organization ID (optional, defaults to authenticated user's org)
+        user_id:
+          type: string
+          format: uuid
+          description: User ID (optional)
+        data:
+          type: object
+          description: Record data
+          additionalProperties: true
+
+    UpdateRecordRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Updated record data
+          additionalProperties: true
+
+    RecordResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type_id:
+          type: string
+          format: uuid
+        org_id:
+          type: string
+          format: uuid
+          nullable: true
+        user_id:
+          type: string
+          format: uuid
+          nullable: true
+        created_by:
+          type: string
+          format: uuid
+        data:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PaginatedRecordsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordResponse'
+        nextCursor:
+          type: string
+          description: Cursor for next page
+        total:
+          type: integer
+          description: Total number of records
+
+    # Reminder schemas
+    CreateReminderRequest:
+      type: object
+      required:
+        - org_id
+        - title
+      properties:
+        org_id:
+          type: string
+          format: uuid
+          description: Organization ID
+        record_id:
+          type: string
+          format: uuid
+          description: Associated record ID (optional)
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Reminder title
+        notes:
+          type: string
+          description: Additional notes
+        due_at:
+          type: string
+          format: date-time
+          description: Due date and time
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+          default: medium
+          description: Reminder priority
+
+    ReminderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        org_id:
+          type: string
+          format: uuid
+        record_id:
+          type: string
+          format: uuid
+          nullable: true
+        title:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        due_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [pending, sent, completed, snoozed, cancelled]
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+        created_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        snoozed_until:
+          type: string
+          format: date-time
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    PaginatedRemindersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReminderResponse'
+        nextCursor:
+          type: string
+          description: Cursor for next page
+        total:
+          type: integer
+          description: Total number of reminders
+
+    # Billing schemas
+    SubscriptionResponse:
+      type: object
+      properties:
+        org_id:
+          type: string
+          format: uuid
+        plan:
+          type: string
+          description: Subscription plan
+        status:
+          type: string
+          enum: [active, trialing, canceled, incomplete, incomplete_expired, past_due, unpaid, paused]
+        current_period_start:
+          type: string
+          format: date-time
+        current_period_end:
+          type: string
+          format: date-time
+        trial_end:
+          type: string
+          format: date-time
+          nullable: true
+        stripe_sub_id:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateCheckoutRequest:
+      type: object
+      required:
+        - org_id
+        - plan
+        - success_url
+        - cancel_url
+      properties:
+        org_id:
+          type: string
+          format: uuid
+          description: Organization ID
+        plan:
+          type: string
+          description: Plan identifier
+        success_url:
+          type: string
+          format: uri
+          description: Success redirect URL
+        cancel_url:
+          type: string
+          format: uri
+          description: Cancel redirect URL
+
+    CheckoutResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+          description: Stripe session ID
+        url:
+          type: string
+          format: uri
+          description: Checkout URL
+        offline:
+          type: boolean
+          description: Whether running in offline mode
+
+    # Audit schemas
+    AuditLogResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        org_id:
+          type: string
+          format: uuid
+        actor_id:
+          type: string
+          format: uuid
+          nullable: true
+        action:
+          type: string
+          description: Action performed
+        entity_type:
+          type: string
+          description: Type of entity affected
+        entity_id:
+          type: string
+          description: ID of entity affected
+        metadata:
+          type: object
+          description: Additional metadata
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+
+    PaginatedAuditResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogResponse'
+        nextCursor:
+          type: string
+          description: Cursor for next page
+        total:
+          type: integer
+          description: Total number of audit logs
+
+    # Error schemas
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code
+            message:
+              type: string
+              description: Error message
+            details:
+              type: object
+              description: Additional error details
+              additionalProperties: true
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "validation_error"
+              message: "Request validation failed"
+              details:
+                fields:
+                  name: ["Name is required"]
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "invalid_token"
+              message: "Invalid or expired token"
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "org_access_denied"
+              message: "User is not a member of the specified organization"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "resource_not_found"
+              message: "Resource not found"
+
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying
+          schema:
+            type: integer
+        X-RateLimit-Limit:
+          description: Request limit per window
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          description: Remaining requests in current window
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: Time when rate limit resets
+          schema:
+            type: string
+            format: date-time
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "rate_limit_exceeded"
+              message: "Rate limit exceeded"
+              details:
+                retryAfter: 60
+                limit: 60
+                remaining: 0

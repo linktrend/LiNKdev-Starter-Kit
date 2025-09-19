@@ -1,0 +1,31 @@
+name: cloud-only-guard
+on: 
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install ripgrep
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+      
+      - name: Fail if local supabase usage detected
+        run: |
+          set -e
+          echo "🔒 Scanning for local Supabase commands and localhost DB references..."
+          
+          if rg -n "supabase start|supabase stop|supabase db|supabase reset|docker-compose.*supabase|localhost:5432|127\.0\.0\.1:5432" -S .; then
+            echo "❌ Found local Supabase commands or localhost DB references. Remove them." >&2
+            echo "💡 Use MCP or CI for database operations. See docs/DB_MIGRATION_RUN.md" >&2
+            exit 1
+          fi
+          
+          echo "✅ Cloud-only guard passed."
+          echo "💡 All database operations must use Supabase Cloud via MCP or CI."

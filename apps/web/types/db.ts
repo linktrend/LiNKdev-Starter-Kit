@@ -1,3 +1,4 @@
+// Database types for template - replace with actual generated types when needed
 export type Json =
   | string
   | number
@@ -9,241 +10,439 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      customers: {
-        Row: {
-          id: string
-          stripe_customer_id: string | null
-        }
-        Insert: {
-          id: string
-          stripe_customer_id?: string | null
-        }
-        Update: {
-          id?: string
-          stripe_customer_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "customers_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      posts: {
-        Row: {
-          content: string | null
-          created_at: string
-          id: number
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          id?: never
-          title: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          id?: never
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      prices: {
-        Row: {
-          active: boolean | null
-          currency: string | null
-          description: string | null
-          id: string
-          interval: Database["public"]["Enums"]["pricing_plan_interval"] | null
-          interval_count: number | null
-          metadata: Json | null
-          product_id: string | null
-          trial_period_days: number | null
-          type: Database["public"]["Enums"]["pricing_type"] | null
-          unit_amount: number | null
-        }
-        Insert: {
-          active?: boolean | null
-          currency?: string | null
-          description?: string | null
-          id: string
-          interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
-          interval_count?: number | null
-          metadata?: Json | null
-          product_id?: string | null
-          trial_period_days?: number | null
-          type?: Database["public"]["Enums"]["pricing_type"] | null
-          unit_amount?: number | null
-        }
-        Update: {
-          active?: boolean | null
-          currency?: string | null
-          description?: string | null
-          id?: string
-          interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
-          interval_count?: number | null
-          metadata?: Json | null
-          product_id?: string | null
-          trial_period_days?: number | null
-          type?: Database["public"]["Enums"]["pricing_type"] | null
-          unit_amount?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "prices_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      products: {
-        Row: {
-          active: boolean | null
-          description: string | null
-          id: string
-          image: string | null
-          metadata: Json | null
-          name: string | null
-        }
-        Insert: {
-          active?: boolean | null
-          description?: string | null
-          id: string
-          image?: string | null
-          metadata?: Json | null
-          name?: string | null
-        }
-        Update: {
-          active?: boolean | null
-          description?: string | null
-          id?: string
-          image?: string | null
-          metadata?: Json | null
-          name?: string | null
-        }
-        Relationships: []
-      }
-      subscriptions: {
-        Row: {
-          cancel_at: string | null
-          cancel_at_period_end: boolean | null
-          canceled_at: string | null
-          created: string
-          current_period_end: string
-          current_period_start: string
-          ended_at: string | null
-          id: string
-          metadata: Json | null
-          price_id: string | null
-          quantity: number | null
-          status: Database["public"]["Enums"]["subscription_status"] | null
-          trial_end: string | null
-          trial_start: string | null
-          user_id: string
-        }
-        Insert: {
-          cancel_at?: string | null
-          cancel_at_period_end?: boolean | null
-          canceled_at?: string | null
-          created?: string
-          current_period_end?: string
-          current_period_start?: string
-          ended_at?: string | null
-          id: string
-          metadata?: Json | null
-          price_id?: string | null
-          quantity?: number | null
-          status?: Database["public"]["Enums"]["subscription_status"] | null
-          trial_end?: string | null
-          trial_start?: string | null
-          user_id: string
-        }
-        Update: {
-          cancel_at?: string | null
-          cancel_at_period_end?: boolean | null
-          canceled_at?: string | null
-          created?: string
-          current_period_end?: string
-          current_period_start?: string
-          ended_at?: string | null
-          id?: string
-          metadata?: Json | null
-          price_id?: string | null
-          quantity?: number | null
-          status?: Database["public"]["Enums"]["subscription_status"] | null
-          trial_end?: string | null
-          trial_start?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_price_id_fkey"
-            columns: ["price_id"]
-            isOneToOne: false
-            referencedRelation: "prices"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       users: {
         Row: {
+          id: string
+          full_name: string | null
           avatar_url: string | null
           billing_address: Json | null
-          full_name: string | null
-          id: string
           payment_method: Json | null
         }
         Insert: {
+          id: string
+          full_name?: string | null
           avatar_url?: string | null
           billing_address?: Json | null
-          full_name?: string | null
-          id: string
           payment_method?: Json | null
         }
         Update: {
+          id?: string
+          full_name?: string | null
           avatar_url?: string | null
           billing_address?: Json | null
-          full_name?: string | null
-          id?: string
           payment_method?: Json | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+      }
+      products: {
+        Row: {
+          id: string
+          active: boolean | null
+          name: string | null
+          description: string | null
+          image: string | null
+          metadata: Json | null
+        }
+        Insert: {
+          id: string
+          active?: boolean | null
+          name?: string | null
+          description?: string | null
+          image?: string | null
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          active?: boolean | null
+          name?: string | null
+          description?: string | null
+          image?: string | null
+          metadata?: Json | null
+        }
+      }
+      prices: {
+        Row: {
+          id: string
+          product_id: string | null
+          active: boolean | null
+          description: string | null
+          unit_amount: number | null
+          currency: string | null
+          type: 'one_time' | 'recurring' | null
+          interval: 'day' | 'week' | 'month' | 'year' | null
+          interval_count: number | null
+          trial_period_days: number | null
+          metadata: Json | null
+        }
+        Insert: {
+          id: string
+          product_id?: string | null
+          active?: boolean | null
+          description?: string | null
+          unit_amount?: number | null
+          currency?: string | null
+          type?: 'one_time' | 'recurring' | null
+          interval?: 'day' | 'week' | 'month' | 'year' | null
+          interval_count?: number | null
+          trial_period_days?: number | null
+          metadata?: Json | null
+        }
+        Update: {
+          id?: string
+          product_id?: string | null
+          active?: boolean | null
+          description?: string | null
+          unit_amount?: number | null
+          currency?: string | null
+          type?: 'one_time' | 'recurring' | null
+          interval?: 'day' | 'week' | 'month' | 'year' | null
+          interval_count?: number | null
+          trial_period_days?: number | null
+          metadata?: Json | null
+        }
+      }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          status: 'trialing' | 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'unpaid' | 'paused' | null
+          metadata: Json | null
+          price_id: string | null
+          quantity: number | null
+          cancel_at_period_end: boolean | null
+          created: string
+          current_period_start: string
+          current_period_end: string
+          ended_at: string | null
+          cancel_at: string | null
+          canceled_at: string | null
+          trial_start: string | null
+          trial_end: string | null
+        }
+        Insert: {
+          id: string
+          user_id: string
+          status?: 'trialing' | 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'unpaid' | 'paused' | null
+          metadata?: Json | null
+          price_id?: string | null
+          quantity?: number | null
+          cancel_at_period_end?: boolean | null
+          created?: string
+          current_period_start?: string
+          current_period_end?: string
+          ended_at?: string | null
+          cancel_at?: string | null
+          canceled_at?: string | null
+          trial_start?: string | null
+          trial_end?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          status?: 'trialing' | 'active' | 'canceled' | 'incomplete' | 'incomplete_expired' | 'past_due' | 'unpaid' | 'paused' | null
+          metadata?: Json | null
+          price_id?: string | null
+          quantity?: number | null
+          cancel_at_period_end?: boolean | null
+          created?: string
+          current_period_start?: string
+          current_period_end?: string
+          ended_at?: string | null
+          cancel_at?: string | null
+          canceled_at?: string | null
+          trial_start?: string | null
+          trial_end?: string | null
+        }
+      }
+      organizations: {
+        Row: {
+          id: string
+          name: string
+          owner_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          owner_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          owner_id?: string
+          created_at?: string
+        }
+      }
+      organization_members: {
+        Row: {
+          org_id: string
+          user_id: string
+          role: 'owner' | 'admin' | 'editor' | 'viewer'
+          created_at: string
+        }
+        Insert: {
+          org_id: string
+          user_id: string
+          role: 'owner' | 'admin' | 'editor' | 'viewer'
+          created_at?: string
+        }
+        Update: {
+          org_id?: string
+          user_id?: string
+          role?: 'owner' | 'admin' | 'editor' | 'viewer'
+          created_at?: string
+        }
+      }
+      invites: {
+        Row: {
+          id: string
+          org_id: string
+          email: string
+          role: 'admin' | 'editor' | 'viewer'
+          token: string
+          status: 'pending' | 'accepted' | 'expired'
+          created_by: string
+          created_at: string
+          expires_at: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          email: string
+          role: 'admin' | 'editor' | 'viewer'
+          token: string
+          status?: 'pending' | 'accepted' | 'expired'
+          created_by: string
+          created_at?: string
+          expires_at?: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          email?: string
+          role?: 'admin' | 'editor' | 'viewer'
+          token?: string
+          status?: 'pending' | 'accepted' | 'expired'
+          created_by?: string
+          created_at?: string
+          expires_at?: string
+        }
+      }
+      record_types: {
+        Row: {
+          id: string
+          key: string
+          display_name: string
+          description: string | null
+          config: Json
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          display_name: string
+          description?: string | null
+          config?: Json
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          display_name?: string
+          description?: string | null
+          config?: Json
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      records: {
+        Row: {
+          id: string
+          type_id: string
+          org_id: string | null
+          user_id: string | null
+          created_by: string
+          data: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          type_id: string
+          org_id?: string | null
+          user_id?: string | null
+          created_by: string
+          data?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          type_id?: string
+          org_id?: string | null
+          user_id?: string | null
+          created_by?: string
+          data?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      reminders: {
+        Row: {
+          id: string
+          org_id: string
+          record_id: string | null
+          title: string
+          notes: string | null
+          due_at: string | null
+          priority: 'low' | 'medium' | 'high' | 'urgent'
+          status: 'pending' | 'sent' | 'completed' | 'snoozed' | 'cancelled'
+          created_by: string
+          created_at: string
+          updated_at: string
+          snoozed_until: string | null
+          completed_at: string | null
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          record_id?: string | null
+          title: string
+          notes?: string | null
+          due_at?: string | null
+          priority?: 'low' | 'medium' | 'high' | 'urgent'
+          status?: 'pending' | 'sent' | 'completed' | 'snoozed' | 'cancelled'
+          created_by: string
+          created_at?: string
+          updated_at?: string
+          snoozed_until?: string | null
+          completed_at?: string | null
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          record_id?: string | null
+          title?: string
+          notes?: string | null
+          due_at?: string | null
+          priority?: 'low' | 'medium' | 'high' | 'urgent'
+          status?: 'pending' | 'sent' | 'completed' | 'snoozed' | 'cancelled'
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+          snoozed_until?: string | null
+          completed_at?: string | null
+        }
+      }
+      schedules: {
+        Row: {
+          id: string
+          org_id: string
+          name: string
+          description: string | null
+          cron: string | null
+          rule: Json | null
+          active: boolean
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          name: string
+          description?: string | null
+          cron?: string | null
+          rule?: Json | null
+          active?: boolean
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          name?: string
+          description?: string | null
+          cron?: string | null
+          rule?: Json | null
+          active?: boolean
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      notifications_outbox: {
+        Row: {
+          id: string
+          org_id: string
+          event: string
+          payload: Json
+          status: 'pending' | 'delivered' | 'failed'
+          attempt_count: number
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          event: string
+          payload: Json
+          status?: 'pending' | 'delivered' | 'failed'
+          attempt_count?: number
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          event?: string
+          payload?: Json
+          status?: 'pending' | 'delivered' | 'failed'
+          attempt_count?: number
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+        }
+      }
+      audit_logs: {
+        Row: {
+          id: string
+          org_id: string
+          actor_id: string
+          action: string
+          entity_type: string
+          entity_id: string
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          actor_id: string
+          action: string
+          entity_type: string
+          entity_id: string
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          actor_id?: string
+          action?: string
+          entity_type?: string
+          entity_id?: string
+          metadata?: Json | null
+          created_at?: string
+        }
       }
     }
     Views: {
@@ -253,17 +452,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      pricing_plan_interval: "day" | "week" | "month" | "year"
-      pricing_type: "one_time" | "recurring"
-      subscription_status:
-        | "trialing"
-        | "active"
-        | "canceled"
-        | "incomplete"
-        | "incomplete_expired"
-        | "past_due"
-        | "unpaid"
-        | "paused"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -271,83 +460,44 @@ export interface Database {
   }
 }
 
-export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
-      Database["public"]["Views"])
-  ? (Database["public"]["Tables"] &
-      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : never
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T]
 
-export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : never
+// Helper types for common use cases
+export type Product = Tables<'products'>
+export type Price = Tables<'prices'>
+export type Subscription = Tables<'subscriptions'>
+export type User = Tables<'users'>
+export type Organization = Tables<'organizations'>
+export type OrganizationMember = Tables<'organization_members'>
+export type Invite = Tables<'invites'>
+export type RecordType = Tables<'record_types'>
+export type Record = Tables<'records'>
+export type Reminder = Tables<'reminders'>
+export type Schedule = Tables<'schedules'>
+export type AuditLog = Tables<'audit_logs'>
 
-export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof Database["public"]["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
-  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : never
+// Extended types with relationships
+export type ProductWithPrices = Product & {
+  prices: Price[]
+}
 
-export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof Database["public"]["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
-  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
-  : never
+export type PriceWithProduct = Price & {
+  products: Product
+}
 
+export type SubscriptionWithProduct = Subscription & {
+  prices: PriceWithProduct[]
+}
+
+export type OrganizationWithMembers = Organization & {
+  members: OrganizationMember[]
+}
+
+export type RecordWithType = Record & {
+  record_types: RecordType
+}
+
+export type ReminderWithRecord = Reminder & {
+  records?: Record | null
+}

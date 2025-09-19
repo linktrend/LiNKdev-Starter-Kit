@@ -2,7 +2,13 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { cache } from 'react';
 import { Database } from '@/types/db';
 
-export const getUser = cache(async (supabase: SupabaseClient<Database>) => {
+export const getUser = cache(async (supabase?: SupabaseClient<Database>) => {
+  if (!supabase) {
+    const { createClient } = await import('@/utils/supabase/server');
+    const { cookies } = await import('next/headers');
+    supabase = createClient({ cookies });
+  }
+  
   const {
     data: { user }
   } = await supabase.auth.getUser();
@@ -58,7 +64,13 @@ export const getPlans = cache(async (supabase: SupabaseClient) => {
   return plans;
 });
 
-export const getUserDetails = cache(async (supabase: SupabaseClient) => {
+export const getUserDetails = cache(async (supabase?: SupabaseClient<Database>) => {
+  if (!supabase) {
+    const { createClient } = await import('@/utils/supabase/server');
+    const { cookies } = await import('next/headers');
+    supabase = createClient({ cookies });
+  }
+  
   const { data: userDetails } = await supabase
     .from('users')
     .select('*')

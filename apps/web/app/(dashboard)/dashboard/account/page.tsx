@@ -13,6 +13,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 import {
   getUser,
   getUserDetails,
@@ -23,13 +24,13 @@ import { ImageUpload } from './image-upload';
 import { redirect } from 'next/navigation';
 
 export default async function AccountPage() {
-  const supabase = createClient();
+  const supabase = createClient({ cookies });
   const [user, userDetails] = await Promise.all([
-    getUser(supabase),
-    getUserDetails(supabase),
+    getUser(),
+    getUserDetails(),
   ]);
 
-  const subscription = user ? await getSubscription(supabase, user.id) : null;
+  const subscription = user ? await getSubscription() : null;
 
   if (!user) {
     return redirect('/signin'); // Keep this for user redirection
@@ -48,19 +49,29 @@ export default async function AccountPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={updateName} className="space-y-4">
+            <form action={async (formData: FormData) => {
+              const name = formData.get('fullName') as string;
+              if (name) {
+                await updateName(name);
+              }
+            }} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input
                   id="fullName"
                   name="fullName"
-                  defaultValue={user.user_metadata.full_name || ''}
+                  defaultValue={user.user_metadata?.full_name || ''}
                   placeholder="Enter your full name"
                 />
               </div>
               <Button type="submit">Update Name</Button>
             </form>
-            <form action={updateEmail} className="space-y-4 mt-6">
+            <form action={async (formData: FormData) => {
+              const email = formData.get('email') as string;
+              if (email) {
+                await updateEmail(email);
+              }
+            }} className="space-y-4 mt-6">
               <div className="space-y-2">
                 <Label htmlFor="newEmail">Email</Label>
                 <Input
@@ -89,7 +100,7 @@ export default async function AccountPage() {
               <div className="flex flex-col gap-2">
                 <Label htmlFor="plan">Plan</Label>
                 <div className="text-muted-foreground">
-                  {subscription?.prices?.products?.name || 'N/A'}
+                  {subscription?.product?.name || 'N/A'}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -106,8 +117,8 @@ export default async function AccountPage() {
               <div className="flex flex-col gap-2">
                 <Label htmlFor="amount">Amount</Label>
                 <div className="text-muted-foreground">
-                  {subscription?.prices?.unit_amount
-                    ? `$${(subscription.prices.unit_amount / 100).toFixed(2)} / ${subscription.prices.interval}`
+                  {subscription?.prices?.[0]?.unit_amount
+                    ? `$${(subscription.prices[0].unit_amount / 100).toFixed(2)} / ${subscription.prices[0].recurring?.interval || 'month'}`
                     : 'N/A'}
                 </div>
               </div>

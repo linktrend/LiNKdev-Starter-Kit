@@ -1,6 +1,31 @@
 import * as React from "react";
-type SwitchProps = React.InputHTMLAttributes<HTMLInputElement>;
-export function Switch({ className, ...props }: SwitchProps) {
-  return <input type="checkbox" className={className} {...props} />;
+import { cn } from "@/lib/utils";
+
+export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+  onCheckedChange?: (checked: boolean) => void;
 }
+
+export function Switch({ className, onCheckedChange, checked, defaultChecked, ...props }: SwitchProps) {
+  const [isChecked, setIsChecked] = React.useState(checked ?? defaultChecked ?? false);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newChecked = e.target.checked;
+    setIsChecked(newChecked);
+    onCheckedChange?.(newChecked);
+  };
+
+  return (
+    <input 
+      type="checkbox" 
+      className={cn(
+        "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+        className
+      )}
+      checked={checked ?? isChecked}
+      onChange={handleChange}
+      {...props} 
+    />
+  );
+}
+
 export default Switch;

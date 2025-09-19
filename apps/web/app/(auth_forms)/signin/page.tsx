@@ -38,9 +38,9 @@ export default function SignIn() {
       icon: <Chrome className="mr-2 h-4 w-4" />
     }
   ];
-  const handleOAuthSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOAuthSubmit = async (provider: string) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await signInWithOAuth(e);
+    await signInWithOAuth(provider);
     setIsSubmitting(false);
   };
 
@@ -122,7 +122,10 @@ export default function SignIn() {
                 <form
                   key={provider.name}
                   className="pb-2"
-                  onSubmit={(e) => handleOAuthSubmit(e)}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleOAuthSubmit(provider.name);
+                  }}
                 >
                   <input type="hidden" name="provider" value={provider.name} />
                   <Button

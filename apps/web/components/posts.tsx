@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { User } from '@supabase/supabase-js'
 
 interface Post {
-  id: number;
+  id: string;
   title: string;
   content: string | null;
 }
@@ -103,12 +103,12 @@ export default function Posts({ user }: PostsProps) {
   }
 
   const handleUpdatePost = () => {
-    if (editingPost) {
+    if (editingPost && editingPost.title && editingPost.content) {
       updatePost.mutate({ id: editingPost.id, title: editingPost.title, content: editingPost.content })
     }
   }
 
-  const handleDeletePost = (id: number) => {
+  const handleDeletePost = (id: string) => {
     deletePost.mutate({ id })
   }
 

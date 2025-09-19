@@ -42,7 +42,7 @@ export default function Page({
         <p className="mb-4 text-white/80">{page.data.description}</p>
         <Link
           href="/blog"
-          className={buttonVariants({ size: 'sm', variant: 'secondary' })}
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-zinc-950 dark:focus-visible:ring-zinc-300 bg-zinc-100 text-zinc-900 hover:bg-zinc-100/80 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-800/80 h-9 rounded-md px-3"
         >
           Back
         </Link>
@@ -83,7 +83,7 @@ export function generateMetadata({ params }: { params: Param }): Metadata {
 }
 
 export async function generateStaticParams(): Promise<Param[]> {
-  return blog.getPages().map<Param>((page) => ({
+  return blog.getPages().map((page: any) => ({
     slug: page.slugs[0]
   }));
 }

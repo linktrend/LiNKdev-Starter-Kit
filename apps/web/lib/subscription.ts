@@ -1,8 +1,8 @@
 // @ts-nocheck
 // TODO: Fix this when we turn strict mode on.
 import { freePlan, proPlan } from '@/config/subscriptions';
-import { createServerSupabaseClient } from '@/supabase-server';
-import { UserSubscriptionPlan } from '../types';
+import { createServerSupabaseClient } from '@/utils/supabase/server';
+import type { UserSubscriptionPlan } from '@types/index';
 
 export async function getUserSubscriptionPlan(
   userId: string

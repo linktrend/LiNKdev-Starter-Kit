@@ -1,0 +1,197 @@
+{
+  "mcp": {
+    "project_url": "https://YOUR_PROJECT_REF.supabase.co",
+    "project_id": "YOUR_PROJECT_REF"
+  },
+  "dropped": ["public.mcp_sanity"],
+  "extensions_ensured": ["pgcrypto", "uuid-ossp"],
+  "migrations": [
+    {
+      "file": "apps/web/supabase/migrations/20230530034630_init.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20240918141953_posts.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/202509161505__orgs_teams_baseline.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000000__orgs_invites_enhancement.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000001__records_crud.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000002__billing_org_scope.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000002__scheduling_notifications.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000004__audit_logs.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000005__idempotency_rate_limits.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250101000006__storage_attachments.sql",
+      "status": "applied"
+    },
+    {
+      "file": "apps/web/supabase/migrations/20250919100018__mcp_sanity.sql",
+      "status": "applied"
+    }
+  ],
+  "storage": {
+    "buckets": [
+      {
+        "id": "attachments",
+        "name": "attachments",
+        "public": false
+      },
+      {
+        "id": "public-assets",
+        "name": "public-assets",
+        "public": true
+      },
+      {
+        "id": "user-uploads",
+        "name": "user-uploads",
+        "public": false
+      }
+    ]
+  },
+  "validation": {
+    "tables": [
+      "attachments", "audit_logs", "billing_customers", "customers", "idempotency_keys",
+      "invites", "mcp_sanity", "notifications_outbox", "org_subscriptions", "organization_members",
+      "organizations", "posts", "prices", "processed_events", "products", "rate_limits",
+      "record_types", "records", "reminders", "schedules", "subscriptions", "users"
+    ],
+    "rls_enabled": [
+      {
+        "table": "attachments",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "audit_logs",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "billing_customers",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "customers",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "idempotency_keys",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "invites",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "mcp_sanity",
+        "enabled": false,
+        "forced": false
+      },
+      {
+        "table": "notifications_outbox",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "org_subscriptions",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "organization_members",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "organizations",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "posts",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "prices",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "processed_events",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "products",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "rate_limits",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "record_types",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "records",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "reminders",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "schedules",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "subscriptions",
+        "enabled": true,
+        "forced": false
+      },
+      {
+        "table": "users",
+        "enabled": true,
+        "forced": false
+      }
+    ],
+    "policies_count": 50,
+    "functions_count": 13,
+    "triggers_count": 9
+  },
+  "finished_at": "2025-01-27T20:45:00Z"
+}

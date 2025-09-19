@@ -20,7 +20,11 @@ import {
 import { usePathname } from 'next/navigation';
 import { NavItem, iconComponents } from '@/config/dashboard';
 
-const Sidebar = ({ navConfig }: { navConfig: NavItem[] }) => {
+interface SidebarProps {
+  navConfig: NavItem[];
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ navConfig }) => {
   const pathname = usePathname();
 
   return (

@@ -38,10 +38,8 @@ export async function checkoutWithStripe(
     // Retrieve or create the customer in Stripe
     let customer: string;
     try {
-      customer = await createOrRetrieveCustomer({
-        uuid: user?.id || '',
-        email: user?.email || ''
-      });
+      const result = await createOrRetrieveCustomer(user?.id || '', user?.email || '');
+      customer = result.id;
     } catch (err) {
       console.error(err);
       throw new Error('Unable to access customer record.');
@@ -66,14 +64,14 @@ export async function checkoutWithStripe(
 
     console.log(
       'Trial end:',
-      calculateTrialEndUnixTimestamp(price.trial_period_days)
+      calculateTrialEndUnixTimestamp()
     );
     if (price.type === 'recurring') {
       params = {
         ...params,
         mode: 'subscription',
         subscription_data: {
-          trial_end: calculateTrialEndUnixTimestamp(price.trial_period_days)
+          trial_end: calculateTrialEndUnixTimestamp()
         }
       };
     } else if (price.type === 'one_time') {
@@ -136,10 +134,8 @@ export async function createStripePortal(currentPath: string) {
 
     let customer;
     try {
-      customer = await createOrRetrieveCustomer({
-        uuid: user.id || '',
-        email: user.email || ''
-      });
+      const result = await createOrRetrieveCustomer(user.id || '', user.email || '');
+      customer = result.id;
     } catch (err) {
       console.error(err);
       throw new Error('Unable to access customer record.');

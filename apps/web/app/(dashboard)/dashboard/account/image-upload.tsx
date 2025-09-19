@@ -39,12 +39,12 @@ export function ImageUpload({ user }: { user: any }) {
       return;
     }
     startTransition(async () => {
-      const imageFile = await convertBlobUrlToFile(imageUrl);
-      const { imageUrl: uploadedImageUrl, error } = await uploadImage({
-        file: imageFile,
-        bucket: "avatar",
-        folder: user.id,
-      });
+      const imageFile = await convertBlobUrlToFile(imageUrl, 'avatar.jpg');
+      const { imageUrl: uploadedImageUrl, error } = await uploadImage(
+        "avatar",
+        `${user.id}/avatar.jpg`,
+        imageFile
+      );
       if (error) {
         toast({
           title: error,

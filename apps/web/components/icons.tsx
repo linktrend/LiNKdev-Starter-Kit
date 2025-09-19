@@ -106,3 +106,6 @@ export const Icons = {
   twitter: Twitter,
   check: Check
 };
+
+// Export as icons for compatibility
+export const icons = Icons;

@@ -49,14 +49,10 @@ export function Navbar({
             </Link>
             {navConfig.map(
               (
-                item: {
-                  icon: keyof typeof iconComponents;
-                  href: string;
-                  label: string;
-                },
+                item: any,
                 index: number
               ) => {
-                const IconComponent = iconComponents[item.icon];
+                const IconComponent = iconComponents[item.icon as keyof typeof iconComponents];
                 return (
                   <Link
                     key={index}
@@ -124,3 +120,5 @@ export function Navbar({
     </header>
   );
 }
+
+export default Navbar;

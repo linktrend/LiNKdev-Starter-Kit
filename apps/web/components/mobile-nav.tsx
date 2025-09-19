@@ -6,7 +6,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { MainNavItem } from 'types';
 import { cn } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import { icons as Icons } from '@/components/icons';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 
@@ -44,15 +44,11 @@ export function MobileNav({ items, children, user }: MobileNavProps) {
         </nav>
         <div className="flex items-center space-x-2 mt-4">
           <ModeToggle />
-          <Link
-            href={user ? '/dashboard' : '/login'}
-            className={cn(
-              buttonVariants({ variant: 'secondary', size: 'sm' }),
-              'px-4'
-            )}
-          >
-            {user ? 'Dashboard' : 'Login'}
-          </Link>
+          <Button asChild variant="secondary" size="sm" className="px-4">
+            <Link href={user ? '/dashboard' : '/login'}>
+              {user ? 'Dashboard' : 'Login'}
+            </Link>
+          </Button>
         </div>
         {children}
       </div>

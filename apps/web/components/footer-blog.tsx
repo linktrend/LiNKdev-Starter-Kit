@@ -1,4 +1,4 @@
-import { Icons } from '@/components/icons';
+import { icons as Icons } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
 import { Eclipse, Github } from 'lucide-react';
 

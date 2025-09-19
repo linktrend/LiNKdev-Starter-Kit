@@ -1,0 +1,318 @@
+{
+  "generated_at": "2025-01-27T20:30:00Z",
+  "mcp_target": {
+    "project_url": "https://YOUR_PROJECT_REF.supabase.co",
+    "project_id": "YOUR_PROJECT_REF"
+  },
+  "cloud": {
+    "tables": [
+      {
+        "schema": "public",
+        "name": "mcp_sanity",
+        "type": "BASE TABLE"
+      }
+    ],
+    "columns": [
+      {
+        "schema": "public",
+        "table": "mcp_sanity",
+        "column": "id",
+        "type": "uuid",
+        "nullable": false,
+        "default": "gen_random_uuid()"
+      },
+      {
+        "schema": "public",
+        "table": "mcp_sanity",
+        "column": "note",
+        "type": "text",
+        "nullable": false,
+        "default": null
+      },
+      {
+        "schema": "public",
+        "table": "mcp_sanity",
+        "column": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": false,
+        "default": "now()"
+      }
+    ],
+    "rls": [
+      {
+        "schema": "public",
+        "table": "mcp_sanity",
+        "enabled": false,
+        "forced": false
+      }
+    ],
+    "policies": [],
+    "functions": [],
+    "triggers": [],
+    "extensions": [
+      {
+        "name": "pg_graphql",
+        "version": "1.5.11"
+      },
+      {
+        "name": "pg_stat_statements",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "version": "1.1"
+      }
+    ],
+    "buckets": []
+  },
+  "local": {
+    "migrations": [
+      {
+        "file": "apps/web/supabase/migrations/20230530034630_init.sql",
+        "timestamp": "20230530034630",
+        "name": "init",
+        "hash": "init_baseline",
+        "operations": [
+          "create table users",
+          "create table customers", 
+          "create table products",
+          "create table prices",
+          "create table subscriptions",
+          "create function handle_new_user",
+          "create trigger on_auth_user_created",
+          "create publication supabase_realtime"
+        ],
+        "requires_extensions": ["pgcrypto"],
+        "depends_on": [],
+        "tables_created": ["users", "customers", "products", "prices", "subscriptions"],
+        "types_created": ["pricing_type", "pricing_plan_interval", "subscription_status"],
+        "policies_created": 7,
+        "functions_created": 1,
+        "triggers_created": 1
+      },
+      {
+        "file": "apps/web/supabase/migrations/20240918141953_posts.sql",
+        "timestamp": "20240918141953",
+        "name": "posts",
+        "hash": "posts_baseline",
+        "operations": [
+          "create table posts",
+          "enable row level security on posts",
+          "create 4 RLS policies for posts"
+        ],
+        "requires_extensions": [],
+        "depends_on": [],
+        "tables_created": ["posts"],
+        "policies_created": 4
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000000__orgs_invites_enhancement.sql",
+        "timestamp": "20250101000000",
+        "name": "orgs_invites_enhancement",
+        "hash": "orgs_invites",
+        "operations": [
+          "create table invites",
+          "create 5 RLS policies for invites",
+          "create 4 enhanced RLS policies for organization_members",
+          "create 2 enhanced RLS policies for organizations",
+          "create 4 indexes",
+          "create function cleanup_expired_invites",
+          "create function generate_invite_token"
+        ],
+        "requires_extensions": ["pgcrypto"],
+        "depends_on": ["organizations", "organization_members"],
+        "tables_created": ["invites"],
+        "policies_created": 11,
+        "functions_created": 2,
+        "indexes_created": 4
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000001__records_crud.sql",
+        "timestamp": "20250101000001",
+        "name": "records_crud",
+        "hash": "records_system",
+        "operations": [
+          "create table record_types",
+          "create table records",
+          "create 8 RLS policies (4 for each table)",
+          "create 7 indexes",
+          "create function update_updated_at_column",
+          "create 2 triggers for updated_at"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["organizations", "auth.users"],
+        "tables_created": ["record_types", "records"],
+        "policies_created": 8,
+        "functions_created": 1,
+        "triggers_created": 2,
+        "indexes_created": 7
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000002__billing_org_scope.sql",
+        "timestamp": "20250101000002",
+        "name": "billing_org_scope",
+        "hash": "billing_org",
+        "operations": [
+          "create table billing_customers",
+          "create table org_subscriptions",
+          "create table processed_events",
+          "create 6 RLS policies",
+          "create 4 indexes",
+          "create function update_updated_at_column",
+          "create 2 triggers for updated_at"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["organizations"],
+        "tables_created": ["billing_customers", "org_subscriptions", "processed_events"],
+        "policies_created": 6,
+        "functions_created": 1,
+        "triggers_created": 2,
+        "indexes_created": 4
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000002__scheduling_notifications.sql",
+        "timestamp": "20250101000002",
+        "name": "scheduling_notifications",
+        "hash": "scheduling_system",
+        "operations": [
+          "create table reminders",
+          "create table schedules",
+          "create table notifications_outbox",
+          "create 12 RLS policies (4 for each table)",
+          "create 8 indexes",
+          "create function update_updated_at_column",
+          "create 2 triggers for updated_at",
+          "create function create_reminders_from_schedules",
+          "create function emit_notification_event"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["organizations", "records"],
+        "tables_created": ["reminders", "schedules", "notifications_outbox"],
+        "policies_created": 12,
+        "functions_created": 3,
+        "triggers_created": 2,
+        "indexes_created": 8
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000004__audit_logs.sql",
+        "timestamp": "20250101000004",
+        "name": "audit_logs",
+        "hash": "audit_system",
+        "operations": [
+          "create table audit_logs",
+          "create 6 indexes",
+          "create 4 RLS policies",
+          "create function prevent_audit_log_modification",
+          "create 2 triggers for immutability",
+          "create function get_audit_stats"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["organizations"],
+        "tables_created": ["audit_logs"],
+        "policies_created": 4,
+        "functions_created": 2,
+        "triggers_created": 2,
+        "indexes_created": 6
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000005__idempotency_rate_limits.sql",
+        "timestamp": "20250101000005",
+        "name": "idempotency_rate_limits",
+        "hash": "idempotency_ratelimit",
+        "operations": [
+          "create table idempotency_keys",
+          "create table rate_limits",
+          "create 4 indexes",
+          "create 3 RLS policies",
+          "create function cleanup_expired_idempotency_keys",
+          "create function cleanup_expired_rate_limits",
+          "create function get_or_create_rate_limit_bucket",
+          "create function check_rate_limit_bucket"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["organizations"],
+        "tables_created": ["idempotency_keys", "rate_limits"],
+        "policies_created": 3,
+        "functions_created": 4,
+        "indexes_created": 4
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250101000006__storage_attachments.sql",
+        "timestamp": "20250101000006",
+        "name": "storage_attachments",
+        "hash": "storage_attachments",
+        "operations": [
+          "create table attachments",
+          "create 6 indexes",
+          "create 4 RLS policies",
+          "create trigger for updated_at",
+          "create function generate_signed_url (placeholder)"
+        ],
+        "requires_extensions": [],
+        "depends_on": ["records", "organizations"],
+        "tables_created": ["attachments"],
+        "policies_created": 4,
+        "functions_created": 1,
+        "triggers_created": 1,
+        "indexes_created": 6
+      },
+      {
+        "file": "apps/web/supabase/migrations/202509161505__orgs_teams_baseline.sql",
+        "timestamp": "202509161505",
+        "name": "orgs_teams_baseline",
+        "hash": "orgs_teams_baseline",
+        "operations": [
+          "create table organizations",
+          "create table organization_members",
+          "create view team_members",
+          "create 5 RLS policies"
+        ],
+        "requires_extensions": [],
+        "depends_on": [],
+        "tables_created": ["organizations", "organization_members"],
+        "views_created": ["team_members"],
+        "policies_created": 5
+      },
+      {
+        "file": "apps/web/supabase/migrations/20250919100018__mcp_sanity.sql",
+        "timestamp": "20250919100018",
+        "name": "mcp_sanity",
+        "hash": "mcp_sanity",
+        "operations": [
+          "create extension pgcrypto",
+          "create table mcp_sanity"
+        ],
+        "requires_extensions": ["pgcrypto"],
+        "depends_on": [],
+        "tables_created": ["mcp_sanity"]
+      }
+    ],
+    "seeds": [
+      "apps/web/supabase/seed.sql"
+    ],
+    "edge_functions": [],
+    "storage": {
+      "buckets": [
+        "attachments",
+        "public-assets", 
+        "user-uploads"
+      ],
+      "notes": "Found bucket references in migration comments and code: storage client usage, signed URLs, file upload functionality"
+    },
+    "schema_files": [
+      "apps/web/schema.sql"
+    ]
+  }
+}

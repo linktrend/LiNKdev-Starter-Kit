@@ -36,40 +36,36 @@ Ensure you have [pnpm](https://pnpm.io/installation) installed and run:
 pnpm install
 ```
 
-### 3. Set Up Local Development Environment with Supabase
+### 3. Set Up Cloud Development Environment with Supabase
 
 #### Prerequisites
 
-- Install [Docker](https://www.docker.com/get-started/)
+- Access to Supabase Cloud project
 - Set up environment files:
   - Copy `.env.local.example` to `.env.local`
   - Copy `.env.example` to `.env`
 
-#### Start Local Supabase Instance
+#### Configure Cloud Supabase
 
-1. Start Supabase:
+1. Get your Supabase project credentials:
+   - Go to your [Supabase Dashboard](https://app.supabase.com)
+   - Navigate to Settings > API
+   - Copy the Project URL and API keys
+
+2. Configure environment variables in `.env.local`:
    ```bash
-   npx supabase start
+   NEXT_PUBLIC_SUPABASE_URL="https://your-project-ref.supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key-here"
+   SUPABASE_SERVICE_ROLE_KEY="your-service-role-key-here"
    ```
 
-2. Configure environment variables:
-   - Copy the `service_role_key` from the terminal output.
-   - Set `SUPABASE_SERVICE_ROLE_KEY` in your `.env.local` file with this value.
-
-3. Get Supabase URLs:
-   ```bash
-   npx supabase status
-   ```
-   Copy the following values to your `.env.local` file:
-   - `API URL` as `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon key` as `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role key` as `SUPABASE_SERVICE_ROLE_KEY`
-
-4. Link local Supabase instance:
+3. Link to cloud project (optional, for CLI operations):
    ```bash
    npx supabase link
    ```
-   Follow the prompts to link to your Supabase project.
+   Follow the prompts to link to your Supabase Cloud project.
+
+> **Note**: This project enforces cloud-only development. Local Supabase instances are prohibited for production data.
 
 ### 4. Set Up Stripe Integration
 
@@ -269,7 +265,7 @@ To use this:
 
 2. Add the following to your `.env` file:
    ```
-   SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI="http://127.0.0.1:54321/auth/v1/callback"
+   SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI="https://your-project-ref.supabase.co/auth/v1/callback"
    SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID="your_client_id"
    SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET="your_client_secret"
    ```
@@ -283,7 +279,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 # Supabase Local Dev
 NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR************************************WNReilDMblYTn_I0"
-NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"
+NEXT_PUBLIC_SUPABASE_URL="https://your-project-ref.supabase.co"
 SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1Ni******************************************Zx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU"
 
 # Stripe

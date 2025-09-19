@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
+import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   if (code) {
-    const supabase = createClient();
+    const supabase = createClient({ cookies });
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -28,8 +29,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.redirect(
     getStatusRedirect(
       `${requestUrl.origin}/dashboard/account`,
-      'Success!',
-      'You are now signed in.'
+      'Success!'
     )
   );
 }

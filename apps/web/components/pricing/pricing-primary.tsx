@@ -3,13 +3,15 @@ import {
   getProducts,
   getSubscription,
   getUser
-} from '@/utils/supabase/queries';
+} from '../../utils/supabase/queries';
+import { cookies } from 'next/headers';
+import { User } from '@supabase/supabase-js';
 import PricingRounded from './pricing-rounded';
 
 export default async function PricingPage() {
-  const supabase = createClient();
+  const supabase = createClient({ cookies });
   const [user, products] = await Promise.all([
-    getUser(supabase),
+    getUser(),
     getProducts(supabase),
   ]);
 
@@ -17,7 +19,7 @@ export default async function PricingPage() {
 
   return (
     <PricingRounded
-      user={user}
+      user={user as User | null}
       products={products ?? []}
       subscription={subscription}
     />

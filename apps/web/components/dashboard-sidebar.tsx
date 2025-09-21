@@ -36,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ navConfig }) => {
           prefetch={false}
         >
           <Eclipse className="h-5 w-5 transition-all group-hover:scale-110" />
-          <span className="sr-only">Hikari Inc</span>
+          <span className="sr-only">LTM Starter Kit Inc</span>
         </Link>
         {navConfig.map((item, index) => {
           const IconComponent =

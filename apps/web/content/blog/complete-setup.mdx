@@ -1,11 +1,11 @@
 ---
-title: Complete Setup Guide for Hikari, a Nextjs Starter
+title: Complete Setup Guide for LTM Starter Kit, a Nextjs Starter
 description: Setup your app in 10 minutes!
 date: 2024-08-03
 author: Antoine Ross
 ---
 
-Hikari is a powerful, feature-rich Next.js SaaS starter designed to accelerate your development process. This guide will walk you through setting up Hikari, including its Supabase backend and Stripe integration.
+LTM Starter Kit is a powerful, feature-rich Next.js SaaS starter designed to accelerate your development process. This guide will walk you through setting up LTM Starter Kit, including its Supabase backend and Stripe integration.
 
 ## Key Features
 
@@ -24,8 +24,8 @@ Hikari is a powerful, feature-rich Next.js SaaS starter designed to accelerate y
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/antoineross/Hikari.git
-cd Hikari
+git clone https://github.com/antoineross/ltm-starter-kit.git
+cd ltm-starter-kit
 ```
 
 ### 2. Install Dependencies
@@ -109,7 +109,7 @@ Make sure you have the ["Test Mode" toggle](https://stripe.com/docs/testing) swi
 
 #### Create Products and Pricing
 
-Hikari uses a fixtures file to bootstrap test product and pricing data in your Stripe account. Here's an example of a comprehensive Stripe fixtures file:
+LTM Starter Kit uses a fixtures file to bootstrap test product and pricing data in your Stripe account. Here's an example of a comprehensive Stripe fixtures file:
 
 ```json
 {
@@ -298,52 +298,52 @@ DB_PASSWORD="your_database_password"
    pnpm dev
    ```
 
-2. Open [http://localhost:3000](http://localhost:3000) in your browser to see your Hikari application.
+2. Open [http://localhost:3000](http://localhost:3000) in your browser to see your LTM Starter Kit application.
 
 ## Key Components
 
 ### Supabase Integration
 
-Hikari uses Supabase for database management and authentication. The setup process includes:
+LTM Starter Kit uses Supabase for database management and authentication. The setup process includes:
 - Local Supabase instance setup
 - Environment variable configuration
 - Database schema management
 
 ### Stripe Integration
 
-The Stripe integration in Hikari includes:
+The Stripe integration in LTM Starter Kit includes:
 - Webhook handling for various Stripe events
 - Product and pricing management using fixtures
 - Subscription handling
 
 ### UI Components
 
-Hikari comes with a rich set of UI components, including:
+LTM Starter Kit comes with a rich set of UI components, including:
 - Complete landing page elements
 - Dashboard components
 - User management interfaces
 
 ## Customization
 
-While Hikari provides a solid starting point, it's designed to be customizable:
+While LTM Starter Kit provides a solid starting point, it's designed to be customizable:
 - Modify the `stripe-fixtures.json` file to adjust product and pricing information
 - Customize UI components to match your brand
 - Extend the provided API routes and add new ones as needed
 
 ## Important Notes
 
-- Stripe Checkout in Hikari supports pricing that bills a predefined amount at a specific interval. More complex plans (e.g., different pricing tiers or seats) are not yet supported.
+- Stripe Checkout in LTM Starter Kit supports pricing that bills a predefined amount at a specific interval. More complex plans (e.g., different pricing tiers or seats) are not yet supported.
 - Always ensure your Stripe webhook is correctly configured and that you've redeployed with all necessary environment variables.
 - The webhook listener must be running concurrently with your development server for the Stripe integration to function correctly.
 
 ## Licensing
 
-Hikari is open-source and available under the MIT License, allowing for both personal and commercial use with proper attribution.
+LTM Starter Kit is open-source and available under the MIT License, allowing for both personal and commercial use with proper attribution.
 
 ## Conclusion
 
-Hikari provides a comprehensive starting point for your Next.js SaaS projects, combining powerful features with ease of use. By leveraging Hikari, you can focus on building your unique product features rather than setting up infrastructure and common SaaS components.
+LTM Starter Kit provides a comprehensive starting point for your Next.js SaaS projects, combining powerful features with ease of use. By leveraging LTM Starter Kit, you can focus on building your unique product features rather than setting up infrastructure and common SaaS components.
 
-Remember, Hikari is an evolving project. Check the official repository for the latest updates, features, and community contributions.
+Remember, LTM Starter Kit is an evolving project. Check the official repository for the latest updates, features, and community contributions.
 
-Happy building with Hikari!
+Happy building with LTM Starter Kit!

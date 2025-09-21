@@ -1,6 +1,6 @@
 # Design System v0
 
-This document outlines the initial design system implementation for Hikari, focusing on design tokens and primitive components.
+This document outlines the initial design system implementation for LTM Starter Kit, focusing on design tokens and primitive components.
 
 ## Overview
 

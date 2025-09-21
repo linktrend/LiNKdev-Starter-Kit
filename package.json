@@ -1,5 +1,5 @@
 {
-  "name": "pet-diary-starter",
+  "name": "ltm-starter-kit",
   "private": true,
   "packageManager": "pnpm@10.15.0",
   "workspaces": [

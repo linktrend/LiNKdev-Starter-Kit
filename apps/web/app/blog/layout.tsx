@@ -20,7 +20,7 @@ export default async function MarketingLayout({
     <div className="flex min-h-screen flex-col items-center w-full">
       <div className="flex items-center justify-between w-full p-4">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-bold">HIKARI</span>
+          <span className="text-lg font-bold">LTM STARTER KIT</span>
         </div>
         <div className="flex items-center space-x-4">
           <a href="/#features" className="text-sm hover:underline">Features</a>

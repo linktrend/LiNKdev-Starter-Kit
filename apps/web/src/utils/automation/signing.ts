@@ -73,8 +73,8 @@ export function verifySignature(
 export function createWebhookHeaders(signedPayload: SignedPayload): Record<string, string> {
   return {
     'Content-Type': 'application/json',
-    'X-Hikari-Signature': signedPayload.signature,
-    'X-Hikari-Timestamp': signedPayload.timestamp,
-    'User-Agent': 'Hikari-Automation-Bridge/1.0',
+    'X-LTM-Signature': signedPayload.signature,
+    'X-LTM-Timestamp': signedPayload.timestamp,
+    'User-Agent': 'LTM-Automation-Bridge/1.0',
   };
 }

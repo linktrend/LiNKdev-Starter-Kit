@@ -14,7 +14,7 @@ The Automation Bridge provides reliable event delivery to n8n and other external
 
 ```bash
 # n8n Webhook Integration (Optional - Template works without these)
-N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/hikari
+N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/ltm-starter-kit
 N8N_WEBHOOK_SECRET=your-n8n-webhook-secret
 
 # Cron Security (for automation delivery endpoint)
@@ -59,8 +59,8 @@ Receives events from n8n (example implementation). Validates HMAC signature and 
 **Headers:**
 ```
 Content-Type: application/json
-X-Hikari-Signature: hex-encoded-hmac-signature
-X-Hikari-Timestamp: unix-timestamp-seconds
+X-LTM-Signature: hex-encoded-hmac-signature
+X-LTM-Timestamp: unix-timestamp-seconds
 ```
 
 ## tRPC API
@@ -152,9 +152,9 @@ signature = HMAC-SHA256(secret, "${timestamp}.${body}")
 **HTTP Headers:**
 ```
 Content-Type: application/json
-X-Hikari-Signature: a1b2c3d4e5f6... (64 hex characters)
-X-Hikari-Timestamp: 1640995200 (unix timestamp)
-User-Agent: Hikari-Automation-Bridge/1.0
+X-LTM-Signature: a1b2c3d4e5f6... (64 hex characters)
+X-LTM-Timestamp: 1640995200 (unix timestamp)
+User-Agent: LTM-Automation-Bridge/1.0
 ```
 
 **Timestamp Validation:**
@@ -185,16 +185,16 @@ When `TEMPLATE_OFFLINE=1` or Supabase is not configured:
 
 ## n8n Workflow Example
 
-Here's a simple n8n workflow to receive Hikari events:
+Here's a simple n8n workflow to receive LTM Starter Kit events:
 
 ```json
 {
-  "name": "Hikari Event Receiver",
+  "name": "LTM Event Receiver",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "hikari",
+        "path": "ltm-starter-kit",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -215,7 +215,7 @@ Here's a simple n8n workflow to receive Hikari events:
           "conditions": [
             {
               "id": "signature-valid",
-              "leftValue": "={{ $json.headers['x-hikari-signature'] }}",
+              "leftValue": "={{ $json.headers['x-ltm-signature'] }}",
               "rightValue": "valid-signature-here",
               "operator": {
                 "type": "string",
@@ -321,8 +321,8 @@ curl -X POST http://localhost:3000/api/cron/automation-delivery \
 # Test n8n webhook (with proper signature)
 curl -X POST http://localhost:3000/api/hooks/n8n \
   -H "Content-Type: application/json" \
-  -H "X-Hikari-Signature: your-signature" \
-  -H "X-Hikari-Timestamp: 1640995200" \
+  -H "X-LTM-Signature: your-signature" \
+  -H "X-LTM-Timestamp: 1640995200" \
   -d '{"event":"test","payload":{"test":true}}'
 ```
 
@@ -369,13 +369,13 @@ Look for `AUTOMATION:` prefixed logs in the console.
 ### n8n Integration Steps
 
 1. **Create Webhook Node** in n8n workflow
-2. **Set URL** to your Hikari webhook endpoint: `https://your-app.com/api/hooks/n8n`
+2. **Set URL** to your LTM Starter Kit webhook endpoint: `https://your-app.com/api/hooks/n8n`
 3. **Configure Headers** (n8n will receive these automatically):
    - `Content-Type: application/json`
-   - `X-Hikari-Signature: [auto-generated]`
-   - `X-Hikari-Timestamp: [auto-generated]`
+   - `X-LTM-Signature: [auto-generated]`
+   - `X-LTM-Timestamp: [auto-generated]`
 4. **Add Response Node** to return `200 OK` status
-5. **Test** with sample payload from Hikari
+5. **Test** with sample payload from LTM Starter Kit
 
 **Minimal n8n Response Node Configuration:**
 ```json

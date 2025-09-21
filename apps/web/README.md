@@ -25,21 +25,21 @@ The all-in-one starter kit for building high-performance SaaS applications using
 
 ## 🎬 Demo
 
-[Live Demo](https://hikari.antoineross.com/)
+[Live Demo](https://ltm-starter-kit.vercel.app/)
 
-**Hero Section:** ![Screenshot of demo](./public/hikari-landingpage.png)
+**Hero Section:** ![Screenshot of demo](./public/ltm-starter-kit-landingpage.png)
 
-**Dashboard View:** ![Screenshot of dashboard](./public/hikari-dashboard.png)
+**Dashboard View:** ![Screenshot of dashboard](./public/ltm-starter-kit-dashboard.png)
 
-**Pricing Table:** ![Screenshot of pricing](./public/hikari-pricing.png)
+**Pricing Table:** ![Screenshot of pricing](./public/ltm-starter-kit-pricing.png)
 
-**Documentation:** ![Screenshot of documentation](./public/hikari-documentation.png)
+**Documentation:** ![Screenshot of documentation](./public/ltm-starter-kit-documentation.png)
 
-**Blog:** ![Screenshot of blog](./public/hikari-blog.png)
+**Blog:** ![Screenshot of blog](./public/ltm-starter-kit-blog.png)
 
 ## 📄 Quick Start Guide
 
-Get up and running quickly by following the [Quick Start Guide](https://hikari.antoineross.com/docs/quick-start).
+Get up and running quickly by following the [Quick Start Guide](https://ltm-starter-kit.vercel.app/docs/quick-start).
 
 ## 🚀 Going Live
 
@@ -53,7 +53,7 @@ After updating environment variables, redeploy your application through Vercel.
 
 ## 🏢 Organizations & Invitations Module
 
-The Hikari template includes a complete **Organizations & Invitations** module for multi-tenant applications:
+The LTM Starter Kit template includes a complete **Organizations & Invitations** module for multi-tenant applications:
 
 ### Features
 - **Multi-tenant Workspaces**: Create and manage multiple organizations
@@ -110,6 +110,6 @@ To contribute:
 ## ❤️ Support
 
 If you like the project, consider leaving a star. 🌟
-[![Star History Chart](https://api.star-history.com/svg?repos=antoineross/Hikari&type=Date)](https://star-history.com/#antoineross/Hikari&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=antoineross/ltm-starter-kit&type=Date)](https://star-history.com/#antoineross/ltm-starter-kit&Date)
 
 Made by [Antoine Ross](https://antoineross.com).

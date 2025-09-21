@@ -18,7 +18,7 @@ import {
 
 export const metadata = {
   title: 'Help Center',
-  description: 'Get help and support for using Hikari',
+  description: 'Get help and support for using LTM Starter Kit',
 };
 
 export default function HelpPage() {
@@ -28,7 +28,7 @@ export default function HelpPage() {
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold">Help Center</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Find answers, get support, and learn how to make the most of Hikari
+          Find answers, get support, and learn how to make the most of LTM Starter Kit
         </p>
         
         {/* Search */}
@@ -107,7 +107,7 @@ export default function HelpPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold mb-2">How to create your first record</h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Learn how to create and manage records in Hikari
+                    Learn how to create and manage records in LTM Starter Kit
                   </p>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">Getting Started</Badge>
@@ -190,7 +190,7 @@ export default function HelpPage() {
         <div className="space-y-4">
           <Card>
             <CardContent className="p-6">
-              <h3 className="font-semibold mb-2">How do I get started with Hikari?</h3>
+              <h3 className="font-semibold mb-2">How do I get started with LTM Starter Kit?</h3>
               <p className="text-sm text-muted-foreground">
                 Getting started is easy! Simply sign up for an account, create your first organization, 
                 and start adding records. Check out our getting started guide for detailed instructions.
@@ -222,7 +222,7 @@ export default function HelpPage() {
             <CardContent className="p-6">
               <h3 className="font-semibold mb-2">Is there an API available?</h3>
               <p className="text-sm text-muted-foreground">
-                Yes! We provide a comprehensive REST API that allows you to integrate Hikari with 
+                Yes! We provide a comprehensive REST API that allows you to integrate LTM Starter Kit with 
                 your existing tools and workflows. API documentation is available in your account settings.
               </p>
             </CardContent>
@@ -235,7 +235,7 @@ export default function HelpPage() {
         <CardContent className="p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Still need help?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Can't find what you're looking for? Our support team is here to help you get the most out of Hikari.
+            Can't find what you're looking for? Our support team is here to help you get the most out of LTM Starter Kit.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

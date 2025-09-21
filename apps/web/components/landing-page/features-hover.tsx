@@ -48,7 +48,7 @@ export default function FeaturesHover() {
       </div>
       <div className="mx-auto text-center md:max-w-[58rem]">
         {/* <p className="leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-          Hikari also includes a blog and a full-featured documentation site
+          LTM Starter Kit also includes a blog and a full-featured documentation site
           built using Fumadocs and MDX.
         </p> */}
       </div>

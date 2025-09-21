@@ -5,7 +5,7 @@
 
 ## Executive Summary
 
-This inventory covers the migration of a comprehensive Hikari application database from local development to Supabase Cloud. The local database contains **11 migration files** with extensive organizational, billing, records management, scheduling, audit, and storage functionality.
+This inventory covers the migration of a comprehensive LTM Starter Kit application database from local development to Supabase Cloud. The local database contains **11 migration files** with extensive organizational, billing, records management, scheduling, audit, and storage functionality.
 
 ### Key Statistics
 - **Local Migrations:** 11 files

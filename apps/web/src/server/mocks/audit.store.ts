@@ -28,7 +28,7 @@ class InMemoryAuditStore {
         action: 'created',
         entity_type: 'org',
         entity_id: 'org-1',
-        metadata: { name: 'Hikari Inc.' },
+        metadata: { name: 'LTM Starter Kit Inc.' },
         created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
       },
       {

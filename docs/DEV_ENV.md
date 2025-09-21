@@ -1,4 +1,4 @@
-# DEV Environment & Secrets — Hikari (LTM Starter Kit)
+# DEV Environment & Secrets — LTM Starter Kit
 
 ## Purpose
 Single source of truth for **environment variables**, **secret handling**, and **rotation**. This doc is for local dev, CI, and preview/prod.

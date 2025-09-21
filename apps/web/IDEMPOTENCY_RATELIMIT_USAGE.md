@@ -1,10 +1,10 @@
 # Idempotency & Rate Limiting Usage Guide
 
-Comprehensive guide for using idempotency and rate limiting in the Hikari starter kit.
+Comprehensive guide for using idempotency and rate limiting in the LTM Starter Kit.
 
 ## Overview
 
-The Hikari starter kit includes built-in idempotency and rate limiting for both REST API endpoints and tRPC procedures. This ensures:
+The LTM Starter Kit includes built-in idempotency and rate limiting for both REST API endpoints and tRPC procedures. This ensures:
 
 - **Idempotency**: Mutating operations can be safely retried without side effects
 - **Rate Limiting**: API usage is controlled to prevent abuse and ensure fair access
@@ -39,7 +39,7 @@ curl -X POST \
      -H "Idempotency-Key: unique-key-123" \
      -H "Content-Type: application/json" \
      -d '{"name": "New Organization"}' \
-     https://api.hikari.dev/v1/orgs
+     https://api.ltm-starter-kit.dev/v1/orgs
 ```
 
 #### JavaScript/TypeScript
@@ -67,7 +67,7 @@ import requests
 import uuid
 
 response = requests.post(
-    'https://api.hikari.dev/v1/records',
+    'https://api.ltm-starter-kit.dev/v1/records',
     headers={
         'Authorization': f'Bearer {token}',
         'X-Org-ID': org_id,

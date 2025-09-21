@@ -97,9 +97,9 @@ describe('Automation Signing', () => {
       
       expect(headers).toEqual({
         'Content-Type': 'application/json',
-        'X-Hikari-Signature': signed.signature,
-        'X-Hikari-Timestamp': signed.timestamp,
-        'User-Agent': 'Hikari-Automation-Bridge/1.0',
+        'X-LTM-Signature': signed.signature,
+        'X-LTM-Timestamp': signed.timestamp,
+        'User-Agent': 'LTM-Automation-Bridge/1.0',
       });
     });
   });

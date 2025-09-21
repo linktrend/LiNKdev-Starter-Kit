@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Hikari API
+  title: LTM Starter Kit API
   description: |
-    Public REST API for Hikari - A comprehensive starter kit for web applications.
+    Public REST API for LTM Starter Kit - A comprehensive starter kit for web applications.
     
     This API provides access to core functionality including organizations, records, scheduling, billing, and audit logs.
     
@@ -22,14 +22,14 @@ info:
     When running in template mode, the API returns deterministic mock data for development purposes.
   version: 1.0.0
   contact:
-    name: Hikari Support
-    email: support@hikari.dev
+    name: LTM Starter Kit Support
+    email: support@ltm-starter-kit.dev
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.hikari.dev/v1
+  - url: https://api.ltm-starter-kit.dev/v1
     description: Production server
   - url: http://localhost:3000/api/v1
     description: Development server

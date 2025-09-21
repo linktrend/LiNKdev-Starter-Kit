@@ -58,8 +58,8 @@ export default function FooterPrimary() {
             <h3 className="text-lg font-bold mb-4">Work</h3>
             <ul className="space-y-2">
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/hikari" className="text-primary">
-                  Hikari
+                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit" className="text-primary">
+                  LTM Starter Kit
                 </AnimatedUnderline>
               </li>
               <li>
@@ -118,7 +118,7 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/hikari" className="text-primary">
+                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit" className="text-primary">
                   GitHub
                 </AnimatedUnderline>
               </li>
@@ -129,7 +129,7 @@ export default function FooterPrimary() {
               Sign up for our newsletter
             </h3>
             <p className="text-primary mb-4">
-              Hikari is a growing project. Subscribe to get the latest design news, articles, resources, updates and
+              LTM Starter Kit is a growing project. Subscribe to get the latest design news, articles, resources, updates and
               inspiration.
             </p>
             <form onSubmit={handleSubmit} className="flex">
@@ -160,9 +160,9 @@ export default function FooterPrimary() {
         <div className="border-t mt-10 pt-6 flex flex-col items-center md:flex-row justify-between">
           <div className="flex items-center space-x-2">
             <LogInIcon className="h-6 w-6" />
-            <span className="text-xl font-bold">Hikari.</span>
+            <span className="text-xl font-bold">LTM Starter Kit.</span>
           </div>
-          <p className="text-gray-500 mt-4 md:mt-0">© Hikari Inc. 2024</p>
+          <p className="text-gray-500 mt-4 md:mt-0">© LTM Starter Kit Inc. 2024</p>
         </div>
       </div>
     </footer>

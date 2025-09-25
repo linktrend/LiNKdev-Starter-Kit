@@ -1,0 +1,20 @@
+# Global ownership - replace with actual GitHub handles
+* @your-github-handle
+
+# Web application
+apps/web/ @your-github-handle
+
+# Mobile application  
+apps/mobile/ @your-github-handle
+
+# Shared packages
+packages/ @your-github-handle
+
+# Design system
+design/ @your-github-handle
+
+# Documentation
+docs/ @your-github-handle
+
+# CI/CD workflows
+.github/ @your-github-handle

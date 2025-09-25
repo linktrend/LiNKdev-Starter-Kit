@@ -1,0 +1,112 @@
+{
+  "color": {
+    "background": {
+      "light": "0 0% 100%",
+      "dark": "240 10% 3.9%"
+    },
+    "foreground": {
+      "light": "240 10% 3.9%",
+      "dark": "0 0% 98%"
+    },
+    "muted": {
+      "light": "240 4.8% 95.9%",
+      "dark": "240 3.7% 15.9%"
+    },
+    "muted-foreground": {
+      "light": "240 3.8% 46.1%",
+      "dark": "240 5% 64.9%"
+    },
+    "primary": {
+      "light": "240 5.9% 10%",
+      "dark": "0 0% 98%"
+    },
+    "primary-foreground": {
+      "light": "0 0% 98%",
+      "dark": "240 5.9% 10%"
+    },
+    "secondary": {
+      "light": "240 4.8% 95.9%",
+      "dark": "240 3.7% 15.9%"
+    },
+    "secondary-foreground": {
+      "light": "240 5.9% 10%",
+      "dark": "0 0% 98%"
+    },
+    "border": {
+      "light": "240 5.9% 90%",
+      "dark": "240 3.7% 15.9%"
+    },
+    "ring": {
+      "light": "240 5.9% 10%",
+      "dark": "240 4.9% 83.9%"
+    },
+    "success": {
+      "light": "142 76% 36%",
+      "dark": "142 76% 36%"
+    },
+    "success-foreground": {
+      "light": "0 0% 98%",
+      "dark": "0 0% 98%"
+    },
+    "warning": {
+      "light": "38 92% 50%",
+      "dark": "38 92% 50%"
+    },
+    "warning-foreground": {
+      "light": "0 0% 98%",
+      "dark": "0 0% 98%"
+    },
+    "danger": {
+      "light": "0 84.2% 60.2%",
+      "dark": "0 62.8% 30.6%"
+    },
+    "danger-foreground": {
+      "light": "0 0% 98%",
+      "dark": "0 0% 98%"
+    }
+  },
+  "radius": {
+    "sm": "0.25rem",
+    "md": "0.375rem",
+    "lg": "0.5rem",
+    "xl": "0.75rem",
+    "pill": "9999px"
+  },
+  "shadow": {
+    "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+    "md": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+  },
+  "space": {
+    "2": "0.5rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "12": "3rem",
+    "16": "4rem",
+    "24": "6rem"
+  },
+  "font": {
+    "sans": ["Inter", "system-ui", "sans-serif"],
+    "mono": ["JetBrains Mono", "Menlo", "Monaco", "monospace"],
+    "size": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.5rem",
+      "3xl": "1.875rem"
+    },
+    "weight": {
+      "regular": "400",
+      "medium": "500",
+      "semibold": "600"
+    }
+  },
+  "z": {
+    "dropdown": "1000",
+    "modal": "1050",
+    "toast": "1100"
+  }
+}

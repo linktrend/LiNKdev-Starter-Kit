@@ -4,18 +4,17 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 
 const alertVariants = cva(
-  'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground',
+  'relative w-full rounded-lg border border-zinc-200 p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-zinc-950 dark:border-zinc-800 dark:[&>svg]:text-zinc-50',
   {
     variants: {
       variant: {
-        info: 'bg-background text-foreground [&>svg]:text-foreground',
-        success: 'border-success/50 text-success-foreground [&>svg]:text-success',
-        warning: 'border-warning/50 text-warning-foreground [&>svg]:text-warning',
-        danger: 'border-danger/50 text-danger-foreground [&>svg]:text-danger'
+        default: 'bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50',
+        destructive:
+          'border-red-500/50 text-red-500 dark:border-red-500 [&>svg]:text-red-500 dark:border-red-900/50 dark:text-red-900 dark:dark:border-red-900 dark:[&>svg]:text-red-900'
       }
     },
     defaultVariants: {
-      variant: 'info'
+      variant: 'default'
     }
   }
 );

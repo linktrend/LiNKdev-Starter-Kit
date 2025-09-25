@@ -20,30 +20,42 @@ export const navConfig: NavItem[] = [
     label: "Dashboard"
   },
   {
+    title: "Notifications",
+    href: "/dashboard/notifications",
+    icon: "MessageCircleIcon",
+    label: "Notifications"
+  },
+  {
     title: "Settings",
     href: "/dashboard/settings",
     icon: "Settings",
     label: "Settings"
+  },
+  {
+    title: "Admin",
+    href: "/admin",
+    icon: "CircleUser",
+    label: "Admin"
   }
 ];
 
-import { Icons } from '@/components/icons';
+import { icons } from '@/components/icons';
 
 export const iconComponents = {
-  BarChart: Icons.BarChart,
-  Settings: Icons.settings,
-  Database: Icons.Database,
-  Puzzle: Icons.Puzzle,
-  Bolt: Icons.Bolt,
-  Menu: Icons.Menu,
-  Eclipse: Icons.Eclipse,
-  SquarePen: Icons.SquarePen,
-  Sparkles: Icons.Sparkles,
-  Code: Icons.Code,
-  Upload: Icons.Upload,
-  MessageCircleIcon: Icons.MessageCircleIcon,
-  Component: Icons.Component,
-  CircleUser: Icons.CircleUser,
+  BarChart: icons.BarChart,
+  Settings: icons.Settings,
+  Database: icons.Database,
+  Puzzle: icons.Puzzle,
+  Bolt: icons.Bolt,
+  Menu: icons.Menu,
+  Eclipse: icons.Eclipse,
+  SquarePen: icons.SquarePen,
+  Sparkles: icons.Sparkles,
+  Code: icons.Code,
+  Upload: icons.Upload,
+  MessageCircleIcon: icons.MessageCircle,
+  Component: icons.Component,
+  CircleUser: icons.CircleUser,
 };
 
 export default dashboardConfig;

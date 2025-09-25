@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/trpc/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -107,7 +107,7 @@ export default function BillingSettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Billing & Subscription</h1>
         <p className="text-muted-foreground mt-2">
-          Manage your organization's subscription and billing settings.
+          Manage your organization&apos;s subscription and billing settings.
         </p>
       </div>
 
@@ -183,9 +183,9 @@ export default function BillingSettingsPage() {
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-          ) : invoicesData?.invoices && invoicesData.invoices.length > 0 ? (
+          ) : (invoicesData?.invoices && Array.isArray(invoicesData.invoices) && invoicesData.invoices.length > 0) ? (
             <div className="space-y-4">
-              {invoicesData.invoices.map((invoice) => (
+              {invoicesData.invoices.map((invoice: any) => (
                 <div
                   key={invoice.id}
                   className="flex items-center justify-between p-4 border rounded-lg"
@@ -255,7 +255,7 @@ export default function BillingSettingsPage() {
                   </div>
                 </div>
               ))}
-              {invoicesData.has_more && (
+              {invoicesData?.has_more && (
                 <div className="text-center pt-4">
                   <Button variant="outline" size="sm">
                     Load More Invoices

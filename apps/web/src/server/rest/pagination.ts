@@ -144,8 +144,8 @@ export function generateNextCursor<T>(
   }
   
   // Fallback to ID if available
-  if ('id' in lastItem && typeof lastItem.id === 'string') {
-    return lastItem.id;
+  if (lastItem && typeof lastItem === 'object' && 'id' in lastItem && typeof (lastItem as any).id === 'string') {
+    return (lastItem as any).id;
   }
   
   return undefined;

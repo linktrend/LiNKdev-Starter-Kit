@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { hashRequest } from './middleware';
 
 export interface IdempotencyRecord {
   key: string;
@@ -13,6 +14,7 @@ export interface IdempotencyRecord {
   created_at: string;
   org_id: string;
   user_id: string;
+  request_hash: string;
 }
 
 export interface IdempotencyStore {
@@ -222,6 +224,7 @@ export async function storeIdempotencyResult(
   response: any,
   orgId: string,
   userId: string,
+  requestHash: string,
   supabase?: any
 ): Promise<void> {
   const record: IdempotencyRecord = {
@@ -233,6 +236,7 @@ export async function storeIdempotencyResult(
     created_at: new Date().toISOString(),
     org_id: orgId,
     user_id: userId,
+    request_hash: requestHash,
   };
 
   const store = getIdempotencyStore(supabase);
@@ -242,14 +246,14 @@ export async function storeIdempotencyResult(
 /**
  * Create idempotency middleware
  */
-export function withIdempotency<T extends any[], R>(
-  handler: (...args: T) => Promise<NextResponse>
+export function withIdempotency(
+  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>
 ) {
   return async (request: NextRequest, ...args: any[]): Promise<NextResponse> => {
     const key = extractIdempotencyKey(request);
     
     if (!key) {
-      return await handler(request, ...args);
+      return await handler(request, ...args as any);
     }
 
     // Extract org and user from request (this would be done by auth middleware)
@@ -257,7 +261,7 @@ export function withIdempotency<T extends any[], R>(
     const userId = 'user-id'; // This would come from auth context
     
     if (!orgId || !userId) {
-      return await handler(request, ...args);
+      return await handler(request, ...args as any);
     }
 
     // Check for existing idempotency record
@@ -274,8 +278,12 @@ export function withIdempotency<T extends any[], R>(
       });
     }
 
+    // Generate request hash
+    const requestBody = await request.clone().json().catch(() => ({}));
+    const requestHash = hashRequest(requestBody, Object.fromEntries(request.headers.entries()), ['content-type', 'authorization']);
+
     // Execute handler and store result
-    const response = await handler(request, ...args);
+    const response = await handler(request, ...args as any);
     const responseData = await response.clone().json();
     
     await storeIdempotencyResult(
@@ -285,7 +293,8 @@ export function withIdempotency<T extends any[], R>(
       response.status,
       responseData,
       orgId,
-      userId
+      userId,
+      requestHash
     );
 
     return response;

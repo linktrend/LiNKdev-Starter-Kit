@@ -1,5 +1,5 @@
 import { Loader2, Building2, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
 
 /**
  * Loading state for organization data

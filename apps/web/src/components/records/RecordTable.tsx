@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Edit, Trash2, Eye, MoreHorizontal, Search, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@starter/ui';
+import { Input } from '@starter/ui';
 import {
   Table,
   TableBody,
@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@starter/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +20,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@starter/ui';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@starter/ui';
 import { RecordData, RecordType } from '@/types/records';
 import { api } from '@/trpc/react';
 
@@ -120,7 +120,7 @@ export function RecordTable({
               <Input
                 placeholder="Search records..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                 className="pl-8 w-64"
               />
             </div>

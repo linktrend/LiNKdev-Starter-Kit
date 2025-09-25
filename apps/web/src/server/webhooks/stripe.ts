@@ -5,6 +5,7 @@
 
 import Stripe from 'stripe';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -171,7 +172,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription): Pro
 async function checkIdempotency(eventId: string): Promise<boolean> {
   try {
     // Try database first
-    const supabase = createClient();
+    const supabase = createClient({ cookies });
     const { data: existingEvent } = await supabase
       .from('processed_events')
       .select('id')
@@ -198,7 +199,7 @@ async function checkIdempotency(eventId: string): Promise<boolean> {
 async function markAsProcessed(eventId: string, eventType: string): Promise<void> {
   try {
     // Try database first
-    const supabase = createClient();
+    const supabase = createClient({ cookies });
     await supabase
       .from('processed_events')
       .insert({

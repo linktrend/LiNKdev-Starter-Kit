@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, Save, X, Clock, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@starter/ui';
 import {
   Form,
   FormControl,
@@ -13,17 +13,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from '@starter/ui';
+import { Input } from '@starter/ui';
+import { Textarea } from '@starter/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/components/ui/use-toast';
+} from '@starter/ui';
+import { useToast } from '@starter/ui';
 import { ReminderFormData, ReminderPriority } from '@/types/scheduling';
 import { api } from '@/trpc/react';
 
@@ -164,7 +164,7 @@ export function ReminderForm({
           <FormField
             control={form.control}
             name="title"
-            render={({ field }) => (
+            render={({ field }: { field: any }) => (
               <FormItem>
                 <FormLabel>Title *</FormLabel>
                 <FormControl>
@@ -181,7 +181,7 @@ export function ReminderForm({
           <FormField
             control={form.control}
             name="notes"
-            render={({ field }) => (
+            render={({ field }: { field: any }) => (
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
@@ -200,7 +200,7 @@ export function ReminderForm({
             <FormField
               control={form.control}
               name="due_at"
-              render={({ field }) => (
+              render={({ field }: { field: any }) => (
                 <FormItem>
                   <FormLabel>Due Date & Time</FormLabel>
                   <FormControl>
@@ -217,7 +217,7 @@ export function ReminderForm({
             <FormField
               control={form.control}
               name="priority"
-              render={({ field }) => (
+              render={({ field }: { field: any }) => (
                 <FormItem>
                   <FormLabel>Priority</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -262,7 +262,7 @@ export function ReminderForm({
           <FormField
             control={form.control}
             name="record_id"
-            render={({ field }) => (
+            render={({ field }: { field: any }) => (
               <FormItem>
                 <FormLabel>Link to Record (Optional)</FormLabel>
                 <FormControl>

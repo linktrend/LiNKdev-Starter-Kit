@@ -4,6 +4,7 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { TRPCError } from '@trpc/server';
+import { cookies } from 'next/headers';
 
 export interface RESTAuthContext {
   user: {
@@ -57,7 +58,7 @@ export async function authenticateRequest(request: NextRequest): Promise<RESTAut
   }
 
   // Validate JWT token
-  const supabase = createClient();
+  const supabase = createClient({ cookies });
   
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);

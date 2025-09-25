@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, Bell, Clock, CheckCircle, AlertCircle, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@starter/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
+import { Badge } from '@starter/ui';
 import { ReminderTable } from '@/components/scheduling/ReminderTable';
 import { api } from '@/trpc/react';
 

@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import { stripe } from "@/utils/stripe/config";
 export async function POST(req: NextRequest){
-  const stripeSecret = process.env.STRIPE_SECRET_KEY;
-  if(!stripeSecret) return NextResponse.json({ error: "Missing STRIPE_SECRET_KEY" }, { status: 500 });
-  const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
   const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const body = await req.json().catch(()=>({}));
   const priceId = body.priceId || "price_12345";

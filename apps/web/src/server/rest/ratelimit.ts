@@ -312,15 +312,15 @@ export function createRateLimitHeaders(rateLimitInfo: RateLimitInfo): Record<str
 /**
  * Rate limit middleware
  */
-export function withRateLimit<T extends [NextRequest, ...any[]]>(
-  handler: (...args: T) => Promise<NextResponse>,
+export function withRateLimit(
+  handler: (request: NextRequest, ...args: any[]) => Promise<NextResponse>,
   config: RateLimitConfig = RATE_LIMIT_CONFIGS.default
 ) {
   return async (request: NextRequest, ...args: any[]): Promise<NextResponse> => {
     const orgId = request.headers.get('x-org-id');
     
     if (!orgId) {
-      return await handler(request as T[0], ...(args as T extends [any, ...infer Rest] ? Rest : []));
+      return await handler(request, ...args as any);
     }
 
     const rateLimitInfo = await checkRateLimit(request, orgId, config);
@@ -353,7 +353,7 @@ export function withRateLimit<T extends [NextRequest, ...any[]]>(
     }
 
     // Add rate limit headers to response
-    const response = await handler(request as T[0], ...(args as T extends [any, ...infer Rest] ? Rest : []));
+    const response = await handler(request, ...args as any);
     const rateLimitHeaders = createRateLimitHeaders(rateLimitInfo);
     
     // Clone response and add headers

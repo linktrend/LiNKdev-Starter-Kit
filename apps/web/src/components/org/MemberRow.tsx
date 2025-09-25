@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { MoreHorizontal, Trash2, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@starter/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,14 +10,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@starter/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@starter/ui';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +27,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@starter/ui';
 import { OrganizationMember, OrgRole } from '@/types/org';
 import { api } from '@/trpc/react';
 import { canManageMembers, canChangeRole } from '@/utils/org';

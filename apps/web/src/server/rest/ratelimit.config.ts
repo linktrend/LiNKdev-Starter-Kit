@@ -4,6 +4,7 @@
 export interface RouteRateLimitConfig {
   limit: number;
   windowMs: number;
+  maxRequests: number;
 }
 
 export interface RateLimitConfigMap {
@@ -16,47 +17,48 @@ export interface RateLimitConfigMap {
 export const DEFAULT_RATE_LIMIT_CONFIG: RouteRateLimitConfig = {
   limit: parseInt(process.env.RATE_LIMIT_DEFAULT_PER_MIN || '60'),
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000'),
+  maxRequests: parseInt(process.env.RATE_LIMIT_DEFAULT_PER_MIN || '60'),
 };
 
 // Per-route rate limit configurations
 export const RATE_LIMIT_CONFIGS: RateLimitConfigMap = {
   // Organizations
   '/api/v1/orgs': {
-    GET: { limit: 60, windowMs: 60000 },    // 60 req/min
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min (creation)
+    GET: { limit: 60, windowMs: 60000, maxRequests: 60 },    // 60 req/min
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min (creation)
   },
 
   // Records
   '/api/v1/records': {
-    GET: { limit: 120, windowMs: 60000 },   // 120 req/min (read)
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min (create)
+    GET: { limit: 120, windowMs: 60000, maxRequests: 120 },   // 120 req/min (read)
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min (create)
   },
   '/api/v1/records/[id]': {
-    GET: { limit: 120, windowMs: 60000 },   // 120 req/min (read)
-    PATCH: { limit: 60, windowMs: 60000 },  // 60 req/min (update)
-    DELETE: { limit: 30, windowMs: 60000 }, // 30 req/min (delete)
+    GET: { limit: 120, windowMs: 60000, maxRequests: 120 },   // 120 req/min (read)
+    PATCH: { limit: 60, windowMs: 60000, maxRequests: 60 },  // 60 req/min (update)
+    DELETE: { limit: 30, windowMs: 60000, maxRequests: 30 }, // 30 req/min (delete)
   },
 
   // Scheduling
   '/api/v1/reminders': {
-    GET: { limit: 120, windowMs: 60000 },   // 120 req/min (read)
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min (create)
+    GET: { limit: 120, windowMs: 60000, maxRequests: 120 },   // 120 req/min (read)
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min (create)
   },
   '/api/v1/reminders/[id]/complete': {
-    POST: { limit: 120, windowMs: 60000 },  // 120 req/min (complete)
+    POST: { limit: 120, windowMs: 60000, maxRequests: 120 },  // 120 req/min (complete)
   },
 
   // Billing
   '/api/v1/billing/subscription': {
-    GET: { limit: 30, windowMs: 60000 },    // 30 req/min (sensitive)
+    GET: { limit: 30, windowMs: 60000, maxRequests: 30 },    // 30 req/min (sensitive)
   },
   '/api/v1/billing/checkout': {
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min (sensitive)
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min (sensitive)
   },
 
   // Audit
   '/api/v1/audit': {
-    GET: { limit: 60, windowMs: 60000 },    // 60 req/min (audit logs)
+    GET: { limit: 60, windowMs: 60000, maxRequests: 60 },    // 60 req/min (audit logs)
   },
 };
 
@@ -64,72 +66,72 @@ export const RATE_LIMIT_CONFIGS: RateLimitConfigMap = {
 export const TRPC_RATE_LIMIT_CONFIGS: RateLimitConfigMap = {
   // Organizations
   'org.createOrg': {
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min
   },
   'org.listOrgs': {
-    GET: { limit: 60, windowMs: 60000 },    // 60 req/min
+    GET: { limit: 60, windowMs: 60000, maxRequests: 60 },    // 60 req/min
   },
   'org.setCurrent': {
-    POST: { limit: 120, windowMs: 60000 },  // 120 req/min
+    POST: { limit: 120, windowMs: 60000, maxRequests: 120 },  // 120 req/min
   },
   'org.updateMemberRole': {
-    POST: { limit: 30, windowMs: 60000 },   // 30 req/min
+    POST: { limit: 30, windowMs: 60000, maxRequests: 30 },   // 30 req/min
   },
   'org.removeMember': {
-    POST: { limit: 30, windowMs: 60000 },   // 30 req/min
+    POST: { limit: 30, windowMs: 60000, maxRequests: 30 },   // 30 req/min
   },
   'org.invite': {
-    POST: { limit: 20, windowMs: 60000 },   // 20 req/min
+    POST: { limit: 20, windowMs: 60000, maxRequests: 20 },   // 20 req/min
   },
   'org.acceptInvite': {
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min
   },
 
   // Records
   'records.createRecord': {
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min
   },
   'records.updateRecord': {
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min
   },
   'records.deleteRecord': {
-    POST: { limit: 30, windowMs: 60000 },   // 30 req/min
+    POST: { limit: 30, windowMs: 60000, maxRequests: 30 },   // 30 req/min
   },
   'records.listRecords': {
-    GET: { limit: 120, windowMs: 60000 },   // 120 req/min
+    GET: { limit: 120, windowMs: 60000, maxRequests: 120 },   // 120 req/min
   },
 
   // Scheduling
   'scheduling.createReminder': {
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min
   },
   'scheduling.completeReminder': {
-    POST: { limit: 120, windowMs: 60000 },  // 120 req/min
+    POST: { limit: 120, windowMs: 60000, maxRequests: 120 },  // 120 req/min
   },
   'scheduling.snoozeReminder': {
-    POST: { limit: 60, windowMs: 60000 },   // 60 req/min
+    POST: { limit: 60, windowMs: 60000, maxRequests: 60 },   // 60 req/min
   },
   'scheduling.listReminders': {
-    GET: { limit: 120, windowMs: 60000 },   // 120 req/min
+    GET: { limit: 120, windowMs: 60000, maxRequests: 120 },   // 120 req/min
   },
 
   // Billing
   'billing.createCheckout': {
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min (sensitive)
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min (sensitive)
   },
   'billing.openPortal': {
-    POST: { limit: 10, windowMs: 60000 },   // 10 req/min (sensitive)
+    POST: { limit: 10, windowMs: 60000, maxRequests: 10 },   // 10 req/min (sensitive)
   },
   'billing.getSubscription': {
-    GET: { limit: 30, windowMs: 60000 },    // 30 req/min
+    GET: { limit: 30, windowMs: 60000, maxRequests: 30 },    // 30 req/min
   },
 
   // Audit
   'audit.list': {
-    GET: { limit: 60, windowMs: 60000 },    // 60 req/min
+    GET: { limit: 60, windowMs: 60000, maxRequests: 60 },    // 60 req/min
   },
   'audit.append': {
-    POST: { limit: 120, windowMs: 60000 },  // 120 req/min
+    POST: { limit: 120, windowMs: 60000, maxRequests: 120 },  // 120 req/min
   },
 };
 
@@ -147,7 +149,7 @@ export function getRateLimitConfigForRoute(
   
   // Fallback to default based on method
   if (['POST', 'PATCH', 'DELETE'].includes(method)) {
-    return { limit: 60, windowMs: 60000 };
+    return { limit: 60, windowMs: 60000, maxRequests: 60 };
   }
   
   return DEFAULT_RATE_LIMIT_CONFIG;
@@ -167,7 +169,7 @@ export function getRateLimitConfigForTRPC(
   
   // Fallback to default based on method
   if (['POST', 'PATCH', 'DELETE'].includes(method)) {
-    return { limit: 60, windowMs: 60000 };
+    return { limit: 60, windowMs: 60000, maxRequests: 60 };
   }
   
   return DEFAULT_RATE_LIMIT_CONFIG;

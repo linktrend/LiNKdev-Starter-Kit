@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, Save, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@starter/ui';
 import {
   Form,
   FormControl,
@@ -13,18 +13,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from '@starter/ui';
+import { Input } from '@starter/ui';
+import { Textarea } from '@starter/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/components/ui/use-toast';
+} from '@starter/ui';
+import { Switch } from '@starter/ui';
+import { useToast } from '@starter/ui';
 import { RecordType, RecordField, RecordFormData } from '@/types/records';
 import { api } from '@/trpc/react';
 
@@ -193,7 +193,7 @@ export function RecordForm({
         return (
           <Switch
             checked={fieldValue || false}
-            onCheckedChange={(checked) => form.setValue(field.key, checked)}
+            onCheckedChange={(checked: boolean) => form.setValue(field.key, checked)}
           />
         );
       
@@ -210,7 +210,7 @@ export function RecordForm({
         return (
           <Select
             value={fieldValue || ''}
-            onValueChange={(value) => form.setValue(field.key, value)}
+            onValueChange={(value: string) => form.setValue(field.key, value)}
           >
             <SelectTrigger>
               <SelectValue placeholder={field.placeholder || 'Select an option'} />
@@ -253,7 +253,7 @@ export function RecordForm({
               key={field.key}
               control={form.control}
               name={field.key}
-              render={({ field: formField, fieldState }) => (
+              render={({ field: formField, fieldState }: { field: any; fieldState: any }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     {field.label}

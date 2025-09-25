@@ -1,0 +1,100 @@
+name: Release Alpha
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0-alpha.1)'
+        required: true
+        default: 'v1.0.0-alpha.1'
+      dry_run:
+        description: 'Dry run (skip actual release)'
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Verify web application
+        run: pnpm verify:web
+        
+      - name: Test mobile application
+        run: pnpm test:mobile
+        
+      - name: Build all packages
+        run: pnpm build
+        
+      - name: Create release tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "${{ inputs.version }}" -m "Release ${{ inputs.version }}"
+          git push origin "${{ inputs.version }}"
+          
+      - name: Create GitHub Release
+        if: ${{ !inputs.dry_run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ inputs.version }}
+          release_name: Release ${{ inputs.version }}
+          body: |
+            ## Alpha Release ${{ inputs.version }}
+            
+            This is an alpha release of the LTM Starter Kit.
+            
+            ### What's Included
+            - Web application (Next.js)
+            - Mobile application (React Native/Expo)
+            - Shared UI design system
+            - Supabase integration
+            - Stripe payment processing
+            - Development tooling and CI/CD
+            
+            ### Getting Started
+            ```bash
+            pnpm install
+            pnpm dev:web
+            pnpm dev:mobile
+            ```
+            
+            ### Quality Gates
+            - ✅ TypeScript compilation
+            - ✅ ESLint checks
+            - ✅ Unit tests
+            - ✅ E2E tests
+            - ✅ Route verification
+            
+            **Note**: This is an alpha release. Some features may be incomplete or unstable.
+          draft: false
+          prerelease: true
+          
+      - name: Dry run summary
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "🚀 Dry run completed successfully!"
+          echo "Version: ${{ inputs.version }}"
+          echo "All quality gates passed ✅"
+          echo "Ready for release! Set dry_run: false to create actual release."

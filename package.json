@@ -8,12 +8,20 @@
   ],
   "scripts": {
     "dev": "pnpm --filter web dev",
+    "dev:web": "pnpm --filter ./apps/web dev",
+    "dev:mobile": "pnpm --filter ./apps/mobile dev",
     "build": "pnpm --filter web build",
     "lint": "pnpm --filter web lint",
     "test": "pnpm --filter web test",
-    "typecheck": "pnpm --filter web typecheck"
+    "typecheck": "pnpm --filter web typecheck",
+    "verify:web": "pnpm --filter ./apps/web verify",
+    "test:web": "pnpm --filter ./apps/web test",
+    "e2e:web": "pnpm --filter ./apps/web e2e",
+    "test:mobile": "pnpm --filter ./apps/mobile test",
+    "release:alpha": "pnpm build && echo 'Release tag creation TBD'"
   },
   "devDependencies": {
+    "@heilgar/shadcn-ui-mcp-server": "^1.0.6",
     "@playwright/test": "^1.55.0",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^20.19.15",

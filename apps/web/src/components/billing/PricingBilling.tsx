@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@starter/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
+import { Badge } from '@starter/ui';
 import { Check, Crown, Zap } from 'lucide-react';
 import { api } from '@/trpc/react';
 import { BillingPlan } from '@/types/billing';

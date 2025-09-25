@@ -103,3 +103,15 @@ temp/
 
 # Supabase
 .supabase/
+
+# Build & cache
+.turbo/
+
+# Test outputs
+apps/web/playwright-report/
+apps/web/test-results/
+
+# Temporary TypeScript error logs
+after-*.txt
+baseline-*.txt
+final-*.txt

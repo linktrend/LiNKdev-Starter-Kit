@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation';
 import { api } from '@/trpc/react';
 import { AuditTable } from '@/components/audit/AuditTable';
 import { AuditFilters } from '@/components/audit/AuditFilters';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';
+import { Badge } from '@starter/ui';
 import { Activity, BarChart3, Users, Clock } from 'lucide-react';
 
 interface AuditFiltersState {

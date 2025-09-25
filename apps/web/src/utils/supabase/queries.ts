@@ -1,4 +1,5 @@
-import { User, UserDetails, Subscription, Product, SubscriptionWithProduct } from '@/types/user';
+import { User, UserDetails, Subscription, Product, SubscriptionWithProduct, ProductWithPrices } from '@/types/user';
+import { createClient } from '@/utils/supabase/server';
 
 export async function getDashboardSummary(_orgId: string) {
   return { pets: 0, reminders: 0, logs: 0 };
@@ -15,12 +16,18 @@ export async function getUserDetails(): Promise<UserDetails | null> {
   return null;
 }
 
-export async function getSubscription(): Promise<SubscriptionWithProduct | null> {
+// Overloads for getSubscription
+export async function getSubscription(): Promise<SubscriptionWithProduct | null>;
+export async function getSubscription(supabase: any, userId?: string): Promise<SubscriptionWithProduct | null>;
+export async function getSubscription(supabase?: any, userId?: string): Promise<SubscriptionWithProduct | null> {
   // Implementation for getting subscription
   return null;
 }
 
-export async function getProducts(): Promise<Product[]> {
+// Overloads for getProducts
+export async function getProducts(): Promise<ProductWithPrices[]>;
+export async function getProducts(supabase: any): Promise<ProductWithPrices[]>;
+export async function getProducts(supabase?: any): Promise<ProductWithPrices[]> {
   // Implementation for getting products
   return [];
 }

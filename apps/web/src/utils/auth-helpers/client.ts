@@ -1,33 +1,39 @@
-export { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+'use client';
 
-// Client auth helper functions
-export async function signInWithOAuth(provider: string) {
-  // Implementation for OAuth sign in
-  throw new Error("Not implemented");
-}
+import { createClient } from '@/utils/supabase/client';
+import { type Provider } from '@supabase/supabase-js';
+import { getURL } from '@/utils/helpers';
+import { redirectToPath } from './server';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export async function handleRequest(
-  e: React.FormEvent<HTMLFormElement>, 
-  authFunction: (email: string, password: string) => Promise<any>, 
-  router: any
-) {
-  // Implementation for handling requests
+  e: React.FormEvent<HTMLFormElement>,
+  requestFunc: (formData: FormData) => Promise<string>,
+  router: AppRouterInstance | null = null
+): Promise<boolean | void> {
+  // Prevent default form submission refresh
+  e.preventDefault();
+
   const formData = new FormData(e.currentTarget);
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  
-  if (!email || !password) {
-    throw new Error("Email and password are required");
+  const redirectUrl: string = await requestFunc(formData);
+
+  if (router) {
+    // If client-side router is provided, use it to redirect
+    return router.push(redirectUrl);
+  } else {
+    // Otherwise, redirect server-side
+    return await redirectToPath(redirectUrl);
   }
-  
-  try {
-    const result = await authFunction(email, password);
-    if (result.error) {
-      throw new Error(result.error.message);
+}
+
+export async function signInWithOAuth(provider: string) {
+  // Create client-side supabase client and call signInWithOAuth
+  const supabase = createClient();
+  const redirectURL = getURL('/auth/callback');
+  await supabase.auth.signInWithOAuth({
+    provider: provider as Provider,
+    options: {
+      redirectTo: redirectURL
     }
-    router.push('/dashboard');
-  } catch (error) {
-    console.error('Auth error:', error);
-    throw error;
-  }
+  });
 }

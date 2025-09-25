@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, ChevronsUpDown, Plus, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button } from '@starter/ui';
 import {
   Command,
   CommandEmpty,
@@ -12,12 +12,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from '@starter/ui';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from '@starter/ui';
 import { api } from '@/trpc/react';
 import { Organization } from '@/types/org';
 

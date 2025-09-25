@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "utils/stripe",
+    "utils/supabase/admin.ts",
+    "src/app/(app)/settings/billing/page.tsx"
+  ]
+}

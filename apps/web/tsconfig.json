@@ -1,10 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": [
       "dom",
       "dom.iterable",
+      "es2015",
+      "es2017",
       "esnext"
+    ],
+    "types": [
+      "vitest/globals",
+      "node"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,39 +19,18 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*",
-        "./*"
+        "src/*"
       ],
       "@/map": [
         "./map"
-      ],
-      "@components/*": [
-        "components/*"
-      ],
-      "@utils/*": [
-        "utils/*"
-      ],
-      "@lib/*": [
-        "lib/*"
-      ],
-      "@config/*": [
-        "config/*"
-      ],
-      "@app/*": [
-        "app/*"
-      ],
-      "@server/*": [
-        "server/*"
-      ],
-      "@types/*": [
-        "types/*"
       ]
     },
     "incremental": true,
@@ -56,18 +41,13 @@
     ]
   },
   "include": [
-    "app",
-    "components",
     "src",
     "pages",
-    "types",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "vitest.config.ts"
   ],
   "exclude": [
-    "server",
-    "trpc",
     "utils/stripe",
-    "utils/supabase/admin.ts",
-    "src/app/api/checkout"
+    "utils/supabase/admin.ts"
   ]
 }

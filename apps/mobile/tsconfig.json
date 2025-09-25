@@ -1,0 +1,26 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./app/*"
+      ],
+      "@starter/ui/native": [
+        "../../packages/ui/src/native-index"
+      ]
+    },
+    "types": ["jest", "@testing-library/jest-native", "react", "react-native", "nativewind/types"]
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "../../packages/**/*"
+  ]
+}

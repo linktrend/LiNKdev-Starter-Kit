@@ -68,4 +68,8 @@ export const appRouter = createTRPCRouter({
 });
 
 export type AppRouter = typeof appRouter;
+
+// Create caller for server-side usage
+export const createCaller = (ctx: any) => appRouter.createCaller(ctx);
+
 export default appRouter;

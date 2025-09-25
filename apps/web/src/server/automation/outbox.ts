@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '@/utils/supabase/server';
 import { signPayload, createWebhookHeaders } from '@/utils/automation/signing';
+import { cookies } from 'next/headers';
 
 const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
 const MAX_ATTEMPTS = 8;
@@ -74,7 +75,7 @@ export async function enqueueEvent(
   event: string,
   payload: Record<string, any>
 ): Promise<string> {
-  const supabase = createServerComponentClient();
+  const supabase = createServerComponentClient({ cookies });
   
   const { data, error } = await supabase
     .from('notifications_outbox')
@@ -104,7 +105,7 @@ export async function enqueueEvent(
  * Get pending events that should be delivered
  */
 export async function getPendingEvents(limit = 50): Promise<OutboxEvent[]> {
-  const supabase = createServerComponentClient();
+  const supabase = createServerComponentClient({ cookies });
   
   const { data, error } = await supabase
     .from('notifications_outbox')
@@ -211,7 +212,7 @@ export async function updateEventAfterDelivery(
   eventId: string,
   result: DeliveryResult
 ): Promise<void> {
-  const supabase = createServerComponentClient();
+  const supabase = createServerComponentClient({ cookies });
   
   if (result.success) {
     // Mark as delivered

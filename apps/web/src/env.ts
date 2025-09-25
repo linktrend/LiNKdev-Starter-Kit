@@ -12,6 +12,7 @@ const ServerEnv = z.object({
   VERCEL_URL: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRO_MONTHLY_PLAN_ID: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
   TURNSTILE_SITE_KEY: z.string().optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),

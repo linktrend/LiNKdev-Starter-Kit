@@ -32,7 +32,7 @@ import {
   Component,
   Upload,
   CircleUser,
-  MessageCircleIcon,
+  MessageCircle,
   SquarePen,
   Code,
   Sparkles,
@@ -56,7 +56,7 @@ export const Icons = {
   Sparkles,
   Code,
   Upload,
-  MessageCircleIcon,
+  MessageCircle,
   Component,
   BarChart,
   CircleUser,
@@ -107,5 +107,5 @@ export const Icons = {
   check: Check
 };
 
-// Also export as icons for compatibility
+// Export as icons for compatibility
 export const icons = Icons;

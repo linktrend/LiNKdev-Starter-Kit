@@ -47,7 +47,7 @@ If a destructive change is needed:
 - Types are generated from **Cloud** database
 - Do not point CLI to local DB
 - Use MCP or cloud-linked CLI for type generation
-- See `scripts/supabase-types.README.md` for procedures
+- See `docs/dev/supabase-types.md` for procedures
 
 ## Guardrails
 - CI will fail if local Supabase commands are detected

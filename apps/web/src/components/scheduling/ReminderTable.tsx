@@ -14,9 +14,9 @@ import {
   Calendar,
   User
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@starter/ui';
+import { Input } from '@starter/ui';
+import { Badge } from '@starter/ui';
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@starter/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +32,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@starter/ui';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@starter/ui';
 import { Reminder, ReminderStatus, ReminderPriority } from '@/types/scheduling';
 import { api } from '@/trpc/react';
 
@@ -179,7 +179,7 @@ export function ReminderTable({
               <Input
                 placeholder="Search reminders..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                 className="pl-8 w-64"
               />
             </div>

@@ -13,6 +13,7 @@ import {
 } from '@/types/audit';
 import { auditStore } from '../mocks/audit.store';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -48,7 +49,7 @@ export const auditRouter = createTRPCRouter({
           return result;
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         const { data, error } = await supabase
           .from('audit_logs')
@@ -110,7 +111,7 @@ export const auditRouter = createTRPCRouter({
           return result;
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Build query
         let query = supabase
@@ -216,7 +217,7 @@ export const auditRouter = createTRPCRouter({
           return result;
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Use the database function for statistics
         const { data, error } = await supabase
@@ -284,7 +285,7 @@ export const auditRouter = createTRPCRouter({
           return { csv };
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Build query for export
         let query = supabase

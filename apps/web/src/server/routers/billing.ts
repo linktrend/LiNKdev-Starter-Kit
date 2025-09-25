@@ -18,11 +18,17 @@ import { BILLING_PLANS, getPlanById } from '@/config/plans';
 import { billingStore } from '../mocks/billing.store';
 import { createClient } from '@/utils/supabase/server';
 import { emitAutomationEvent } from '@/utils/automation/event-emitter';
+import { cookies } from 'next/headers';
+import Stripe from 'stripe';
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || 
   !process.env.NEXT_PUBLIC_SUPABASE_URL || 
   !process.env.STRIPE_SECRET_KEY ||
   process.env.BILLING_OFFLINE === '1';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2023-10-16',
+});
 
 export const billingRouter = createTRPCRouter({
   /**
@@ -54,7 +60,7 @@ export const billingRouter = createTRPCRouter({
           } as SubscriptionResponse;
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Get subscription
         const { data: subscription, error: subError } = await supabase
@@ -222,8 +228,7 @@ export const billingRouter = createTRPCRouter({
         // Emit analytics event
         await emitAnalyticsEvent(ctx.user.id, `billing.${input.type}` as BillingAnalyticsEvent, {
           org_id: input.orgId,
-          event_type: input.type,
-          metadata: { simulated: true },
+          metadata: { simulated: true, event_type: input.type },
         });
 
         return {
@@ -259,7 +264,7 @@ export const billingRouter = createTRPCRouter({
           };
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Get current plan
         const { data: subscription } = await supabase
@@ -322,7 +327,7 @@ export const billingRouter = createTRPCRouter({
           } as InvoiceResponse;
         }
 
-        const supabase = createClient();
+        const supabase = createClient({ cookies });
         
         // Get customer mapping
         const { data: customer } = await supabase
@@ -345,7 +350,7 @@ export const billingRouter = createTRPCRouter({
           limit: input.limit,
         });
 
-        const invoices = stripeInvoices.data.map(invoice => ({
+        const invoices = stripeInvoices.data.map((invoice: Stripe.Invoice) => ({
           id: `inv_${invoice.id}`,
           org_id: input.orgId,
           stripe_invoice_id: invoice.id,

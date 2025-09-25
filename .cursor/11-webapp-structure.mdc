@@ -1,0 +1,57 @@
+# Cursor Project Rules (.mdc)
+# This file applies only to this project (template monorepo).
+
+rules:
+  - description: >
+      Always ensure the web application follows the locked user-facing navigation and developer console structure.
+      Do not modify the mobile app navigation; it will follow its own design.
+      Where possible, maximize shared components (forms, UI primitives, typography, colors, etc.) across web and mobile.
+
+    applies_to: ["web"]
+
+    instructions: |
+      The web application must have two entry experiences:
+
+      1. User-Facing App (yourapp.com)
+         - Landing Page (public): marketing sections (features, pricing, testimonials, docs) + Sign Up + Login
+         - After Sign Up: registration → onboarding → homepage
+         - After Login: homepage
+         - Homepage (primary landing screen): acts as Dashboard / Feed / Log depending on app type
+         - From homepage, user can access:
+           • Feature Modules (dynamic, app-specific)
+           • Profile
+           • Account / Organization
+           • Settings
+           • Billing & Subscriptions
+           • Notifications
+           • Help / Support / Docs
+           • Admin (role-based)
+
+      2. Developer Console (console.yourapp.com or /console)
+         - Separate login page (not shared with user login)
+         - After login: Developer Console Home, with collapsible left sidebar navigation to:
+           • System Health & Logs
+           • Database / Records Viewer
+           • Jobs / Background Tasks
+           • Feature Flags & Config
+           • Environment Management
+           • Integrations & Webhooks
+           • Automations (n8n, others)
+           • API Monitoring
+           • Error Tracking & Alerts
+           • Analytics / Usage Metrics
+           • Audit & Security Logs
+           • Security & Access Control
+
+      If Cursor detects the structure is different, it should recommend aligning it
+      but take no direct action unless explicitly instructed.
+
+  - description: >
+      The mobile application is structured separately and may have different navigation.
+      Do not apply the web navigation rules to the mobile side.
+
+    applies_to: ["mobile"]
+
+    instructions: |
+      For mobile, follow its own navigation system (likely bottom nav or stack-based),
+      but ensure shared UI primitives and design tokens are reused with the web app.

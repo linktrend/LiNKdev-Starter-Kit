@@ -1,19 +1,19 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@starter/ui';
+import { Input } from '@starter/ui';
+import { Label } from '@starter/ui';
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';
+import { Calendar } from '@starter/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@starter/ui';
 import { 
   Search, 
   Filter, 
@@ -132,7 +132,7 @@ export function AuditFilters({
                 id="search"
                 placeholder="Search logs..."
                 value={filters.q || ''}
-                onChange={(e) => handleFilterChange('q', e.target.value || undefined)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFilterChange('q', e.target.value || undefined)}
                 className="pl-10"
               />
             </div>
@@ -143,7 +143,7 @@ export function AuditFilters({
             <Label>Entity Type</Label>
             <Select
               value={filters.entityType || ''}
-              onValueChange={(value) => handleFilterChange('entityType', value || undefined)}
+              onValueChange={(value: string) => handleFilterChange('entityType', value || undefined)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All entity types" />
@@ -164,7 +164,7 @@ export function AuditFilters({
             <Label>Action</Label>
             <Select
               value={filters.action || ''}
-              onValueChange={(value) => handleFilterChange('action', value || undefined)}
+              onValueChange={(value: string) => handleFilterChange('action', value || undefined)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="All actions" />
@@ -187,7 +187,7 @@ export function AuditFilters({
               id="actorId"
               placeholder="User ID"
               value={filters.actorId || ''}
-              onChange={(e) => handleFilterChange('actorId', e.target.value || undefined)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFilterChange('actorId', e.target.value || undefined)}
             />
           </div>
 
@@ -208,7 +208,7 @@ export function AuditFilters({
                 <Calendar
                   mode="single"
                   selected={filters.from ? new Date(filters.from) : undefined}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     handleFilterChange('from', date ? date.toISOString() : undefined);
                     setIsOpen(false);
                   }}
@@ -235,7 +235,7 @@ export function AuditFilters({
                 <Calendar
                   mode="single"
                   selected={filters.to ? new Date(filters.to) : undefined}
-                  onSelect={(date) => {
+                  onSelect={(date: Date | undefined) => {
                     handleFilterChange('to', date ? date.toISOString() : undefined);
                   }}
                   initialFocus

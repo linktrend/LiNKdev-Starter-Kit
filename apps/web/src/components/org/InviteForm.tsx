@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, UserPlus, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@starter/ui';
 import {
   Form,
   FormControl,
@@ -13,16 +13,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@starter/ui';
+import { Input } from '@starter/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/components/ui/use-toast';
+} from '@starter/ui';
+import { useToast } from '@starter/ui';
 import { api } from '@/trpc/react';
 import { OrgRole } from '@/types/org';
 
@@ -114,7 +114,7 @@ export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
+            render={({ field }: { field: any }) => (
               <FormItem>
                 <FormLabel>Email address</FormLabel>
                 <FormControl>
@@ -136,7 +136,7 @@ export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
           <FormField
             control={form.control}
             name="role"
-            render={({ field }) => (
+            render={({ field }: { field: any }) => (
               <FormItem>
                 <FormLabel>Role</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>

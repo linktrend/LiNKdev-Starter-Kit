@@ -1,0 +1,71 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./app/**/*.{tsx,ts,jsx,js}"],
+  theme: {
+    extend: {
+      colors: {
+        background: "hsl(var(--color-background))",
+        foreground: "hsl(var(--color-foreground))",
+        muted: "hsl(var(--color-muted))",
+        "muted-foreground": "hsl(var(--color-muted-foreground))",
+        primary: "hsl(var(--color-primary))",
+        "primary-foreground": "hsl(var(--color-primary-foreground))",
+        secondary: "hsl(var(--color-secondary))",
+        "secondary-foreground": "hsl(var(--color-secondary-foreground))",
+        border: "hsl(var(--color-border))",
+        ring: "hsl(var(--color-ring))",
+        success: "hsl(var(--color-success))",
+        "success-foreground": "hsl(var(--color-success-foreground))",
+        warning: "hsl(var(--color-warning))",
+        "warning-foreground": "hsl(var(--color-warning-foreground))",
+        danger: "hsl(var(--color-danger))",
+        "danger-foreground": "hsl(var(--color-danger-foreground))",
+      },
+      borderRadius: {
+        sm: "0.25rem",
+        md: "0.375rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        pill: "9999px",
+      },
+      spacing: {
+        2: "0.5rem",
+        4: "1rem",
+        6: "1.5rem",
+        8: "2rem",
+        12: "3rem",
+        16: "4rem",
+        24: "6rem",
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "Menlo", "Monaco", "monospace"],
+      },
+      fontSize: {
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+      },
+      fontWeight: {
+        regular: "400",
+        medium: "500",
+        semibold: "600",
+      },
+      boxShadow: {
+        sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+      },
+      zIndex: {
+        dropdown: "1000",
+        modal: "1050",
+        toast: "1100",
+      },
+    },
+  },
+  plugins: [],
+};

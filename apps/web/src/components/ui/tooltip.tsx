@@ -1,34 +1,30 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
+'use client';
 
-export function Tooltip({ children }: { children: React.ReactNode }) { 
-  return <>{children}</>; 
-}
+import * as React from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
-export function TooltipTrigger({ children, asChild, ...props }: { children: React.ReactNode; asChild?: boolean } & React.HTMLAttributes<HTMLElement>) { 
-  return <>{children}</>; 
-}
+import { cn } from '@/utils/cn';
 
-export function TooltipContent({ children, side, className, ...props }: { 
-  children: React.ReactNode; 
-  side?: string;
-  className?: string;
-} & React.HTMLAttributes<HTMLDivElement>) { 
-  return (
-    <div
-      className={cn(
-        "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  ); 
-}
+const TooltipProvider = TooltipPrimitive.Provider;
 
-export function TooltipProvider({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-}
+const Tooltip = TooltipPrimitive.Root;
 
-export default Tooltip;
+const TooltipTrigger = TooltipPrimitive.Trigger;
+
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <TooltipPrimitive.Content
+    ref={ref}
+    sideOffset={sideOffset}
+    className={cn(
+      'z-50 overflow-hidden rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-950 shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50',
+      className
+    )}
+    {...props}
+  />
+));
+TooltipContent.displayName = TooltipPrimitive.Content.displayName;
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };

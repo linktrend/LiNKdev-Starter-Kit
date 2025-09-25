@@ -6,6 +6,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { createClient as createServerClient } from "@/utils/supabase/server";
 import { env } from "@/env";
+import { cookies } from 'next/headers';
 import { 
   generateStoragePath, 
   generateUniqueFilename, 
@@ -229,7 +230,7 @@ export class ClientStorageService {
  */
 export class ServerStorageService {
   private getStorage() {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ cookies });
     return supabase.storage;
   }
 

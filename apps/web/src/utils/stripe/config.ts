@@ -1,25 +1,17 @@
-export const stripeConfig = { publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_x' };
+import Stripe from 'stripe';
 
-// Mock stripe instance for now
-export const stripe = {
-  customers: {
-    create: async () => ({ id: 'cus_test' }),
-    retrieve: async () => ({ id: 'cus_test' })
-  },
-  subscriptions: {
-    create: async () => ({ id: 'sub_test' }),
-    retrieve: async () => ({ id: 'sub_test' })
-  },
-  checkout: {
-    sessions: {
-      create: async () => ({ id: 'cs_test', url: 'https://checkout.stripe.com/test' })
-    }
-  },
-  billingPortal: {
-    sessions: {
-      create: async () => ({ id: 'bps_test', url: 'https://billing.stripe.com/test' })
+export const stripe = new Stripe(
+  process.env.STRIPE_SECRET_KEY_LIVE ?? process.env.STRIPE_SECRET_KEY ?? '',
+  {
+    // https://github.com/stripe/stripe-node#configuration
+    // https://stripe.com/docs/api/versioning
+    apiVersion: '2023-10-16',
+    // Register this as an official Stripe plugin.
+    // https://stripe.com/docs/building-plugins#setappinfo
+    appInfo: {
+      name: 'Next.js Subscription Starter',
+      version: '0.0.0',
+      url: 'https://github.com/vercel/nextjs-subscription-payments'
     }
   }
-};
-
-export default stripeConfig;
+);

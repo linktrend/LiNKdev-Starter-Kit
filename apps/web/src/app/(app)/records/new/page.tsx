@@ -3,8 +3,8 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@starter/ui';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
 import { RecordForm } from '@/components/records/RecordForm';
 import { api } from '@/trpc/react';
 

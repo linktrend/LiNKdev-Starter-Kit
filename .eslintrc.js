@@ -14,6 +14,25 @@ module.exports = {
     "react-hooks/rules-of-hooks": "warn",
     "react-hooks/exhaustive-deps": "warn",
     "no-case-declarations": "off",
-    "prefer-const": "off"
+    "prefer-const": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@/components/ui/*", "../components/ui/*", "../../components/ui/*"],
+            "message": "Use @starter/ui for primitives to keep the design system centralized."
+          }
+        ]
+      }
+    ]
   },
+  overrides: [
+    {
+      files: ["apps/web/src/app/(app)/settings/billing/page.tsx"],
+      rules: {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
 };

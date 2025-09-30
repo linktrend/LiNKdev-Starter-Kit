@@ -16,6 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@starter/ui';
 import { Database } from '@starter/types';
 import { User } from '@starter/types'
 import Image from "next/image"
+import { NotificationCounter } from './notification-counter';
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: {
@@ -37,23 +38,25 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
 
 
   return (
-    <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button
-        variant="outline"
-        size="icon"
-        className="overflow-hidden rounded-full"
-      >
-        <Image
-          src={`${user?.avatar_url || "/placeholder-user.jpg"}?t=${Date.now()}`}
-          width={36}
-          height={36}
-          alt="Avatar"
-          className="overflow-hidden rounded-full"
-          unoptimized
-        />
-      </Button>
-    </DropdownMenuTrigger>
+    <div className="flex items-center gap-2">
+      <NotificationCounter />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Image
+              src={`${user?.avatar_url || "/placeholder-user.jpg"}?t=${Date.now()}`}
+              width={36}
+              height={36}
+              alt="Avatar"
+              className="overflow-hidden rounded-full"
+              unoptimized
+            />
+          </Button>
+        </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>{user?.full_name || "My Account"}</DropdownMenuLabel>
       <DropdownMenuSeparator />
@@ -73,6 +76,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
+  </div>
 
   )
 }

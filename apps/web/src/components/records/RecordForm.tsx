@@ -25,7 +25,7 @@ import {
 } from '@starter/ui';
 import { Switch } from '@starter/ui';
 import { useToast } from '@starter/ui';
-import { RecordType, RecordField, RecordFormData } from '@/types/records';
+import { RecordType, RecordField, RecordFormData } from '@starter/types';
 import { api } from '@/trpc/react';
 
 interface RecordFormProps {

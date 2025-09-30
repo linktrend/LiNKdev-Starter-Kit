@@ -25,7 +25,7 @@ export function OrgEmpty() {
         <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <CardTitle>No Organizations Found</CardTitle>
         <CardDescription>
-          You don't have access to any organizations yet.
+          You don&apos;t have access to any organizations yet.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-center">
@@ -50,7 +50,7 @@ export function OrgForbidden() {
         <AlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
         <CardTitle>Access Denied</CardTitle>
         <CardDescription>
-          You don't have permission to access this organization.
+          You don&apos;t have permission to access this organization.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-center">

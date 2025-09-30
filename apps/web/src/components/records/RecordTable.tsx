@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@starter/ui';
-import { RecordData, RecordType } from '@/types/records';
+import { RecordData, RecordType } from '@starter/types';
 import { api } from '@/trpc/react';
 
 interface RecordTableProps {

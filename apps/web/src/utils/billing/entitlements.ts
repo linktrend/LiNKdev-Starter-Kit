@@ -1,4 +1,4 @@
-import { BillingPlan, PlanEntitlements } from '@/types/billing';
+import { BillingPlan, PlanEntitlements } from '@starter/types';
 import { getPlanById } from '@/config/plans';
 
 /**

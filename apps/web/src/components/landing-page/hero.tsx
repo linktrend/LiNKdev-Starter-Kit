@@ -37,7 +37,7 @@ export default function HeroSection() {
     }, 5000) // Change quote every 5 seconds
 
     return () => clearInterval(intervalId)
-  }, [])
+  }, [quotes.length])
 
   return (
     <section className="relative w-full overflow-hidden">

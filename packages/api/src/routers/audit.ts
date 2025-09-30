@@ -1,6 +1,6 @@
-import { z } from 'zod';
+// Note: z is imported but not used in this file
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/root';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { 
   AppendAuditLogInput,
   ListAuditLogsInput,
@@ -10,10 +10,11 @@ import {
   AuditStatsResponse,
   AuditAnalyticsEvent,
   AuditAnalyticsPayload
-} from '@/types/audit';
-import { auditStore } from '../mocks/audit.store';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
+} from '@starter/types';
+
+// Note: These utility functions and stores will need to be provided by the consuming application
+declare const auditStore: any;
+declare const emitAnalyticsEvent: (userId: string, event: AuditAnalyticsEvent, payload: AuditAnalyticsPayload) => Promise<void>;
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -26,11 +27,11 @@ export const auditRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         const auditLog = {
-          org_id: input.orgId,
+          org_id: input.orgId as string,
           actor_id: ctx.user.id,
-          action: input.action,
-          entity_type: input.entityType,
-          entity_id: input.entityId,
+          action: input.action as string,
+          entity_type: input.entityType as string,
+          entity_id: input.entityId as string,
           metadata: input.metadata || {},
         };
 
@@ -39,9 +40,9 @@ export const auditRouter = createTRPCRouter({
           
           // Emit analytics event
           await emitAnalyticsEvent(ctx.user.id, 'audit.appended', {
-            org_id: input.orgId,
-            action: input.action,
-            entity_type: input.entityType,
+            org_id: input.orgId as string,
+            action: input.action as string,
+            entity_type: input.entityType as string,
             actor_id: ctx.user.id,
             metadata: { offline: true },
           });
@@ -49,9 +50,7 @@ export const auditRouter = createTRPCRouter({
           return result;
         }
 
-        const supabase = createClient({ cookies });
-        
-        const { data, error } = await supabase
+        const { data, error } = await ctx.supabase
           .from('audit_logs')
           .insert(auditLog)
           .select()
@@ -66,9 +65,9 @@ export const auditRouter = createTRPCRouter({
 
         // Emit analytics event
         await emitAnalyticsEvent(ctx.user.id, 'audit.appended', {
-          org_id: input.orgId,
-          action: input.action,
-          entity_type: input.entityType,
+          org_id: input.orgId as string,
+          action: input.action as string,
+          entity_type: input.entityType as string,
           actor_id: ctx.user.id,
         });
 
@@ -90,11 +89,15 @@ export const auditRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       try {
         if (isOfflineMode) {
-          const result = await auditStore.listLogs(input);
+          const result = await auditStore.listLogs({
+            ...input,
+            orgId: input.orgId as string,
+            limit: input.limit || 50,
+          });
           
           // Emit analytics event
           await emitAnalyticsEvent(ctx.user.id, 'audit.viewed', {
-            org_id: input.orgId,
+            org_id: input.orgId as string,
             metadata: { 
               filters: {
                 q: input.q,
@@ -111,13 +114,11 @@ export const auditRouter = createTRPCRouter({
           return result;
         }
 
-        const supabase = createClient({ cookies });
-        
         // Build query
-        let query = supabase
+        let query = ctx.supabase
           .from('audit_logs')
           .select('*', { count: 'exact' })
-          .eq('org_id', input.orgId)
+          .eq('org_id', input.orgId as string)
           .order('created_at', { ascending: false });
 
         // Apply filters
@@ -147,7 +148,7 @@ export const auditRouter = createTRPCRouter({
 
         // Apply cursor-based pagination
         if (input.cursor) {
-          const { data: cursorLog } = await supabase
+          const { data: cursorLog } = await ctx.supabase
             .from('audit_logs')
             .select('created_at')
             .eq('id', input.cursor)
@@ -159,7 +160,7 @@ export const auditRouter = createTRPCRouter({
         }
 
         // Apply limit
-        query = query.limit(input.limit + 1); // +1 to check if there are more
+        query = query.limit((input.limit || 50) + 1); // +1 to check if there are more
 
         const { data: logs, error, count } = await query;
 
@@ -170,13 +171,14 @@ export const auditRouter = createTRPCRouter({
           });
         }
 
-        const hasMore = logs && logs.length > input.limit;
-        const paginatedLogs = hasMore ? logs.slice(0, input.limit) : (logs || []);
+        const limit = input.limit || 50;
+        const hasMore = logs && logs.length > limit;
+        const paginatedLogs = hasMore ? logs.slice(0, limit) : (logs || []);
         const nextCursor = hasMore ? paginatedLogs[paginatedLogs.length - 1]?.id : undefined;
 
         // Emit analytics event
         await emitAnalyticsEvent(ctx.user.id, 'audit.viewed', {
-          org_id: input.orgId,
+          org_id: input.orgId as string,
           metadata: { 
             filters: {
               q: input.q,
@@ -212,17 +214,19 @@ export const auditRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       try {
         if (isOfflineMode) {
-          const result = await auditStore.getStats(input);
+          const result = await auditStore.getStats({
+            ...input,
+            orgId: input.orgId as string,
+            window: input.window || 'day',
+          });
           
           return result;
         }
 
-        const supabase = createClient({ cookies });
-        
         // Use the database function for statistics
-        const { data, error } = await supabase
+        const { data, error } = await ctx.supabase
           .rpc('get_audit_stats', {
-            p_org_id: input.orgId,
+            p_org_id: input.orgId as string,
             p_window: input.window,
           });
 
@@ -264,11 +268,14 @@ export const auditRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       try {
         if (isOfflineMode) {
-          const csv = await auditStore.exportCsv(input);
+          const csv = await auditStore.exportCsv({
+            ...input,
+            orgId: input.orgId as string,
+          });
           
           // Emit analytics event
           await emitAnalyticsEvent(ctx.user.id, 'audit.exported', {
-            org_id: input.orgId,
+            org_id: input.orgId as string,
             metadata: { 
               filters: {
                 q: input.q,
@@ -285,13 +292,11 @@ export const auditRouter = createTRPCRouter({
           return { csv };
         }
 
-        const supabase = createClient({ cookies });
-        
         // Build query for export
-        let query = supabase
+        let query = ctx.supabase
           .from('audit_logs')
           .select('*')
-          .eq('org_id', input.orgId)
+          .eq('org_id', input.orgId as string)
           .order('created_at', { ascending: false });
 
         // Apply filters
@@ -333,7 +338,7 @@ export const auditRouter = createTRPCRouter({
 
         // Emit analytics event
         await emitAnalyticsEvent(ctx.user.id, 'audit.exported', {
-          org_id: input.orgId,
+          org_id: input.orgId as string,
           metadata: { 
             filters: {
               q: input.q,
@@ -393,35 +398,4 @@ function generateCsv(logs: any[]): string {
     .join('\n');
 
   return csvContent;
-}
-
-/**
- * Emit analytics event
- */
-async function emitAnalyticsEvent(
-  userId: string,
-  event: AuditAnalyticsEvent,
-  payload: AuditAnalyticsPayload
-): Promise<void> {
-  try {
-    // Log the event for debugging
-    console.log('Audit Analytics Event:', { 
-      userId, 
-      event, 
-      payload,
-      timestamp: new Date().toISOString()
-    });
-    
-    // TODO: Implement actual analytics emission
-    // In a real implementation, this would call PostHog or similar:
-    // await posthog.capture({
-    //   distinctId: userId,
-    //   event,
-    //   properties: payload,
-    // });
-    
-  } catch (error) {
-    console.error('Error emitting analytics event:', error);
-    // Don't throw - analytics failures shouldn't break the main flow
-  }
 }

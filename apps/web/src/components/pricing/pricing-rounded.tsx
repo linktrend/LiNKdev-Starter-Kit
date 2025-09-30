@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardContent
 } from '@starter/ui';
-import type { Tables } from '@/types/db';
+import type { Tables } from '@starter/types';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
@@ -17,8 +17,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Moon } from 'lucide-react';
 import pricingPlans from '@/config/pricing';
 import { dummyPricing } from '@/config/pricing';
-import { ProductWithPrices, SubscriptionWithProduct } from '@/types/user';
-import { Price } from '@/types/db';
+import { ProductWithPrices, SubscriptionWithProduct } from '@starter/types';
+import { Price } from '@starter/types';
 
 type PriceWithProduct = Price & {
   products: Tables<'products'> | null;
@@ -115,8 +115,8 @@ export default function PricingRounded({
             Flat pricing, no management fees.
           </h1>
           <p className="mt-2 text-center text-muted-foreground">
-            Whether you're one person trying to get ahead or a big firm trying
-            to take over the world, we've got a plan for you.
+            Whether you&apos;re one person trying to get ahead or a big firm trying
+            to take over the world, we&apos;ve got a plan for you.
           </p>
           {displayProducts.length === 0 && (
             <p className="mt-4 text-center text-red-500">

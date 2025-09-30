@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AuditLog } from '@/types/audit';
+import { AuditLog } from '@starter/types';
 import { Badge } from '@starter/ui';
 import { Button } from '@starter/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';

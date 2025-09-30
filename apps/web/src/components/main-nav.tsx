@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 
-import { MainNavItem } from '@/types/main';
+import { MainNavItem } from '@starter/types';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
 import { icons as Icons } from '@/components/icons';

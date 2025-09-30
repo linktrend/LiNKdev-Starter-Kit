@@ -19,7 +19,7 @@ export default function Footer() {
           </h2>
           <p className="text-xl text-gray-300 mb-4">
             We partner with global brands, from startups to industry leaders.{' '}
-            <span className="text-white font-bold">Let's discuss.</span>
+            <span className="text-white font-bold">Let&apos;s discuss.</span>
           </p>
           <h3 className="text-sm text-gray-300 font-bold mb-2">
             Subscribe to our Newsletter

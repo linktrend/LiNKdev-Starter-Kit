@@ -89,7 +89,7 @@ export default async function OrgSettingsPage({ params }: OrgSettingsPageProps) 
               Organization Information
             </CardTitle>
             <CardDescription>
-              Update your organization's basic details
+              Update your organization&apos;s basic details
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

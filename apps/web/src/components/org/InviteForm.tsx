@@ -24,7 +24,7 @@ import {
 } from '@starter/ui';
 import { useToast } from '@starter/ui';
 import { api } from '@/trpc/react';
-import { OrgRole } from '@/types/org';
+import { OrgRole } from '@starter/types';
 
 const inviteSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -184,7 +184,7 @@ export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
       <div className="text-xs text-muted-foreground">
         <p>
           <strong>Note:</strong> Invitations expire after 7 days. The recipient will need to 
-          create an account if they don't already have one.
+          create an account if they don&apos;t already have one.
         </p>
       </div>
     </div>

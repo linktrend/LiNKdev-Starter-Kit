@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useEntitlement, useUsageLimit } from '@/hooks/useEntitlement';
-import { PlanEntitlements } from '@/types/billing';
+import { PlanEntitlements } from '@starter/types';
 import { Button } from '@starter/ui';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
 import { Lock, Crown, Zap } from 'lucide-react';

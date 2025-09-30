@@ -1,7 +1,7 @@
 'use client';
 
 import { useEntitlement } from '@/hooks/useEntitlement';
-import { PlanEntitlements } from '@/types/billing';
+import { PlanEntitlements } from '@starter/types';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

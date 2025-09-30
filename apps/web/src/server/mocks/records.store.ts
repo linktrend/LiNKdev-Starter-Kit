@@ -1,7 +1,7 @@
 // Offline fallback store for Records module
 // Used when TEMPLATE_OFFLINE=1 or Supabase is not configured
 
-import { RecordType, RecordData, CreateRecordTypeInput, CreateRecordInput, UpdateRecordInput, ListRecordsInput, RecordSearchResult } from '@/types/records';
+import { RecordType, RecordData, CreateRecordTypeInput, CreateRecordInput, UpdateRecordInput, ListRecordsInput, RecordSearchResult } from '@starter/types';
 
 interface RecordsStore {
   recordTypes: Map<string, RecordType>;

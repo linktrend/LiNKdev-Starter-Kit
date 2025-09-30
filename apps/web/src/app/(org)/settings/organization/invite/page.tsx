@@ -209,7 +209,7 @@ export default function InvitePage() {
           <p>• Recipients will receive an email with instructions to join</p>
           <p>• Only organization owners and admins can send invitations</p>
           <p>• You can revoke pending invitations at any time</p>
-          <p>• New members will need to create an account if they don't have one</p>
+          <p>• New members will need to create an account if they don&apos;t have one</p>
         </CardContent>
       </Card>
     </div>

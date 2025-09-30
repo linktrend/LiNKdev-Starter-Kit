@@ -9,7 +9,7 @@ export default function Page(){
   const [user,setUser]=useState<any>(null);
   const [msg,setMsg]=useState<string>("");
 
-  useEffect(()=>{ supabase.auth.getUser().then(({data})=>setUser(data.user)); },[]);
+  useEffect(()=>{ supabase.auth.getUser().then(({data})=>setUser(data.user)); },[supabase.auth]);
 
   async function signup(){
     setMsg("");

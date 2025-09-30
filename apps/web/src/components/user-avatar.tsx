@@ -1,7 +1,7 @@
 import { AvatarProps } from '@radix-ui/react-avatar';
 import { icons as Icons } from '@/components/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@starter/ui';
-import { User } from '@/types/main';
+import { User } from '@starter/types';
 import { User as UserIcon } from 'lucide-react';
 
 interface UserAvatarProps extends AvatarProps {

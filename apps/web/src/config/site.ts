@@ -1,4 +1,4 @@
-import { SiteConfig } from '@/types/main';
+import { SiteConfig } from '@starter/types';
 
 export const siteConfig: SiteConfig = {
   name: 'LTM Starter Kit',

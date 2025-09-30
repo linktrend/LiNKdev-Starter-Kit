@@ -8,7 +8,7 @@ import { Users, UserPlus, Mail, RefreshCw } from 'lucide-react';
 import { MemberRow } from '@/components/org/MemberRow';
 import { InviteForm } from '@/components/org/InviteForm';
 import { api } from '@/trpc/react';
-import { OrgRole } from '@/types/org';
+import { OrgRole } from '@starter/types';
 
 // Mock data for template
 const mockMembers = [

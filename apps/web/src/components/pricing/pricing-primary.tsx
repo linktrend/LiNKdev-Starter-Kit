@@ -7,7 +7,7 @@ import {
 import { cookies } from 'next/headers';
 import { User } from '@supabase/supabase-js';
 import PricingRounded from './pricing-rounded';
-import { ProductWithPrices, SubscriptionWithProduct } from '@/types/user';
+import { ProductWithPrices, SubscriptionWithProduct } from '@starter/types';
 
 export default async function PricingPage() {
   const supabase = createClient();

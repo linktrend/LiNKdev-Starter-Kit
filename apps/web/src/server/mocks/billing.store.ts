@@ -1,7 +1,7 @@
 // Offline fallback store for Billing module
 // Used when TEMPLATE_OFFLINE=1 or Stripe is not configured
 
-import { BillingCustomer, BillingSubscription, BillingPlan, BillingInvoice } from '@/types/billing';
+import { BillingCustomer, BillingSubscription, BillingPlan, BillingInvoice } from '@starter/types';
 import { getPlanById } from '@/config/plans';
 
 interface BillingStore {
@@ -206,6 +206,37 @@ class InMemoryBillingStore {
       }
     }
     return null;
+  }
+
+  // Check if organization has exceeded a specific limit
+  async hasExceededLimit(
+    orgId: string,
+    featureKey: string,
+    currentCount: number
+  ): Promise<boolean> {
+    const subscription = await this.getSubscription(orgId);
+    if (!subscription) return true; // No subscription = exceeded
+
+    const plan = getPlanById(subscription.plan);
+    if (!plan) return true; // No plan = exceeded
+
+    const limit = (plan.entitlements as any)[featureKey];
+    
+    if (typeof limit === 'number') {
+      return limit !== -1 && currentCount >= limit; // -1 means unlimited
+    }
+    
+    return false;
+  }
+
+  // Get current plan for organization
+  async getCurrentPlan(orgId: string): Promise<any> {
+    const subscription = await this.getSubscription(orgId);
+    if (!subscription) {
+      return getPlanById('free') || null;
+    }
+
+    return getPlanById(subscription.plan) || getPlanById('free') || null;
   }
 
   // Invoice management

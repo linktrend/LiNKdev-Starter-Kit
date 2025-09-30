@@ -2,7 +2,7 @@
 // Non-breaking helpers for existing modules to log audit events
 
 import { TRPCError } from '@trpc/server';
-import { AuditContext, AuditEventData } from '@/types/audit';
+import { AuditContext, AuditEventData } from '@starter/types';
 
 /**
  * Log an organization-related event

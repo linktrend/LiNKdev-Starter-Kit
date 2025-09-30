@@ -1,4 +1,4 @@
-import { BillingPlan } from '@/types/billing';
+import { BillingPlan } from '@starter/types';
 
 export const BILLING_PLANS: BillingPlan[] = [
   {

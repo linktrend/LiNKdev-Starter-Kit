@@ -43,7 +43,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@starter/ui';
-import { Reminder, ReminderStatus, ReminderPriority } from '@/types/scheduling';
+import { Reminder, ReminderStatus, ReminderPriority } from '@starter/types';
 import { api } from '@/trpc/react';
 
 interface ReminderTableProps {

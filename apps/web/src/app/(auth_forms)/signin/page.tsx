@@ -104,7 +104,7 @@ export default function SignIn() {
                 className="text-sm font-medium hover:underline underline-offset-4"
                 prefetch={false}
               >
-                Don't have an account? Sign up
+                Don&apos;t have an account? Sign up
               </Link>
             </div>
             <div className="flex justify-center">

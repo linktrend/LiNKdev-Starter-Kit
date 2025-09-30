@@ -16,7 +16,7 @@ import {
   ReminderStatus,
   ReminderPriority,
   NotificationEventPayload
-} from '@/types/scheduling';
+} from '@starter/types';
 
 interface SchedulingStore {
   reminders: Map<string, Reminder>;

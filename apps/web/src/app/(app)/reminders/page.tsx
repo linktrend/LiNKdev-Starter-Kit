@@ -47,7 +47,7 @@ export default function RemindersPage() {
         <div>
           <h1 className="text-3xl font-bold">Reminders</h1>
           <p className="text-muted-foreground">
-            Manage your team's reminders and notifications
+            Manage your team&apos;s reminders and notifications
           </p>
         </div>
         <Button asChild>

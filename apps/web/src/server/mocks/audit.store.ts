@@ -1,7 +1,7 @@
 // Offline fallback store for Audit Logs module
 // Used when TEMPLATE_OFFLINE=1 or Supabase is not configured
 
-import { AuditLog, AuditLogsResponse, AuditStatsResponse } from '@/types/audit';
+import { AuditLog, AuditLogsResponse, AuditStatsResponse } from '@starter/types';
 
 interface AuditStore {
   logs: Map<string, AuditLog>;

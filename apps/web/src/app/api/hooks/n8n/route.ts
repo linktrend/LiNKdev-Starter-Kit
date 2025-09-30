@@ -2,7 +2,7 @@
 // Template-only implementation - validates signature and accepts events
 
 import { NextRequest, NextResponse } from 'next/server';
-import { WebhookPayload } from '@/types/scheduling';
+import { WebhookPayload } from '@starter/types';
 
 const WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET || 'template-secret-key';
 

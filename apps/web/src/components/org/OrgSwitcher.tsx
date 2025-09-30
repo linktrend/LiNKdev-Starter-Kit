@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from '@starter/ui';
 import { api } from '@/trpc/react';
-import { Organization } from '@/types/org';
+import { Organization } from '@starter/types';
 
 interface OrgSwitcherProps {
   currentOrg?: Organization | null;

@@ -1,8 +1,11 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '../api/root';
-import { enqueueEvent, processPendingEvents, getPendingEvents } from '../automation/outbox';
-// import { emitAnalyticsEvent } from '@/utils/analytics/posthog';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
+
+// Note: These utility functions will need to be provided by the consuming application
+declare const enqueueEvent: (orgId: string, event: string, payload: any) => Promise<string>;
+declare const processPendingEvents: () => Promise<{ processed: number; successful: number; failed: number }>;
+declare const getPendingEvents: (limit: number) => Promise<any[]>;
 
 export const automationRouter = createTRPCRouter({
   /**
@@ -14,7 +17,7 @@ export const automationRouter = createTRPCRouter({
       payload: z.record(z.any()),
       orgId: z.string().uuid('Invalid organization ID'),
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       try {
         const eventId = await enqueueEvent(input.orgId, input.event, input.payload);
         
@@ -43,7 +46,7 @@ export const automationRouter = createTRPCRouter({
    * Run a delivery tick to process pending events
    */
   runDeliveryTick: protectedProcedure
-    .mutation(async ({ ctx }) => {
+    .mutation(async () => {
       try {
         const startTime = Date.now();
         const result = await processPendingEvents();
@@ -86,7 +89,7 @@ export const automationRouter = createTRPCRouter({
       orgId: z.string().uuid('Invalid organization ID').optional(),
       limit: z.number().min(1).max(100).default(50),
     }))
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       try {
         const events = await getPendingEvents(input.limit);
         

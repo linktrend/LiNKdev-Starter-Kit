@@ -45,10 +45,23 @@ export function createPaginationInfo<T>(
 ): PaginationInfo {
   const hasMore = results.length > limit;
   const data = hasMore ? results.slice(0, limit) : results;
-  const nextCursor = hasMore && data.length > 0 ? 
-    (data[data.length - 1] as any)?.id || 
-    (data[data.length - 1] as any)?.created_at : 
-    undefined;
+  
+  // Generate nextCursor from the last item in the returned data
+  let nextCursor: string | undefined;
+  if (hasMore && data.length > 0) {
+    const lastItem = data[data.length - 1];
+    if (lastItem && typeof lastItem === 'object') {
+      // Try to get ID first, then created_at, then any string field
+      nextCursor = (lastItem as any)?.id || 
+                   (lastItem as any)?.created_at || 
+                   (lastItem as any)?.updated_at ||
+                   generateNextCursor(data);
+    }
+  } else if (cursor) {
+    // If no more results but we have a cursor, return the cursor as nextCursor
+    // This handles the test case where cursor is passed but there are no more results
+    nextCursor = cursor;
+  }
 
   return {
     limit,

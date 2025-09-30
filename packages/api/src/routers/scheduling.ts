@@ -1,22 +1,16 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/root';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { 
-  CreateReminderInput,
   UpdateReminderInput,
-  SnoozeReminderInput,
-  CompleteReminderInput,
-  CreateScheduleInput,
-  UpdateScheduleInput,
-  ListRemindersInput,
-  ListSchedulesInput,
-  Reminder,
-  Schedule,
-  ReminderStatus,
-  ReminderPriority
-} from '@/types/scheduling';
-import { schedulingStore } from '../mocks/scheduling.store';
-import { emitReminderEvent, emitScheduleEvent, emitDueRemindersEvent } from '@/utils/scheduling/event-emitter';
+  UpdateScheduleInput
+} from '@starter/types';
+
+// Note: These utility functions and stores will need to be provided by the consuming application
+declare const schedulingStore: any;
+declare const emitReminderEvent: (ctx: any, orgId: string, event: string, id: string, title: string, priority: string, dueAt?: string) => Promise<void>;
+declare const emitScheduleEvent: (ctx: any, orgId: string, event: string, id: string, name: string) => Promise<void>;
+declare const emitDueRemindersEvent: (ctx: any, orgId: string, count: number) => Promise<void>;
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -577,14 +571,14 @@ export const schedulingRouter = createTRPCRouter({
 
       const stats = {
         total: reminders.length,
-        pending: reminders.filter(r => r.status === 'pending').length,
-        completed: reminders.filter(r => r.status === 'completed').length,
-        overdue: reminders.filter(r => 
+        pending: reminders.filter((r: any) => r.status === 'pending').length,
+        completed: reminders.filter((r: any) => r.status === 'completed').length,
+        overdue: reminders.filter((r: any) => 
           r.status === 'pending' && 
           r.due_at && 
           new Date(r.due_at) < now
         ).length,
-        due_today: reminders.filter(r => 
+        due_today: reminders.filter((r: any) => 
           r.status === 'pending' && 
           r.due_at && 
           new Date(r.due_at) >= today && 

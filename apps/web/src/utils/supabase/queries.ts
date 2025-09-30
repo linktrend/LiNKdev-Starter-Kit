@@ -1,4 +1,4 @@
-import { User, UserDetails, Subscription, Product, SubscriptionWithProduct, ProductWithPrices } from '@/types/user';
+import { User, UserDetails, Subscription, Product, SubscriptionWithProduct, ProductWithPrices } from '@starter/types';
 import { createClient } from '@/utils/supabase/server';
 
 export async function getDashboardSummary(_orgId: string) {

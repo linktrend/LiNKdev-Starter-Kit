@@ -111,7 +111,7 @@ export default function RecordDetailPage() {
             <div className="text-center">
               <h3 className="text-lg font-semibold">Record not found</h3>
               <p className="text-muted-foreground mt-2">
-                The record you're looking for doesn't exist or you don't have permission to view it.
+                The record you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
               </p>
               <Button asChild className="mt-4">
                 <a href="/records">Back to Records</a>

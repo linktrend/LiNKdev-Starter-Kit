@@ -40,7 +40,7 @@ export default async function OrgDashboardPage({ params }: OrgDashboardPageProps
         <div>
           <h1 className="text-3xl font-bold">Access Denied</h1>
           <p className="text-muted-foreground">
-            You are not a member of this organization or it doesn't exist.
+            You are not a member of this organization or it doesn&apos;t exist.
           </p>
         </div>
         <div className="text-sm text-muted-foreground">

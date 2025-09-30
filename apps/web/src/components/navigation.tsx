@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { MainNavItem } from '@/types/main';
+import { MainNavItem } from '@starter/types';
 import { cn } from '@/lib/utils';
 import { MobileNav } from '@/components/mobile-nav';
 import { icons as Icons } from '@/components/icons';

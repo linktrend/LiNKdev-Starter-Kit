@@ -1,8 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
+import { TRPCContext } from '@starter/api';
 
-export const createTRPCContext = async (opts?: { headers?: Headers }) => {
+export const createTRPCContext = async (opts?: { headers?: Headers }): Promise<TRPCContext> => {
   const supabase = createClient({ cookies });
   const user = await getUser();
   
@@ -20,5 +21,3 @@ export const createTRPCContext = async (opts?: { headers?: Headers }) => {
     headers: opts?.headers,
   };
 };
-
-export type TRPCContext = Awaited<ReturnType<typeof createTRPCContext>>;

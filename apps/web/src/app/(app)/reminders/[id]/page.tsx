@@ -165,7 +165,7 @@ export default function ReminderDetailPage() {
             <div className="text-center">
               <h3 className="text-lg font-semibold">Reminder not found</h3>
               <p className="text-muted-foreground mt-2">
-                The reminder you're looking for doesn't exist or you don't have permission to view it.
+                The reminder you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
               </p>
               <Button asChild className="mt-4">
                 <a href="/reminders">Back to Reminders</a>

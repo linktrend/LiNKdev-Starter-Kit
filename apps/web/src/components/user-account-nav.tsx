@@ -13,8 +13,8 @@ import {
 } from '@starter/ui';
 import { Button } from "@starter/ui"
 import { Avatar, AvatarImage, AvatarFallback } from '@starter/ui';
-import { Database } from '@/types/db';
-import { User } from '@/types/main'
+import { Database } from '@starter/types';
+import { User } from '@starter/types'
 import Image from "next/image"
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {

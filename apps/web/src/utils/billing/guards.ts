@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { PlanEntitlements } from '@/types/billing';
+import { PlanEntitlements } from '@starter/types';
 import { hasEntitlement } from './entitlements';
 
 /**

@@ -1,7 +1,7 @@
 // Offline fallback store for Organizations module
 // Used when TEMPLATE_OFFLINE=1 or Supabase is not configured
 
-import { Organization, OrganizationMember, Invite, OrgRole } from '@/types/org';
+import { Organization, OrganizationMember, Invite, OrgRole } from '@starter/types';
 
 interface OrgStore {
   organizations: Map<string, Organization>;

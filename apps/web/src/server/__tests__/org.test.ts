@@ -9,7 +9,7 @@ import {
   isInviteExpired,
   getInviteExpiryDate
 } from '@/utils/org';
-import { OrgRole } from '@/types/org';
+import { OrgRole } from '@starter/types';
 
 describe('Organization Store (Offline Mode)', () => {
   beforeEach(() => {

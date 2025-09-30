@@ -1,18 +1,12 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/root';
-import { 
-  CreateRecordTypeInput,
-  UpdateRecordTypeInput,
-  CreateRecordInput,
-  UpdateRecordInput,
-  ListRecordsInput,
-  RecordType,
-  RecordData,
-  RecordSearchResult
-} from '@/types/records';
-import { recordsStore } from '../mocks/records.store';
-import { assertEntitlement, assertWithinLimit } from '@/utils/billing/guards';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
+// Note: Type imports removed as they're not used in this file
+
+// Note: These utility functions and stores will need to be provided by the consuming application
+declare const recordsStore: any;
+declare const assertEntitlement: (orgId: string, entitlement: string, supabase: any) => Promise<void>;
+declare const assertWithinLimit: (orgId: string, entitlement: string, current: number, supabase: any) => Promise<void>;
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 

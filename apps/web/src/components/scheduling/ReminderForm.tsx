@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@starter/ui';
 import { useToast } from '@starter/ui';
-import { ReminderFormData, ReminderPriority } from '@/types/scheduling';
+import { ReminderFormData, ReminderPriority } from '@starter/types';
 import { api } from '@/trpc/react';
 
 const reminderSchema = z.object({

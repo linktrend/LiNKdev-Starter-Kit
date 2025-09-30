@@ -1,4 +1,4 @@
-import { OrgRole } from '@/types/org';
+import { OrgRole } from '@starter/types';
 
 export const ORG_ROLES: OrgRole[] = ['owner', 'admin', 'editor', 'viewer'];
 
@@ -38,6 +38,9 @@ export function isRoleHigher(role1: OrgRole, role2: OrgRole): boolean {
 }
 
 export function canChangeRole(fromRole: OrgRole, toRole: OrgRole, actorRole: OrgRole): boolean {
+  // Only owners and admins can change roles
+  if (!canManageMembers(actorRole)) return false;
+  
   // Can't change owner role
   if (fromRole === 'owner') return false;
   
@@ -46,6 +49,9 @@ export function canChangeRole(fromRole: OrgRole, toRole: OrgRole, actorRole: Org
   
   // Can't promote someone to a higher role than yourself
   if (isRoleHigher(toRole, actorRole)) return false;
+  
+  // Can't change roles of users with same or higher role than yourself
+  if (!isRoleHigher(actorRole, fromRole)) return false;
   
   return true;
 }

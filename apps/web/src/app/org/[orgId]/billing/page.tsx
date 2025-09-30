@@ -78,7 +78,7 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
         <div>
           <h1 className="text-3xl font-bold">Billing & Plans</h1>
           <p className="text-muted-foreground">
-            Manage your organization's subscription and billing
+            Manage your organization&apos;s subscription and billing
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
             Current Plan
           </CardTitle>
           <CardDescription>
-            Your organization's current subscription details
+            Your organization&apos;s current subscription details
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -174,7 +174,7 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
           <CardHeader>
             <CardTitle>Plan Features</CardTitle>
             <CardDescription>
-              What's included in your current plan
+              What&apos;s included in your current plan
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -279,7 +279,7 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
         <CardHeader>
           <CardTitle>Available Plans</CardTitle>
           <CardDescription>
-            Choose the plan that best fits your organization's needs
+            Choose the plan that best fits your organization&apos;s needs
           </CardDescription>
         </CardHeader>
         <CardContent>

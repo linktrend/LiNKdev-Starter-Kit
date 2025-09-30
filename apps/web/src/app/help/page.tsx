@@ -203,7 +203,7 @@ export default function HelpPage() {
               <h3 className="font-semibold mb-2">Can I invite team members to my organization?</h3>
               <p className="text-sm text-muted-foreground">
                 Yes! You can invite team members by going to your organization settings and clicking 
-                "Invite Member". You can set different permission levels for each team member.
+                &quot;Invite Member&quot;. You can set different permission levels for each team member.
               </p>
             </CardContent>
           </Card>
@@ -235,7 +235,7 @@ export default function HelpPage() {
         <CardContent className="p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Still need help?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Can't find what you're looking for? Our support team is here to help you get the most out of LTM Starter Kit.
+            Can&apos;t find what you&apos;re looking for? Our support team is here to help you get the most out of LTM Starter Kit.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -1,6 +1,6 @@
 import { createRouteHandlerClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers';
-import type { Database } from "@/types/db";
+import type { Database } from "@starter/types";
 
 export { createRouteHandlerClient, createServerComponentClient };
 

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@star
 import { Badge } from '@starter/ui';
 import { Check, Crown, Zap } from 'lucide-react';
 import { api } from '@/trpc/react';
-import { BillingPlan } from '@/types/billing';
+import { BillingPlan } from '@starter/types';
 
 interface PricingBillingProps {
   orgId?: string;

@@ -28,7 +28,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@starter/ui';
-import { OrganizationMember, OrgRole } from '@/types/org';
+import { OrganizationMember, OrgRole } from '@starter/types';
 import { api } from '@/trpc/react';
 import { canManageMembers, canChangeRole } from '@/utils/org';
 

@@ -1,7 +1,7 @@
 // Event emitter utility for scheduling notifications
 // Now uses the generic automation event emitter
 
-import { NotificationEventPayload } from '@/types/scheduling';
+import { NotificationEventPayload } from '@starter/types';
 import { emitAutomationEvent, emitReminderEvent as emitGenericReminderEvent, emitScheduleEvent as emitGenericScheduleEvent } from '@/utils/automation/event-emitter';
 
 export interface EventEmitterContext {

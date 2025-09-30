@@ -15,7 +15,7 @@ export default function EmailSignIn() {
   const redirectMethod = 'client';
   const disableButton = false;
   
-  const router = redirectMethod === 'client' ? useRouter() : null;
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -90,7 +90,7 @@ export default function EmailSignIn() {
                     className="text-sm font-bold hover:underline underline-offset-4"
                     prefetch={false}
                   >
-                    Don't have an account? Sign up
+                    Don&apos;t have an account? Sign up
                   </Link>
                 </div>
               </>

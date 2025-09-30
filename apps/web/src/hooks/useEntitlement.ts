@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/trpc/react';
-import { PlanEntitlements } from '@/types/billing';
+import { PlanEntitlements } from '@starter/types';
 
 interface UseEntitlementOptions {
   orgId?: string;

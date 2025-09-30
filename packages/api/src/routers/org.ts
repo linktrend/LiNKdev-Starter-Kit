@@ -1,27 +1,20 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, protectedProcedure } from '@/server/api/root';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { 
-  CreateOrgInput, 
-  InviteUserInput, 
-  UpdateMemberRoleInput, 
-  RemoveMemberInput, 
-  AcceptInviteInput, 
-  SetCurrentOrgInput,
   Organization,
-  OrganizationMember,
-  Invite,
-  OrgRole
-} from '@/types/org';
-import { 
-  generateInviteToken, 
-  getInviteExpiryDate, 
-  isInviteExpired,
-  canManageMembers,
-  canManageInvites,
-  canChangeRole
-} from '@/utils/org';
-import { orgStore } from '../mocks/org.store';
+  Invite
+} from '@starter/types';
+
+// Note: These utility functions and stores will need to be provided by the consuming application
+// or moved to a shared utilities package
+declare const orgStore: any;
+declare const generateInviteToken: () => string;
+declare const getInviteExpiryDate: () => string;
+declare const isInviteExpired: (date: string) => boolean;
+declare const canManageMembers: (role: string) => boolean;
+declare const canManageInvites: (role: string) => boolean;
+declare const canChangeRole: (currentRole: string, newRole: string, userRole: string) => boolean;
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -139,14 +132,14 @@ export const orgRouter = createTRPCRouter({
         });
       }
 
-      return memberships?.map(membership => ({
+      return memberships?.map((membership: any) => ({
         ...membership.organizations,
         role: membership.role,
       })) || [];
     }),
 
   getCurrent: protectedProcedure
-    .query(async ({ ctx }) => {
+    .query(async () => {
       if (isOfflineMode) {
         return orgStore.getCurrentOrg();
       }
@@ -291,6 +284,53 @@ export const orgRouter = createTRPCRouter({
       }
 
       // Supabase implementation
+      // First, get the current user's role in the organization
+      const { data: userMembership, error: userMembershipError } = await ctx.supabase
+        .from('organization_members')
+        .select('role')
+        .eq('org_id', input.orgId)
+        .eq('user_id', ctx.user.id)
+        .single();
+
+      if (userMembershipError || !userMembership) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Not a member of this organization',
+        });
+      }
+
+      // Check if user can manage members
+      if (!canManageMembers(userMembership.role)) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Insufficient permissions',
+        });
+      }
+
+      // Get the target user's current role
+      const { data: targetMembership, error: targetMembershipError } = await ctx.supabase
+        .from('organization_members')
+        .select('role')
+        .eq('org_id', input.orgId)
+        .eq('user_id', input.userId)
+        .single();
+
+      if (targetMembershipError || !targetMembership) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Target user not found in organization',
+        });
+      }
+
+      // Check if the role change is allowed
+      if (!canChangeRole(targetMembership.role, input.role, userMembership.role)) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Cannot change role',
+        });
+      }
+
+      // Update the role
       const { error } = await ctx.supabase
         .from('organization_members')
         .update({ role: input.role })
@@ -311,6 +351,7 @@ export const orgRouter = createTRPCRouter({
         properties: {
           org_id: input.orgId,
           target_user_id: input.userId,
+          old_role: targetMembership.role,
           new_role: input.role,
         },
       });

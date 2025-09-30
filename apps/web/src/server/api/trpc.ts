@@ -1,7 +1,13 @@
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
-import { TRPCContext } from '@starter/api';
+// Define TRPCContext locally since it's not being exported properly
+type TRPCContext = {
+  user: any;
+  supabase: any;
+  posthog: any;
+  headers?: any;
+};
 import { 
   sendProfileUpdateEmail, 
   sendTestEmail 

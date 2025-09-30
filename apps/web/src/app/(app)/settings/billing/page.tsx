@@ -25,17 +25,23 @@ export default function BillingSettingsPage() {
 
   const { data: subscriptionData, isLoading: subscriptionLoading } = api.billing.getSubscription.useQuery(
     { orgId },
-    { enabled: !!orgId }
+    {
+      enabled: !!orgId,
+    }
   );
 
   const { data: usageStats, isLoading: usageLoading } = api.billing.getUsageStats.useQuery(
     { orgId },
-    { enabled: !!orgId }
+    {
+      enabled: !!orgId,
+    }
   );
 
   const { data: invoicesData, isLoading: invoicesLoading } = api.billing.listInvoices.useQuery(
     { orgId, limit: 10 },
-    { enabled: !!orgId }
+    {
+      enabled: !!orgId,
+    }
   );
 
   const { data: plansData } = api.billing.getPlans.useQuery();
@@ -70,7 +76,7 @@ export default function BillingSettingsPage() {
   }
 
   const subscription = subscriptionData?.subscription;
-  const currentPlan = plansData?.plans.find(p => p.id === subscription?.plan) || plansData?.plans[0];
+  const currentPlan = plansData?.plans.find((p: any) => p.id === subscription?.plan) || plansData?.plans[0];
 
   const getStatusIcon = (status?: string) => {
     switch (status) {

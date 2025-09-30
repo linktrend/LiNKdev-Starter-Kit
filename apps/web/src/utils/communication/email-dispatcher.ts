@@ -19,7 +19,7 @@ import { mockEmailService } from '../../server/mocks/email.service';
  * Email template configurations
  * Maps template names to their subject lines and body generation functions
  */
-const emailTemplates: Record<string, EmailTemplateConfig> = {
+const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
   welcome: {
     subject: 'Welcome to LTM Starter Kit!',
     getBody: (data: WelcomeEmailData) => `

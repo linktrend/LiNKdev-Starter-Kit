@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { MoreHorizontal, Trash2, User } from 'lucide-react';
 import { Button } from '@starter/ui';
 import {
@@ -111,9 +112,11 @@ export function MemberRow({
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
             {member.user?.user_metadata?.avatar_url ? (
-              <img
+              <Image
                 src={member.user.user_metadata.avatar_url}
                 alt={member.user.email}
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full"
               />
             ) : (

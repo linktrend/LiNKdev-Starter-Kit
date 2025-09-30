@@ -18,28 +18,28 @@ let notifications = [
     time: "15m ago",
 
     icon: "💸",
-    color: "#00C9A7",
+    color: "hsl(var(--color-success))",
   },
   {
     name: "User signed up",
     description: "Magic UI",
     time: "10m ago",
     icon: "👤",
-    color: "#FFB800",
+    color: "hsl(var(--color-warning))",
   },
   {
     name: "New message",
     description: "Magic UI",
     time: "5m ago",
     icon: "💬",
-    color: "#FF3D71",
+    color: "hsl(var(--color-danger))",
   },
   {
     name: "New event",
     description: "Magic UI",
     time: "2m ago",
     icon: "🗞️",
-    color: "#1E86FF",
+    color: "hsl(var(--color-primary))",
   },
 ];
 
@@ -55,7 +55,7 @@ const Notification = ({ name, description, icon, color, time }: Item) => {
         // light styles
         "bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
         // dark styles
-        "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
+        "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_hsl(var(--color-background))1f_inset]",
       )}
     >
       <div className="flex flex-row items-center gap-3">

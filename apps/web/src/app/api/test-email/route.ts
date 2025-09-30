@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       success: true,
       message: 'Test email sent successfully! Check the server console for output.',
       email,
-      message,
+      emailMessage: message,
     });
   } catch (error) {
     console.error('Failed to send test email:', error);

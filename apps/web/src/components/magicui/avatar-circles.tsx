@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 import { cn } from '@/utils/cn';
 
@@ -18,7 +19,7 @@ const AvatarCircles = ({
   return (
     <div className={cn('z-10 flex -space-x-4 rtl:space-x-reverse', className)}>
       {avatarUrls.map((url, index) => (
-        <img
+        <Image
           key={index}
           className="h-10 w-10 rounded-full border-2 border-gray-300 dark:border-white"
           src={url}

@@ -37,7 +37,7 @@ export function roleIsSufficient(requiredRole: OrgRole, userRole: OrgRole | null
 export function hasPermission(userRole: OrgRole | null, permission: string): boolean {
   if (!userRole) return false;
   const permissions = ROLE_PERMISSIONS[userRole] || [];
-  return permissions.includes(permission as any);
+  return permissions.includes(permission as never);
 }
 
 /**

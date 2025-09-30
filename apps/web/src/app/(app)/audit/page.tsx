@@ -32,7 +32,9 @@ export default function AuditPage() {
       cursor,
       limit: 50,
     },
-    { enabled: !!orgId }
+    {
+      enabled: !!orgId,
+    }
   );
 
   const { data: statsData, isLoading: statsLoading } = api.audit.stats.useQuery(
@@ -40,7 +42,9 @@ export default function AuditPage() {
       orgId,
       window: 'day',
     },
-    { enabled: !!orgId }
+    {
+      enabled: !!orgId,
+    }
   );
 
   const exportCsv = api.audit.exportCsv.useMutation();
@@ -121,7 +125,7 @@ export default function AuditPage() {
             <CardContent>
               <div className="text-2xl font-bold">
                 {Object.entries(statsData.by_action).length > 0
-                  ? Object.entries(statsData.by_action).sort(([,a], [,b]) => b - a)[0][0]
+                  ? Object.entries(statsData.by_action).sort(([,a], [,b]) => (b as number) - (a as number))[0][0]
                   : 'N/A'
                 }
               </div>

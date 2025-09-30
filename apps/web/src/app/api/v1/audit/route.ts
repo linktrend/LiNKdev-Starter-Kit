@@ -10,7 +10,7 @@ import {
   ListAuditQuery
 } from '@/server/rest/validators';
 import { createPaginatedResponse, extractPaginationParams } from '@/server/rest/pagination';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/audit - List audit logs with filters
 export const GET = withErrorHandling(
@@ -57,7 +57,7 @@ export const GET = withErrorHandling(
       });
 
       // Transform to REST response format
-      const response: AuditLogResponse[] = result.logs.map(log => ({
+      const response: AuditLogResponse[] = result.logs.map((log: any) => ({
         id: log.id,
         org_id: log.org_id,
         actor_id: log.actor_id,

@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Link from 'next/link';
+import Image from 'next/image';
 import * as React from 'react';
 import { SVGProps } from 'react';
 
@@ -99,7 +100,7 @@ export const GithubSvg = (props: SVGProps<SVGSVGElement>) => (
 export function LogoSupacrawler() {
   return (
     <Link href="https://supacrawler.com" aria-label="Home" className={clsx('flex items-center gap-x-1 mr-2')}>
-      <img src="/images/supacrawler.jpg" alt="Supacrawler" className="size-6 sm:size-8" />
+      <Image src="/images/supacrawler.jpg" alt="Supacrawler" width={32} height={32} className="size-6 sm:size-8" />
       <span
         className={clsx(
           'flex items-center text-sm py-1 tracking-tighter text-slate-900',

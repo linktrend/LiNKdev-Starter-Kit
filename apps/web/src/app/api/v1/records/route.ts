@@ -13,7 +13,7 @@ import {
   ListRecordsQuery
 } from '@/server/rest/validators';
 import { createPaginatedResponse, extractPaginationParams } from '@/server/rest/pagination';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/records - List records with filters
 export const GET = withErrorHandling(
@@ -60,7 +60,7 @@ export const GET = withErrorHandling(
       });
 
       // Transform to REST response format
-      const response: RecordResponse[] = result.records.map(record => ({
+      const response: RecordResponse[] = result.records.map((record: any) => ({
         id: record.id,
         type_id: record.type_id,
         org_id: record.org_id,

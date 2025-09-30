@@ -13,7 +13,7 @@ import {
   ListRemindersQuery
 } from '@/server/rest/validators';
 import { createPaginatedResponse, extractPaginationParams } from '@/server/rest/pagination';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/reminders - List reminders with filters
 export const GET = withErrorHandling(
@@ -58,7 +58,7 @@ export const GET = withErrorHandling(
       });
 
       // Transform to REST response format
-      const response: ReminderResponse[] = result.reminders.map(reminder => ({
+      const response: ReminderResponse[] = result.reminders.map((reminder: any) => ({
         id: reminder.id,
         org_id: reminder.org_id,
         record_id: reminder.record_id,

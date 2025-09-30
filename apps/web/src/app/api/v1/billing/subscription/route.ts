@@ -5,7 +5,7 @@ import { authenticateRequest, isOfflineMode, createMockAuthContext } from '@/ser
 import { 
   SubscriptionResponse
 } from '@/server/rest/validators';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/billing/subscription - Get organization subscription
 export const GET = withErrorHandling(

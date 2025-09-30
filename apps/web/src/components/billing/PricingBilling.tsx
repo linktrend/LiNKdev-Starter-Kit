@@ -130,7 +130,7 @@ export function PricingBilling({ orgId, currentPlan, onPlanSelect }: PricingBill
       </div>
 
       <div className="grid gap-8 md:grid-cols-3 max-w-6xl mx-auto">
-        {plans.map((plan) => {
+        {plans.map((plan: any) => {
           const isCurrentPlan = currentPlan === plan.id;
           const isPopular = plan.popular;
           const price = getPrice(plan);
@@ -198,7 +198,7 @@ export function PricingBilling({ orgId, currentPlan, onPlanSelect }: PricingBill
                 <div className="space-y-3">
                   <h4 className="font-medium text-sm text-muted-foreground">Features included:</h4>
                   <ul className="space-y-2">
-                    {plan.features.map((feature, index) => (
+                    {plan.features.map((feature: any, index: any) => (
                       <li key={index} className="flex items-start space-x-2">
                         <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{feature}</span>

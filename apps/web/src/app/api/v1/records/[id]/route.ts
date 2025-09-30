@@ -12,7 +12,7 @@ import {
   UUIDSchema
 } from '@/server/rest/validators';
 import { z } from 'zod';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/records/[id] - Get single record
 export const GET = withErrorHandling(

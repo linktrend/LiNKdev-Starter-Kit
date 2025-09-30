@@ -11,7 +11,7 @@ import {
   ListOrgsResponse
 } from '@/server/rest/validators';
 import { createPaginatedResponse } from '@/server/rest/pagination';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // GET /api/v1/orgs - List organizations for authenticated user
 export const GET = withErrorHandling(

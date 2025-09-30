@@ -46,7 +46,7 @@ export default function HeroSection() {
           className="absolute inset-0"
           quantity={300}
           ease={80}
-          color={theme === 'dark' ? '#FFFFFF' : '#000000'}
+          color={theme === 'dark' ? 'hsl(var(--color-background))' : 'hsl(var(--color-foreground))'}
           refresh
         />
         <Ripple />
@@ -63,7 +63,7 @@ export default function HeroSection() {
                 🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-gray-300" />{" "}
                 <span
                   className={cn(
-                    `inline animate-gradient bg-gradient-to-r from-[#b76a24] via-[#6a24b7] to-[#b76a24] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`,
+                    `inline animate-gradient bg-gradient-to-r from-[hsl(var(--color-warning))] via-[hsl(var(--color-primary))] to-[hsl(var(--color-warning))] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`,
                   )}
                 >
                   Follow the progress on X

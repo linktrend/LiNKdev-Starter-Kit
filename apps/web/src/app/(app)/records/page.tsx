@@ -19,7 +19,7 @@ export default function RecordsPage() {
   });
 
   const records = recordsData?.records || [];
-  const selectedType = recordTypes.find(rt => rt.id === selectedTypeId);
+  const selectedType = recordTypes.find((rt: any) => rt.id === selectedTypeId);
 
   return (
     <div className="space-y-6">
@@ -79,7 +79,7 @@ export default function RecordsPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recordTypes.map((type) => (
+                {recordTypes.map((type: any) => (
                   <Card
                     key={type.id}
                     className={`cursor-pointer transition-colors hover:bg-muted/50 ${

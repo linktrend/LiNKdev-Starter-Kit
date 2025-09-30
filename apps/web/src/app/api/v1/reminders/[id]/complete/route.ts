@@ -9,7 +9,7 @@ import {
   UUIDSchema
 } from '@/server/rest/validators';
 import { z } from 'zod';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // POST /api/v1/reminders/[id]/complete - Mark reminder as complete
 export const POST = withErrorHandling(

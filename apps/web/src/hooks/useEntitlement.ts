@@ -18,7 +18,7 @@ interface EntitlementResult {
 export function useEntitlement({ orgId, featureKey }: UseEntitlementOptions): EntitlementResult {
   const { data: subscriptionData, isLoading, error } = api.billing.getSubscription.useQuery(
     { orgId: orgId || '' },
-    { 
+    {
       enabled: !!orgId,
       retry: false,
     }
@@ -61,7 +61,7 @@ export function useEntitlement({ orgId, featureKey }: UseEntitlementOptions): En
   
   // Get plan details to check entitlements
   const { data: plansData } = api.billing.getPlans.useQuery();
-  const currentPlan = plansData?.plans.find(p => p.id === plan);
+  const currentPlan = plansData?.plans.find((p: any) => p.id === plan);
   
   if (!currentPlan) {
     return {
@@ -116,7 +116,7 @@ export function useCanUseWebhooks(orgId?: string) {
 export function useUsageLimit(featureKey: keyof PlanEntitlements, orgId?: string) {
   const { data: usageStats, isLoading } = api.billing.getUsageStats.useQuery(
     { orgId: orgId || '' },
-    { 
+    {
       enabled: !!orgId,
       retry: false,
     }

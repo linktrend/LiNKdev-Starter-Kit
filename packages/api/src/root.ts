@@ -46,7 +46,7 @@ export const appRouter = createTRPCRouter({
         to: z.string().email('Invalid email address'),
         message: z.string().optional().default('Hello from LTM Starter Kit!'),
       }))
-      .mutation(async ({ ctx, input }) => {
+      .mutation(async ({ input }) => {
         try {
           await sendTestEmail(input.to, {
             message: input.message,

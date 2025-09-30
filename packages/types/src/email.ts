@@ -28,12 +28,14 @@ export type EmailTemplate =
 export interface WelcomeEmailData {
   userName: string;
   loginUrl: string;
+  [key: string]: unknown;
 }
 
 export interface PasswordResetEmailData {
   userName: string;
   resetUrl: string;
   expiresIn: string;
+  [key: string]: unknown;
 }
 
 export interface InvoiceEmailData {
@@ -42,6 +44,7 @@ export interface InvoiceEmailData {
   amount: string;
   dueDate: string;
   invoiceUrl: string;
+  [key: string]: unknown;
 }
 
 export interface ProfileUpdateEmailData {
@@ -49,11 +52,13 @@ export interface ProfileUpdateEmailData {
   updatedField: string;
   newValue: string;
   profileUrl: string;
+  [key: string]: unknown;
 }
 
 export interface TestEmailData {
   message: string;
   timestamp: string;
+  [key: string]: unknown;
 }
 
 /**
@@ -104,7 +109,7 @@ export interface EmailService {
 /**
  * Email template configuration
  */
-export interface EmailTemplateConfig {
+export interface EmailTemplateConfig<T = Record<string, unknown>> {
   subject: string;
-  getBody: (data: Record<string, unknown>) => string;
+  getBody: (data: T) => string;
 }

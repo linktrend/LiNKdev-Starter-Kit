@@ -9,7 +9,7 @@ import {
   CreateCheckoutRequest,
   CheckoutResponse
 } from '@/server/rest/validators';
-import { appRouter } from '@/server/api/root';
+import { appRouter } from '@starter/api';
 
 // POST /api/v1/billing/checkout - Create checkout session
 export const POST = withErrorHandling(

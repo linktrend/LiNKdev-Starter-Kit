@@ -18,12 +18,16 @@ export default function NewRecordPage() {
 
   const { data: recordType, isLoading: typeLoading } = api.records.getRecordType.useQuery(
     { id: typeId! },
-    { enabled: !!typeId }
+    {
+      enabled: !!typeId,
+    }
   );
 
   const { data: recordTypeByKey, isLoading: typeByKeyLoading } = api.records.getRecordTypeByKey.useQuery(
     { key: typeKey! },
-    { enabled: !!typeKey && !typeId }
+    {
+      enabled: !!typeKey && !typeId,
+    }
   );
 
   const { data: recordTypes, isLoading: typesLoading } = api.records.listRecordTypes.useQuery();
@@ -107,7 +111,7 @@ export default function NewRecordPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recordTypes?.map((type) => (
+                {recordTypes?.map((type: any) => (
                   <Card
                     key={type.id}
                     className="cursor-pointer transition-colors hover:bg-muted/50"

@@ -13,6 +13,7 @@ import { RootProvider } from 'fumadocs-ui/provider';
 import { TRPCReactProvider } from '@/trpc/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { SupportWidgetWrapper } from '@/components/support-widget-wrapper';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -104,6 +105,7 @@ export default async function LocaleLayout({
             </NextIntlClientProvider>
           </RootProvider>
           <Toaster />
+          <SupportWidgetWrapper />
           {/* <TailwindIndicator /> */}
         </ThemeProvider>
       </body>

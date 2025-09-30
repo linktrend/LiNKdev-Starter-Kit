@@ -7,6 +7,8 @@ const ClientEnv = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_HOST: z.string().optional(),
+  // Support Widget Configuration
+  NEXT_PUBLIC_SUPPORT_ENABLED: z.string().optional(),
   // OAuth Provider Configuration
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().optional(),
   NEXT_PUBLIC_GITHUB_CLIENT_ID: z.string().optional(),

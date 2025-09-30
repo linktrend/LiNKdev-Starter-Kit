@@ -15,8 +15,15 @@ export default defineConfig({
     '@/components/ui/use-toast',
     '@starter/ui', // Mark self as external to avoid circular dependency
     'react',
+    'react-dom',
     'react-native',
     'nativewind',
     'react/jsx-runtime',
+    'use-callback-ref',
+    '@floating-ui/react-dom',
+    'react-day-picker',
+    'date-fns',
+    'embla-carousel-react',
+    'embla-carousel-reactive-utils',
   ],
 });

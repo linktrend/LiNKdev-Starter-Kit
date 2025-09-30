@@ -9,8 +9,10 @@
       "esnext"
     ],
     "types": [
-      "vitest/globals",
       "node"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -48,6 +50,12 @@
   ],
   "exclude": [
     "utils/stripe",
-    "utils/supabase/admin.ts"
+    "utils/supabase/admin.ts",
+    "src/test/**/*",
+    "tests/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }

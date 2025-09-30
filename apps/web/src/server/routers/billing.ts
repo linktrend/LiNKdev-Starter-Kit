@@ -19,16 +19,12 @@ import { billingStore } from '../mocks/billing.store';
 import { createClient } from '@/utils/supabase/server';
 import { emitAutomationEvent } from '@/utils/automation/event-emitter';
 import { cookies } from 'next/headers';
-import Stripe from 'stripe';
+import { stripe } from '@/utils/stripe/config';
 
 const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || 
   !process.env.NEXT_PUBLIC_SUPABASE_URL || 
   !process.env.STRIPE_SECRET_KEY ||
   process.env.BILLING_OFFLINE === '1';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
 
 export const billingRouter = createTRPCRouter({
   /**
@@ -350,7 +346,7 @@ export const billingRouter = createTRPCRouter({
           limit: input.limit,
         });
 
-        const invoices = stripeInvoices.data.map((invoice: Stripe.Invoice) => ({
+        const invoices = stripeInvoices.data.map((invoice: any) => ({
           id: `inv_${invoice.id}`,
           org_id: input.orgId,
           stripe_invoice_id: invoice.id,

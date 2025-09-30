@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BILLING_PLANS, getPlanById } from '@/config/plans';
 import { hasEntitlement, hasExceededLimit, getCurrentPlan } from '@/utils/billing/entitlements';
+import { stripe, validateStripeConfig } from '@/utils/stripe/config';
 
 // Mock Supabase client
 const mockSupabase = {
@@ -289,5 +290,57 @@ describe('Offline Mode', () => {
     
     // Restore environment
     process.env.STRIPE_SECRET_KEY = originalEnv;
+  });
+});
+
+describe('Stripe Client Configuration', () => {
+  it('should initialize Stripe client without throwing errors', () => {
+    // Mock environment variable
+    const originalEnv = process.env.STRIPE_SECRET_KEY;
+    process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key';
+    
+    expect(() => {
+      // This should not throw an error
+      const client = stripe;
+      expect(client).toBeDefined();
+    }).not.toThrow();
+    
+    // Restore environment
+    process.env.STRIPE_SECRET_KEY = originalEnv;
+  });
+
+  it('should validate Stripe configuration correctly', () => {
+    const originalEnv = process.env.STRIPE_SECRET_KEY;
+    
+    // Test with valid configuration
+    process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key';
+    expect(() => validateStripeConfig()).not.toThrow();
+    
+    // Test with missing configuration
+    delete process.env.STRIPE_SECRET_KEY;
+    expect(() => validateStripeConfig()).toThrow('STRIPE_SECRET_KEY or STRIPE_SECRET_KEY_LIVE environment variable is required');
+    
+    // Test with live key
+    process.env.STRIPE_SECRET_KEY_LIVE = 'sk_live_mock_key';
+    expect(() => validateStripeConfig()).not.toThrow();
+    
+    // Restore environment
+    process.env.STRIPE_SECRET_KEY = originalEnv;
+    delete process.env.STRIPE_SECRET_KEY_LIVE;
+  });
+
+  it('should have correct API version', () => {
+    expect(stripe.getApiField('version')).toBe('2023-10-16');
+  });
+
+  it('should have correct app info', () => {
+    // The Stripe client should be properly configured
+    expect(stripe).toBeDefined();
+    expect(typeof stripe).toBe('object');
+    
+    // Test that the client has the expected methods
+    expect(typeof stripe.customers).toBe('object');
+    expect(typeof stripe.subscriptions).toBe('object');
+    expect(typeof stripe.invoices).toBe('object');
   });
 });

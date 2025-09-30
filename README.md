@@ -146,7 +146,7 @@ DESIGN_TOKENS.json → tailwind-preset.js → Tailwind CSS → Application Compo
 ## 🛡️ Guardrails
 
 ### Design System
-- Reference `11-webapp-structure.mdc` for complete design system rules
+- Reference `.cursor/11-webapp-structure.mdc` for complete design system rules
 - No direct primitive imports (use `@starter/ui`)
 - No raw hex colors (use design tokens)
 
@@ -173,7 +173,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - **[Project Structure](docs/structure.md)** - Detailed monorepo documentation
-- **[Design System Guide](11-webapp-structure.mdc)** - Complete design system rules
+- **[Design System Guide](.cursor/11-webapp-structure.mdc)** - Complete design system rules
 - **[Web App](apps/web/)** - Next.js application
 - **[Mobile App](apps/mobile/)** - React Native application
 - **[UI Package](packages/ui/)** - Shared design system components

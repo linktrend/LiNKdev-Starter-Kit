@@ -274,7 +274,7 @@ export default function BillingSettingsPage() {
       </Card>
 
       {/* Offline Mode Notice */}
-      {subscriptionData && 'offline' in subscriptionData && subscriptionData.offline && (
+      {subscriptionData && 'offline' in subscriptionData && subscriptionData.offline ? (
         <Card className="border-yellow-200 bg-yellow-50">
           <CardContent className="pt-6">
             <div className="flex items-center gap-2 text-yellow-800">
@@ -285,7 +285,7 @@ export default function BillingSettingsPage() {
             </div>
           </CardContent>
         </Card>
-      )}
+      ) : null}
     </div>
   );
 }

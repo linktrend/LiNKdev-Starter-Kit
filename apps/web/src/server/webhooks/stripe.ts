@@ -6,11 +6,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
-
-// Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
+import { stripe } from '@/utils/stripe/config';
 
 export interface StripeHandlerOptions {
   rawBody: Buffer | Uint8Array | string;

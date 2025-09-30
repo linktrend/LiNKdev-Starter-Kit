@@ -12,12 +12,23 @@
         "SUPABASE_ACCESS_TOKEN": "sbp_11a7d003c112735c140ab17ea4a239c1708cc0c8"
       }
     },
-    "shadcn-mcp": {
+    "shadcnui-mcp": {
       "command": "npx",
       "args": [
         "-y",
-        "@heilgar/shadcn-ui-mcp-server"
+        "@jpisnice/shadcn-ui-mcp-server@latest"
       ]
+    },
+    "stripe": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@stripe/mcp",
+        "--tools=all"
+      ],
+      "env": {
+        "STRIPE_SECRET_KEY": "sk_***REDACTED***"
+      }
     }
   }
 }

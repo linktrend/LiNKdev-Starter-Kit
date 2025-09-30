@@ -98,7 +98,7 @@ The Developer Console is a separate shell with its own authentication and interf
 ## Guardrails
 
 ### Design System Enforcement
-- **Reference**: See `11-webapp-structure.mdc` for complete design system rules
+- **Reference**: See `.cursor/11-webapp-structure.mdc` for complete design system rules
 - **ESLint Rule**: `no-restricted-imports` prevents direct primitive imports
 - **Color Usage**: No raw hex colors in app code (use design tokens)
 - **Component Reuse**: Prefer `@starter/ui` primitives over custom implementations

@@ -7,6 +7,9 @@ export interface TRPCContext {
   user: any;
   posthog?: any;
   headers?: Headers;
+  // RBAC context - populated by accessGuard middleware
+  userRole?: string;
+  orgId?: string;
 }
 
 const t = initTRPC.context<TRPCContext>().create({

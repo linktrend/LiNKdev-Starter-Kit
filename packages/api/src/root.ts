@@ -1,11 +1,15 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from './trpc';
+import { createTRPCRouter, publicProcedure, protectedProcedure } from './trpc';
 import { orgRouter } from './routers/org';
 import { recordsRouter } from './routers/records';
 import { schedulingRouter } from './routers/scheduling';
 import { automationRouter } from './routers/automation';
 import { billingRouter } from './routers/billing';
 import { auditRouter } from './routers/audit';
+import { flagsRouter } from './routers/flags';
+
+// Note: Email dispatcher will be imported by the consuming application
+declare const sendTestEmail: (to: string, data: any) => Promise<void>;
 
 export const appRouter = createTRPCRouter({
   status: publicProcedure.query(() => ({ ok: true })),
@@ -33,6 +37,32 @@ export const appRouter = createTRPCRouter({
   automation: automationRouter,
   billing: billingRouter,
   audit: auditRouter,
+  flags: flagsRouter,
+  
+  // Email testing endpoint
+  email: createTRPCRouter({
+    sendTest: protectedProcedure
+      .input(z.object({
+        to: z.string().email('Invalid email address'),
+        message: z.string().optional().default('Hello from LTM Starter Kit!'),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        try {
+          await sendTestEmail(input.to, {
+            message: input.message,
+            timestamp: new Date().toISOString(),
+          });
+          
+          return { 
+            success: true, 
+            message: 'Test email sent successfully. Check console for output.' 
+          };
+        } catch (error) {
+          console.error('Failed to send test email:', error);
+          throw new Error('Failed to send test email');
+        }
+      }),
+  }),
 });
 
 // Export the router type explicitly to avoid type collision issues

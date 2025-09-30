@@ -6,6 +6,8 @@ export * from './audit';
 export * from './records';
 export * from './scheduling';
 export * from './attachments';
+export * from './feature-flags';
+export * from './email';
 export * from './supabase';
 export * from './main';
 

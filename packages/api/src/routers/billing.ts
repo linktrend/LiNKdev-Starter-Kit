@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { requireMember, requireAdmin } from '../middleware/accessGuard';
 import { 
   GetSubscriptionInput,
   CreateCheckoutInput,
@@ -42,6 +43,7 @@ export const billingRouter = createTRPCRouter({
    * Get organization's current subscription
    */
   getSubscription: protectedProcedure
+    .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(GetSubscriptionInput)
     .query(async ({ input, ctx }) => {
       try {
@@ -102,6 +104,7 @@ export const billingRouter = createTRPCRouter({
    * Create Stripe checkout session
    */
   createCheckout: protectedProcedure
+    .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(CreateCheckoutInput)
     .mutation(async ({ input, ctx }) => {
       try {
@@ -168,6 +171,7 @@ export const billingRouter = createTRPCRouter({
    * Open Stripe customer portal
    */
   openPortal: protectedProcedure
+    .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(OpenPortalInput)
     .mutation(async ({ input }) => {
       try {
@@ -207,6 +211,7 @@ export const billingRouter = createTRPCRouter({
    * Simulate webhook events (offline mode only)
    */
   simulateEvent: protectedProcedure
+    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(SimulateEventInput)
     .mutation(async ({ input, ctx }) => {
       if (!isOfflineMode) {
@@ -242,6 +247,7 @@ export const billingRouter = createTRPCRouter({
    * Get usage statistics for an organization
    */
   getUsageStats: protectedProcedure
+    .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       orgId: z.string().uuid('Invalid organization ID'),
     }))
@@ -306,6 +312,7 @@ export const billingRouter = createTRPCRouter({
    * Get organization's invoices
    */
   listInvoices: protectedProcedure
+    .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(ListInvoicesInput)
     .query(async ({ input, ctx }) => {
       try {

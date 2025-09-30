@@ -1,10 +1,14 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { requireAdmin, requireOwner } from '../middleware/accessGuard';
 import { 
   Organization,
   Invite
 } from '@starter/types';
+
+// Note: Email dispatcher will be imported by the consuming application
+declare const sendProfileUpdateEmail: (to: string, data: any) => Promise<void>;
 
 // Note: These utility functions and stores will need to be provided by the consuming application
 // or moved to a shared utilities package
@@ -207,6 +211,84 @@ export const orgRouter = createTRPCRouter({
       return { success: true };
     }),
 
+  // Organization Settings Management
+  updateOrgSettings: protectedProcedure
+    .use(requireOwner({ orgIdSource: 'input', orgIdField: 'orgId' }))
+    .input(z.object({
+      orgId: z.string(),
+      name: z.string().min(1, 'Organization name is required').max(100, 'Name too long'),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      if (isOfflineMode) {
+        const updatedOrg = orgStore.updateOrg(input.orgId, { name: input.name });
+        
+        // Analytics
+        ctx.posthog?.capture({
+          distinctId: ctx.user.id,
+          event: 'org_updated',
+          properties: {
+            org_id: input.orgId,
+            org_name: input.name,
+          },
+        });
+
+        // Send profile update email notification
+        try {
+          await sendProfileUpdateEmail(ctx.user.email || 'user@example.com', {
+            userName: ctx.user.user_metadata?.full_name || 'User',
+            updatedField: 'Organization Name',
+            newValue: input.name,
+            profileUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/org/${input.orgId}/settings`,
+          });
+        } catch (error) {
+          console.error('Failed to send profile update email:', error);
+          // Don't fail the mutation if email fails
+        }
+        
+        return updatedOrg;
+      }
+
+      // Supabase implementation
+      const { data: org, error } = await ctx.supabase
+        .from('organizations')
+        .update({ name: input.name })
+        .eq('id', input.orgId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update organization',
+        });
+      }
+
+      // Analytics
+      ctx.posthog?.capture({
+        distinctId: ctx.user.id,
+        event: 'org_updated',
+        properties: {
+          org_id: input.orgId,
+          org_name: input.name,
+        },
+      });
+
+      // Send profile update email notification
+      try {
+        await sendProfileUpdateEmail(ctx.user.email || 'user@example.com', {
+          userName: ctx.user.user_metadata?.full_name || 'User',
+          updatedField: 'Organization Name',
+          newValue: input.name,
+          profileUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/org/${input.orgId}/settings`,
+        });
+      } catch (error) {
+        console.error('Failed to send profile update email:', error);
+        // Don't fail the mutation if email fails
+      }
+
+      return org;
+    }),
+
   // Member Management
   listMembers: protectedProcedure
     .input(z.object({
@@ -243,6 +325,7 @@ export const orgRouter = createTRPCRouter({
     }),
 
   updateMemberRole: protectedProcedure
+    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       orgId: z.string(),
       userId: z.string(),
@@ -360,6 +443,7 @@ export const orgRouter = createTRPCRouter({
     }),
 
   removeMember: protectedProcedure
+    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       orgId: z.string(),
       userId: z.string(),
@@ -418,6 +502,7 @@ export const orgRouter = createTRPCRouter({
 
   // Invitation System
   invite: protectedProcedure
+    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       orgId: z.string(),
       email: z.string().email('Invalid email address'),
@@ -610,8 +695,10 @@ export const orgRouter = createTRPCRouter({
     }),
 
   revokeInvite: protectedProcedure
+    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       inviteId: z.string(),
+      orgId: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {

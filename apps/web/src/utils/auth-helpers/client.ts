@@ -27,13 +27,30 @@ export async function handleRequest(
 }
 
 export async function signInWithOAuth(provider: string) {
-  // Create client-side supabase client and call signInWithOAuth
-  const supabase = createClient();
-  const redirectURL = getURL('/auth/callback');
-  await supabase.auth.signInWithOAuth({
-    provider: provider as Provider,
-    options: {
-      redirectTo: redirectURL
+  try {
+    // Create client-side supabase client and call signInWithOAuth
+    const supabase = createClient();
+    const redirectURL = getURL('/auth/callback');
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider as Provider,
+      options: {
+        redirectTo: redirectURL,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      }
+    });
+
+    if (error) {
+      console.error('OAuth sign-in error:', error);
+      throw new Error(`Failed to sign in with ${provider}: ${error.message}`);
     }
-  });
+
+    return data;
+  } catch (error) {
+    console.error('OAuth sign-in error:', error);
+    throw error;
+  }
 }

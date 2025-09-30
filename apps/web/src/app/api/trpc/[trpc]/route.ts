@@ -4,6 +4,14 @@ import { type NextRequest } from "next/server";
 import { env } from "@/env";
 import { appRouter } from "@starter/api";
 import { createTRPCContext } from "@/server/api/trpc";
+import { 
+  sendProfileUpdateEmail, 
+  sendTestEmail 
+} from "@/utils/communication/email-dispatcher";
+
+// Make email functions globally available for the API
+(global as any).sendProfileUpdateEmail = sendProfileUpdateEmail;
+(global as any).sendTestEmail = sendTestEmail;
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when

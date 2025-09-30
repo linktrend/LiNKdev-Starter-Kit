@@ -15,10 +15,12 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Github, Chrome } from 'lucide-react';
+import { useToast } from '@starter/ui';
 
 export default function SignIn() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
@@ -40,8 +42,22 @@ export default function SignIn() {
   ];
   const handleOAuthSubmit = async (provider: string) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await signInWithOAuth(provider);
-    setIsSubmitting(false);
+    try {
+      await signInWithOAuth(provider);
+      toast({
+        title: "Redirecting...",
+        description: `Redirecting to ${provider} for authentication.`,
+      });
+    } catch (error) {
+      console.error('OAuth sign-in error:', error);
+      toast({
+        title: "Sign-in failed",
+        description: `Failed to sign in with ${provider}. Please try again.`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -132,7 +148,7 @@ export default function SignIn() {
                     variant="outline"
                     type="submit"
                     className="w-full"
-                    disabled={provider.name === 'google'} // Disable button if provider is Google
+                    disabled={isSubmitting}
                   >
                     {provider.icon}
                     Sign in with {provider.displayName}
@@ -141,7 +157,7 @@ export default function SignIn() {
               ))}
             </div>
             <p className="text-muted-foreground text-xs text-center my-2">
-              For testing purposes, only Github is available.
+              Sign in with your preferred social account or email.
             </p>
           </CardContent>
         </Card>

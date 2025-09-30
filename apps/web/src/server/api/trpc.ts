@@ -2,6 +2,10 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
 import { TRPCContext } from '@starter/api';
+import { 
+  sendProfileUpdateEmail, 
+  sendTestEmail 
+} from '@/utils/communication/email-dispatcher';
 
 export const createTRPCContext = async (opts?: { headers?: Headers }): Promise<TRPCContext> => {
   const supabase = createClient({ cookies });

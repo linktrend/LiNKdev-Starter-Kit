@@ -7,6 +7,7 @@ const ClientEnv = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
   NEXT_PUBLIC_POSTHOG_HOST: z.string().optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
   // Support Widget Configuration
   NEXT_PUBLIC_SUPPORT_ENABLED: z.string().optional(),
   // OAuth Provider Configuration
@@ -19,6 +20,7 @@ const ServerEnv = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PRO_MONTHLY_PLAN_ID: z.string().optional(),
   SENTRY_DSN: z.string().optional(),
+  SENTRY_ENVIRONMENT: z.string().optional(),
   TURNSTILE_SITE_KEY: z.string().optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),
   NODE_ENV: z.string().optional(),
@@ -29,6 +31,8 @@ const ServerEnv = z.object({
   // Webhook configuration
   WEBHOOK_TOLERANCE_SEC: z.string().optional().default("300"),
   N8N_WEBHOOK_SECRET: z.string().optional(),
+  // Email service configuration
+  RESEND_API_KEY: z.string().optional(),
 });
 
 export const env = {

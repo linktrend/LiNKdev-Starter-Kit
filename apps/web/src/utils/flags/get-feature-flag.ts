@@ -3,7 +3,7 @@
  */
 
 import type { FeatureFlagName } from '@starter/types';
-import { getFlag } from '@/server/mocks/feature-flags.store';
+import { featureFlagsService } from '@/server/services/feature-flags.service';
 
 /**
  * Get a feature flag value for the current organization
@@ -11,8 +11,9 @@ import { getFlag } from '@/server/mocks/feature-flags.store';
  * @param flagName - Name of the feature flag
  * @returns Boolean value indicating if the feature is enabled
  */
-export function getFeatureFlag(orgId: string, flagName: FeatureFlagName): boolean {
-  return getFlag(orgId, flagName);
+export async function getFeatureFlag(orgId: string, flagName: FeatureFlagName): Promise<boolean> {
+  const result = await featureFlagsService.getFeatureFlag(orgId, flagName);
+  return result.isEnabled;
 }
 
 /**
@@ -21,8 +22,8 @@ export function getFeatureFlag(orgId: string, flagName: FeatureFlagName): boolea
  * @param flagName - Name of the feature flag
  * @returns Boolean value indicating if the feature is enabled
  */
-export function isFeatureEnabled(orgId: string, flagName: FeatureFlagName): boolean {
-  return getFeatureFlag(orgId, flagName);
+export async function isFeatureEnabled(orgId: string, flagName: FeatureFlagName): Promise<boolean> {
+  return await getFeatureFlag(orgId, flagName);
 }
 
 /**
@@ -31,6 +32,6 @@ export function isFeatureEnabled(orgId: string, flagName: FeatureFlagName): bool
  * @param flagName - Name of the feature flag
  * @returns Boolean value indicating if the feature is disabled
  */
-export function isFeatureDisabled(orgId: string, flagName: FeatureFlagName): boolean {
-  return !getFeatureFlag(orgId, flagName);
+export async function isFeatureDisabled(orgId: string, flagName: FeatureFlagName): Promise<boolean> {
+  return !(await getFeatureFlag(orgId, flagName));
 }

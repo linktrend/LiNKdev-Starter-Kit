@@ -33,7 +33,7 @@ export async function assertEntitlementWithFlag(
   supabase?: any
 ): Promise<void> {
   // Check feature flag first if provided
-  if (featureFlag && !getFeatureFlag(orgId, featureFlag)) {
+  if (featureFlag && !(await getFeatureFlag(orgId, featureFlag))) {
     throw new TRPCError({
       code: 'FORBIDDEN',
       message: `Feature '${featureKey}' is currently disabled. Please contact support if you believe this is an error.`,
@@ -104,7 +104,7 @@ export async function checkEntitlement(
   isEntitlementMissing?: boolean;
 }> {
   // Check feature flag first if provided
-  if (featureFlag && !getFeatureFlag(orgId, featureFlag)) {
+  if (featureFlag && !(await getFeatureFlag(orgId, featureFlag))) {
     return {
       hasAccess: false,
       reason: `Feature '${featureKey}' is currently disabled`,

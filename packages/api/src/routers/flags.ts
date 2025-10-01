@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 import type { FeatureFlagName, FeatureFlagResponse } from '@starter/types';
+import { featureFlagsService } from '../../../apps/web/src/server/services/feature-flags.service';
 
 /**
  * Input validation schema for getting a feature flag
@@ -32,30 +33,10 @@ export const flagsRouter = createTRPCRouter({
   getFlagStatus: publicProcedure
     .input(getFlagInputSchema)
     .query(async ({ input }): Promise<FeatureFlagResponse> => {
-      const { name } = input;
+      const { orgId, name } = input;
       
-      // In a real implementation, this would query the database or remote config service
-      // For now, we'll use a simple mock implementation
-      const mockFlags: Record<FeatureFlagName, boolean> = {
-        RECORDS_FEATURE_ENABLED: true,
-        BILLING_FEATURE_ENABLED: true,
-        AUDIT_FEATURE_ENABLED: true,
-        SCHEDULING_FEATURE_ENABLED: true,
-        ATTACHMENTS_FEATURE_ENABLED: true,
-        ADVANCED_ANALYTICS_ENABLED: false,
-        BETA_FEATURES_ENABLED: false,
-      };
-
-      // In production, you would:
-      // 1. Query the database for the organization's feature flags
-      // 2. Check for organization-specific overrides
-      // 3. Fall back to default values
-      // 4. Consider user-level overrides if needed
-
-      return {
-        name,
-        isEnabled: mockFlags[name] ?? false,
-      };
+      // Use the live feature flags service
+      return await featureFlagsService.getFeatureFlag(orgId, name);
     }),
 
   /**
@@ -65,22 +46,10 @@ export const flagsRouter = createTRPCRouter({
     .input(z.object({
       orgId: z.string().min(1, 'Organization ID is required'),
     }))
-    .query(async (): Promise<FeatureFlagResponse[]> => {
+    .query(async ({ input }): Promise<FeatureFlagResponse[]> => {
+      const { orgId } = input;
       
-      // Mock implementation - in production, query the database
-      const mockFlags: Record<FeatureFlagName, boolean> = {
-        RECORDS_FEATURE_ENABLED: true,
-        BILLING_FEATURE_ENABLED: true,
-        AUDIT_FEATURE_ENABLED: true,
-        SCHEDULING_FEATURE_ENABLED: true,
-        ATTACHMENTS_FEATURE_ENABLED: true,
-        ADVANCED_ANALYTICS_ENABLED: false,
-        BETA_FEATURES_ENABLED: false,
-      };
-
-      return Object.entries(mockFlags).map(([name, isEnabled]) => ({
-        name: name as FeatureFlagName,
-        isEnabled,
-      }));
+      // Use the live feature flags service
+      return await featureFlagsService.getAllFeatureFlags(orgId);
     }),
 });

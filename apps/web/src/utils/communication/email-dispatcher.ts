@@ -13,7 +13,7 @@ import type {
   ProfileUpdateEmailData,
   TestEmailData
 } from '@starter/types';
-import { mockEmailService } from '../../server/mocks/email.service';
+import { emailService } from '../../server/services/email.service';
 
 /**
  * Email template configurations
@@ -126,7 +126,7 @@ export async function sendWelcomeEmail(
   data: WelcomeEmailData
 ): Promise<void> {
   const payload = composeEmail('welcome', data, to);
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -139,7 +139,7 @@ export async function sendPasswordResetEmail(
   data: PasswordResetEmailData
 ): Promise<void> {
   const payload = composeEmail('password-reset', data, to);
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -152,7 +152,7 @@ export async function sendInvoiceEmail(
   data: InvoiceEmailData
 ): Promise<void> {
   const payload = composeEmail('invoice', data, to);
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -165,7 +165,7 @@ export async function sendProfileUpdateEmail(
   data: ProfileUpdateEmailData
 ): Promise<void> {
   const payload = composeEmail('profile-update', data, to);
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -178,7 +178,7 @@ export async function sendTestEmail(
   data: TestEmailData
 ): Promise<void> {
   const payload = composeEmail('test', data, to);
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -186,7 +186,7 @@ export async function sendTestEmail(
  * @param payload - Complete email payload
  */
 export async function dispatchEmail(payload: EmailPayload): Promise<void> {
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }
 
 /**
@@ -194,5 +194,5 @@ export async function dispatchEmail(payload: EmailPayload): Promise<void> {
  * @param payload - Typed email payload
  */
 export async function dispatchTypedEmail(payload: TypedEmailPayload): Promise<void> {
-  await mockEmailService.sendEmail(payload);
+  await emailService.sendEmail(payload);
 }

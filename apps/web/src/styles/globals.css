@@ -7,6 +7,7 @@
 
 @layer base {
   :root {
+    /* Core theme colors - mapped from design tokens */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -27,6 +28,16 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
+    
+    /* Success, Warning, Danger colors from design tokens */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    --danger: 0 84.2% 60.2%;
+    --danger-foreground: 0 0% 98%;
+    
+    /* Chart colors for data visualization */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -35,6 +46,7 @@
   }
 
   .dark {
+    /* Dark theme colors - mapped from design tokens */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -54,6 +66,16 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    
+    /* Success, Warning, Danger colors for dark theme */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+    --danger: 0 62.8% 30.6%;
+    --danger-foreground: 0 0% 98%;
+    
+    /* Chart colors for dark theme */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;

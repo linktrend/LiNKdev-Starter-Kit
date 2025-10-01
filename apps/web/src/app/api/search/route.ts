@@ -1,11 +1,7 @@
 import { getPages } from '@/utils/source';
 import { createSearchAPI } from 'fumadocs-core/search/server';
 
+// Temporarily disable search API due to build issues
 export const { GET } = createSearchAPI('advanced', {
-  indexes: getPages().map((page: any) => ({
-    title: page.data.title,
-    structuredData: page.data.exports.structuredData,
-    id: page.url,
-    url: page.url
-  }))
+  indexes: []
 });

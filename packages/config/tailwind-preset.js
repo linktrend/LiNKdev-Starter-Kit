@@ -9,7 +9,9 @@ const mapColors = (t) => {
     if (typeof value === 'object' && value !== null) {
       // Handle nested objects like { light: "...", dark: "..." }
       if (value.light && value.dark) {
-        flattened[key] = `hsl(var(--color-${key}))`;
+        // Use CSS variables for themeable colors
+        flattened[key] = `hsl(var(--${key}))`;
+        flattened[`${key}-foreground`] = `hsl(var(--${key}-foreground))`;
       } else {
         // Handle other nested structures
         flattened[key] = value;

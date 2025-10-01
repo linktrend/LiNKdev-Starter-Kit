@@ -3,10 +3,7 @@
 import * as React from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/trpc/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Badge, Separator } from '@starter/ui';
 import { 
   CreditCard, 
   Calendar, 
@@ -81,30 +78,30 @@ export default function BillingSettingsPage() {
   const getStatusIcon = (status?: string) => {
     switch (status) {
       case 'active':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'trialing':
-        return <Clock className="h-4 w-4 text-blue-500" />;
+        return <Clock className="h-4 w-4 text-primary" />;
       case 'past_due':
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+        return <AlertCircle className="h-4 w-4 text-warning" />;
       case 'canceled':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       default:
-        return <Clock className="h-4 w-4 text-gray-500" />;
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success/10 text-success';
       case 'trialing':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary/10 text-primary';
       case 'past_due':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning/10 text-warning';
       case 'canceled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/10 text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -281,9 +278,9 @@ export default function BillingSettingsPage() {
 
       {/* Offline Mode Notice */}
       {subscriptionData && 'offline' in subscriptionData && subscriptionData.offline ? (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-warning/20 bg-warning/5">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-yellow-800">
+            <div className="flex items-center gap-2 text-warning">
               <AlertCircle className="h-4 w-4" />
               <span className="text-sm font-medium">
                 Offline Mode: Billing data is simulated for template development.

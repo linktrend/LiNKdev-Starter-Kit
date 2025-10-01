@@ -3,6 +3,7 @@
 
 import { TRPCError } from '@trpc/server';
 import { AuditContext, AuditEventData } from '@starter/types';
+import { logger } from '@/lib/logging/logger';
 
 /**
  * Log an organization-related event
@@ -11,18 +12,12 @@ export async function logOrgEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
     // This would be called from tRPC context
     // For now, just log the event
-    console.log('AUDIT: Org event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Org event logged
     
     // In a real implementation, this would call the audit router
     // await auditRouter.append.mutate({
@@ -33,7 +28,13 @@ export async function logOrgEvent(
     //   metadata: metadata || {},
     // });
   } catch (error) {
-    console.error('Error logging org event:', error);
+    logger.error('Error logging org event', { 
+      service: 'audit', 
+      operation: 'logOrgEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
     // Don't throw - audit failures shouldn't break main flows
   }
 }
@@ -45,18 +46,18 @@ export async function logRecordEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Record event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Record event logged
   } catch (error) {
-    console.error('Error logging record event:', error);
+    logger.error('Error logging record event', { 
+      service: 'audit', 
+      operation: 'logRecordEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -67,18 +68,18 @@ export async function logReminderEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Reminder event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Reminder event logged
   } catch (error) {
-    console.error('Error logging reminder event:', error);
+    logger.error('Error logging reminder event', { 
+      service: 'audit', 
+      operation: 'logReminderEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -89,18 +90,18 @@ export async function logBillingEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Billing event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Billing event logged
   } catch (error) {
-    console.error('Error logging billing event:', error);
+    logger.error('Error logging billing event', { 
+      service: 'audit', 
+      operation: 'logBillingEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -111,18 +112,18 @@ export async function logMemberEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Member event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Member event logged
   } catch (error) {
-    console.error('Error logging member event:', error);
+    logger.error('Error logging member event', { 
+      service: 'audit', 
+      operation: 'logMemberEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -133,18 +134,18 @@ export async function logScheduleEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Schedule event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Schedule event logged
   } catch (error) {
-    console.error('Error logging schedule event:', error);
+    logger.error('Error logging schedule event', { 
+      service: 'audit', 
+      operation: 'logScheduleEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -155,18 +156,18 @@ export async function logAutomationEvent(
   context: AuditContext,
   action: string,
   entityId: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<void> {
   try {
-    console.log('AUDIT: Automation event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      action,
-      entityId,
-      metadata,
-    });
+    // AUDIT: Automation event logged
   } catch (error) {
-    console.error('Error logging automation event:', error);
+    logger.error('Error logging automation event', { 
+      service: 'audit', 
+      operation: 'logAutomationEvent',
+      orgId: context.orgId,
+      action,
+      entityId 
+    }, error as Error);
   }
 }
 
@@ -178,12 +179,15 @@ export async function logAuditEvent(
   eventData: AuditEventData
 ): Promise<void> {
   try {
-    console.log('AUDIT: Generic event logged', {
-      orgId: context.orgId,
-      actorId: context.actorId,
-      ...eventData,
-    });
+    // AUDIT: Generic event logged
   } catch (error) {
-    console.error('Error logging audit event:', error);
+    logger.error('Error logging audit event', { 
+      service: 'audit', 
+      operation: 'logAuditEvent',
+      orgId: context.orgId,
+      action: eventData.action,
+      entityType: eventData.entityType,
+      entityId: eventData.entityId 
+    }, error as Error);
   }
 }

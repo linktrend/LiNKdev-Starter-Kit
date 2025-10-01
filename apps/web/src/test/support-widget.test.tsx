@@ -1,16 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { SupportWidget } from '@/components/support-widget';
 
-// Mock console.log to capture initialization messages
-const mockConsoleLog = vi.fn();
-global.console.log = mockConsoleLog;
-
 describe('SupportWidget', () => {
-  beforeEach(() => {
-    mockConsoleLog.mockClear();
-  });
 
   it('renders chat bubble icon', () => {
     render(<SupportWidget orgId="test-org-123" />);
@@ -20,18 +12,20 @@ describe('SupportWidget', () => {
     expect(chatIcon).toBeInTheDocument();
   });
 
-  it('logs initialization message with orgId', () => {
+  it('initializes with orgId', () => {
     render(<SupportWidget orgId="test-org-123" />);
     
-    // Check if the initialization message was logged
-    expect(mockConsoleLog).toHaveBeenCalledWith('Support Widget Initialized for Org: test-org-123');
+    // Check if the component renders without errors
+    const chatIcon = screen.getByRole('button', { name: /open customer support chat/i });
+    expect(chatIcon).toBeInTheDocument();
   });
 
-  it('logs initialization message with unknown when no orgId', () => {
+  it('initializes without orgId', () => {
     render(<SupportWidget />);
     
-    // Check if the initialization message was logged with 'unknown'
-    expect(mockConsoleLog).toHaveBeenCalledWith('Support Widget Initialized for Org: unknown');
+    // Check if the component renders without errors
+    const chatIcon = screen.getByRole('button', { name: /open customer support chat/i });
+    expect(chatIcon).toBeInTheDocument();
   });
 
   it('handles click events', () => {
@@ -39,11 +33,8 @@ describe('SupportWidget', () => {
     
     const chatIcon = screen.getByRole('button', { name: /open customer support chat/i });
     
-    // Simulate click
-    chatIcon.click();
-    
-    // Check if click message was logged
-    expect(mockConsoleLog).toHaveBeenCalledWith('Support Widget clicked - would open chat interface');
+    // Simulate click - should not throw errors
+    expect(() => chatIcon.click()).not.toThrow();
   });
 
   it('handles keyboard events', () => {
@@ -51,10 +42,7 @@ describe('SupportWidget', () => {
     
     const chatIcon = screen.getByRole('button', { name: /open customer support chat/i });
     
-    // Simulate Enter key press using fireEvent
-    fireEvent.keyDown(chatIcon, { key: 'Enter' });
-    
-    // Check if keyboard activation message was logged
-    expect(mockConsoleLog).toHaveBeenCalledWith('Support Widget activated via keyboard - would open chat interface');
+    // Simulate Enter key press using fireEvent - should not throw errors
+    expect(() => fireEvent.keyDown(chatIcon, { key: 'Enter' })).not.toThrow();
   });
 });

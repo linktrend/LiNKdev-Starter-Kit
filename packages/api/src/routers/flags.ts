@@ -4,8 +4,8 @@
 
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../trpc';
-import type { FeatureFlagName, FeatureFlagResponse } from '@starter/types';
-import { featureFlagsService } from '../../../apps/web/src/server/services/feature-flags.service';
+import type { FeatureFlagResponse } from '@starter/types';
+import { featureFlagsService } from '../services/feature-flags.service';
 
 /**
  * Input validation schema for getting a feature flag

@@ -2,7 +2,7 @@ import { createServerComponentClient } from '@/utils/supabase/server';
 import { signPayload, createWebhookHeaders } from '@/utils/automation/signing';
 import { cookies } from 'next/headers';
 
-const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
+const getWebhookUrl = () => process.env.N8N_WEBHOOK_URL;
 const MAX_ATTEMPTS = 8;
 const BACKOFF_SCHEDULE = [
   60,      // 1 minute
@@ -92,11 +92,7 @@ export async function enqueueEvent(
     throw new Error(`Failed to enqueue event: ${error.message}`);
   }
   
-  console.log('AUTOMATION: Event enqueued', {
-    eventId: data.id,
-    event,
-    orgId,
-  });
+  // Event enqueued successfully
   
   return data.id;
 }
@@ -130,7 +126,8 @@ export async function getPendingEvents(limit = 50): Promise<OutboxEvent[]> {
 export async function deliverEvent(event: OutboxEvent): Promise<DeliveryResult> {
   const startTime = Date.now();
   
-  if (!WEBHOOK_URL) {
+  const webhookUrl = getWebhookUrl();
+  if (!webhookUrl) {
     console.warn('AUTOMATION: No webhook URL configured, simulating delivery');
     return {
       success: true,
@@ -148,7 +145,7 @@ export async function deliverEvent(event: OutboxEvent): Promise<DeliveryResult> 
     const signedPayload = signPayload(body);
     const headers = createWebhookHeaders(signedPayload);
     
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers,
       body,
@@ -175,11 +172,7 @@ export async function deliverEvent(event: OutboxEvent): Promise<DeliveryResult> 
       };
     }
     
-    console.log('AUTOMATION: Event delivered successfully', {
-      eventId: event.id,
-      statusCode: response.status,
-      latencyMs,
-    });
+    // Event delivered successfully
     
     return {
       success: true,
@@ -271,7 +264,7 @@ export async function processPendingEvents(): Promise<{
   let successful = 0;
   let failed = 0;
   
-  console.log('AUTOMATION: Processing pending events', { count: events.length });
+  // Processing pending events
   
   for (const event of events) {
     try {
@@ -295,11 +288,7 @@ export async function processPendingEvents(): Promise<{
     }
   }
   
-  console.log('AUTOMATION: Batch processing complete', {
-    processed,
-    successful,
-    failed,
-  });
+  // Batch processing complete
   
   return { processed, successful, failed };
 }

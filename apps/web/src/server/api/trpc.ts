@@ -3,10 +3,15 @@ import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
 // Define TRPCContext locally since it's not being exported properly
 type TRPCContext = {
-  user: any;
-  supabase: any;
-  posthog: any;
-  headers?: any;
+  user: {
+    id: string;
+    email?: string;
+  } | null;
+  supabase: ReturnType<typeof createClient>;
+  posthog: {
+    capture: (event: string, properties?: Record<string, unknown>) => void;
+  } | null;
+  headers?: Headers;
 };
 import { 
   sendProfileUpdateEmail, 
@@ -19,8 +24,8 @@ export const createTRPCContext = async (opts?: { headers?: Headers }): Promise<T
   
   // PostHog client (optional)
   const posthog = process.env.NEXT_PUBLIC_POSTHOG_KEY ? {
-    capture: (event: any) => {
-      console.log('PostHog event:', event);
+    capture: (event: string, properties?: Record<string, unknown>) => {
+      // PostHog event tracked
     }
   } : null;
 

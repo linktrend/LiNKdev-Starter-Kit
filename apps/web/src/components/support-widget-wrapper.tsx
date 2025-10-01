@@ -19,7 +19,7 @@ export function SupportWidgetWrapper() {
 
   useEffect(() => {
     // Extract orgId from URL path (e.g., /org/[orgId]/...)
-    const orgMatch = pathname.match(/\/org\/([^\/]+)/);
+    const orgMatch = pathname.match(/\/org\/([^/]+)/);
     if (orgMatch) {
       setOrgId(orgMatch[1]);
       return;

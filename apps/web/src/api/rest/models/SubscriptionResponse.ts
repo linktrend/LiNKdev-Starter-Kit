@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export type SubscriptionResponse = {
     org_id?: string;
     /**

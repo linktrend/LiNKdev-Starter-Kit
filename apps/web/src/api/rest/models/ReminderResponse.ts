@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export type ReminderResponse = {
     id?: string;
     org_id?: string;

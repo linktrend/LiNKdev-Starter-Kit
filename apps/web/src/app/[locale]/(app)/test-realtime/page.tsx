@@ -86,9 +86,9 @@ export default function TestRealtimePage() {
             <p><strong>Instructions:</strong></p>
             <ol className="list-decimal list-inside space-y-1 mt-2">
               <li>Open the Audit Logs page in another tab</li>
-              <li>Click the "Insert Test Audit Log" button above</li>
+              <li>Click the &quot;Insert Test Audit Log&quot; button above</li>
               <li>Check if the new log appears instantly on the Audit Logs page</li>
-              <li>Look for the "Live" indicator in the top-right of the Audit Logs page</li>
+              <li>Look for the &quot;Live&quot; indicator in the top-right of the Audit Logs page</li>
             </ol>
           </div>
         </CardContent>

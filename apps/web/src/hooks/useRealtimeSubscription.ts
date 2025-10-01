@@ -45,7 +45,7 @@ export function useRealtimeSubscription<T extends TableName>({
   const [data, setData] = useState<TableRow<T> | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const subscriptionRef = useRef<any>(null);
+  const subscriptionRef = useRef<unknown>(null);
 
   useEffect(() => {
     if (!enabled || !orgId) {
@@ -58,7 +58,7 @@ export function useRealtimeSubscription<T extends TableName>({
     const subscription = supabase
       .channel(`realtime-${table}-${orgId}`)
       .on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
@@ -66,13 +66,7 @@ export function useRealtimeSubscription<T extends TableName>({
           filter: `org_id=eq.${orgId}`,
         },
         (payload: RealtimePostgresChangesPayload<TableRow<T>>) => {
-          console.log('Realtime event received:', {
-            table,
-            orgId,
-            eventType: payload.eventType,
-            new: payload.new,
-            old: payload.old,
-          });
+          // Realtime event received
 
           // Update local state with the latest data
           if (payload.new) {
@@ -94,7 +88,7 @@ export function useRealtimeSubscription<T extends TableName>({
         }
       )
       .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
+        // Realtime subscription status updated
         setIsConnected(status === 'SUBSCRIBED');
         
         if (status === 'CHANNEL_ERROR') {
@@ -111,8 +105,8 @@ export function useRealtimeSubscription<T extends TableName>({
     // Cleanup function
     return () => {
       if (subscriptionRef.current) {
-        console.log('Cleaning up realtime subscription for table:', table);
-        supabase.removeChannel(subscriptionRef.current);
+        // Cleaning up realtime subscription
+        supabase.removeChannel(subscriptionRef.current as any);
         subscriptionRef.current = null;
       }
     };
@@ -123,7 +117,7 @@ export function useRealtimeSubscription<T extends TableName>({
     return () => {
       if (subscriptionRef.current) {
         const supabase = supabaseBrowser();
-        supabase.removeChannel(subscriptionRef.current);
+        supabase.removeChannel(subscriptionRef.current as any);
       }
     };
   }, []);

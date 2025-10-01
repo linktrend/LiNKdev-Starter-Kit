@@ -16,12 +16,12 @@ export function initSentry(dsn?: string, environment?: string): void {
   
   // Only initialize if we have a DSN and we're in production or explicitly configured
   if (!sentryDsn || sentryDsn === 'https://your_sentry_dsn@sentry.io/project_id') {
-    console.log('Sentry not initialized: No valid DSN provided');
+    console.warn('Sentry not initialized: No valid DSN provided');
     return;
   }
   
   if (sentryEnv === 'development' && !process.env.NEXT_PUBLIC_SENTRY_DSN) {
-    console.log('Sentry not initialized: Development environment without explicit DSN');
+    console.warn('Sentry not initialized: Development environment without explicit DSN');
     return;
   }
   
@@ -34,7 +34,7 @@ export function initSentry(dsn?: string, environment?: string): void {
   });
   
   inited = true;
-  console.log('Sentry initialized successfully');
+  // Sentry initialized successfully
 }
 
 export { Sentry };

@@ -16,13 +16,13 @@ export function initPostHog(apiKey?: string, host?: string): void {
   
   // Only initialize if we have a valid API key
   if (!posthogKey || posthogKey === 'phc_your_posthog_key') {
-    console.log('PostHog not initialized: No valid API key provided');
+    console.warn('PostHog not initialized: No valid API key provided');
     return;
   }
   
   // Only initialize in production or when explicitly configured
   if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_POSTHOG_KEY) {
-    console.log('PostHog not initialized: Development environment without explicit key');
+    console.warn('PostHog not initialized: Development environment without explicit key');
     return;
   }
   
@@ -36,7 +36,7 @@ export function initPostHog(apiKey?: string, host?: string): void {
   });
   
   inited = true;
-  console.log('PostHog initialized successfully');
+  // PostHog initialized successfully
 }
 
 export { posthog };

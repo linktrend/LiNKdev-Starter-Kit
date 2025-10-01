@@ -96,7 +96,7 @@ describe('Audit Logs Module', () => {
       });
 
       expect(typeof result).toBe('string');
-      expect(result).toContain('id,org_id,actor_id,action,entity_type,entity_id,metadata,created_at');
+      expect(result).toContain('"id","org_id","actor_id","action","entity_type","entity_id","metadata","created_at"');
     });
   });
 
@@ -232,7 +232,7 @@ describe('Audit Logs Module', () => {
       
       // Check header
       const header = lines[0];
-      expect(header).toContain('id,org_id,actor_id,action,entity_type,entity_id,metadata,created_at');
+      expect(header).toContain('"id","org_id","actor_id","action","entity_type","entity_id","metadata","created_at"');
     });
 
     it('should handle empty results', async () => {

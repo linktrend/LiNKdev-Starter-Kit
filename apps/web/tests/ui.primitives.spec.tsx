@@ -11,35 +11,35 @@ describe('UI Primitives', () => {
       render(<Button>Click me</Button>);
       const button = screen.getByRole('button', { name: /click me/i });
       expect(button).toBeTruthy();
-      expect(button.className).toContain('bg-zinc-900');
-      expect(button.className).toContain('text-zinc-50');
+      expect(button.className).toContain('bg-primary');
+      expect(button.className).toContain('text-primary-foreground');
     });
 
     it('renders with secondary variant', () => {
       render(<Button variant="secondary">Secondary</Button>);
       const button = screen.getByRole('button', { name: /secondary/i });
-      expect(button.className).toContain('bg-zinc-100');
-      expect(button.className).toContain('text-zinc-900');
+      expect(button.className).toContain('bg-secondary');
+      expect(button.className).toContain('text-secondary-foreground');
     });
 
     it('renders with outline variant', () => {
       render(<Button variant="outline">Outline</Button>);
       const button = screen.getByRole('button', { name: /outline/i });
       expect(button.className).toContain('border');
-      expect(button.className).toContain('border-zinc-200');
+      expect(button.className).toContain('border-input');
     });
 
     it('renders with ghost variant', () => {
       render(<Button variant="ghost">Ghost</Button>);
       const button = screen.getByRole('button', { name: /ghost/i });
-      expect(button.className).toContain('hover:bg-zinc-100');
+      expect(button.className).toContain('hover:bg-accent');
     });
 
     it('renders with destructive variant', () => {
       render(<Button variant="destructive">Destructive</Button>);
       const button = screen.getByRole('button', { name: /destructive/i });
-      expect(button.className).toContain('bg-red-500');
-      expect(button.className).toContain('text-zinc-50');
+      expect(button.className).toContain('bg-destructive');
+      expect(button.className).toContain('text-destructive-foreground');
     });
 
     it('renders with different sizes', () => {

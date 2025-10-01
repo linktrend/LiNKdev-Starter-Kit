@@ -6,6 +6,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { FeatureFlagName, FeatureFlagResponse } from '@starter/types';
 import { getFlag } from '../mocks/feature-flags.store';
+import { logger } from '@/lib/logging/logger';
 
 /**
  * Live feature flags service implementation using Supabase
@@ -33,7 +34,12 @@ export class LiveFeatureFlagsService {
         .single();
 
       if (error) {
-        console.error('Error fetching feature flag:', error);
+        logger.error('Error fetching feature flag', { 
+          service: 'feature-flags', 
+          operation: 'getFeatureFlag',
+          orgId,
+          flagName 
+        }, error as Error);
         // Return default value on error
         return {
           name: flagName,
@@ -46,7 +52,12 @@ export class LiveFeatureFlagsService {
         isEnabled: data?.is_enabled ?? false,
       };
     } catch (error) {
-      console.error('Error in getFeatureFlag:', error);
+      logger.error('Error in getFeatureFlag', { 
+        service: 'feature-flags', 
+        operation: 'getFeatureFlag',
+        orgId,
+        flagName 
+      }, error as Error);
       return {
         name: flagName,
         isEnabled: false,
@@ -67,7 +78,11 @@ export class LiveFeatureFlagsService {
         .eq('org_id', orgId);
 
       if (error) {
-        console.error('Error fetching feature flags:', error);
+        logger.error('Error fetching feature flags', { 
+          service: 'feature-flags', 
+          operation: 'getAllFeatureFlags',
+          orgId 
+        }, error as Error);
         return [];
       }
 
@@ -76,7 +91,11 @@ export class LiveFeatureFlagsService {
         isEnabled: flag.is_enabled,
       })) ?? [];
     } catch (error) {
-      console.error('Error in getAllFeatureFlags:', error);
+      logger.error('Error in getAllFeatureFlags', { 
+        service: 'feature-flags', 
+        operation: 'getAllFeatureFlags',
+        orgId 
+      }, error as Error);
       return [];
     }
   }
@@ -99,11 +118,23 @@ export class LiveFeatureFlagsService {
         });
 
       if (error) {
-        console.error('Error setting feature flag:', error);
+        logger.error('Error setting feature flag', { 
+          service: 'feature-flags', 
+          operation: 'setFeatureFlag',
+          orgId,
+          flagName,
+          isEnabled 
+        }, error as Error);
         throw new Error('Failed to set feature flag');
       }
     } catch (error) {
-      console.error('Error in setFeatureFlag:', error);
+      logger.error('Error in setFeatureFlag', { 
+        service: 'feature-flags', 
+        operation: 'setFeatureFlag',
+        orgId,
+        flagName,
+        isEnabled 
+      }, error as Error);
       throw error;
     }
   }
@@ -154,7 +185,7 @@ export function createFeatureFlagsService(): {
     },
     setFeatureFlag: async () => {
       // Mock implementation - no-op
-      console.log('Mock feature flag service: setFeatureFlag called (no-op)');
+      // Mock feature flag service: setFeatureFlag called (no-op)
     },
   };
 }

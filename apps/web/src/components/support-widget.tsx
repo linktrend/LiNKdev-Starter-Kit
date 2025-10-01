@@ -23,7 +23,7 @@ export function SupportWidget({ orgId, className }: SupportWidgetProps) {
   useEffect(() => {
     // Simulate initialization and log to console
     const orgContext = orgId || 'unknown';
-    console.log(`Support Widget Initialized for Org: ${orgContext}`);
+    // Support Widget Initialized
     setIsInitialized(true);
   }, [orgId]);
 
@@ -48,13 +48,13 @@ export function SupportWidget({ orgId, className }: SupportWidgetProps) {
       tabIndex={0}
       aria-label="Open customer support chat"
       onClick={() => {
-        console.log('Support Widget clicked - would open chat interface');
+        // Support Widget clicked - would open chat interface
         // Future: Open chat modal or redirect to support
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          console.log('Support Widget activated via keyboard - would open chat interface');
+          // Support Widget activated via keyboard - would open chat interface
         }
       }}
     >

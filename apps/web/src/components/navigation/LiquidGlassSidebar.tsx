@@ -49,16 +49,9 @@ export function LiquidGlassSidebar({ links, title, logo }: LiquidGlassSidebarPro
                 className={cn(
                   'flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200',
                   'text-sm font-medium',
-                  isActive ? [
-                    // Active state with subtle glass highlight
-                    'bg-white/40 text-primary',
-                    'shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),inset_0_-1px_2px_rgba(0,0,0,0.1)]',
-                    'dark:bg-white/20'
-                  ] : [
-                    // Hover state
-                    'text-foreground/80 hover:text-foreground',
-                    'hover:bg-white/20 dark:hover:bg-white/10'
-                  ]
+                  isActive 
+                    ? 'bg-white/40 text-primary shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/20'
+                    : 'text-foreground/80 hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10'
                 )}
               >
                 <Icon className="h-5 w-5" />

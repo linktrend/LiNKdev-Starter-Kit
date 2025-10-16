@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 // import { Toaster } from '@starter/ui';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 import localFont from 'next/font/local';
 import type { Viewport } from 'next';
 import { RootProvider } from 'fumadocs-ui/provider';
@@ -29,9 +29,9 @@ const fontSans = Inter({
   variable: '--font-sans'
 });
 
-// Geist Mono font for code/monospace
-const fontMono = localFont({
-  src: '../../../assets/fonts/GeistMono-Variable.woff2',
+// JetBrains Mono font for code/monospace
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
   variable: '--font-mono'
 });
 

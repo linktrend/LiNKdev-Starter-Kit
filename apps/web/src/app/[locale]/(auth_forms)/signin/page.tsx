@@ -14,7 +14,7 @@ import { signInWithOAuth } from '@/utils/auth-helpers/client';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Github, Chrome } from 'lucide-react';
+import { Github, Chrome, ArrowLeft as ArrowLeftIcon } from 'lucide-react';
 import { useToast } from '@starter/ui';
 
 export default function SignIn() {
@@ -61,7 +61,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[100dvh] flex-col liquid-glass-bg-blue px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-8">
         <Link
           href="/"

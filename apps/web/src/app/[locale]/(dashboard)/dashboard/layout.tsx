@@ -13,8 +13,17 @@ import {
   getUser,
   getUserDetails,
 } from '@/utils/supabase/queries';
-import { Settings, User, Eclipse } from 'lucide-react';
+import { Settings, User, Eclipse, Home, LayoutDashboard } from 'lucide-react';
+import { LiquidGlassSidebar } from '@/components/navigation/LiquidGlassSidebar';
 // import { ThemeToggle } from '@starter/ui';
+// User app navigation links
+const userAppLinks = [
+  { href: '/dashboard', label: 'Home', icon: Home },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/profile', label: 'Profile', icon: User },
+  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+];
+
 // Inline Navbar component for template
 const Navbar = ({ userDetails, navConfig, userId }: { userDetails: any; navConfig: NavItem[]; userId: string }) => (
   <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -53,7 +62,7 @@ const Sidebar = ({ navConfig }: { navConfig: NavItem[] }) => (
           <div
             className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8 ${
               isDisabled
-                ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                ? 'text-muted-foreground bg-muted cursor-not-allowed'
                 : isActive
                   ? 'bg-accent text-accent-foreground'
                   : 'text-muted-foreground hover:text-foreground'
@@ -104,31 +113,15 @@ export default async function DashboardLayout({
     // const pathname = headersList.get('x-current-path') || ''
 
     return (
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-          <Sidebar navConfig={navConfig as NavItem[]} />
-        <nav className="mt-auto flex flex-col items-center gap-2 px-2 sm:py-5">
-          <Link
-            href="/dashboard/account"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            prefetch={false}
-          >
-            <User className="h-5 w-5" />
-            <span className="sr-only">Profile</span>
-          </Link>
-          <Link
-            href="/dashboard/settings"
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            prefetch={false}
-          >
-            <Settings className="h-5 w-5" />
-            <span className="sr-only">Settings</span>
-          </Link>
-        </nav>
-        </aside>
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className="flex min-h-screen w-full">
+        <LiquidGlassSidebar 
+          links={userAppLinks} 
+          title="Dashboard"
+          logo={<Eclipse className="h-6 w-6" />}
+        />
+        <div className="flex flex-col flex-1 lg:pl-64">
           <Navbar userDetails={userDetails} navConfig={navConfig as NavItem[]} userId={user.id} />
-          <main className="grid flex-1 items-start p-4 sm:px-6 sm:py-0 md:gap-8">
+          <main className="flex-1 p-4 sm:px-6 sm:py-4">
             {children}
           </main>
         </div>

@@ -2,43 +2,51 @@
   "color": {
     "background": {
       "light": "0 0% 100%",
-      "dark": "240 10% 3.9%"
+      "dark": "0 0% 10%"
     },
     "foreground": {
-      "light": "240 10% 3.9%",
-      "dark": "0 0% 98%"
+      "light": "0 0% 20%",
+      "dark": "0 0% 95%"
     },
     "muted": {
-      "light": "240 4.8% 95.9%",
-      "dark": "240 3.7% 15.9%"
+      "light": "210 20% 98%",
+      "dark": "215 16% 15%"
     },
     "muted-foreground": {
-      "light": "240 3.8% 46.1%",
-      "dark": "240 5% 64.9%"
+      "light": "215 16% 35%",
+      "dark": "215 16% 65%"
     },
     "primary": {
-      "light": "240 5.9% 10%",
-      "dark": "0 0% 98%"
+      "light": "217 91% 60%",
+      "dark": "217 91% 60%"
     },
     "primary-foreground": {
-      "light": "0 0% 98%",
-      "dark": "240 5.9% 10%"
+      "light": "0 0% 100%",
+      "dark": "0 0% 100%"
     },
     "secondary": {
-      "light": "240 4.8% 95.9%",
-      "dark": "240 3.7% 15.9%"
+      "light": "220 13% 95%",
+      "dark": "215 16% 15%"
     },
     "secondary-foreground": {
-      "light": "240 5.9% 10%",
-      "dark": "0 0% 98%"
+      "light": "215 16% 35%",
+      "dark": "0 0% 100%"
+    },
+    "accent": {
+      "light": "199 89% 94%",
+      "dark": "199 89% 20%"
+    },
+    "accent-foreground": {
+      "light": "217 91% 60%",
+      "dark": "199 89% 94%"
     },
     "border": {
-      "light": "240 5.9% 90%",
-      "dark": "240 3.7% 15.9%"
+      "light": "214 32% 91%",
+      "dark": "215 16% 25%"
     },
     "ring": {
-      "light": "240 5.9% 10%",
-      "dark": "240 4.9% 83.9%"
+      "light": "217 91% 60%",
+      "dark": "217 91% 60%"
     },
     "success": {
       "light": "142 76% 36%",
@@ -88,7 +96,7 @@
   },
   "font": {
     "sans": ["Inter", "system-ui", "sans-serif"],
-    "mono": ["JetBrains Mono", "Menlo", "Monaco", "monospace"],
+    "mono": ["Geist Mono", "JetBrains Mono", "Menlo", "Monaco", "monospace"],
     "size": {
       "xs": "0.75rem",
       "sm": "0.875rem",

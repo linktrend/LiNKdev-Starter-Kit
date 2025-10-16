@@ -9,7 +9,14 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'rounded-lg border border-zinc-200 bg-white text-zinc-950 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50',
+      'rounded-lg border shadow-sm',
+      // Liquid Glass effect
+      'bg-white/25 backdrop-blur-[40px] backdrop-saturate-[250%]',
+      'border-white/40',
+      'shadow-[0_32px_80px_rgba(0,0,0,0.3),0_16px_64px_rgba(255,255,255,0.2),inset_0_3px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.3)]',
+      // Dark mode adjustments
+      'dark:bg-black/25 dark:border-white/20',
+      'dark:shadow-[0_32px_80px_rgba(0,0,0,0.5),0_16px_64px_rgba(255,255,255,0.1),inset_0_3px_0_rgba(255,255,255,0.3),inset_0_-1px_0_rgba(255,255,255,0.15)]',
       className
     )}
     {...props}

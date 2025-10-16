@@ -45,7 +45,7 @@ export default function HelpPage() {
 
       {/* Quick Help Categories */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <BookOpen className="h-6 w-6 text-blue-600" />
@@ -57,7 +57,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <FileText className="h-6 w-6 text-green-600" />
@@ -69,7 +69,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Video className="h-6 w-6 text-purple-600" />
@@ -81,7 +81,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="h-6 w-6 text-orange-600" />

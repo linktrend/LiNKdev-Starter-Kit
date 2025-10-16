@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 // import { Toaster } from '@starter/ui';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Inter as FontSans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import type { Viewport } from 'next';
 import { RootProvider } from 'fumadocs-ui/provider';
@@ -24,9 +24,15 @@ export const viewport: Viewport = {
 
 import '@/styles/globals.css';
 
-const fontSans = FontSans({
+const fontSans = Inter({
   subsets: ['latin'],
   variable: '--font-sans'
+});
+
+// Geist Mono font for code/monospace
+const fontMono = localFont({
+  src: '../../../assets/fonts/GeistMono-Variable.woff2',
+  variable: '--font-mono'
 });
 
 // Font files can be colocated inside of `pages`
@@ -91,8 +97,9 @@ export default async function LocaleLayout({
       <head />
       <body
         className={cn(
-          'min-h-screen bg-background font-mono antialiased',
+          'min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
+          fontMono.variable,
           fontHeading.variable
         )}
       >

@@ -2,7 +2,7 @@ import { CalendarIcon, FileTextIcon } from "@radix-ui/react-icons";
 import { BellIcon, Share2Icon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Calendar } from "@starter/ui";
+// import { Calendar } from "@starter/ui";
 import { AnimatedBeamMultipleOutputDemo } from "@/components/animated-beam";
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import Marquee from "@/components/magicui/marquee";
@@ -97,11 +97,9 @@ const features = [
     href: "#",
     cta: "Learn more",
     background: (
-      <Calendar
-        mode="single"
-        selected={new Date(2022, 4, 11, 0, 0, 0)}
-        className="absolute right-0 top-10 origin-top rounded-md border transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:scale-105"
-      />
+      <div className="absolute right-0 top-10 origin-top rounded-md border transition-all duration-300 ease-out [mask-image:linear-gradient(to_top,transparent_40%,#000_100%)] group-hover:scale-105">
+        {/* Calendar component temporarily disabled */}
+      </div>
     ),
   },
 ];

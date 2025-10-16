@@ -1,7 +1,7 @@
 import { marketingConfig } from '@/config/marketing';
 
 import CircularNavigation from '@/components/navigation';
-import FooterPrimary from '@/components/footer-blog';
+import FooterBlog from '@/components/footer-blog';
 import React from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { getUser } from '@/utils/supabase/queries';
@@ -30,7 +30,7 @@ export default async function MarketingLayout({
         </div>
       </div>
       <main className="flex-1">{children}</main>
-      <FooterPrimary />
+      <FooterBlog />
     </div>
   );
 }

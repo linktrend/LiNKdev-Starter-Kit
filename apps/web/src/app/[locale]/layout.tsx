@@ -3,7 +3,7 @@ import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
-import { Toaster } from '@starter/ui';
+// import { Toaster } from '@starter/ui';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Inter as FontSans } from 'next/font/google';
@@ -84,8 +84,6 @@ export default async function LocaleLayout({
   children,
   params: { locale }
 }: PropsWithChildren<{ params: { locale: string } }>) {
-  // Providing all messages to the client
-  // side is the easiest way to get started
   const messages = await getMessages();
 
   return (
@@ -101,12 +99,13 @@ export default async function LocaleLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <RootProvider>
             <NextIntlClientProvider messages={messages}>
-              <TRPCReactProvider>{children}</TRPCReactProvider>
+              <TRPCReactProvider>
+                {children}
+                <SupportWidgetWrapper />
+                {/* <TailwindIndicator /> */}
+              </TRPCReactProvider>
             </NextIntlClientProvider>
           </RootProvider>
-          <Toaster />
-          <SupportWidgetWrapper />
-          {/* <TailwindIndicator /> */}
         </ThemeProvider>
       </body>
     </html>

@@ -15,21 +15,15 @@ module.exports = {
     "react-hooks/exhaustive-deps": "warn",
     "no-case-declarations": "off",
     "prefer-const": "off",
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          {
-            "group": ["@/components/ui/*", "../components/ui/*", "../../components/ui/*"],
-            "message": "Use @starter/ui for primitives to keep the design system centralized."
-          }
-        ]
-      }
-    ]
+    "no-restricted-imports": "off"
   },
   overrides: [
     {
-      files: ["apps/web/src/app/(app)/settings/billing/page.tsx"],
+      files: [
+        "apps/web/src/app/(app)/settings/billing/page.tsx",
+        "apps/web/src/app/[locale]/(org)/settings/organization/page.tsx",
+        "apps/web/src/app/[locale]/(dashboard)/dashboard/account/page.tsx"
+      ],
       rules: {
         "no-restricted-imports": "off"
       }

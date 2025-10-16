@@ -20,11 +20,17 @@
     "test:mobile": "pnpm --filter ./apps/mobile test",
     "release:alpha": "pnpm build && echo 'Release tag creation TBD'"
   },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "devDependencies": {
     "@heilgar/shadcn-ui-mcp-server": "^1.0.6",
     "@playwright/test": "^1.55.0",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^20.19.15",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
     "eslint": "^8.57.1",
@@ -38,8 +44,10 @@
   "pnpm": {
     "overrides": {
       "eslint-plugin-react-hooks": "4.6.0",
-      "@types/react": "^18.3.3",
-      "@types/react-dom": "^18.3.0"
+      "@types/react": "$@types/react",
+      "@types/react-dom": "$@types/react-dom",
+      "react": "$react",
+      "react-dom": "$react-dom"
     }
   }
 }

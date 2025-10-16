@@ -1,3 +1,5 @@
+'use client';
+
 import { icons as Icons } from '@/components/icons';
 import { Separator } from '@starter/ui';
 import { Eclipse, Github } from 'lucide-react';

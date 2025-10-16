@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building2, Users, Mail, Settings } from 'lucide-react';
 import Link from 'next/link';
 

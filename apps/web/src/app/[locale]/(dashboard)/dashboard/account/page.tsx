@@ -1,7 +1,7 @@
 import { LockIcon, Trash2Icon } from 'lucide-react';
-import { Switch } from '@starter/ui';
+import { Switch } from '@/components/ui/switch';
 import Link from 'next/link';
-import { Button } from '@starter/ui';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -9,9 +9,9 @@ import {
   CardDescription,
   CardContent,
   CardFooter
-} from '@starter/ui';
-import { Label } from '@starter/ui';
-import { Input } from '@starter/ui';
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import {

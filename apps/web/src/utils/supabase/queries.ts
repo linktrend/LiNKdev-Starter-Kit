@@ -1,19 +1,64 @@
 import { User, UserDetails, Subscription, Product, SubscriptionWithProduct, ProductWithPrices } from '@starter/types';
 import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function getDashboardSummary(_orgId: string) {
   return { pets: 0, reminders: 0, logs: 0 };
 }
 
 export async function getUser(): Promise<User | null> {
-  // Re-export from server queries for consistency
-  const { getCurrentUserProfile } = await import('@/server/queries/user');
-  return getCurrentUserProfile();
+  try {
+    const supabase = createClient({ cookies });
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error || !user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email || '',
+    };
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return null;
+  }
 }
 
 export async function getUserDetails(): Promise<UserDetails | null> {
-  // Implementation for getting user details
-  return null;
+  try {
+    const supabase = createClient({ cookies });
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error || !user) {
+      return null;
+    }
+
+    // Get user details from the users table
+    const { data: userDetails, error: userError } = await supabase
+      .from('users')
+      .select('id, full_name, avatar_url')
+      .eq('id', user.id)
+      .single();
+
+    if (userError || !userDetails) {
+      // Fallback to auth user data if users table doesn't have the record
+      return {
+        id: user.id,
+        full_name: user.user_metadata?.full_name || null,
+        avatar_url: user.user_metadata?.avatar_url || null,
+      };
+    }
+
+    return {
+      id: userDetails.id,
+      full_name: userDetails.full_name,
+      avatar_url: userDetails.avatar_url,
+    };
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    return null;
+  }
 }
 
 // Overloads for getSubscription

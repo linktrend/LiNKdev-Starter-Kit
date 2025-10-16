@@ -1,8 +1,4 @@
 import Link from 'next/link';
-import { Card, CardContent } from '@starter/ui';
-import { Label } from '@starter/ui';
-import { Input } from '@starter/ui';
-import { Button } from '@starter/ui';
 
 export default function Component() {
   return (
@@ -19,8 +15,8 @@ export default function Component() {
         <div />
       </div>
       <div className="flex items-center justify-center flex-1">
-        <Card className="w-full max-w-md">
-          <CardContent className="grid gap-4 px-4 pb-4 my-10">
+        <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white text-zinc-950 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50">
+          <div className="grid gap-4 px-4 pb-4 my-10">
             <div className="space-y-1 text-center">
               <h2 className="text-2xl font-bold">Forgot Password</h2>
               <p className="text-muted-foreground my-2">
@@ -28,17 +24,21 @@ export default function Component() {
               </p>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+              <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+              <input
                 id="email"
                 type="email"
                 placeholder="name@example.com"
                 required
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
-            <Button type="submit" className="w-full">
+            <button 
+              type="submit" 
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+            >
               Reset Password
-            </Button>
+            </button>
             <div className="text-center text-sm text-muted-foreground">
               <span>Reset your password with your email</span>
             </div>
@@ -51,8 +51,8 @@ export default function Component() {
                 Remember your password? Sign in
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

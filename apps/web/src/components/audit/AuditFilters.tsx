@@ -12,7 +12,7 @@ import {
   SelectValue 
 } from '@starter/ui';
 import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';
-import { Calendar } from '@starter/ui';
+// import { Calendar } from '@starter/ui';
 import { Popover, PopoverContent, PopoverTrigger } from '@starter/ui';
 import { 
   Search, 
@@ -205,7 +205,7 @@ export function AuditFilters({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
+                {/* <Calendar
                   mode="single"
                   selected={filters.from ? new Date(filters.from) : undefined}
                   onSelect={(date: Date | undefined) => {
@@ -213,7 +213,7 @@ export function AuditFilters({
                     setIsOpen(false);
                   }}
                   initialFocus
-                />
+                /> */}
               </PopoverContent>
             </Popover>
           </div>
@@ -232,14 +232,14 @@ export function AuditFilters({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
+                {/* <Calendar
                   mode="single"
                   selected={filters.to ? new Date(filters.to) : undefined}
                   onSelect={(date: Date | undefined) => {
                     handleFilterChange('to', date ? date.toISOString() : undefined);
                   }}
                   initialFocus
-                />
+                /> */}
               </PopoverContent>
             </Popover>
           </div>

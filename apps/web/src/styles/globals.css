@@ -155,4 +155,13 @@
   .liquid-glass-bg-blue {
     background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
   }
+  
+  /* Animation delay utilities for floating orbs */
+  .delay-500 {
+    animation-delay: 500ms;
+  }
+  
+  .delay-1000 {
+    animation-delay: 1000ms;
+  }
 }

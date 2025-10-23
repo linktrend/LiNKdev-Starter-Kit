@@ -14,6 +14,7 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { SupportWidgetWrapper } from '@/components/support-widget-wrapper';
+import { LiquidGlassPageWrapper } from '@/components/layout/LiquidGlassPageWrapper';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -107,7 +108,9 @@ export default async function LocaleLayout({
           <RootProvider>
             <NextIntlClientProvider messages={messages}>
               <TRPCReactProvider>
-                {children}
+                <LiquidGlassPageWrapper>
+                  {children}
+                </LiquidGlassPageWrapper>
                 <SupportWidgetWrapper />
                 {/* <TailwindIndicator /> */}
               </TRPCReactProvider>

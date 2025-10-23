@@ -13,13 +13,15 @@ import {
   getUser,
   getUserDetails,
 } from '@/utils/supabase/queries';
-import { Settings, User, Eclipse, Home, LayoutDashboard } from 'lucide-react';
+import { Settings, User, Eclipse, Home, LayoutDashboard, FileText, Bell } from 'lucide-react';
 import { LiquidGlassSidebar } from '@/components/navigation/LiquidGlassSidebar';
 // import { ThemeToggle } from '@starter/ui';
 // User app navigation links
 const userAppLinks = [
   { href: '/dashboard', label: 'Home', icon: Home },
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/records', label: 'Records', icon: FileText },
+  { href: '/reminders', label: 'Reminders', icon: Bell },
   { href: '/profile', label: 'Profile', icon: User },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];

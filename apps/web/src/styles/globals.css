@@ -142,21 +142,8 @@
   margin-top: 5px; /* Adjust spacing as needed */
 }
 
-/* Liquid Glass Background Utilities */
+/* Animation delay utilities for floating orbs */
 @layer utilities {
-  .liquid-glass-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-  
-  .liquid-glass-bg-light {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  }
-  
-  .liquid-glass-bg-blue {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-  }
-  
-  /* Animation delay utilities for floating orbs */
   .delay-500 {
     animation-delay: 500ms;
   }

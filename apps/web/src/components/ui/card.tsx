@@ -10,13 +10,10 @@ const Card = React.forwardRef<
     ref={ref}
     className={cn(
       'rounded-lg border shadow-sm',
-      // Liquid Glass effect
-      'bg-white/25 backdrop-blur-[40px] backdrop-saturate-[250%]',
-      'border-white/40',
-      'shadow-[0_32px_80px_rgba(0,0,0,0.3),0_16px_64px_rgba(255,255,255,0.2),inset_0_3px_0_rgba(255,255,255,0.6),inset_0_-1px_0_rgba(255,255,255,0.3)]',
-      // Dark mode adjustments
-      'dark:bg-black/25 dark:border-white/20',
-      'dark:shadow-[0_32px_80px_rgba(0,0,0,0.5),0_16px_64px_rgba(255,255,255,0.1),inset_0_3px_0_rgba(255,255,255,0.3),inset_0_-1px_0_rgba(255,255,255,0.15)]',
+      // Liquid Glass effect using theme utilities
+      'bg-glass-light dark:bg-glass-dark backdrop-blur-glass backdrop-saturate-[250%]',
+      'border-glass-border-light dark:border-glass-border-dark',
+      'shadow-glass-subtle dark:shadow-glass-subtle-dark',
       className
     )}
     {...props}

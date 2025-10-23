@@ -24,11 +24,10 @@ export function LiquidGlassSidebar({ links, title, logo }: LiquidGlassSidebarPro
     <aside className="fixed inset-y-0 left-0 z-10 w-64 flex-col hidden lg:flex">
       <div className={cn(
         'flex flex-col h-full p-4 gap-4',
-        // Liquid Glass effect
-        'bg-white/25 backdrop-blur-[40px] backdrop-saturate-[250%]',
-        'border-r border-white/40',
-        'shadow-[0_32px_80px_rgba(0,0,0,0.3),0_16px_64px_rgba(255,255,255,0.2)]',
-        'dark:bg-black/25 dark:border-white/20'
+        // Liquid Glass effect using theme utilities
+        'bg-glass-light dark:bg-glass-dark backdrop-blur-glass backdrop-saturate-[250%]',
+        'border-r border-glass-border-light dark:border-glass-border-dark',
+        'shadow-glass-subtle dark:shadow-glass-subtle-dark'
       )}>
         {/* Logo/Title */}
         <div className="flex items-center gap-2 px-2 py-4">
@@ -50,8 +49,8 @@ export function LiquidGlassSidebar({ links, title, logo }: LiquidGlassSidebarPro
                   'flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200',
                   'text-sm font-medium',
                   isActive 
-                    ? 'bg-white/40 text-primary shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),inset_0_-1px_2px_rgba(0,0,0,0.1)] dark:bg-white/20'
-                    : 'text-foreground/80 hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10'
+                    ? 'bg-glass-light-hover dark:bg-glass-dark-hover text-primary shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),inset_0_-1px_2px_rgba(0,0,0,0.1)]'
+                    : 'text-foreground/80 hover:text-foreground hover:bg-glass-light dark:hover:bg-glass-dark'
                 )}
               >
                 <Icon className="h-5 w-5" />

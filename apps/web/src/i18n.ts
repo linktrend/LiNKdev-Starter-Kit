@@ -2,10 +2,17 @@ import { notFound } from 'next/navigation';
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './i18n/routing';
 
-export default getRequestConfig(async ({ locale }) => {
-  // No validation - just return the locale and messages
+export default getRequestConfig(async ({ requestLocale }) => {
+  // Await the request locale
+  let locale = await requestLocale;
+  
+  // Ensure that a valid locale is used
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
+  }
+
   return {
-    locale: locale || 'en',
-    messages: (await import(`../messages/${locale || 'en'}.json`)).default
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default
   };
 });

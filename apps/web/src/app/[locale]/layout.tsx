@@ -21,7 +21,7 @@ export const viewport: Viewport = {
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: 'black' }
   ]
-};
+} as const;
 
 import '@/styles/globals.css';
 
@@ -89,8 +89,9 @@ export const metadata: Metadata = {
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
-}: PropsWithChildren<{ params: { locale: string } }>) {
+  params
+}: PropsWithChildren<{ params: Promise<{ locale: string }> }>) {
+  const { locale } = await params;
   const messages = await getMessages();
 
   return (
@@ -105,17 +106,14 @@ export default async function LocaleLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <RootProvider>
-            <NextIntlClientProvider messages={messages}>
-              <TRPCReactProvider>
-                <LiquidGlassPageWrapper>
-                  {children}
-                </LiquidGlassPageWrapper>
-                <SupportWidgetWrapper />
-                {/* <TailwindIndicator /> */}
-              </TRPCReactProvider>
-            </NextIntlClientProvider>
-          </RootProvider>
+          <NextIntlClientProvider messages={messages}>
+            <TRPCReactProvider>
+              <LiquidGlassPageWrapper>
+                {children}
+              </LiquidGlassPageWrapper>
+              <SupportWidgetWrapper />
+            </TRPCReactProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

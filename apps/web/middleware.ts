@@ -7,7 +7,7 @@ const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
   // Handle internationalization first
-  const intlResponse = intlMiddleware(request);
+  const intlResponse = await intlMiddleware(request);
   
   // If intl middleware returns a response (redirect), use it
   if (intlResponse) {

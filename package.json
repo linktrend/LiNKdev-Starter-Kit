@@ -21,8 +21,8 @@
     "release:alpha": "pnpm build && echo 'Release tag creation TBD'"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106"
   },
   "devDependencies": {
     "@heilgar/shadcn-ui-mcp-server": "^1.0.6",

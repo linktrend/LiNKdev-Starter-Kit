@@ -152,7 +152,7 @@ export function SessionsActivityModal({ open, onOpenChange }: SessionsActivityMo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-glass-border-light dark:border-glass-border-dark shadow-glass-subtle dark:shadow-glass-subtle-dark max-w-4xl">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />

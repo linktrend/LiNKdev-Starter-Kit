@@ -163,7 +163,7 @@ export function Edit2FAModal({ open, onOpenChange, is2FAEnabled = false }: Edit2
   if (is2FAEnabled) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-glass-border-light dark:border-glass-border-dark shadow-glass-subtle dark:shadow-glass-subtle-dark max-w-lg">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
@@ -301,7 +301,7 @@ export function Edit2FAModal({ open, onOpenChange, is2FAEnabled = false }: Edit2
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-glass-border-light dark:border-glass-border-dark shadow-glass-subtle dark:shadow-glass-subtle-dark max-w-lg">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />

@@ -40,27 +40,15 @@ module.exports = {
     extend: {
       colors: {
         ...mapColors(tokens),
-        // Liquid Glass background colors
-        'glass-light': 'rgba(255, 255, 255, 0.25)',
-        'glass-light-hover': 'rgba(255, 255, 255, 0.40)',
-        'glass-dark': 'rgba(0, 0, 0, 0.25)',
-        'glass-dark-hover': 'rgba(0, 0, 0, 0.40)',
-        // Liquid Glass border colors
-        'glass-border-light': 'rgba(255, 255, 255, 0.40)',
-        'glass-border-dark': 'rgba(255, 255, 255, 0.20)',
       },
       borderRadius: mapRadius(tokens),
       spacing: mapSpacing(tokens),
       fontFamily: mapFontFamily(tokens),
       boxShadow: {
         ...mapBoxShadow(tokens),
-        // Liquid Glass shadow utilities
-        'glass-subtle': '0 32px 80px rgba(0,0,0,0.3), 0 16px 64px rgba(255,255,255,0.2), inset 0 3px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(255,255,255,0.3)',
-        'glass-subtle-dark': '0 32px 80px rgba(0,0,0,0.5), 0 16px 64px rgba(255,255,255,0.1), inset 0 3px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(255,255,255,0.15)',
       },
       backdropBlur: {
         'md-soft': '20px',
-        'glass': '40px',
       },
       zIndex: mapZIndex(tokens),
     },

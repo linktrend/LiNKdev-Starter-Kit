@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { countryCodes } from '@/data/countryCodes';
 import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -16,11 +19,12 @@ interface LoginPageProps {
 export default function LoginPage({ params: { locale } }: LoginPageProps) {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [countryCode, setCountryCode] = useState('+1');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(true);
 
   const handleLogin = () => {
-    if ((email || phoneNumber) && acceptedTerms) {
+    if ((email || (countryCode && phoneNumber)) && acceptedTerms) {
       router.push(`/${locale}/dashboard`);
     }
   };
@@ -45,8 +49,9 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Log in</CardTitle>
-            <CardDescription>Welcome back! Please log in to continue.</CardDescription>
+            <CardDescription className="text-2xl font-semibold leading-none tracking-tight">
+              Welcome back! Please log in to continue
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-6">
@@ -123,13 +128,28 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
               {/* Phone Input */}
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
+                <div className="flex gap-2">
+                  <Select value={countryCode} onValueChange={setCountryCode}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {countryCodes.sort((a, b) => a.country.localeCompare(b.country)).map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.country} {country.code}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="flex-1"
+                  />
+                </div>
               </div>
 
               {/* Terms Checkbox */}
@@ -143,13 +163,13 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
                 />
                 <label htmlFor="terms" className="text-sm text-muted-foreground">
                   By continuing, you accept our{' '}
-                  <a href="/privacy" className="text-primary hover:underline">
+                  <Link href="/en/privacy" className="text-primary hover:underline">
                     Privacy Policy
-                  </a>{' '}
+                  </Link>{' '}
                   and{' '}
-                  <a href="/terms" className="text-primary hover:underline">
-                    Terms of Use
-                  </a>
+                  <Link href="/en/terms" className="text-primary hover:underline">
+                    Terms and Conditions
+                  </Link>
                 </label>
               </div>
 
@@ -157,7 +177,7 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
               <Button 
                 className="w-full" 
                 onClick={handleLogin}
-                disabled={(!email && !phoneNumber) || !acceptedTerms}
+                disabled={(!email && !(countryCode && phoneNumber)) || !acceptedTerms}
               >
                 Log In
               </Button>

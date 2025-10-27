@@ -26,7 +26,7 @@ export default async function DashboardPage() {
     ]);
 
   if (!user) {
-    return redirect('/signin');
+    return redirect('/en/login');
   }
 
   return (

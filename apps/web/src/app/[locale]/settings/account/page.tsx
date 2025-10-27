@@ -128,16 +128,16 @@ export default function AccountSettingsPage() {
       </div>
 
       <Tabs defaultValue="account" className="space-y-6">
-        <TabsList className="bg-glass-light dark:bg-glass-dark backdrop-blur-md border-glass-border-light dark:border-glass-border-dark">
-          <TabsTrigger value="account" className="data-[state=active]:bg-glass-light-hover dark:data-[state=active]:bg-glass-dark-hover">
+        <TabsList>
+          <TabsTrigger value="account">
             <User className="w-4 h-4 mr-2" />
             Account
           </TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-glass-light-hover dark:data-[state=active]:bg-glass-dark-hover">
+          <TabsTrigger value="security">
             <Shield className="w-4 h-4 mr-2" />
             Security
           </TabsTrigger>
-          <TabsTrigger value="billing" className="data-[state=active]:bg-glass-light-hover dark:data-[state=active]:bg-glass-dark-hover">
+          <TabsTrigger value="billing">
             <CreditCard className="w-4 h-4 mr-2" />
             Billing
           </TabsTrigger>

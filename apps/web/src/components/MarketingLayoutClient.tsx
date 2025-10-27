@@ -1,6 +1,6 @@
 'use client';
 
-import FooterPrimary from '@/components/footer-primary';
+import Footer from '@/components/footer';
 import { MarketingHeader } from '@/components/navigation/MarketingHeader';
 import React from 'react';
 
@@ -17,7 +17,7 @@ export default function MarketingLayoutClient({
     <div className="flex min-h-screen flex-col w-full">
       <MarketingHeader user={user} />
       <main className="flex-1">{children}</main>
-      <FooterPrimary />
+      <Footer />
     </div>
   );
 }

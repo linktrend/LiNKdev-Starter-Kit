@@ -86,7 +86,7 @@ export const PRIVACY_VISIBILITY_OPTIONS = [
 ];
 
 // Step labels for the step indicator
-export const STEP_LABELS = ONBOARDING_STEPS.map(step => step.title);
+export const STEP_LABELS = (ONBOARDING_STEPS || []).map(step => step.title);
 
 // Default preferences based on locale
 export const getDefaultPreferences = (locale: string) => ({

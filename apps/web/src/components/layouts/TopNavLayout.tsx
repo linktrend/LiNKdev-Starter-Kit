@@ -22,13 +22,13 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
   return (
     <div className="flex min-h-screen w-full flex-col">
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-50 h-16 bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-b border-glass-border-light dark:border-glass-border-dark shadow-glass-subtle">
+      <header className="sticky top-0 z-50 h-16 bg-background border-b shadow-sm">
         <div className="flex h-full items-center justify-between px-4 lg:px-6">
           {/* Logo and Brand */}
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
               <Eclipse className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">Liquid Glass</span>
+              <span className="text-xl font-bold">LTM Starter Kit</span>
             </Link>
           </div>
 
@@ -40,7 +40,7 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                   {Icon && <Icon className="h-4 w-4" />}
                   {link.label}
@@ -64,11 +64,11 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
                   <span className="sr-only">Toggle menu</span>
                 </button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-l border-glass-border-light dark:border-glass-border-dark">
+              <SheetContent side="right" className="w-80">
                 <div className="flex flex-col gap-4 mt-8">
                   <div className="flex items-center gap-2 px-2">
                     <Eclipse className="h-6 w-6 text-primary" />
-                    <span className="text-lg font-semibold">Liquid Glass</span>
+                    <span className="text-lg font-semibold">LTM Starter Kit</span>
                   </div>
                   
                   <nav className="flex flex-col gap-2">
@@ -78,7 +78,7 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
                         <Link
                           key={link.href}
                           href={link.href}
-                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover transition-colors"
+                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {Icon && <Icon className="h-4 w-4" />}

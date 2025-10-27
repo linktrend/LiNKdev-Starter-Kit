@@ -61,7 +61,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col liquid-glass-bg-blue px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[100dvh] flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-8">
         <Link
           href="/"

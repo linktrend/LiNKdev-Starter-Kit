@@ -28,6 +28,11 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const screenName = getScreenName(pathname);
 
+  // Don't show sidebar/topbar on login page
+  if (pathname?.includes('/console/login')) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex min-h-screen">
       <ConsoleSidebar 

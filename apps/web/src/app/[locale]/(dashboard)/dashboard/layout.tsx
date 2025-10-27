@@ -1,10 +1,5 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { NavItem, navConfig, iconComponents } from '@/config/dashboard';
-// import { TooltipProvider } from '@/components/ui/tooltip-provider';
-// import { Tooltip } from '@/components/ui/tooltip';
-// import { TooltipTrigger } from '@/components/ui/tooltip-trigger';
-// import { TooltipContent } from '@/components/ui/tooltip-content';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import {
@@ -12,7 +7,7 @@ import {
   getUserDetails,
 } from '@/utils/supabase/queries';
 import { Settings, User, Eclipse, Home, LayoutDashboard, FileText, Bell } from 'lucide-react';
-// import { ThemeToggle } from '@/components/ui/themetoggle';
+
 // User app navigation links
 const userAppLinks = [
   { href: '/dashboard', label: 'Home', icon: Home },
@@ -24,16 +19,12 @@ const userAppLinks = [
 ];
 
 // Inline Navbar component for template
-const Navbar = ({ userDetails, navConfig, userId }: { userDetails: any; navConfig: NavItem[]; userId: string }) => (
+const Navbar = ({ userDetails }: { userDetails: any }) => (
   <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
     <div className="w-full flex-1">
       <h1 className="text-lg font-semibold">Dashboard</h1>
     </div>
     <div className="ml-auto flex items-center gap-4">
-      {/* Theme Toggle - temporarily disabled */}
-      {/* <ThemeToggle /> */}
-      {/* Organization Switcher - temporarily disabled */}
-      {/* {userId && <OrgSwitcher userId={userId} />} */}
       <span className="text-sm text-muted-foreground">
         {userDetails?.full_name || 'User'}
       </span>
@@ -41,51 +32,34 @@ const Navbar = ({ userDetails, navConfig, userId }: { userDetails: any; navConfi
   </header>
 );
 
-// Inline Sidebar component for template
-const Sidebar = ({ navConfig }: { navConfig: NavItem[] }) => (
-  <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-    <Link
-      href="/"
-      className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-      prefetch={false}
-    >
-      <Eclipse className="h-5 w-5 transition-all group-hover:scale-110" />
-      <span className="sr-only">LTM Starter Kit Inc</span>
-    </Link>
-    {navConfig.map((item, index) => {
-      const IconComponent = iconComponents[item.icon as keyof typeof iconComponents];
-      const isActive = false; // Simplified for template
-      const isDisabled = item.disabled;
-      return (
-        <div key={index}>
-          <div
-            className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8 ${
-              isDisabled
-                ? 'text-muted-foreground bg-muted cursor-not-allowed'
-                : isActive
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {isDisabled ? (
-              <IconComponent className="h-5 w-5 opacity-50" />
-            ) : (
-              <Link
-                href={item.href}
-                className="flex h-full w-full items-center justify-center"
-                prefetch={false}
-              >
-                <IconComponent className="h-5 w-5" />
-              </Link>
-            )}
-            <span className="sr-only">{item.label}</span>
-          </div>
+// Inline Sidebar component
+const Sidebar = ({ links }: { links: typeof userAppLinks }) => (
+  <aside className="fixed left-0 top-0 z-50 h-screen w-64 bg-background border-r shadow-lg">
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b">
+        <div className="flex items-center gap-2">
+          <Eclipse className="h-6 w-6" />
+          <span className="text-xl font-bold">LTM Starter Kit</span>
         </div>
-      );
-    })}
-  </nav>
+      </div>
+      <nav className="flex-1 p-4 space-y-2">
+        {links.map((link) => {
+          const Icon = link.icon;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <Icon className="h-5 w-5" />
+              <span>{link.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
+  </aside>
 );
-import { OrgSwitcher } from '@/components/org-switcher';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -102,24 +76,14 @@ export default async function DashboardLayout({
     ]);
 
     if (!user) {
-      return redirect('/signin');
+      return redirect('/en/login');
     }
-
-    // In case you want to get the current pathname in Server.
-    // This corresponds to a middleware setting, copy the middleware in root when you use this.
-
-    // const headersList = headers()
-    // const pathname = headersList.get('x-current-path') || ''
 
     return (
       <div className="flex min-h-screen w-full">
-        <LiquidGlassSidebar 
-          links={userAppLinks} 
-          title="Dashboard"
-          logo={<Eclipse className="h-6 w-6" />}
-        />
+        <Sidebar links={userAppLinks} />
         <div className="flex flex-col flex-1 lg:pl-64">
-          <Navbar userDetails={userDetails} navConfig={navConfig as NavItem[]} userId={user.id} />
+          <Navbar userDetails={userDetails} />
           <main className="flex-1 p-4 sm:px-6 sm:py-4">
             {children}
           </main>

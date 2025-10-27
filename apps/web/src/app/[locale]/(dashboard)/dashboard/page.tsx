@@ -5,7 +5,7 @@ import {
   getUserDetails,
   getSubscription
 } from '@/utils/supabase/queries';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 import { DevNav } from '@/components/dev-nav';
 
 // Inline Posts component for template

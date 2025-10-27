@@ -21,7 +21,7 @@ import {
 } from '@/utils/supabase/queries';
 import { updateName, updateEmail } from '@/utils/auth-helpers/server';
 import { ImageUpload } from './image-upload'; 
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 
 export default async function AccountPage() {
   const supabase = createClient({ cookies });

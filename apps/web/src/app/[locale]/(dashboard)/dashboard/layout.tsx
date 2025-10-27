@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 import { NavItem, navConfig, iconComponents } from '@/config/dashboard';
 // import {
 //   TooltipProvider,

@@ -2,10 +2,10 @@
 import { useState } from "react"
 import React from 'react'
 
-import { Button } from '@starter/ui';
-import { Input } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { createClient } from '@supabase/supabase-js'
-import { useToast } from "@starter/ui"
+import { useToast } from "@/components/ui/use-toast"
 import { CoolMode } from "@/components/magicui/cool-mode";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';

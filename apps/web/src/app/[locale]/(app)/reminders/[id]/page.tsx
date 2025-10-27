@@ -3,10 +3,10 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ArrowLeft, Edit, Trash2, Check, Clock, Calendar, User, AlertCircle } from 'lucide-react';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
-import { Badge } from '@starter/ui';
-import { Separator } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { ReminderForm } from '@/components/scheduling/ReminderForm';
 import { api } from '@/trpc/react';
 

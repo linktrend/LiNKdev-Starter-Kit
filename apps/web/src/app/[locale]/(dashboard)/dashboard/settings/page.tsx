@@ -1,23 +1,11 @@
 'use client';
 import { useTheme } from 'next-themes';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent
-} from '@starter/ui';
-import { Switch } from '@starter/ui';
-import { Label } from '@starter/ui';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '@starter/ui';
-import { Input } from '@starter/ui';
-import { Button } from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { icons as Icons } from '@/components/icons';
 import { AtSign, Bell, EyeOff, X } from 'lucide-react';

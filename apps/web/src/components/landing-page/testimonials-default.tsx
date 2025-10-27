@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardContent } from '@starter/ui';
-import { Avatar, AvatarImage, AvatarFallback } from '@starter/ui';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { testimonials } from '@/config/testimonials';
 
 export default function Testimonials() {

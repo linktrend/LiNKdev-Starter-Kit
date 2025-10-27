@@ -1,7 +1,7 @@
 'use client';
 
 import { icons as Icons } from '@/components/icons';
-import { Separator } from '@starter/ui';
+import { Separator } from '@/components/ui/separator';
 import { Eclipse, Github } from 'lucide-react';
 
 export default function FooterBlog() {

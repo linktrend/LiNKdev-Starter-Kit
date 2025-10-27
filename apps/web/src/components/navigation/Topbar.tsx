@@ -1,87 +1,95 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Bell, HelpCircle, Moon, Sun, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@starter/ui';
-import { Sheet, SheetContent, SheetTrigger } from '@starter/ui';
-import { Menu, Bell, Eclipse } from 'lucide-react';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { NotificationCounter } from '@/components/notification-counter';
+import { NotificationsModal } from '@/components/ui/notifications-modal';
 
 interface TopbarProps {
-  isCollapsed?: boolean;
-  title?: string;
-  links?: Array<{
-    href: string;
-    label: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }>;
+  locale?: string;
+  screenName?: string;
 }
 
-export function Topbar({ 
-  isCollapsed = false, 
-  title = "Dashboard",
-  links = []
-}: TopbarProps) {
+export function Topbar({ locale = 'en', screenName = 'Dashboard' }: TopbarProps) {
+  const router = useRouter();
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        setIsDarkMode(true);
+        document.documentElement.classList.add('dark');
+      }
+    }
+  }, []);
+
+  const handleThemeToggle = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  const handleHelpClick = () => {
+    router.push(`/${locale}/help`);
+  };
+
   return (
-    <header className={cn(
-      "h-16 flex items-center gap-4 px-4 lg:px-6",
-      // Glass styling
-      "bg-glass-light dark:bg-glass-dark backdrop-blur-glass",
-      "border-b border-glass-border-light dark:border-glass-border-dark",
-      "shadow-glass-subtle dark:shadow-glass-subtle-dark"
-    )}>
-      {/* Mobile Menu Button */}
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="lg:hidden">
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-80 bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-r border-glass-border-light dark:border-glass-border-dark">
-          <div className="flex flex-col gap-4 mt-8">
-            <div className="flex items-center gap-2 px-2">
-              <Eclipse className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">{title}</span>
-            </div>
-            
-            <nav className="flex flex-col gap-2">
-              {links.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover transition-colors"
-                  >
-                    {Icon && <Icon className="h-4 w-4" />}
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </nav>
+    <>
+      <div className="h-16 border-b flex items-center px-6 sticky top-0 z-30 bg-background">
+        <div className="flex items-center gap-3">
+          <Sparkles className="h-6 w-6 text-primary" />
+          <div>
+            <div className="text-xs text-muted-foreground font-medium">LTM Starter Kit</div>
+            <div className="text-sm font-semibold">{screenName}</div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
 
-      {/* Logo and Title */}
-      <div className="flex items-center gap-3">
-        <Link href="/" className="flex items-center gap-2">
-          <Eclipse className="h-6 w-6 text-primary" />
-        </Link>
-        <h1 className="text-lg font-semibold">{title}</h1>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsNotificationsOpen(true)}
+          >
+            <Bell className="h-5 w-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleHelpClick}
+          >
+            <HelpCircle className="h-5 w-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleThemeToggle}
+          >
+            {isDarkMode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
       </div>
 
-      {/* Spacer */}
-      <div className="flex-1" />
-
-      {/* Right Side Actions */}
-      <div className="flex items-center gap-2">
-        <NotificationCounter />
-        <ThemeToggle />
-      </div>
-    </header>
+      <NotificationsModal 
+        isOpen={isNotificationsOpen} 
+        onClose={() => setIsNotificationsOpen(false)} 
+      />
+    </>
   );
 }

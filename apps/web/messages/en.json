@@ -47,6 +47,95 @@
     "billing": "Billing",
     "notifications": "Notifications",
     "privacy": "Privacy",
-    "security": "Security"
+    "security": "Security",
+    "preferences": "Preferences",
+    "data": "Data & Integrations"
+  },
+  "sidebar": {
+    "home": "Home",
+    "screen1": "Projects",
+    "screen2": "Analytics",
+    "screen3": "Team",
+    "screen4": "Documents",
+    "settings": "Settings",
+    "switchAccount": "Switch Account",
+    "logout": "Logout"
+  },
+  "topbar": {
+    "notifications": "Notifications",
+    "help": "Help",
+    "theme": "Theme",
+    "screens": {
+      "dashboard": "Dashboard",
+      "projects": "Projects",
+      "analytics": "Analytics",
+      "profile": "Profile",
+      "settings": "Settings",
+      "billing": "Billing",
+      "help": "Help"
+    }
+  },
+  "console": {
+    "overview": "Overview",
+    "healthChecks": "Health Checks",
+    "errorsLogs": "Errors & Logs",
+    "database": "Database",
+    "apiKeys": "API & Keys",
+    "config": "Configuration",
+    "jobs": "Jobs/Queue",
+    "automations": "Automations",
+    "security": "Security & Access",
+    "flags": "Flags"
+  },
+  "onboarding": {
+    "welcome": "Welcome!",
+    "title": "Let's get you started",
+    "step1": {
+      "title": "Authentication",
+      "subtitle": "Sign in with your preferred method",
+      "or": "OR",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "phoneLabel": "Phone number",
+      "phonePlaceholder": "Enter your phone number",
+      "continue": "Continue"
+    },
+    "step2": {
+      "title": "Name",
+      "nameLabel": "Name"
+    },
+    "step3": {
+      "Developer": "Developer",
+      "Designer": "Designer",
+      "Analyst": "Analyst"
+    },
+    "step4": {
+      "notifications": "Notification Preferences",
+      "email": "Email",
+      "push": "Push",
+      "inapp": "In-App",
+      "theme": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "step5": {
+      "description": "Welcome to LTM Starter Kit! You're all set to start building amazing applications.",
+      "cta": "Get Started"
+    },
+    "skip": "Skip",
+    "back": "Back"
+  },
+  "billing": {
+    "currentPlan": "Current Plan",
+    "upgrade": "Upgrade",
+    "paymentMethods": "Payment Methods",
+    "addPaymentMethod": "Add Payment Method"
+  },
+  "help": {
+    "helpCenter": "Help Center",
+    "contactSupport": "Contact Support",
+    "sendFeedback": "Send Feedback",
+    "releaseNotes": "Release Notes"
   }
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
 
 export default function TestRealtimePage() {

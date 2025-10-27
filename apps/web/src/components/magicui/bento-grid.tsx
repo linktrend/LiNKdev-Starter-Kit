@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/utils/cn";
-import { Button } from "@starter/ui";
+import { Button } from '@/components/ui/button';
 
 const BentoGrid = ({
   children,

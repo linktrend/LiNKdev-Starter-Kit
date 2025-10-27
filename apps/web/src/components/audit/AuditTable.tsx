@@ -2,17 +2,10 @@
 
 import React from 'react';
 import { AuditLog } from '@starter/types';
-import { Badge } from '@starter/ui';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@starter/ui';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@starter/ui';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Clock, 
   User, 

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@starter/ui';
+import { buttonVariants } from '@/components/ui/button';
 import { Star } from 'lucide-react';
 import Particles from '@/components/magicui/particles';
 import Ripple from '@/components/magicui/ripple';
@@ -10,7 +10,7 @@ import AnimatedGradientText from '@/components/magicui/animated-shiny-text';
 import { ArrowRightIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
 import AvatarCircles from '@/components/magicui/avatar-circles';
 import { useTheme } from 'next-themes';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@starter/ui"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 

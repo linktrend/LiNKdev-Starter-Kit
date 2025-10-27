@@ -3,14 +3,9 @@
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 import { icons as Icons } from '@/components/icons';
-import { Button } from '@starter/ui';
+import { Button } from '@/components/ui/button';
 import { Sun, Moon } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@starter/ui';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();

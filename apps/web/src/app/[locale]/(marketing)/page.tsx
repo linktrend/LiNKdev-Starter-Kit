@@ -1,4 +1,5 @@
-import { Card } from '@starter/ui';
+import { Card } from '@/components/ui/card';
+import Footer from '@/components/footer';
 
 export default function SimpleHomepage() {
   return (
@@ -62,6 +63,8 @@ export default function SimpleHomepage() {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 }

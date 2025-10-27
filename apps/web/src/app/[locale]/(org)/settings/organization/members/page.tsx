@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, UserPlus, Mail, RefreshCw } from 'lucide-react';
 import { MemberRow } from '@/components/org/MemberRow';
 import { InviteForm } from '@/components/org/InviteForm';

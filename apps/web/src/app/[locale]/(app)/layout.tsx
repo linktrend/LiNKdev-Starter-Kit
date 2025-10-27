@@ -1,38 +1,29 @@
-import { PropsWithChildren } from 'react';
-import { DEFAULT_APP_LAYOUT, AppLayoutStyles } from '@/config/app-layout';
-import { TopNavLayout } from '@/components/layouts/TopNavLayout';
-import { SidebarLayout } from '@/components/layouts/SidebarLayout';
+'use client';
+
+import { useState, PropsWithChildren } from 'react';
+import { useParams } from 'next/navigation';
 import { Sidebar } from '@/components/navigation/Sidebar';
 import { Topbar } from '@/components/navigation/Topbar';
-import { Home, LayoutDashboard, FileText, Bell, User, Settings } from 'lucide-react';
-
-const appLinks = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/records', label: 'Records', icon: FileText },
-  { href: '/reminders', label: 'Reminders', icon: Bell },
-  { href: '/profile', label: 'Profile', icon: User },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-];
 
 export default function AppLayout({ children }: PropsWithChildren) {
-  // Layout switcher logic - change DEFAULT_APP_LAYOUT to switch layouts
-  // @ts-ignore - This comparison is intentional for layout switching
-  if (DEFAULT_APP_LAYOUT === AppLayoutStyles.TOPNAV) {
-    return (
-      <TopNavLayout links={appLinks}>
-        {children}
-      </TopNavLayout>
-    );
-  }
+  const params = useParams();
+  const locale = params.locale as string || 'en';
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Default SIDEBAR layout
   return (
-    <SidebarLayout
-      sidebarComponent={<Sidebar links={appLinks} />}
-      topbarComponent={<Topbar title="Application" links={appLinks} />}
-    >
-      {children}
-    </SidebarLayout>
+    <div className="flex min-h-screen">
+      <Sidebar 
+        locale={locale} 
+        userName="John Doe"
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
+      <div className="flex-1 flex flex-col">
+        <Topbar locale={locale} screenName="Dashboard" />
+        <main className="flex-1">
+          {children}
+        </main>
+      </div>
+    </div>
   );
 }

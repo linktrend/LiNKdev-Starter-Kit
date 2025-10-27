@@ -47,6 +47,95 @@
     "billing": "Facturación",
     "notifications": "Notificaciones",
     "privacy": "Privacidad",
-    "security": "Seguridad"
+    "security": "Seguridad",
+    "preferences": "Preferencias",
+    "data": "Datos e Integraciones"
+  },
+  "sidebar": {
+    "home": "Inicio",
+    "screen1": "Proyectos",
+    "screen2": "Analítica",
+    "screen3": "Equipo",
+    "screen4": "Documentos",
+    "settings": "Configuración",
+    "switchAccount": "Cambiar Cuenta",
+    "logout": "Cerrar Sesión"
+  },
+  "topbar": {
+    "notifications": "Notificaciones",
+    "help": "Ayuda",
+    "theme": "Tema",
+    "screens": {
+      "dashboard": "Panel",
+      "projects": "Proyectos",
+      "analytics": "Analítica",
+      "profile": "Perfil",
+      "settings": "Configuración",
+      "billing": "Facturación",
+      "help": "Ayuda"
+    }
+  },
+  "console": {
+    "overview": "Resumen",
+    "healthChecks": "Verificaciones de Salud",
+    "errorsLogs": "Errores y Registros",
+    "database": "Base de Datos",
+    "apiKeys": "API y Claves",
+    "config": "Configuración",
+    "jobs": "Trabajos/Cola",
+    "automations": "Automatizaciones",
+    "security": "Seguridad y Acceso",
+    "flags": "Banderas"
+  },
+  "onboarding": {
+    "welcome": "¡Bienvenido!",
+    "title": "Comencemos",
+    "step1": {
+      "title": "Autenticación",
+      "subtitle": "Inicia sesión con tu método preferido",
+      "or": "O",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "phoneLabel": "Número de teléfono",
+      "phonePlaceholder": "Ingresa tu número de teléfono",
+      "continue": "Continuar"
+    },
+    "step2": {
+      "title": "Nombre",
+      "nameLabel": "Nombre"
+    },
+    "step3": {
+      "Developer": "Desarrollador",
+      "Designer": "Diseñador",
+      "Analyst": "Analista"
+    },
+    "step4": {
+      "notifications": "Preferencias de Notificaciones",
+      "email": "Correo",
+      "push": "Push",
+      "inapp": "En la aplicación",
+      "theme": "Tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "step5": {
+      "description": "¡Bienvenido a LTM Starter Kit! Estás listo para comenzar a crear aplicaciones increíbles.",
+      "cta": "Comenzar"
+    },
+    "skip": "Omitir",
+    "back": "Atrás"
+  },
+  "billing": {
+    "currentPlan": "Plan Actual",
+    "upgrade": "Actualizar",
+    "paymentMethods": "Métodos de Pago",
+    "addPaymentMethod": "Agregar Método de Pago"
+  },
+  "help": {
+    "helpCenter": "Centro de Ayuda",
+    "contactSupport": "Contactar Soporte",
+    "sendFeedback": "Enviar Comentarios",
+    "releaseNotes": "Notas de Versión"
   }
 }

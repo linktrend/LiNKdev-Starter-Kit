@@ -7,13 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter web dev",
+    "dev": "pnpm --filter ltm-starter-kit-web dev",
     "dev:web": "pnpm --filter ./apps/web dev",
     "dev:mobile": "pnpm --filter ./apps/mobile dev",
-    "build": "pnpm --filter web build",
-    "lint": "pnpm --filter web lint",
-    "test": "pnpm --filter web test",
-    "typecheck": "pnpm --filter web typecheck",
+    "build": "pnpm --filter ltm-starter-kit-web build",
+    "lint": "pnpm --filter ltm-starter-kit-web lint",
+    "test": "pnpm --filter ltm-starter-kit-web test",
+    "typecheck": "pnpm --filter ltm-starter-kit-web typecheck",
     "verify:web": "pnpm --filter ./apps/web verify",
     "test:web": "pnpm --filter ./apps/web test",
     "e2e:web": "pnpm --filter ./apps/web e2e",

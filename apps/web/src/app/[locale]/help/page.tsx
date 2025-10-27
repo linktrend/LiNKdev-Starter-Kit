@@ -1,7 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
-import { Button } from '@starter/ui';
-import { Input } from '@starter/ui';
-import { Badge } from '@starter/ui';
+'use client';
+
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
   HelpCircle, 
@@ -15,13 +18,31 @@ import {
   Download,
   ExternalLink
 } from 'lucide-react';
+import { SubmitTicketModal } from '@/components/help/SubmitTicketModal';
+import { ReportBugModal } from '@/components/help/ReportBugModal';
+import { ScheduleCallModal } from '@/components/help/ScheduleCallModal';
+import { LiveChatModal } from '@/components/help/LiveChatModal';
+import { FeatureRequestModal } from '@/components/help/FeatureRequestModal';
 
-export const metadata = {
-  title: 'Help Center',
-  description: 'Get help and support for using LTM Starter Kit',
-};
+// Note: Metadata removed because this is now a client component
 
 export default function HelpPage() {
+  const [modalStates, setModalStates] = useState({
+    submitTicket: false,
+    reportBug: false,
+    scheduleCall: false,
+    liveChat: false,
+    featureRequest: false,
+  });
+
+  const openModal = (modal: keyof typeof modalStates) => {
+    setModalStates(prev => ({ ...prev, [modal]: true }));
+  };
+
+  const closeModal = (modal: keyof typeof modalStates) => {
+    setModalStates(prev => ({ ...prev, [modal]: false }));
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -45,7 +66,7 @@ export default function HelpPage() {
 
       {/* Quick Help Categories */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <BookOpen className="h-6 w-6 text-blue-600" />
@@ -57,7 +78,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <FileText className="h-6 w-6 text-green-600" />
@@ -69,7 +90,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Video className="h-6 w-6 text-purple-600" />
@@ -81,7 +102,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-200 hover:bg-white/30">
+        <Card className="cursor-pointer transition-all duration-200 hover:bg-glass-light-hover dark:hover:bg-glass-dark-hover">
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="h-6 w-6 text-orange-600" />
@@ -239,24 +260,39 @@ export default function HelpPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button>
+            <Button onClick={() => openModal('liveChat')}>
               <MessageCircle className="mr-2 h-4 w-4" />
-              Chat Support
+              Live Chat
             </Button>
-            <Button variant="outline">
-              <Mail className="mr-2 h-4 w-4" />
-              Email Support
+            <Button variant="outline" onClick={() => openModal('submitTicket')}>
+              <FileText className="mr-2 h-4 w-4" />
+              Submit Ticket
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => openModal('scheduleCall')}>
               <Phone className="mr-2 h-4 w-4" />
-              Phone Support
+              Schedule Call
             </Button>
           </div>
           
           <div className="mt-6 pt-6 border-t">
-            <p className="text-sm text-muted-foreground">
-              TODO: Implement real support contact forms and integration with support system
-            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => openModal('reportBug')}
+              >
+                <HelpCircle className="mr-2 h-4 w-4" />
+                Report a Bug
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => openModal('featureRequest')}
+              >
+                <BookOpen className="mr-2 h-4 w-4" />
+                Request Feature
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -314,6 +350,29 @@ export default function HelpPage() {
           </Card>
         </div>
       </div>
+
+      {/* Support Modals */}
+      <SubmitTicketModal 
+        open={modalStates.submitTicket} 
+        onOpenChange={(open) => closeModal('submitTicket')} 
+      />
+      <ReportBugModal 
+        open={modalStates.reportBug} 
+        onOpenChange={(open) => closeModal('reportBug')} 
+      />
+      <ScheduleCallModal 
+        open={modalStates.scheduleCall} 
+        onOpenChange={(open) => closeModal('scheduleCall')} 
+      />
+      <LiveChatModal 
+        open={modalStates.liveChat} 
+        onOpenChange={(open) => closeModal('liveChat')}
+        onOpenTicket={() => openModal('submitTicket')}
+      />
+      <FeatureRequestModal 
+        open={modalStates.featureRequest} 
+        onOpenChange={(open) => closeModal('featureRequest')} 
+      />
     </div>
   );
 }

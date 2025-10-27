@@ -2,8 +2,8 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getCurrentUserProfile } from '@/server/queries/user';
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
-import { Badge } from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { User, Mail, Calendar, Shield } from 'lucide-react';
 
 export const metadata = {

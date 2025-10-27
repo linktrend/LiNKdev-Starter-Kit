@@ -4,9 +4,9 @@ import { getCurrentUserProfile } from '@/server/queries/user';
 import { getOrgSummary, getUserOrgRole, hasOrgAccess } from '@/server/queries/orgs';
 import { listRecentOrgActivity } from '@/server/queries/audit';
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
-import { Badge } from '@starter/ui';
-import { Button } from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Building2, Users, Activity, TrendingUp, Calendar, FileText } from 'lucide-react';
 import Link from 'next/link';
 

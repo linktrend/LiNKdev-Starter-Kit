@@ -1,11 +1,11 @@
 'use client'
 
 import { ChangeEvent, useRef, useState, useTransition } from "react";
-import { toast } from "@starter/ui";
+import { toast } from '@/components/ui/use-toast';
 import Image from "next/image";
 import { uploadImage } from "@/utils/supabase/storage/client";
 import { convertBlobUrlToFile } from "@/lib/utils";
-import { Button } from "@starter/ui";
+import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
 export function ImageUpload({ user }: { user: any }) {

@@ -4,8 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { useEntitlement, useUsageLimit } from '@/hooks/useEntitlement';
 import { PlanEntitlements } from '@starter/types';
-import { Button } from '@starter/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Lock, Crown, Zap } from 'lucide-react';
 
 interface PaywallProps {
@@ -65,15 +65,19 @@ export function Paywall({
           <div className="flex flex-col sm:flex-row gap-2 justify-center">
             <Button asChild>
               <Link href="/pricing">
-                <Crown className="mr-2 h-4 w-4" />
-                Upgrade Plan
+                <span className="flex items-center">
+                  <Crown className="mr-2 h-4 w-4" />
+                  Upgrade Plan
+                </span>
               </Link>
             </Button>
             
             <Button variant="outline" asChild>
               <Link href="/settings/billing">
-                <Zap className="mr-2 h-4 w-4" />
-                Manage Billing
+                <span className="flex items-center">
+                  <Zap className="mr-2 h-4 w-4" />
+                  Manage Billing
+                </span>
               </Link>
             </Button>
           </div>

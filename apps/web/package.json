@@ -55,7 +55,6 @@
     "@sentry/tracing": "^7.120.4",
     "@starter/api": "workspace:*",
     "@starter/types": "workspace:*",
-    "@starter/ui": "workspace:*",
     "@stripe/stripe-js": "2.4.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.2",

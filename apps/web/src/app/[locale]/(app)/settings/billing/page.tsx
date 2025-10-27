@@ -3,7 +3,10 @@
 import * as React from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/trpc/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Badge, Separator } from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { 
   CreditCard, 
   Calendar, 

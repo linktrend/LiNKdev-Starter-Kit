@@ -5,25 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2, Save, X, Clock, AlertCircle } from 'lucide-react';
-import { Button } from '@starter/ui';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@starter/ui';
-import { Input } from '@starter/ui';
-import { Textarea } from '@starter/ui';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@starter/ui';
-import { useToast } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {  } from '@/components/ui/';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {  } from '@/components/ui/';
+import { useToast } from '@/components/ui/use-toast';
 import { ReminderFormData, ReminderPriority } from '@starter/types';
 import { api } from '@/trpc/react';
 

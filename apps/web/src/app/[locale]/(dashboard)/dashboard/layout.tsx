@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { NavItem, navConfig, iconComponents } from '@/config/dashboard';
-// import {
-//   TooltipProvider,
-//   Tooltip,
-//   TooltipTrigger,
-//   TooltipContent
-// } from '@starter/ui';
+// import { TooltipProvider } from '@/components/ui/tooltip-provider';
+// import { Tooltip } from '@/components/ui/tooltip';
+// import { TooltipTrigger } from '@/components/ui/tooltip-trigger';
+// import { TooltipContent } from '@/components/ui/tooltip-content';
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import {
@@ -14,8 +12,7 @@ import {
   getUserDetails,
 } from '@/utils/supabase/queries';
 import { Settings, User, Eclipse, Home, LayoutDashboard, FileText, Bell } from 'lucide-react';
-import { LiquidGlassSidebar } from '@/components/navigation/LiquidGlassSidebar';
-// import { ThemeToggle } from '@starter/ui';
+// import { ThemeToggle } from '@/components/ui/themetoggle';
 // User app navigation links
 const userAppLinks = [
   { href: '/dashboard', label: 'Home', icon: Home },

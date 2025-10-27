@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@starter/ui"
-import { Button } from "@starter/ui"
-import { Input } from "@starter/ui"
-import { Textarea } from "@starter/ui"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, Edit, Trash, FileText } from 'lucide-react'
 import { api } from "@/trpc/react"
-import { useToast } from "@starter/ui"
+import { useToast } from '@/components/ui/use-toast';
 import { User } from '@supabase/supabase-js'
 
 interface Post {

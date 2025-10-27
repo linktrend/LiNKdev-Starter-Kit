@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent } from '@starter/ui';
-import { Label } from '@starter/ui';
-import { Input } from '@starter/ui';
-import { Button } from '@starter/ui';
-import { Separator } from '@starter/ui';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   signInWithEmail,
   signInWithPassword
@@ -15,7 +15,7 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Github, Chrome, ArrowLeft as ArrowLeftIcon } from 'lucide-react';
-import { useToast } from '@starter/ui';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function SignIn() {
   const router = useRouter();

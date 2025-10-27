@@ -2,8 +2,15 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts'],
-  format: ['esm', 'cjs'],
-  dts: false, // Disable DTS generation for now
+  format: ['esm'],
+  dts: false,
+  splitting: false,
+  sourcemap: true,
+  clean: true,
+  target: 'es2020',
+  platform: 'browser',
+  treeshake: true,
+  minify: false,
   external: [
     '@/utils/cn',
     '@/lib/utils',
@@ -13,7 +20,7 @@ export default defineConfig({
     '@/components/ui/toggle',
     '@/components/ui/toast',
     '@/components/ui/use-toast',
-    '@starter/ui', // Mark self as external to avoid circular dependency
+    '@starter/ui',
     'react',
     'react-dom',
     'react-native',
@@ -26,4 +33,12 @@ export default defineConfig({
     'embla-carousel-react',
     'embla-carousel-reactive-utils',
   ],
+  esbuildOptions(options) {
+    options.banner = {
+      js: '"use client";',
+    };
+    options.format = 'esm';
+    options.bundle = true;
+    options.splitting = false;
+  },
 });

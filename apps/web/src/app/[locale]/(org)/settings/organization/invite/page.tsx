@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@starter/ui';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { InviteForm } from '@/components/org/InviteForm';
 import { UserPlus, Mail, Clock, CheckCircle } from 'lucide-react';
 

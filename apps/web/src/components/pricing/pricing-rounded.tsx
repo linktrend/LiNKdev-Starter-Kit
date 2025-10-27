@@ -1,13 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@starter/ui';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent
-} from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Tables } from '@starter/types';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';

@@ -1,114 +1,55 @@
-import { Button } from '@starter/ui';
-import { Input } from '@starter/ui';
 import Link from 'next/link';
-import { footerLinks } from '@/config/footer';
-import {
-  FacebookIcon,
-  LinkedinIcon,
-  XIcon,
-  InstagramIcon
-} from '@/components/svg';
+import { Droplets } from 'lucide-react';
+import { cn } from '@/utils/cn';
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-gray-300 p-8 relative">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 justify-between">
-        <div>
-          <h2 className="text-md text-gray-300 font-bold mb-4">
-            {footerLinks.getInTouch.title}
-          </h2>
-          <p className="text-xl text-gray-300 mb-4">
-            We partner with global brands, from startups to industry leaders.{' '}
-            <span className="text-white font-bold">Let&apos;s discuss.</span>
-          </p>
-          <h3 className="text-sm text-gray-300 font-bold mb-2">
-            Subscribe to our Newsletter
-          </h3>
-          <form className="flex">
-            <Input
-              type="email"
-              placeholder="name@email.com"
-              className="p-2 flex-grow bg-gray-800 text-white rounded-sm border-black"
-            />
-            <Button className="ml-2 bg-gray-700">Subscribe</Button>
-          </form>
-        </div>
-        <div className="flex flex-col items-center mx-auto text-xs">
-          <div className="flex">
-            <div className="mr-8">
-              <h2 className="text-sm font-bold mb-4">
-                {footerLinks.pages.title}
-              </h2>
-              <ul>
-                {footerLinks.pages.links.map((link, index) => (
-                  <li key={index} className="mb-2">
-                    <Link
-                      href={link.href}
-                      className="text-white"
-                      prefetch={false}
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+    <footer className={cn(
+      'w-full mt-16 py-8 px-4',
+      'bg-glass-light dark:bg-glass-dark backdrop-blur-glass backdrop-saturate-[250%]',
+      'border-t border-glass-border-light dark:border-glass-border-dark',
+      'shadow-glass-subtle dark:shadow-glass-subtle-dark'
+    )}>
+      <div className="container mx-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Logo Section - Left */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-glass-light dark:bg-glass-dark border border-glass-border-light dark:border-glass-border-dark">
+              <Droplets className="h-6 w-6 text-primary" />
             </div>
-            <div>
-              <h2 className="text-sm font-bold mb-4">
-                {footerLinks.utilityPages.title}
-              </h2>
-              <ul>
-                {footerLinks.utilityPages.links.map((link, index) => (
-                  <li key={index} className="mb-2">
-                    <Link
-                      href={link.href}
-                      className="text-white"
-                      prefetch={false}
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <span className="text-xl font-bold text-foreground">Liquid Glass</span>
           </div>
-        </div>
-        <div className="text-sm font-bold mb-4 w-fit justify-end mx-auto">
-          <h2 className="flex text-sm font-bold mb-4">
-            {footerLinks.location.title}
-          </h2>
-          <p className="mb-4 text-xs max-w-[150px]">
-            {footerLinks.location.address}
-          </p>
-          <h3 className="text-sm font-bold mb-2">
-            {footerLinks.location.socialLinksTitle}
-          </h3>
-          <div className="flex space-x-3">
-            <Link href="#" className="text-white" prefetch={false}>
-              <XIcon className="w-6 h-6" />
+
+          {/* Copyright - Center */}
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">
+              © Copyright 2025. LiNKtrend Media
+            </p>
+          </div>
+
+          {/* Legal Links - Right */}
+          <div className="flex items-center gap-6">
+            <Link 
+              href="/terms" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Terms and Conditions
             </Link>
-            <Link href="#" className="text-white" prefetch={false}>
-              <FacebookIcon className="w-6 h-6" />
+            <Link 
+              href="/privacy" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Privacy Policy
             </Link>
-            <Link href="#" className="text-white" prefetch={false}>
-              <InstagramIcon className="w-6 h-6" />
-            </Link>
-            <Link href="#" className="text-white" prefetch={false}>
-              <LinkedinIcon className="w-6 h-6" />
+            <Link 
+              href="/en/console/login" 
+              className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            >
+              Admin Console Login
             </Link>
           </div>
         </div>
       </div>
-      <div className="mt-8 text-center text-gray-300 text-xs">
-        <p>
-          Copyright ©2024{' '}
-          <span className="text-white font-bold">Webestica</span>. All rights
-          reserved.
-        </p>
-      </div>
-      {/* <div className="absolute bottom-0 right-0 text-[10rem] text-bold text-gray-300 opacity-30">
-        ROSS
-      </div> */}
     </footer>
   );
 }

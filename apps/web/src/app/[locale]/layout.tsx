@@ -3,7 +3,7 @@ import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
-// import { Toaster } from '@starter/ui';
+// import { Toaster } from '@/components/ui/toast';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Inter, JetBrains_Mono } from 'next/font/google';
@@ -14,7 +14,6 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { SupportWidgetWrapper } from '@/components/support-widget-wrapper';
-import { LiquidGlassPageWrapper } from '@/components/layout/LiquidGlassPageWrapper';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -108,9 +107,7 @@ export default async function LocaleLayout({
           <RootProvider>
             <NextIntlClientProvider messages={messages}>
               <TRPCReactProvider>
-                <LiquidGlassPageWrapper>
-                  {children}
-                </LiquidGlassPageWrapper>
+                {children}
                 <SupportWidgetWrapper />
                 {/* <TailwindIndicator /> */}
               </TRPCReactProvider>

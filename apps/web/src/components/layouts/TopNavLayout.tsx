@@ -2,8 +2,8 @@
 
 import { PropsWithChildren, useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@starter/ui';
-import { Sheet, SheetContent, SheetTrigger } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Bell, Eclipse } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { NotificationCounter } from '@/components/notification-counter';
@@ -57,10 +57,12 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
             {/* Mobile Menu Button */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <button 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 md:hidden"
+                >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle menu</span>
-                </Button>
+                </button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 bg-glass-light dark:bg-glass-dark backdrop-blur-glass border-l border-glass-border-light dark:border-glass-border-dark">
                 <div className="flex flex-col gap-4 mt-8">

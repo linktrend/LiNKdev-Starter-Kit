@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { MainNavItem } from '@starter/types';
 import { cn } from '@/lib/utils';
 import { icons as Icons } from '@/components/icons';
-import { Button, buttonVariants } from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 
 interface MobileNavProps {

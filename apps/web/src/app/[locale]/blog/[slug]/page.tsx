@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
 import { blog } from '@/utils/source';
 import { createMetadata } from '@/utils/metadata';
-import { buttonVariants } from '@starter/ui';
+import { buttonVariants } from '@/components/ui/button';
 import { Control } from './page.client';
 import { DocsPage, DocsBody } from 'fumadocs-ui/page';
 

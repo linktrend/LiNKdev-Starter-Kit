@@ -4,20 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, ChevronsUpDown, Plus, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@starter/ui';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@starter/ui';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@starter/ui';
+import { Button } from '@/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import {  } from '@/components/ui/';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {  } from '@/components/ui/';
 import { api } from '@/trpc/react';
 import { Organization } from '@starter/types';
 

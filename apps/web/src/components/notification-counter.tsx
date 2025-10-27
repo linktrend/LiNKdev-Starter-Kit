@@ -1,7 +1,7 @@
 'use client';
 
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
-import { Badge } from '@starter/ui';
+import { Badge } from '@/components/ui/badge';
 import { Bell } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState, useCallback } from 'react';

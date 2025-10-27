@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { Button } from "@starter/ui";
+import { Button } from '@/components/ui/button';
 
 describe("Primitive Import Tests", () => {
   it("renders Button component from local UI components", () => {

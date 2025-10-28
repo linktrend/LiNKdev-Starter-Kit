@@ -2,9 +2,9 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getCurrentUserProfile } from '@/server/queries/user';
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { User, Mail, Calendar, Shield } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { User, Mail, Phone, MapPin, Building2, Briefcase, Activity, Award, Calendar } from 'lucide-react';
 
 export const metadata = {
   title: 'Profile',
@@ -18,139 +18,142 @@ export default async function ProfilePage() {
     return redirect('/signin');
   }
 
+  // Mock data for display (replace with actual user data when available)
+  const profileData = {
+    name: 'John',
+    middleName: 'Michael',
+    lastName: 'Doe',
+    displayName: user.full_name || 'John Doe',
+    username: 'johndoe167',
+    email: user.email || 'john.doe@example.com',
+    phoneCountryCode: '+1',
+    phoneNumber: '5551234567',
+    aptSuite: 'Apt 4B',
+    streetAddress1: '123 Market Street',
+    streetAddress2: '',
+    country: 'United States',
+    postalCode: '94102',
+    region: 'California',
+    city: 'San Francisco',
+    jobTitle: 'Senior Product Designer',
+    company: 'Tech Innovations Inc.',
+    bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces. I love working with modern design systems and bringing creative ideas to life through thoughtful design and collaboration.',
+  };
+
+  const fullName = `${profileData.name} ${profileData.middleName ? profileData.middleName + ' ' : ''}${profileData.lastName}`;
+  const fullPhone = profileData.phoneNumber ? `${profileData.phoneCountryCode} ${profileData.phoneNumber}` : '';
+  
+  const addressParts = [];
+  if (profileData.aptSuite) addressParts.push(profileData.aptSuite);
+  if (profileData.streetAddress1) addressParts.push(profileData.streetAddress1);
+  const streetLine = addressParts.join(', ');
+  const cityLine = `${profileData.city}, ${profileData.region} ${profileData.postalCode}`;
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="text-muted-foreground">
-          Manage your personal information and account settings
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Profile Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              Profile Information
-            </CardTitle>
-            <CardDescription>
-              Your basic account details
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Email</span>
+    <div className="min-h-screen p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* Card 1: Avatar, Display Name, Username, Edit Button */}
+          <Card className="md:col-span-1">
+            <CardContent className="pt-6 flex flex-col items-center text-center">
+              <div className="relative w-24 h-24 rounded-full bg-muted border-4 border-primary flex items-center justify-center overflow-hidden mb-4">
+                <User className="w-12 h-12 text-primary" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                {user.email || 'Not provided'}
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Full Name</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {user.full_name || 'Not set'}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Member Since</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Account Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Account Status
-            </CardTitle>
-            <CardDescription>
-              Your account verification and status
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Email Verified</span>
-              <Badge variant="default">
-                Verified
-              </Badge>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Account Status</span>
-              <Badge variant="default">Active</Badge>
-            </div>
-
-            <div className="pt-2">
-              <p className="text-xs text-muted-foreground">
-                TODO: Add account security settings, 2FA status, and recent activity
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* TODO Sections */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">TODO: Additional Features</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Recent Activity</CardTitle>
-              <CardDescription>
-                Your recent actions and changes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                TODO: Implement activity feed with tRPC call
-              </p>
+              <h2 className="text-2xl font-bold mb-1">{profileData.displayName}</h2>
+              <p className="text-sm text-muted-foreground mb-4">@{profileData.username}</p>
+              <Button 
+                size="sm"
+                className="w-auto"
+                disabled
+              >
+                Edit Profile
+              </Button>
             </CardContent>
           </Card>
 
-          <Card>
+          {/* Card 2: User Information */}
+          <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle className="text-base">Security Settings</CardTitle>
-              <CardDescription>
-                Manage password and security preferences
-              </CardDescription>
+              <CardTitle>{fullName}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                TODO: Add password change, 2FA setup, session management
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Preferences</CardTitle>
-              <CardDescription>
-                Customize your experience
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                TODO: Add theme, notifications, language settings
-              </p>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-3 text-sm">
+                <Briefcase className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                <div>
+                  <span className="font-medium">{profileData.jobTitle}</span>
+                </div>
+              </div>
+              
+              {profileData.company && (
+                <div className="flex items-center gap-3 text-sm">
+                  <Building2 className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                  <span className="text-muted-foreground">{profileData.company}</span>
+                </div>
+              )}
+              
+              <div className="flex items-center gap-3 text-sm">
+                <Mail className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                <span className="text-muted-foreground">{profileData.email}</span>
+              </div>
+              
+              {fullPhone && (
+                <div className="flex items-center gap-3 text-sm">
+                  <Phone className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                  <span className="text-muted-foreground">{fullPhone}</span>
+                </div>
+              )}
+              
+              <div className="flex items-start gap-3 text-sm">
+                <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5 text-muted-foreground" />
+                <div className="text-muted-foreground">
+                  {streetLine && <div>{streetLine}</div>}
+                  <div>{cityLine}</div>
+                  <div>{profileData.country}</div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Card 3: About Me */}
+        {profileData.bio && (
+          <Card>
+            <CardHeader>
+              <CardTitle>About Me</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {profileData.bio}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Statistics</CardTitle>
+            <CardDescription>Your activity and achievements</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <div className="text-2xl font-bold">---</div>
+                <div className="text-sm text-muted-foreground">Stat 1</div>
+              </div>
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Award className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <div className="text-2xl font-bold">---</div>
+                <div className="text-sm text-muted-foreground">Stat 2</div>
+              </div>
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Calendar className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <div className="text-2xl font-bold">---</div>
+                <div className="text-sm text-muted-foreground">Stat 3</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

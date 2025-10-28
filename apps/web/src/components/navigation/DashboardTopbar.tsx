@@ -1,16 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Bell, Moon, Sun, Sparkles } from 'lucide-react';
+import { Bell, Moon, Sun, Sparkles, HelpCircle } from 'lucide-react';
 import { NotificationsModal } from '@/components/ui/notifications-modal';
 
-interface ConsoleTopbarProps {
+interface DashboardTopbarProps {
   locale?: string;
   screenName?: string;
 }
 
-export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: ConsoleTopbarProps) {
+export function DashboardTopbar({ locale = 'en', screenName = 'Dashboard' }: DashboardTopbarProps) {
+  const router = useRouter();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -43,7 +45,7 @@ export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: Consol
         <div className="flex items-center gap-3">
           <Sparkles className="h-6 w-6 text-primary" />
           <div>
-            <div className="text-xs text-muted-foreground font-medium">Console</div>
+            <div className="text-xs text-muted-foreground font-medium">LTM Starter Kit</div>
             <div className="text-sm font-semibold">{screenName}</div>
           </div>
         </div>
@@ -55,6 +57,18 @@ export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: Consol
             onClick={() => setIsNotificationsOpen(true)}
           >
             <Bell className="h-5 w-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              const helpUrl = `/${locale}/dashboard/help`;
+              router.push(helpUrl);
+            }}
+            title="Help"
+          >
+            <HelpCircle className="h-5 w-5" />
           </Button>
 
           <Button
@@ -78,3 +92,4 @@ export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: Consol
     </>
   );
 }
+

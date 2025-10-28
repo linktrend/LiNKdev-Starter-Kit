@@ -16,6 +16,17 @@ export type UserProfile = z.infer<typeof UserProfileSchema>;
  * Get current user profile information
  */
 export async function getCurrentUserProfile(): Promise<UserProfile | null> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return {
+      id: 'test-user-123',
+      email: 'test@example.com',
+      full_name: 'Test User',
+      avatar_url: null,
+      created_at: new Date().toISOString(),
+    };
+  }
+
   try {
     const supabase = createClient({ cookies });
     

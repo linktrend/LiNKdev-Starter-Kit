@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { HelpCircle, FileText, Video, Book, Send, MessageCircle, Phone, Lightbulb, Bug, Star, Eye, CheckCircle } from 'lucide-react';
+import { HelpCircle, FileText, Video, Book, Send, MessageCircle, Phone, Clock, Lightbulb, Bug, Star, Eye, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SubmitTicketModal from '@/components/help/SubmitTicketModal';
 import LiveChatModal from '@/components/help/LiveChatModal';
@@ -34,15 +34,10 @@ export default function HelpPage() {
       <div className="max-w-6xl mx-auto">
         <div className="grid gap-6 md:grid-cols-2">
           <div 
-            className="p-6 rounded-lg border border-gray-200 shadow-md"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.30)',
-              backdropFilter: 'blur(40px)',
-              WebkitBackdropFilter: 'blur(40px)',
-            }}
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
           >
             <div className="flex items-center gap-2 mb-4">
-              <HelpCircle className="h-6 w-6 text-card-foreground" />
+              <HelpCircle className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-bold text-card-foreground">Help Center</h2>
             </div>
             <p className="text-sm text-card-foreground/70 mb-6">
@@ -74,15 +69,10 @@ export default function HelpPage() {
           </div>
 
           <div 
-            className="p-6 rounded-lg border border-gray-200 shadow-md"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.30)',
-              backdropFilter: 'blur(40px)',
-              WebkitBackdropFilter: 'blur(40px)',
-            }}
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
           >
             <div className="flex items-center gap-2 mb-4">
-              <MessageCircle className="h-6 w-6 text-card-foreground" />
+              <MessageCircle className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-bold text-card-foreground">Contact Support</h2>
             </div>
             <p className="text-sm text-card-foreground/70 mb-6">
@@ -114,15 +104,10 @@ export default function HelpPage() {
           </div>
 
           <div 
-            className="p-6 rounded-lg border border-gray-200 shadow-md"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.30)',
-              backdropFilter: 'blur(40px)',
-              WebkitBackdropFilter: 'blur(40px)',
-            }}
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
           >
             <div className="flex items-center gap-2 mb-4">
-              <Star className="h-6 w-6 text-card-foreground" />
+              <Star className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-bold text-card-foreground">Send Feedback</h2>
             </div>
             <p className="text-sm text-card-foreground/70 mb-6">
@@ -154,19 +139,14 @@ export default function HelpPage() {
           </div>
 
           <div 
-            className="p-6 rounded-lg border border-gray-200 shadow-md"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.30)',
-              backdropFilter: 'blur(40px)',
-              WebkitBackdropFilter: 'blur(40px)',
-            }}
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
           >
             <div className="flex items-center gap-2 mb-4">
-              <FileText className="h-6 w-6 text-card-foreground" />
+              <FileText className="h-6 w-6 text-primary" />
               <h2 className="text-xl font-bold text-card-foreground">Release Notes</h2>
             </div>
             <p className="text-sm text-card-foreground/70 mb-6">
-              Stay updated with the latest features and improvements
+              Latest features and improvements
             </p>
             <div className="space-y-3">
               <Button 
@@ -177,11 +157,11 @@ export default function HelpPage() {
                 View Latest Updates
               </Button>
               <div 
-                className="px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30"
+                className="px-4 py-3 rounded-lg bg-success/10 border border-success/30"
               >
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm text-green-700 font-medium">Latest Version: 2.1.0 (01/12/2024)</span>
+                  <CheckCircle className="h-4 w-4 text-success" />
+                  <span className="text-sm text-success font-medium">Latest Version: 2.1.0 (01/12/2024)</span>
                 </div>
               </div>
             </div>
@@ -192,3 +172,4 @@ export default function HelpPage() {
     </>
   );
 }
+

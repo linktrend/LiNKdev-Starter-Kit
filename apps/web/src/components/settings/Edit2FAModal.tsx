@@ -235,7 +235,7 @@ export function Edit2FAModal({ open, onOpenChange, is2FAEnabled = false }: Edit2
                 <CardTitle className="text-lg text-destructive">Disable 2FA</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-start gap-2 p-3 bg-destructive/10 rounded-lg">
+                <div className="flex items-start gap-2 p-3 bg-destructive/20 rounded-lg">
                   <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
                   <div className="text-sm">
                     <p className="font-medium text-destructive">Warning</p>
@@ -344,7 +344,7 @@ export function Edit2FAModal({ open, onOpenChange, is2FAEnabled = false }: Edit2
                   Open your authenticator app and scan this QR code:
                 </p>
                 
-                <div className="flex justify-center p-4 bg-white rounded-lg">
+                <div className="flex justify-center p-4 bg-background rounded-lg">
                   <div className="w-48 h-48 bg-muted rounded flex items-center justify-center">
                     <QrCode className="h-24 w-24 text-muted-foreground" />
                   </div>

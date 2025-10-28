@@ -7,6 +7,14 @@ export async function getDashboardSummary(_orgId: string) {
 }
 
 export async function getUser(): Promise<User | null> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return {
+      id: 'test-user-123',
+      email: 'test@example.com',
+    };
+  }
+
   try {
     const supabase = createClient({ cookies });
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -26,6 +34,15 @@ export async function getUser(): Promise<User | null> {
 }
 
 export async function getUserDetails(): Promise<UserDetails | null> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return {
+      id: 'test-user-123',
+      full_name: 'Test User',
+      avatar_url: null,
+    };
+  }
+
   try {
     const supabase = createClient({ cookies });
     const { data: { user }, error } = await supabase.auth.getUser();

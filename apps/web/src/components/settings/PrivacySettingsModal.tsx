@@ -1,322 +1,186 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { X, Shield, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Eye, Shield, BarChart3, Users, Download, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
-
-const privacySchema = z.object({
-  profileVisibility: z.enum(['public', 'private', 'team']),
-  activityTracking: z.boolean(),
-  dataSharing: z.boolean(),
-  analytics: z.boolean(),
-  marketingData: z.boolean(),
-  locationTracking: z.boolean(),
-  searchHistory: z.boolean(),
-});
-
-type PrivacyFormData = z.infer<typeof privacySchema>;
 
 interface PrivacySettingsModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function PrivacySettingsModal({ open, onOpenChange }: PrivacySettingsModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<PrivacyFormData>({
-    resolver: zodResolver(privacySchema),
-    defaultValues: {
-      profileVisibility: 'private',
-      activityTracking: true,
-      dataSharing: false,
-      analytics: true,
-      marketingData: false,
-      locationTracking: false,
-      searchHistory: true,
-    },
+export function PrivacySettingsModal({ isOpen, onClose }: PrivacySettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [settings, setSettings] = useState({
+    showEmail: false,
+    dataCollection: true,
+    thirdPartySharing: false,
+    analytics: true,
   });
 
-  const onSubmit = async (data: PrivacyFormData) => {
-    setIsSubmitting(true);
-    try {
-      // TODO: Implement actual privacy settings update logic
-      console.log('Privacy settings update:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Privacy settings updated successfully');
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Privacy update error:', error);
-      toast.error('Failed to update privacy settings. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  const handleSave = async () => {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log('Saving privacy settings...', settings);
+    alert('Privacy settings saved successfully!');
+    onClose();
   };
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      reset();
-    }
-    onOpenChange(newOpen);
-  };
-
-  const watchedValues = watch();
-
-  const visibilityOptions = [
-    {
-      value: 'public',
-      label: 'Public',
-      description: 'Your profile is visible to everyone',
-    },
-    {
-      value: 'private',
-      label: 'Private',
-      description: 'Your profile is only visible to you',
-    },
-    {
-      value: 'team',
-      label: 'Team Only',
-      description: 'Your profile is visible to team members',
-    },
-  ];
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 99999 }}
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 modal-backdrop"
+      />
+      
+      {/* Modal */}
+      <div
+        className="relative w-full max-w-md rounded-lg border shadow-2xl overflow-hidden modal-bg"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            Privacy Settings
-          </DialogTitle>
-          <DialogDescription>
-            Control your privacy and data sharing preferences
-          </DialogDescription>
-        </DialogHeader>
+            <h2 className="text-xl font-bold">Privacy Settings</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Content */}
+        <div className="p-6 space-y-4">
           {/* Profile Visibility */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Eye className="h-5 w-5" />
-                Profile Visibility
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="profileVisibility">Who can see your profile?</Label>
-                <Select
-                  value={watchedValues.profileVisibility}
-                  onValueChange={(value) => setValue('profileVisibility', value as 'public' | 'private' | 'team')}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select visibility" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {visibilityOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div>
-                          <p className="font-medium">{option.label}</p>
-                          <p className="text-xs text-muted-foreground">{option.description}</p>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.profileVisibility && (
-                  <p className="text-sm text-destructive">{errors.profileVisibility.message}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Profile Visibility</label>
+            <select className="w-full px-4 py-2.5 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option selected>Public</option>
+              <option>Friends Only</option>
+              <option>Private</option>
+            </select>
+          </div>
+
+          {/* Show Email Address */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold">Show Email Address</p>
+              <p className="text-sm text-muted-foreground">Display email on profile</p>
+            </div>
+            <button
+              onClick={() => setSettings({ ...settings, showEmail: !settings.showEmail })}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                settings.showEmail ? 'bg-success' : 'bg-danger'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  settings.showEmail ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
 
           {/* Data Collection */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BarChart3 className="h-5 w-5" />
-                Data Collection
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Activity Tracking</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow us to track your activity to improve the service
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.activityTracking}
-                    onCheckedChange={(checked) => setValue('activityTracking', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Analytics</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Help us understand how you use the platform
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.analytics}
-                    onCheckedChange={(checked) => setValue('analytics', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Search History</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Save your search history for better recommendations
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.searchHistory}
-                    onCheckedChange={(checked) => setValue('searchHistory', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Location Tracking</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow location-based features and recommendations
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.locationTracking}
-                    onCheckedChange={(checked) => setValue('locationTracking', checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Data Sharing */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Users className="h-5 w-5" />
-                Data Sharing
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Share Data with Partners</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow sharing of anonymized data with trusted partners
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.dataSharing}
-                    onCheckedChange={(checked) => setValue('dataSharing', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Marketing Data</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow use of your data for marketing purposes
-                    </p>
-                  </div>
-                  <Switch
-                    checked={watchedValues.marketingData}
-                    onCheckedChange={(checked) => setValue('marketingData', checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Data Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Download className="h-5 w-5" />
-                Data Management
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium">Export Your Data</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Download a copy of all your data
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
-                  </Button>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-sm font-medium text-destructive">Delete Account</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Permanently delete your account and all data
-                    </p>
-                  </div>
-                  <Button variant="destructive" size="sm">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold">Data Collection</p>
+              <p className="text-sm text-muted-foreground">Allow collection of usage data</p>
+            </div>
+            <button
+              onClick={() => setSettings({ ...settings, dataCollection: !settings.dataCollection })}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                settings.dataCollection ? 'bg-success' : 'bg-danger'
+              }`}
             >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Settings'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  settings.dataCollection ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Third-Party Sharing */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold">Third-Party Sharing</p>
+              <p className="text-sm text-muted-foreground">Share data with partners</p>
+            </div>
+            <button
+              onClick={() => setSettings({ ...settings, thirdPartySharing: !settings.thirdPartySharing })}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                settings.thirdPartySharing ? 'bg-success' : 'bg-danger'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  settings.thirdPartySharing ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Analytics */}
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold">Analytics</p>
+              <p className="text-sm text-muted-foreground">Help improve with anonymous analytics</p>
+            </div>
+            <button
+              onClick={() => setSettings({ ...settings, analytics: !settings.analytics })}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                settings.analytics ? 'bg-success' : 'bg-danger'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  settings.analytics ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Privacy Policy Link */}
+          <button
+            onClick={() => window.open('https://example.com/privacy', '_blank')}
+            className="w-full p-3 bg-blue-50 text-blue-900 rounded-lg flex items-center justify-between hover:bg-blue-100 transition-colors"
+          >
+            <span className="text-sm font-medium">View Full Privacy Policy</span>
+            <ExternalLink className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 p-6 border-t bg-muted">
+          <Button
+            onClick={onClose}
+            variant="outline"
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            className="flex-1"
+          >
+            Save Changes
+          </Button>
+        </div>
+      </div>
+    </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

@@ -1,40 +1,113 @@
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
-import {
-  getUser,
-  getUserDetails,
-  getSubscription
-} from '@/utils/supabase/queries';
-import { redirect } from 'next/navigation';
-import { DevNav } from '@/components/dev-nav';
+'use client';
 
-// Inline Posts component for template
-const Posts = ({ user }: { user: any }) => (
-  <div className="container mx-auto p-4">
-    <h1 className="text-2xl font-bold mb-4">Welcome, {user?.email || 'User'}!</h1>
-    <p className="text-muted-foreground">
-      This is a template dashboard. Replace this component with your actual content.
-    </p>
-  </div>
-);
+import { TrendingUp, Database, Activity, DollarSign } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default async function DashboardPage() {
-  const supabase = createClient({ cookies });
-  const [user, userDetails] = await Promise.all([
-    getUser(),
-    getUserDetails()
-    ]);
-
-  if (!user) {
-    return redirect('/en/login');
-  }
+export default function DashboardPage() {
+  // Mock user for preview purposes
+  const displayUser = {
+    id: 'preview-user-id',
+    email: 'preview@example.com',
+    name: 'Preview User'
+  };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40 gap-4">
-      <Posts user={user} />
-      <div className="container mx-auto p-4">
-        <DevNav />
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Metric Cards */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$45,231.89</div>
+            <p className="text-xs text-muted-foreground">
+              +20.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">2,350</div>
+            <p className="text-xs text-muted-foreground">
+              +180.1% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">+12,234</div>
+            <p className="text-xs text-muted-foreground">
+              +19% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">API Calls</CardTitle>
+            <Database className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">573</div>
+            <p className="text-xs text-muted-foreground">
+              +201 since last hour
+            </p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Welcome Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Welcome, {displayUser?.email || 'User'}!</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">
+            This is a template dashboard. Replace this component with your actual content.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">New user registered</p>
+                <p className="text-xs text-muted-foreground">2 minutes ago</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Database backup completed</p>
+                <p className="text-xs text-muted-foreground">1 hour ago</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">API endpoint updated</p>
+                <p className="text-xs text-muted-foreground">3 hours ago</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

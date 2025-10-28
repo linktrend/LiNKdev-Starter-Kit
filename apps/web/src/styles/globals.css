@@ -18,9 +18,9 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 220 13% 95%;      /* #f3f4f6 */
     --secondary-foreground: 215 16% 35%; /* #4b5563 */
-    --muted: 210 20% 98%;          /* #f9fafb */
+    --muted: 220 13% 95%;          /* Better contrast in light mode */
     --muted-foreground: 215 16% 35%;
-    --accent: 199 89% 94%;         /* #e0f2fe */
+    --accent: 217 91% 95%;         /* Light blue tint for better visibility */
     --accent-foreground: 217 91% 60%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -59,24 +59,24 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 215 16% 15%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 215 16% 15%;
-    --muted-foreground: 215 16% 65%;
-    --accent: 199 89% 20%;
-    --accent-foreground: 199 89% 94%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: 215 16% 17%;          /* Slightly lighter for better visibility */
+    --muted-foreground: 215 16% 70%;   /* Brighter for better readability */
+    --accent: 217 91% 20%;         /* Blue tint for consistency */
+    --accent-foreground: 217 91% 90%;
+    --destructive: 0 84% 65%;
     --destructive-foreground: 0 0% 98%;
     --border: 215 16% 25%;
     --input: 215 16% 25%;
     --ring: 217 91% 60%;
-    --accent-red: 0 84.2% 60.2%;
+    --accent-red: 0 84% 65%;
     --accent-red-foreground: 0 0% 98%;
     
     /* Success, Warning, Danger colors for dark theme */
-    --success: 142 76% 36%;
+    --success: 142 76% 45%;
     --success-foreground: 0 0% 98%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
-    --danger: 0 62.8% 30.6%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 0 0% 10%;
+    --danger: 0 84% 65%;
     --danger-foreground: 0 0% 98%;
     
     /* Chart colors for dark theme */
@@ -155,4 +155,17 @@
   .delay-1000 {
     animation-delay: 1000ms;
   }
+}
+
+/* Modal backgrounds - fully opaque in both light and dark modes */
+.modal-bg {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  opacity: 1;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }

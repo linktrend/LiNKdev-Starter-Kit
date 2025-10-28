@@ -1,309 +1,169 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { X, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Eye, EyeOff, Key, Check, X } from 'lucide-react';
-import { toast } from 'sonner';
-
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
-  newPassword: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
-    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-type PasswordFormData = z.infer<typeof passwordSchema>;
 
 interface EditPasswordModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function EditPasswordModal({ open, onOpenChange }: EditPasswordModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
+export function EditPasswordModal({ isOpen, onClose }: EditPasswordModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-  } = useForm<PasswordFormData>({
-    resolver: zodResolver(passwordSchema),
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    },
-  });
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const newPassword = watch('newPassword', '');
+  if (!isOpen || !mounted) return null;
 
-  const getPasswordStrength = (password: string) => {
-    let score = 0;
-    const checks = {
-      length: password.length >= 8,
-      uppercase: /[A-Z]/.test(password),
-      lowercase: /[a-z]/.test(password),
-      number: /[0-9]/.test(password),
-      special: /[^A-Za-z0-9]/.test(password),
-    };
-
-    score = Object.values(checks).filter(Boolean).length;
-    return { score, checks };
+  const handleSave = () => {
+    console.log('Updating password...');
+    onClose();
   };
 
-  const { score, checks } = getPasswordStrength(newPassword);
-  const strengthPercentage = (score / 5) * 100;
-
-  const getStrengthLabel = (score: number) => {
-    if (score <= 2) return 'Weak';
-    if (score <= 3) return 'Fair';
-    if (score <= 4) return 'Good';
-    return 'Strong';
-  };
-
-  const getStrengthColor = (score: number) => {
-    if (score <= 2) return 'bg-destructive';
-    if (score <= 3) return 'bg-orange-500';
-    if (score <= 4) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
-  const onSubmit = async (data: PasswordFormData) => {
-    setIsSubmitting(true);
-    try {
-      // TODO: Implement actual password update logic
-      // This would typically call a server action or API endpoint
-      console.log('Password update data:', { 
-        currentPassword: '***', 
-        newPassword: '***' 
-      });
+  const modalContent = (
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 99999 }}
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 modal-backdrop"
+      />
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Password updated successfully');
-      onOpenChange(false);
-      reset();
-    } catch (error) {
-      console.error('Password update error:', error);
-      toast.error('Failed to update password. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      {/* Modal */}
+      <div
+        className="relative w-full max-w-md rounded-lg border shadow-2xl overflow-hidden modal-bg"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center gap-2">
+            <Lock className="h-5 w-5" />
+            <h2 className="text-xl font-bold">Change Password</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      reset();
-      setShowPasswords({ current: false, new: false, confirm: false });
-    }
-    onOpenChange(newOpen);
-  };
-
-  const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Key className="h-5 w-5" />
-            Change Password
-          </DialogTitle>
-          <DialogDescription>
-            Update your password to keep your account secure
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Password Security</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Current Password */}
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
-                <div className="relative">
-                  <Input
-                    id="currentPassword"
-                    type={showPasswords.current ? 'text' : 'password'}
-                    {...register('currentPassword')}
-                    placeholder="Enter your current password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => togglePasswordVisibility('current')}
-                  >
-                    {showPasswords.current ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.currentPassword && (
-                  <p className="text-sm text-destructive">{errors.currentPassword.message}</p>
-                )}
+        {/* Content */}
+        <div className="p-6">
+          <div className="space-y-4 mb-6">
+            {/* Current Password */}
+            <div>
+              <label className="block text-sm text-muted-foreground mb-2">
+                Current Password <span className="text-danger">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrent ? 'text' : 'password'}
+                  value={formData.currentPassword}
+                  onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+                  className="w-full px-4 py-2.5 pr-10 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrent(!showCurrent)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showCurrent ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
+            </div>
 
-              {/* New Password */}
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="newPassword"
-                    type={showPasswords.new ? 'text' : 'password'}
-                    {...register('newPassword')}
-                    placeholder="Enter your new password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => togglePasswordVisibility('new')}
-                  >
-                    {showPasswords.new ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.newPassword && (
-                  <p className="text-sm text-destructive">{errors.newPassword.message}</p>
-                )}
-
-                {/* Password Strength Indicator */}
-                {newPassword && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>Password strength:</span>
-                      <span className={`font-medium ${
-                        score <= 2 ? 'text-destructive' :
-                        score <= 3 ? 'text-orange-500' :
-                        score <= 4 ? 'text-yellow-500' :
-                        'text-green-500'
-                      }`}>
-                        {getStrengthLabel(score)}
-                      </span>
-                    </div>
-                    <Progress 
-                      value={strengthPercentage} 
-                      className="h-2"
-                    />
-                  </div>
-                )}
+            {/* New Password */}
+            <div>
+              <label className="block text-sm text-muted-foreground mb-2">
+                New Password <span className="text-danger">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showNew ? 'text' : 'password'}
+                  value={formData.newPassword}
+                  onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                  className="w-full px-4 py-2.5 pr-10 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showNew ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
+            </div>
 
-              {/* Confirm Password */}
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showPasswords.confirm ? 'text' : 'password'}
-                    {...register('confirmPassword')}
-                    placeholder="Confirm your new password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => togglePasswordVisibility('confirm')}
-                  >
-                    {showPasswords.confirm ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-                )}
+            {/* Confirm New Password */}
+            <div>
+              <label className="block text-sm text-muted-foreground mb-2">
+                Confirm New Password <span className="text-danger">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  className="w-full px-4 py-2.5 pr-10 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
+            </div>
+          </div>
 
-              {/* Password Requirements */}
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Password requirements:</p>
-                <div className="space-y-1 text-xs">
-                  <div className={`flex items-center gap-2 ${checks.length ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    {checks.length ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    At least 8 characters
-                  </div>
-                  <div className={`flex items-center gap-2 ${checks.uppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    {checks.uppercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    One uppercase letter
-                  </div>
-                  <div className={`flex items-center gap-2 ${checks.lowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    {checks.lowercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    One lowercase letter
-                  </div>
-                  <div className={`flex items-center gap-2 ${checks.number ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    {checks.number ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    One number
-                  </div>
-                  <div className={`flex items-center gap-2 ${checks.special ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    {checks.special ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    One special character
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Password Requirements */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Password Requirements:</p>
+            <ul className="text-sm text-blue-900 dark:text-blue-300 space-y-1 list-disc list-inside">
+              <li>At least 12 characters</li>
+              <li>Mix of uppercase and lowercase letters</li>
+              <li>At least one number</li>
+              <li>At least one special character</li>
+            </ul>
+          </div>
+        </div>
 
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || score < 3}>
-              {isSubmitting ? 'Updating...' : 'Update Password'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        {/* Footer */}
+        <div className="flex gap-3 p-6 border-t bg-muted">
+          <Button
+            onClick={onClose}
+            variant="outline"
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            className="flex-1"
+          >
+            Update Password
+          </Button>
+        </div>
+      </div>
+    </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

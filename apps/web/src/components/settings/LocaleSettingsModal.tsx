@@ -1,239 +1,154 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { X, Globe, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Globe, Clock, MapPin } from 'lucide-react';
-import { toast } from 'sonner';
-import { LOCALE_OPTIONS } from '@/lib/mocks/onboarding';
-
-const localeSchema = z.object({
-  locale: z.string().min(2, 'Please select a locale'),
-  timezone: z.string().optional(),
-  region: z.string().optional(),
-});
-
-type LocaleFormData = z.infer<typeof localeSchema>;
 
 interface LocaleSettingsModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  currentLocale?: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function LocaleSettingsModal({ open, onOpenChange, currentLocale = 'en' }: LocaleSettingsModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [language, setLanguage] = useState('English');
+  const [region, setRegion] = useState('United States');
+  const [calendar, setCalendar] = useState('Gregorian');
+  const [measurement, setMeasurement] = useState('Metric');
+  const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
+  const [currency, setCurrency] = useState('USD ($)');
+  const [saving, setSaving] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<LocaleFormData>({
-    resolver: zodResolver(localeSchema),
-    defaultValues: {
-      locale: currentLocale,
-      timezone: 'UTC-8',
-      region: 'US',
-    },
-  });
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const onSubmit = async (data: LocaleFormData) => {
-    setIsSubmitting(true);
-    try {
-      // TODO: Implement actual locale update logic
-      console.log('Locale settings update:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success('Locale settings updated successfully');
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Locale update error:', error);
-      toast.error('Failed to update locale settings. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  if (!isOpen || !mounted) return null;
+
+  const handleSave = async () => {
+    setSaving(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    console.log('Saving locale settings...', { language, region, calendar, measurement, dateFormat, currency });
+    alert('Locale settings saved successfully!');
+    setSaving(false);
+    onClose();
   };
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      reset();
-    }
-    onOpenChange(newOpen);
-  };
-
-  const watchedLocale = watch('locale');
-  const selectedLocale = LOCALE_OPTIONS.find(option => option.value === watchedLocale);
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 99999 }}
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 modal-backdrop"
+      />
+      
+      {/* Modal */}
+      <div
+        className="relative w-full max-w-md rounded-lg border shadow-2xl overflow-hidden modal-bg"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b">
+          <div className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
-            Locale & Region Settings
-          </DialogTitle>
-          <DialogDescription>
-            Configure your language, timezone, and regional preferences
-          </DialogDescription>
-        </DialogHeader>
+            <h2 className="text-xl font-bold">Locale Settings</h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Language & Region</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="locale">Language</Label>
-                <Select
-                  value={watchedLocale}
-                  onValueChange={(value) => setValue('locale', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LOCALE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <span className="flex items-center gap-2">
-                          <span>{option.flag}</span>
-                          <span>{option.label}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.locale && (
-                  <p className="text-sm text-destructive">{errors.locale.message}</p>
-                )}
-              </div>
+        {/* Content */}
+        <div className="p-6 space-y-4">
+          {/* Language */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Language</label>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>English</option>
+              <option>Spanish</option>
+              <option>French</option>
+              <option>German</option>
+            </select>
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
-                <Select
-                  value={watch('timezone')}
-                  onValueChange={(value) => setValue('timezone', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UTC-12">UTC-12 (Baker Island)</SelectItem>
-                    <SelectItem value="UTC-11">UTC-11 (American Samoa)</SelectItem>
-                    <SelectItem value="UTC-10">UTC-10 (Hawaii)</SelectItem>
-                    <SelectItem value="UTC-9">UTC-9 (Alaska)</SelectItem>
-                    <SelectItem value="UTC-8">UTC-8 (Pacific Time)</SelectItem>
-                    <SelectItem value="UTC-7">UTC-7 (Mountain Time)</SelectItem>
-                    <SelectItem value="UTC-6">UTC-6 (Central Time)</SelectItem>
-                    <SelectItem value="UTC-5">UTC-5 (Eastern Time)</SelectItem>
-                    <SelectItem value="UTC-4">UTC-4 (Atlantic Time)</SelectItem>
-                    <SelectItem value="UTC-3">UTC-3 (Brazil)</SelectItem>
-                    <SelectItem value="UTC-2">UTC-2 (Mid-Atlantic)</SelectItem>
-                    <SelectItem value="UTC-1">UTC-1 (Azores)</SelectItem>
-                    <SelectItem value="UTC+0">UTC+0 (Greenwich)</SelectItem>
-                    <SelectItem value="UTC+1">UTC+1 (Central Europe)</SelectItem>
-                    <SelectItem value="UTC+2">UTC+2 (Eastern Europe)</SelectItem>
-                    <SelectItem value="UTC+3">UTC+3 (Moscow)</SelectItem>
-                    <SelectItem value="UTC+4">UTC+4 (Gulf)</SelectItem>
-                    <SelectItem value="UTC+5">UTC+5 (Pakistan)</SelectItem>
-                    <SelectItem value="UTC+6">UTC+6 (Bangladesh)</SelectItem>
-                    <SelectItem value="UTC+7">UTC+7 (Thailand)</SelectItem>
-                    <SelectItem value="UTC+8">UTC+8 (China)</SelectItem>
-                    <SelectItem value="UTC+9">UTC+9 (Japan)</SelectItem>
-                    <SelectItem value="UTC+10">UTC+10 (Australia)</SelectItem>
-                    <SelectItem value="UTC+11">UTC+11 (Solomon Islands)</SelectItem>
-                    <SelectItem value="UTC+12">UTC+12 (New Zealand)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Region */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Region</label>
+            <select value={region} onChange={(e) => setRegion(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>United States</option>
+              <option>United Kingdom</option>
+              <option>Canada</option>
+              <option>Australia</option>
+            </select>
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="region">Region</Label>
-                <Select
-                  value={watch('region')}
-                  onValueChange={(value) => setValue('region', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="CA">Canada</SelectItem>
-                    <SelectItem value="GB">United Kingdom</SelectItem>
-                    <SelectItem value="DE">Germany</SelectItem>
-                    <SelectItem value="FR">France</SelectItem>
-                    <SelectItem value="ES">Spain</SelectItem>
-                    <SelectItem value="IT">Italy</SelectItem>
-                    <SelectItem value="JP">Japan</SelectItem>
-                    <SelectItem value="KR">South Korea</SelectItem>
-                    <SelectItem value="CN">China</SelectItem>
-                    <SelectItem value="AU">Australia</SelectItem>
-                    <SelectItem value="BR">Brazil</SelectItem>
-                    <SelectItem value="MX">Mexico</SelectItem>
-                    <SelectItem value="IN">India</SelectItem>
-                    <SelectItem value="RU">Russia</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Calendar */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Calendar</label>
+            <select value={calendar} onChange={(e) => setCalendar(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>Gregorian</option>
+              <option>Julian</option>
+              <option>Islamic</option>
+              <option>Hebrew</option>
+            </select>
+          </div>
 
-          {/* Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                  <span>Language: {selectedLocale?.label || 'English'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span>Timezone: {watch('timezone') || 'UTC-8'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>Region: {watch('region') || 'US'}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Measurement System */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Measurement System</label>
+            <select value={measurement} onChange={(e) => setMeasurement(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>Metric</option>
+              <option>Imperial</option>
+            </select>
+          </div>
 
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Settings'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          {/* Date Format */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Date Format</label>
+            <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>MM/DD/YYYY</option>
+              <option>DD/MM/YYYY</option>
+              <option>YYYY-MM-DD</option>
+            </select>
+          </div>
+
+          {/* Currency */}
+          <div>
+            <label className="block text-sm text-muted-foreground mb-2">Currency</label>
+            <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+              <option>USD ($)</option>
+              <option>EUR (€)</option>
+              <option>GBP (£)</option>
+              <option>JPY (¥)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-3 p-6 border-t bg-muted">
+          <Button
+            onClick={onClose}
+            variant="outline"
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            className="flex-1"
+            disabled={saving}
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

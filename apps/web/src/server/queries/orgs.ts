@@ -17,6 +17,15 @@ export type UserOrgRole = z.infer<typeof UserOrgRoleSchema>;
  * Get organization summary information
  */
 export async function getOrgSummary(orgId: string): Promise<OrgSummary | null> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return {
+      id: orgId,
+      name: 'Test Organization',
+      members: 1,
+    };
+  }
+
   try {
     const supabase = createClient({ cookies });
     
@@ -56,6 +65,11 @@ export async function getOrgSummary(orgId: string): Promise<OrgSummary | null> {
  * Get user's role in a specific organization
  */
 export async function getUserOrgRole(orgId: string, userId: string): Promise<UserOrgRole> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return 'owner';
+  }
+
   try {
     const supabase = createClient({ cookies });
     
@@ -81,6 +95,11 @@ export async function getUserOrgRole(orgId: string, userId: string): Promise<Use
  * Check if user has access to organization
  */
 export async function hasOrgAccess(orgId: string, userId: string): Promise<boolean> {
+  // TEMPORARY: Offline mode for testing - always grant access
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return true;
+  }
+  
   const role = await getUserOrgRole(orgId, userId);
   return role !== null;
 }

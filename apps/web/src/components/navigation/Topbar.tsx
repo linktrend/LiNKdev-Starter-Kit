@@ -41,12 +41,12 @@ export function Topbar({ locale = 'en', screenName = 'Dashboard' }: TopbarProps)
   };
 
   const handleHelpClick = () => {
-    router.push(`/${locale}/help`);
+    router.push(`/${locale}/dashboard/help`);
   };
 
   return (
     <>
-      <div className="h-16 border-b flex items-center px-6 sticky top-0 z-30 bg-background">
+      <div className="border-b flex items-center px-6 sticky top-0 z-30 bg-background" style={{ height: '75px' }}>
         <div className="flex items-center gap-3">
           <Sparkles className="h-6 w-6 text-primary" />
           <div>

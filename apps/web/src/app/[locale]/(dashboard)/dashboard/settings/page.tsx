@@ -1,172 +1,418 @@
 'use client';
-import { useTheme } from 'next-themes';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { User, Lock, Key, Settings2, Globe, Palette, Bell, Shield, Eye, FileText, Upload, Database, Link2, UserCircle, Key as KeyIcon, CreditCard, BarChart3, ArrowUpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { icons as Icons } from '@/components/icons';
-import { AtSign, Bell, EyeOff, X } from 'lucide-react';
+import { UpgradeModal } from '@/components/settings/UpgradeModal';
+import { ManageBillingModal } from '@/components/settings/ManageBillingModal';
+import { UsageDashboardModal } from '@/components/settings/UsageDashboardModal';
+import { MagicLinkSettingsModal } from '@/components/settings/MagicLinkSettingsModal';
+import { BiometricLoginModal } from '@/components/settings/BiometricLoginModal';
+import { TwoFactorModal } from '@/components/settings/TwoFactorModal';
+import { ManagePermissionsModal } from '@/components/settings/ManagePermissionsModal';
+import { SessionsActivityModal } from '@/components/settings/SessionsActivityModal';
+import { LocaleSettingsModal } from '@/components/settings/LocaleSettingsModal';
+import { AppearanceModal } from '@/components/settings/AppearanceModal';
+import { NotificationPreferencesModal } from '@/components/settings/NotificationPreferencesModal';
+import { PrivacySettingsModal } from '@/components/settings/PrivacySettingsModal';
+import { ImportExportModal } from '@/components/settings/ImportExportModal';
+import { DataSettingsModal } from '@/components/settings/DataSettingsModal';
+import { IntegrationsModal } from '@/components/settings/IntegrationsModal';
+import { APIKeysModal } from '@/components/settings/APIKeysModal';
 
 export default function SettingsPage() {
-  const [isEverythingToggled, setIsEverythingToggled] = useState(false);
-  const [isAvailableToggled, setIsAvailableToggled] = useState(true);
-  const [isNotificationToggled, setIsNotificationToggled] = useState(true);
-  const { setTheme } = useTheme();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'account');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  
+  // Modal states
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [billingModalOpen, setBillingModalOpen] = useState(false);
+  const [usageModalOpen, setUsageModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [biometricModalOpen, setBiometricModalOpen] = useState(false);
+  const [twoFactorModalOpen, setTwoFactorModalOpen] = useState(false);
+  const [permissionsModalOpen, setPermissionsModalOpen] = useState(false);
+  const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
+  const [localeModalOpen, setLocaleModalOpen] = useState(false);
+  const [appearanceModalOpen, setAppearanceModalOpen] = useState(false);
+  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [importExportModalOpen, setImportExportModalOpen] = useState(false);
+  const [dataSettingsModalOpen, setDataSettingsModalOpen] = useState(false);
+  const [integrationsModalOpen, setIntegrationsModalOpen] = useState(false);
+  const [apiKeysModalOpen, setAPIKeysModalOpen] = useState(false);
+  
+  useEffect(() => {
+    const tab = searchParams.get('tab') || 'account';
+    setActiveTab(tab);
+  }, [searchParams]);
+  
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tabId);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+  
+  const tabs = [
+    { id: 'account', label: 'Account' },
+    { id: 'security', label: 'Security' },
+    { id: 'preferences', label: 'Preferences' },
+    { id: 'data', label: 'Data & Integrations' },
+  ];
 
   return (
-    <div className="w-full mx-auto">
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="text-muted-foreground">
-            Customize your account and preferences.
-          </p>
+    <>
+      <div className="min-h-screen p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap border shadow-sm ${
+                  activeTab === tab.id
+                    ? 'bg-primary text-primary-foreground border-primary shadow-lg'
+                    : 'bg-card text-muted-foreground hover:bg-accent hover:text-card-foreground hover:shadow-md border-border'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'account' && (
+            <div className="grid gap-6 md:grid-cols-2">
+              <SettingCard
+                icon={<User />}
+                title="Profile Information"
+                description=""
+              >
+                <div className="mb-6">
+                  <p className="font-semibold text-card-foreground mb-1">John Doe</p>
+                  <p className="text-sm text-card-foreground/60">john.doe@example.com</p>
+                </div>
+                <Button 
+                  onClick={() => router.push('/en/dashboard/profile')}
+                  className="w-full mt-auto"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Edit Profile
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<CreditCard />}
+                title="Plan & Billing"
+                titleAction={
+                  <button
+                    onClick={() => setUpgradeModalOpen(true)}
+                    className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium inline-flex items-center gap-1 hover:bg-danger/30 transition-all"
+                  >
+                    <ArrowUpCircle className="h-3 w-3" />
+                    Upgrade
+                  </button>
+                }
+                description="Current plan and billing information"
+              >
+                <div className="mb-6">
+                  <p className="text-sm text-card-foreground/60">Free Plan - Limited Features</p>
+                </div>
+                <Button onClick={() => setBillingModalOpen(true)} className="w-full mt-auto">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Manage Billing
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<BarChart3 />}
+                title="Usage"
+                description="Monthly data usage statistics"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setUsageModalOpen(true)} className="w-full mt-auto">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  View Usage
+                </Button>
+              </SettingCard>
+            </div>
+          )}
+
+          {activeTab === 'security' && (
+            <div className="grid gap-6 md:grid-cols-2">
+              <SettingCard
+                icon={<Lock />}
+                title="Login Credentials"
+                description="Manage your password and biometric authentication"
+              >
+                <div className="flex-1" />
+                <div className="space-y-3 mt-auto">
+                  <Button onClick={() => setPasswordModalOpen(true)} className="w-full">
+                    <Key className="h-4 w-4 mr-2" />
+                    Edit Magic Link Settings
+                  </Button>
+                  <Button onClick={() => setBiometricModalOpen(true)} className="w-full">
+                    <UserCircle className="h-4 w-4 mr-2" />
+                    Edit Biometric Login
+                  </Button>
+                </div>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Shield />}
+                title="Two-Factor Authentication"
+                description=""
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-sm text-card-foreground/70">2FA Status</span>
+                  <span className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium">Disabled</span>
+                </div>
+                <Button onClick={() => setTwoFactorModalOpen(true)} className="w-full mt-auto">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Edit 2FA Settings
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Settings2 />}
+                title="User Roles & Permissions"
+                description="Manage access levels for shared accounts"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setPermissionsModalOpen(true)} className="w-full mt-auto">
+                  <Settings2 className="h-4 w-4 mr-2" />
+                  Manage Permissions
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<FileText />}
+                title="Session & Activity Logs"
+                description="View and manage active sessions and activity history"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setSessionsModalOpen(true)} className="w-full mt-auto">
+                  <FileText className="h-4 w-4 mr-2" />
+                  View Sessions & Activity
+                </Button>
+              </SettingCard>
+            </div>
+          )}
+
+          {activeTab === 'preferences' && (
+            <div className="grid gap-6 md:grid-cols-2">
+              <SettingCard
+                icon={<Globe />}
+                title="Locale"
+                description=""
+              >
+                <div className="space-y-4">
+                  <div>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground shadow-sm">
+                      <option value="">Application Language</option>
+                      <option>English</option>
+                      <option>Spanish</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground shadow-sm">
+                      <option value="">Region</option>
+                      <option>United States</option>
+                      <option>United Kingdom</option>
+                      <option>Canada</option>
+                      <option>Australia</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <Button onClick={() => setLocaleModalOpen(true)} className="w-full mt-auto">
+                  <Globe className="h-4 w-4 mr-2" />
+                  Manage Locale Settings
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Palette />}
+                title="Theme & Appearance"
+                description=""
+              >
+                <div className="space-y-4">
+                  <div>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground shadow-sm">
+                      <option value="">Theme</option>
+                      <option>Light</option>
+                      <option>Dark</option>
+                    </select>
+                  </div>
+                  <div>
+                    <select className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground shadow-sm">
+                      <option value="">Font Size</option>
+                      <option>Small</option>
+                      <option>Medium</option>
+                      <option>Large</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <Button onClick={() => setAppearanceModalOpen(true)} className="w-full mt-auto">
+                  <Palette className="h-4 w-4 mr-2" />
+                  Customize Appearance
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Bell />}
+                title="Notification Preferences"
+                description=""
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-card-foreground">Email</span>
+                    <div className="px-3 py-1 rounded-full bg-success/20 text-success text-xs font-medium border border-success/30">On</div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-card-foreground">In-App Notifications</span>
+                    <div className="px-3 py-1 rounded-full bg-success/20 text-success text-xs font-medium border border-success/30">On</div>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <Button onClick={() => setNotificationsModalOpen(true)} className="w-full mt-auto">
+                  <Bell className="h-4 w-4 mr-2" />
+                  Manage Notifications
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Eye />}
+                title="Privacy Settings"
+                description=""
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-card-foreground">Data Sharing</span>
+                    <div className="px-3 py-1 rounded-full bg-gray-500/20 text-gray-700 text-xs font-medium border border-gray-500/30">Off</div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-card-foreground">Analytics Tracking</span>
+                    <div className="px-3 py-1 rounded-full bg-gray-500/20 text-gray-700 text-xs font-medium border border-gray-500/30">Off</div>
+                  </div>
+                </div>
+                <div className="flex-1" />
+                <Button onClick={() => setPrivacyModalOpen(true)} className="w-full mt-auto">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Privacy Settings
+                </Button>
+              </SettingCard>
+            </div>
+          )}
+
+          {activeTab === 'data' && (
+            <div className="grid gap-6 md:grid-cols-2">
+              <SettingCard
+                icon={<Upload />}
+                title="Data Import/Export"
+                description="Upload or export financial data in various formats"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setImportExportModalOpen(true)} className="w-full mt-auto">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import/Export Data
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Database />}
+                title="Data Settings"
+                description="Data retention policy, backup and restore settings"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setDataSettingsModalOpen(true)} className="w-full mt-auto">
+                  <Database className="h-4 w-4 mr-2" />
+                  Manage Data Settings
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Link2 />}
+                title="Integrations"
+                description="Manage webhooks, integrations and linked accounts"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setIntegrationsModalOpen(true)} className="w-full mt-auto">
+                  <Link2 className="h-4 w-4 mr-2" />
+                  Manage Integrations
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<KeyIcon />}
+                title="API Access"
+                description="Generate and manage API keys for third-party apps"
+              >
+                <div className="flex-1" />
+                <Button onClick={() => setAPIKeysModalOpen(true)} className="w-full mt-auto">
+                  <KeyIcon className="h-4 w-4 mr-2" />
+                  API Keys
+                </Button>
+              </SettingCard>
+            </div>
+          )}
         </div>
-        <div className="grid gap-6">
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Notifications</CardTitle>
-              <CardDescription>
-                Choose what you want to be notified about.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              <div
-                className={`flex items-center justify-between p-2 ${isEverythingToggled ? 'bg-accent text-accent-foreground rounded-md' : ''} transition-colors ease-in-out duration-300`}
-              >
-                <div className="flex items-center space-x-2">
-                  <Bell className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm font-medium">Everything</p>
-                    <p className="text-sm text-muted-foreground">
-                      Email digest, mentions & all activity.
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  id="notification-everything"
-                  checked={isEverythingToggled}
-                  onCheckedChange={setIsEverythingToggled}
-                />
-              </div>
-              <div
-                className={`flex items-center justify-between p-2 ${isAvailableToggled ? 'bg-accent text-accent-foreground rounded-md' : ''} transition-colors ease-in-out duration-300`}
-              >
-                <div className="flex items-center space-x-2">
-                  <AtSign className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm font-medium">Available</p>
-                    <p className="text-sm text-muted-foreground">
-                      Only mentions and comments.
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  id="notification-available"
-                  defaultChecked
-                  checked={isAvailableToggled}
-                  onCheckedChange={setIsAvailableToggled}
-                />
-              </div>
-              <div
-                className={`flex items-center justify-between p-2 ${isNotificationToggled ? 'bg-accent text-accent-foreground rounded-md' : ''} transition-colors ease-in-out duration-300`}
-              >
-                <div className="flex items-center space-x-2">
-                  <EyeOff className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm font-medium">Ignoring</p>
-                    <p className="text-sm text-muted-foreground">
-                      Turn off all notifications.
-                    </p>
-                  </div>
-                </div>
-                <Switch
-                  id="notification-ignoring"
-                  checked={isNotificationToggled}
-                  onCheckedChange={setIsNotificationToggled}
-                />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Language</CardTitle>
-              <CardDescription>
-                Update your language preferences.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              <div className="grid gap-2">
-                <Label htmlFor="language">Language</Label>
-                <Select>
-                  <SelectTrigger className="text-muted-foreground">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Spanish</SelectItem>
-                    {/* <SelectItem value="fr">French</SelectItem>
-                    <SelectItem value="de">German</SelectItem> */}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Appearance</CardTitle>
-              <CardDescription>
-                Customize the look and feel of your account.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              <div className="grid gap-2">
-                <Label htmlFor="theme">Theme</Label>
-                <Select onValueChange={(value: string) => setTheme(value)}>
-                  <SelectTrigger className="text-muted-foreground">
-                    <SelectValue placeholder="Select theme" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">
-                      <div className="flex items-center">
-                        <Icons.Sun className="mr-2 h-4 w-4" />
-                        <span>Light</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="dark">
-                      <div className="flex items-center">
-                        <Icons.Moon className="mr-2 h-4 w-4" />
-                        <span>Dark</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="system">
-                      <div className="flex items-center">
-                        <Icons.Laptop className="mr-2 h-4 w-4" />
-                        <span>System</span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="font">Font</Label>
-                <Select>
-                  <SelectTrigger className="text-muted-foreground">
-                    <SelectValue placeholder="Select font" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sans">Sans Serif</SelectItem>
-                    <SelectItem value="serif">Serif</SelectItem>
-                    <SelectItem value="mono">Monospace</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+      </div>
+      
+      {/* All Modals */}
+      <UpgradeModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
+      <ManageBillingModal isOpen={billingModalOpen} onClose={() => setBillingModalOpen(false)} />
+      <UsageDashboardModal isOpen={usageModalOpen} onClose={() => setUsageModalOpen(false)} />
+      <MagicLinkSettingsModal isOpen={passwordModalOpen} onClose={() => setPasswordModalOpen(false)} />
+      <BiometricLoginModal isOpen={biometricModalOpen} onClose={() => setBiometricModalOpen(false)} />
+      <TwoFactorModal isOpen={twoFactorModalOpen} onClose={() => setTwoFactorModalOpen(false)} />
+      <ManagePermissionsModal isOpen={permissionsModalOpen} onClose={() => setPermissionsModalOpen(false)} />
+      <SessionsActivityModal isOpen={sessionsModalOpen} onClose={() => setSessionsModalOpen(false)} />
+      <LocaleSettingsModal isOpen={localeModalOpen} onClose={() => setLocaleModalOpen(false)} />
+      <AppearanceModal isOpen={appearanceModalOpen} onClose={() => setAppearanceModalOpen(false)} />
+      <NotificationPreferencesModal isOpen={notificationsModalOpen} onClose={() => setNotificationsModalOpen(false)} />
+      <PrivacySettingsModal isOpen={privacyModalOpen} onClose={() => setPrivacyModalOpen(false)} />
+      <ImportExportModal isOpen={importExportModalOpen} onClose={() => setImportExportModalOpen(false)} />
+      <DataSettingsModal isOpen={dataSettingsModalOpen} onClose={() => setDataSettingsModalOpen(false)} />
+      <IntegrationsModal isOpen={integrationsModalOpen} onClose={() => setIntegrationsModalOpen(false)} />
+      <APIKeysModal isOpen={apiKeysModalOpen} onClose={() => setAPIKeysModalOpen(false)} />
+    </>
+  );
+}
+
+function SettingCard({
+  icon,
+  title,
+  titleAction,
+  description,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  titleAction?: React.ReactNode;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm h-[280px] flex flex-col"
+    >
+      <div className="flex items-start gap-3 mb-4 flex-shrink-0">
+        <div className="text-primary">{icon}</div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-bold text-card-foreground">{title}</h3>
+            {titleAction}
+          </div>
+          {description && <p className="text-sm text-card-foreground/70 mt-1">{description}</p>}
         </div>
+      </div>
+      <div className="flex-1 flex flex-col">
+        {children}
       </div>
     </div>
   );

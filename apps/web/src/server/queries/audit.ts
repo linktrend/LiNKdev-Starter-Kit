@@ -18,6 +18,11 @@ export type AuditItem = z.infer<typeof AuditItemSchema>;
  * List recent organization activity from audit logs
  */
 export async function listRecentOrgActivity(orgId: string, limit: number = 5): Promise<AuditItem[]> {
+  // TEMPORARY: Offline mode for testing
+  if (process.env.TEMPLATE_OFFLINE === '1') {
+    return [];
+  }
+
   try {
     const supabase = createClient({ cookies });
     

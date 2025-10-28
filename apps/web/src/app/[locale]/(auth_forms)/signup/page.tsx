@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { countryCodes } from '@/data/countryCodes';
-import { Sparkles, ArrowLeft } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface ConsoleLoginPageProps {
   params: { locale: string };
@@ -19,8 +19,11 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
   const router = useRouter();
   const [authMethod, setAuthMethod] = useState<'social' | 'email' | 'phone'>('social');
   const [email, setEmail] = useState('');
-  const [countryCode, setCountryCode] = useState('+1');
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  
+  // Extract country code from selected country string
+  const countryCode = selectedCountry ? selectedCountry.split(' ').pop() || '+1' : '+1';
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleSocialLogin = (provider: string) => {
@@ -38,6 +41,10 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedCountry) {
+      alert('Please select a country code');
+      return;
+    }
     // Mock: Send verification code and move to step 2
     console.log('Sending code to', countryCode + phoneNumber);
     setTimeout(() => setCurrentStep(2), 1000);
@@ -74,13 +81,13 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
             <div className="space-y-2">
               <Label htmlFor="phone">Phone number</Label>
               <div className="flex gap-2">
-                <Select value={countryCode} onValueChange={setCountryCode}>
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue />
+                <Select value={selectedCountry || undefined} onValueChange={setSelectedCountry}>
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
-                    {countryCodes.sort((a, b) => a.country.localeCompare(b.country)).map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
+                    {countryCodes.sort((a, b) => a.country.localeCompare(b.country)).map((country, index) => (
+                      <SelectItem key={`${country.code}-${country.country}-${index}`} value={`${country.country} ${country.code}`}>
                         {country.country} {country.code}
                       </SelectItem>
                     ))}
@@ -269,7 +276,7 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" onClick={() => router.push('/en/dashboard')}>
+              <Button className="w-full" onClick={() => router.push(`/${locale}/dashboard`)}>
                 Get Started
               </Button>
             </CardContent>
@@ -303,13 +310,6 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
             {renderAuthMethod()}
           </CardContent>
         </Card>
-
-        <div className="mt-6 text-center">
-          <Link href="/en" className="text-sm text-muted-foreground hover:underline flex items-center justify-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Home
-          </Link>
-        </div>
       </div>
     </div>
   );

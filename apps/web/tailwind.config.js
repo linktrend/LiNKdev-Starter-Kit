@@ -12,5 +12,23 @@ module.exports = {
     "./node_modules/fumadocs-ui/dist/**/*.js"
   ],
   future: { hoverOnlyWhenSupported: true },
+  theme: {
+    extend: {
+      colors: {
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
+        danger: {
+          DEFAULT: 'hsl(var(--danger))',
+          foreground: 'hsl(var(--danger-foreground))',
+        },
+      },
+    },
+  },
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')]
 };

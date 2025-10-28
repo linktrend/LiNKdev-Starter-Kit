@@ -2,13 +2,11 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Mail, Phone, MapPin, Camera, Building2, Briefcase } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Camera, Building2, Briefcase, Activity, Award, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ProfileEditModal from '@/components/profile/ProfileEditModal';
 
 export default function ProfilePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [profileData, setProfileData] = useState({
+  const [profileData] = useState({
     name: 'John',
     middleName: 'Michael',
     lastName: 'Doe',
@@ -29,10 +27,6 @@ export default function ProfilePage() {
     bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces. I love working with modern design systems and bringing creative ideas to life through thoughtful design and collaboration.',
   });
 
-  const handleSaveProfile = (data: typeof profileData) => {
-    setProfileData(data);
-    setIsModalOpen(false);
-  };
 
   const fullName = `${profileData.name} ${profileData.middleName ? profileData.middleName + ' ' : ''}${profileData.lastName}`;
   const fullPhone = profileData.phoneNumber ? `${profileData.phoneCountryCode} ${profileData.phoneNumber}` : '';
@@ -64,7 +58,7 @@ export default function ProfilePage() {
               <Button 
                 size="sm"
                 className="w-auto"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {/* TODO: Will be implemented later */}}
               >
                 Edit Profile
               </Button>
@@ -136,46 +130,25 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 md:grid-cols-3">
-              <div className="p-4 rounded-lg bg-muted">
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Activity className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                 <div className="text-2xl font-bold">---</div>
-                <div className="text-sm text-muted-foreground">Activities</div>
+                <div className="text-sm text-muted-foreground">Stat 1</div>
               </div>
-              <div className="p-4 rounded-lg bg-muted">
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Award className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                 <div className="text-2xl font-bold">---</div>
-                <div className="text-sm text-muted-foreground">Achievements</div>
+                <div className="text-sm text-muted-foreground">Stat 2</div>
               </div>
-              <div className="p-4 rounded-lg bg-muted">
+              <div className="p-4 rounded-lg bg-muted text-center">
+                <Calendar className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                 <div className="text-2xl font-bold">---</div>
-                <div className="text-sm text-muted-foreground">Contributions</div>
+                <div className="text-sm text-muted-foreground">Stat 3</div>
               </div>
-            </div>
-
-            <div className="mt-6 p-4 rounded-lg bg-muted">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">Skills</h3>
-              <p className="text-sm text-muted-foreground">No skills added</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest actions and updates</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">No recent activity to display</p>
             </div>
           </CardContent>
         </Card>
       </div>
-
-      <ProfileEditModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        profileData={profileData}
-        onSave={handleSaveProfile}
-      />
     </div>
   );
 }

@@ -46,25 +46,25 @@ export default function HelpPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
-                  onClick={() => window.open('https://help.company.com/faq', '_blank')}
+                  onClick={() => window.open('about:blank', '_blank', 'width=800,height=600')}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   Frequently Asked Questions
                 </Button>
                 <Button 
-                  onClick={() => window.open('https://help.company.com/tutorials', '_blank')}
+                  onClick={() => window.open('https://youtube.com', '_blank', 'width=1000,height=800')}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Video className="h-4 w-4 mr-2" />
                   Video Tutorials
                 </Button>
                 <Button 
-                  onClick={() => window.open('https://help.company.com/docs', '_blank')}
+                  onClick={() => window.open('about:blank', '_blank', 'width=800,height=600')}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Book className="h-4 w-4 mr-2" />
                   User Documentation
@@ -86,7 +86,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsTicketModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   Submit Support Ticket
@@ -94,7 +94,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsLiveChatModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Live Chat Support
@@ -102,7 +102,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsScheduleCallModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Phone className="h-4 w-4 mr-2" />
                   Schedule a Call
@@ -124,7 +124,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsFeatureRequestModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Lightbulb className="h-4 w-4 mr-2" />
                   Feature Request
@@ -132,7 +132,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsReportBugModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Bug className="h-4 w-4 mr-2" />
                   Report a Bug
@@ -140,7 +140,7 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsUserSurveyModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Star className="h-4 w-4 mr-2" />
                   Take User Survey
@@ -162,15 +162,15 @@ export default function HelpPage() {
                 <Button 
                   onClick={() => setIsReleaseNotesModalOpen(true)}
                   className="w-full"
-                  variant="outline"
+                  variant="default"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   View Latest Updates
                 </Button>
-                <div className="px-4 py-3 rounded-lg bg-green-500/10 border border-green-500/30">
+                <div className="px-4 py-3 rounded-lg bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-sm text-green-700 font-medium">Latest Version: 2.1.0 (01/12/2024)</span>
+                    <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-500" />
+                    <span className="text-sm text-green-700 dark:text-green-400 font-medium">Latest Version: 2.1.0 (01/12/2024)</span>
                   </div>
                 </div>
               </CardContent>

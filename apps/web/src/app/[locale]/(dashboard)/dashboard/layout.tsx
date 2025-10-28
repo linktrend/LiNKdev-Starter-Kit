@@ -7,6 +7,7 @@ import {
   getUserDetails,
 } from '@/utils/supabase/queries';
 import { Settings, User, Eclipse, Home, LayoutDashboard, FileText, Bell } from 'lucide-react';
+import { DashboardNavbar } from '@/components/dashboard/DashboardNavbar';
 
 // User app navigation links
 const userAppLinks = [
@@ -18,19 +19,6 @@ const userAppLinks = [
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
 ];
 
-// Inline Navbar component for template
-const Navbar = ({ userDetails }: { userDetails: any }) => (
-  <header className="flex h-16 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-    <div className="w-full flex-1">
-      <h1 className="text-lg font-semibold">Dashboard</h1>
-    </div>
-    <div className="ml-auto flex items-center gap-4">
-      <span className="text-sm text-muted-foreground">
-        {userDetails?.full_name || 'User'}
-      </span>
-    </div>
-  </header>
-);
 
 // Inline Sidebar component
 const Sidebar = ({ links }: { links: typeof userAppLinks }) => (
@@ -83,7 +71,7 @@ export default async function DashboardLayout({
       <div className="flex min-h-screen w-full">
         <Sidebar links={userAppLinks} />
         <div className="flex flex-col flex-1 lg:pl-64">
-          <Navbar userDetails={userDetails} />
+          <DashboardNavbar userDetails={userDetails} />
           <main className="flex-1 p-4 sm:px-6 sm:py-4">
             {children}
           </main>

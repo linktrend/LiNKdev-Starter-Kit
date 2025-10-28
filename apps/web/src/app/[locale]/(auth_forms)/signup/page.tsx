@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { countryCodes } from '@/data/countryCodes';
 import { Sparkles, ArrowLeft } from 'lucide-react';
+import { OnboardingProgress } from '@/components/onboarding/OnboardingProgress';
 
 interface ConsoleLoginPageProps {
   params: { locale: string };
@@ -174,36 +175,39 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
   // Onboarding Step 2: Profile Details
   if (currentStep === 2) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <div className="w-full max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Details</CardTitle>
-              <CardDescription>Tell us about yourself (optional)</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input id="fullName" placeholder="John Doe" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" placeholder="Your company" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input id="role" placeholder="Your role" />
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setCurrentStep(3)} className="flex-1">
-                  Skip
-                </Button>
-                <Button onClick={() => setCurrentStep(3)} className="flex-1">
-                  Continue
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="min-h-screen flex flex-col p-4 bg-background">
+        <OnboardingProgress currentStep={2} totalSteps={4} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-2xl">
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile Details</CardTitle>
+                <CardDescription>Tell us about yourself (optional)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input id="fullName" placeholder="John Doe" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="company">Company</Label>
+                  <Input id="company" placeholder="Your company" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Input id="role" placeholder="Your role" />
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setCurrentStep(3)} className="flex-1">
+                    Skip
+                  </Button>
+                  <Button onClick={() => setCurrentStep(3)} className="flex-1">
+                    Continue
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );
@@ -212,40 +216,43 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
   // Onboarding Step 3: Preferences
   if (currentStep === 3) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <div className="w-full max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferences</CardTitle>
-              <CardDescription>Customize your experience (optional)</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="language">Preferred Language</Label>
-                <Select defaultValue="en">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Español</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="notifications">Enable Notifications</Label>
-                <Input id="notifications" placeholder="Notification preferences" disabled />
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setCurrentStep(4)} className="flex-1">
-                  Skip
-                </Button>
-                <Button onClick={() => setCurrentStep(4)} className="flex-1">
-                  Continue
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="min-h-screen flex flex-col p-4 bg-background">
+        <OnboardingProgress currentStep={3} totalSteps={4} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-2xl">
+            <Card>
+              <CardHeader>
+                <CardTitle>Preferences</CardTitle>
+                <CardDescription>Customize your experience (optional)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="language">Preferred Language</Label>
+                  <Select defaultValue="en">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="en">English</SelectItem>
+                      <SelectItem value="es">Español</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="notifications">Enable Notifications</Label>
+                  <Input id="notifications" placeholder="Notification preferences" disabled />
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setCurrentStep(4)} className="flex-1">
+                    Skip
+                  </Button>
+                  <Button onClick={() => setCurrentStep(4)} className="flex-1">
+                    Continue
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );
@@ -254,26 +261,29 @@ export default function SignUpPage({ params: { locale } }: ConsoleLoginPageProps
   // Onboarding Step 4: Confirmation
   if (currentStep === 4) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <div className="w-full max-w-2xl">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-primary" />
+      <div className="min-h-screen flex flex-col p-4 bg-background">
+        <OnboardingProgress currentStep={4} totalSteps={4} />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-2xl">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-center mb-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-primary" />
+                  </div>
                 </div>
-              </div>
-              <CardTitle className="text-center">Welcome to LTM Starter Kit!</CardTitle>
-              <CardDescription className="text-center">
-                Your account has been created successfully. Click below to get started.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" onClick={() => router.push('/en/dashboard')}>
-                Get Started
-              </Button>
-            </CardContent>
-          </Card>
+                <CardTitle className="text-center">Welcome to LTM Starter Kit!</CardTitle>
+                <CardDescription className="text-center">
+                  Your account has been created successfully. Click below to get started.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" onClick={() => router.push('/en/dashboard')}>
+                  Get Started
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );

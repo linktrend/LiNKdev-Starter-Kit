@@ -31,8 +31,6 @@ const REQUIRED_ROUTES = [
   'src/app/(console)/console/login/page.tsx',
   'src/app/(console)/console/health/page.tsx',
   'src/app/(console)/console/db/page.tsx',
-  'src/app/(console)/console/jobs/page.tsx',
-  'src/app/(console)/console/flags/page.tsx',
   'src/app/(console)/console/env/page.tsx',
   'src/app/(console)/console/integrations/page.tsx',
   'src/app/(console)/console/automations/page.tsx',

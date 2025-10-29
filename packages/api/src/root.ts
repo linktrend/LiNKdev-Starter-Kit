@@ -7,6 +7,7 @@ import { automationRouter } from './routers/automation';
 import { billingRouter } from './routers/billing';
 import { auditRouter } from './routers/audit';
 import { flagsRouter } from './routers/flags';
+import { developmentTasksRouter } from './routers/developmentTasks';
 
 // Note: Email dispatcher will be imported by the consuming application
 declare const sendTestEmail: (to: string, data: any) => Promise<void>;
@@ -38,6 +39,7 @@ export const appRouter = createTRPCRouter({
   billing: billingRouter,
   audit: auditRouter,
   flags: flagsRouter,
+  developmentTasks: developmentTasksRouter,
   
   // Email testing endpoint
   email: createTRPCRouter({

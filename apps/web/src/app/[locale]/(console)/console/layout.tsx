@@ -6,17 +6,26 @@ import { ConsoleSidebar } from '@/components/navigation/ConsoleSidebar';
 import { ConsoleTopbar } from '@/components/navigation/ConsoleTopbar';
 
 const getScreenName = (pathname: string): string => {
-  if (pathname.includes('/console/overview')) return 'Overview';
-  if (pathname.includes('/console/health')) return 'Health Checks';
+  // Handle nested config routes first (most specific)
+  if (pathname.includes('/console/config/application/deployment')) return 'Configuration > Application > Deployment';
+  if (pathname.includes('/console/config/application/jobs')) return 'Configuration > Application > Jobs/Queue';
+  if (pathname.includes('/console/config/application/feature-flags')) return 'Configuration > Application > Feature Flags';
+  if (pathname.includes('/console/config/application/settings')) return 'Configuration > Application > Settings';
+  if (pathname.includes('/console/config/application')) return 'Configuration > Application';
+  if (pathname.includes('/console/config/integrations')) return 'Configuration > Integrations';
+  if (pathname.includes('/console/config/automations')) return 'Configuration > Automations';
+  if (pathname.includes('/console/config/api-keys')) return 'Configuration > External API & Keys';
+  if (pathname.includes('/console/config/system')) return 'Configuration > System';
+  if (pathname.includes('/console/config/environment')) return 'Configuration > Environment';
+  if (pathname.includes('/console/config')) return 'Configuration';
+  
+  // Other console routes
+  if (pathname.includes('/console/security')) return 'Security & Access';
+  if (pathname.includes('/console/reports')) return 'Reports';
   if (pathname.includes('/console/errors')) return 'Errors & Logs';
   if (pathname.includes('/console/database')) return 'Database';
-  if (pathname.includes('/console/api-keys')) return 'API & Keys';
-  if (pathname.includes('/console/config')) return 'Configuration';
-  if (pathname.includes('/console/jobs')) return 'Jobs/Queue';
-  if (pathname.includes('/console/reports')) return 'Reports';
-  if (pathname.includes('/console/automations')) return 'Automations';
-  if (pathname.includes('/console/security')) return 'Security & Access';
-  if (pathname.includes('/console/flags')) return 'Flags';
+  if (pathname.includes('/console/health')) return 'Health Checks';
+  if (pathname.includes('/console/overview') || pathname === '/console' || pathname.endsWith('/console')) return 'Overview';
   if (pathname.includes('/console/settings')) return 'Settings';
   if (pathname.includes('/console/profile')) return 'Profile';
   return 'Overview';

@@ -24,6 +24,7 @@ import {
   Code,
   Server,
   Database,
+  Shield,
   Globe,
   ChevronDown,
   ChevronUp,
@@ -158,7 +159,7 @@ const generateMockLogs = (count: number): ApplicationLog[] => {
 };
 
 export default function ConsoleErrorsPage() {
-  const [activeTab, setActiveTab] = useState<'errors' | 'logs'>('errors');
+  const [activeTab, setActiveTab] = useState<'error-tracking' | 'application-logs' | 'audit-logs' | 'system-logs'>('error-tracking');
   const [timeRange, setTimeRange] = useState<TimeRange>('24h');
   const [severityFilter, setSeverityFilter] = useState<ErrorSeverity | 'all'>('all');
   const [levelFilter, setLevelFilter] = useState<LogLevel | 'all'>('all');
@@ -468,18 +469,29 @@ export default function ConsoleErrorsPage() {
       <Card>
         <CardHeader className="p-4 sm:p-6">
           <div className="flex items-center gap-4">
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'errors' | 'logs')}>
-              <TabsList className="w-full sm:w-auto">
-                <TabsTrigger value="errors" className="flex-1 sm:flex-initial">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsList className="w-full sm:w-auto grid grid-cols-2 lg:grid-cols-4">
+                <TabsTrigger value="error-tracking" className="flex-1">
                   <Bug className="h-4 w-4 mr-1 sm:mr-2" />
-                  <span className="hidden min-[375px]:inline">Errors</span>
-                  <span className="min-[375px]:hidden">Errs</span>
+                  <span className="hidden sm:inline">Error Tracking</span>
+                  <span className="sm:hidden">Errors</span>
                   <span className="hidden md:inline ml-1">({filteredErrors.length})</span>
                 </TabsTrigger>
-                <TabsTrigger value="logs" className="flex-1 sm:flex-initial">
+                <TabsTrigger value="application-logs" className="flex-1">
                   <FileText className="h-4 w-4 mr-1 sm:mr-2" />
-                  Logs
+                  <span className="hidden sm:inline">Application</span>
+                  <span className="sm:hidden">App</span>
                   <span className="hidden md:inline ml-1">({filteredLogs.length})</span>
+                </TabsTrigger>
+                <TabsTrigger value="audit-logs" className="flex-1">
+                  <Shield className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Audit</span>
+                  <span className="sm:hidden">Audit</span>
+                </TabsTrigger>
+                <TabsTrigger value="system-logs" className="flex-1">
+                  <Server className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">System</span>
+                  <span className="sm:hidden">Sys</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -511,7 +523,7 @@ export default function ConsoleErrorsPage() {
                 <SelectItem value="all">All time</SelectItem>
               </SelectContent>
             </Select>
-            {activeTab === 'errors' ? (
+            {activeTab === 'error-tracking' ? (
               <Select value={severityFilter} onValueChange={(v) => setSeverityFilter(v as ErrorSeverity | 'all')}>
                 <SelectTrigger className="w-full sm:w-[200px]">
                   <Filter className="h-4 w-4 mr-2" />
@@ -554,9 +566,9 @@ export default function ConsoleErrorsPage() {
           </div>
 
           {/* Tabs Content */}
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'errors' | 'logs')}>
-            {/* Errors Tab */}
-            <TabsContent value="errors" className="space-y-0">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+            {/* Error Tracking Tab */}
+            <TabsContent value="error-tracking" className="space-y-0">
               <Card className="overflow-hidden">
                 <CardContent className="p-0 pr-0">
                   <div className="overflow-x-auto -mr-0">
@@ -807,8 +819,8 @@ export default function ConsoleErrorsPage() {
               </Card>
             </TabsContent>
 
-            {/* Logs Tab */}
-            <TabsContent value="logs" className="space-y-0">
+            {/* Application Logs Tab */}
+            <TabsContent value="application-logs" className="space-y-0">
               <Card className="overflow-hidden">
                 <CardContent className="p-0 pr-0">
                   <div className="overflow-x-auto -mr-0">
@@ -988,6 +1000,78 @@ export default function ConsoleErrorsPage() {
                       )}
                         </TableBody>
                       </Table>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Audit Logs Tab */}
+            <TabsContent value="audit-logs" className="space-y-0">
+              <Card className="overflow-hidden">
+                <CardContent className="p-0 pr-0">
+                  <div className="overflow-x-auto -mr-0">
+                    <div className="relative max-h-[600px] overflow-y-auto">
+                      <div className="p-4 sm:p-6">
+                        <div className="text-center py-12">
+                          <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                          <h3 className="text-lg font-semibold mb-2">Audit Logs</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Comprehensive audit trail of system actions and user activities
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <Button variant="outline">
+                              <Search className="h-4 w-4 mr-2" />
+                              Search Audit Logs
+                            </Button>
+                            <Button variant="outline">
+                              <Filter className="h-4 w-4 mr-2" />
+                              Apply Filters
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-4">
+                            Audit log functionality coming soon
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* System Logs Tab */}
+            <TabsContent value="system-logs" className="space-y-0">
+              <Card className="overflow-hidden">
+                <CardContent className="p-0 pr-0">
+                  <div className="overflow-x-auto -mr-0">
+                    <div className="relative max-h-[600px] overflow-y-auto">
+                      <div className="p-4 sm:p-6">
+                        <div className="text-center py-12">
+                          <Server className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                          <h3 className="text-lg font-semibold mb-2">System Logs</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            System-level logs and infrastructure monitoring
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <Button variant="outline">
+                              <Database className="h-4 w-4 mr-2" />
+                              Database Logs
+                            </Button>
+                            <Button variant="outline">
+                              <Server className="h-4 w-4 mr-2" />
+                              Server Logs
+                            </Button>
+                            <Button variant="outline">
+                              <Activity className="h-4 w-4 mr-2" />
+                              Performance
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-4">
+                            System log functionality coming soon
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

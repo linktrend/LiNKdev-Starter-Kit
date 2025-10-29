@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ConsoleFlagsPage } from '@/components/console/ConsoleFlagsPage';
+import { DevelopmentTasksSection } from '@/components/console/DevelopmentTasksSection';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
@@ -65,6 +66,12 @@ import {
   TrendingDown,
   AlertTriangle,
   Workflow,
+  Webhook,
+  Plug,
+  Link2,
+  DollarSign,
+  BarChart3,
+  Mail,
 } from 'lucide-react';
 
 // Mock data for environment variables
@@ -194,8 +201,10 @@ const generateQueueStats = (jobs: Job[]): QueueStats[] => {
 };
 
 export default function ConsoleConfigPage() {
-  const [activeTab, setActiveTab] = useState<'application' | 'environment' | 'system' | 'api-keys' | 'automations'>('application');
+  const [activeTab, setActiveTab] = useState<'application' | 'environment' | 'system' | 'external-api-keys' | 'automations' | 'integrations'>('application');
   const [applicationSubTab, setApplicationSubTab] = useState<'settings' | 'feature-flags' | 'jobs' | 'deployment'>('settings');
+  const [externalApiSubTab, setExternalApiSubTab] = useState<'api-keys' | 'webhooks-outbound'>('api-keys');
+  const [automationsSubTab, setAutomationsSubTab] = useState<'workflow-status' | 'execution-history' | 'webhooks-inbound'>('workflow-status');
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
   const [appConfig, setAppConfig] = useState({
     appName: 'LTM Starter Kit',
@@ -380,7 +389,7 @@ export default function ConsoleConfigPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
       <Card>
         <CardHeader className="p-4 sm:p-6">
           <div className="flex items-center gap-4">
@@ -398,13 +407,17 @@ export default function ConsoleConfigPage() {
                   <Server className="h-4 w-4 mr-1 sm:mr-2" />
                   System
                 </TabsTrigger>
-                <TabsTrigger value="api-keys" className="flex-1 sm:flex-initial">
+                <TabsTrigger value="external-api-keys" className="flex-1 sm:flex-initial">
                   <Key className="h-4 w-4 mr-1 sm:mr-2" />
-                  API & Keys
+                  External API & Keys
                 </TabsTrigger>
                 <TabsTrigger value="automations" className="flex-1 sm:flex-initial">
                   <Workflow className="h-4 w-4 mr-1 sm:mr-2" />
                   Automations
+                </TabsTrigger>
+                <TabsTrigger value="integrations" className="flex-1 sm:flex-initial">
+                  <Plug className="h-4 w-4 mr-1 sm:mr-2" />
+                  Integrations
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -413,9 +426,9 @@ export default function ConsoleConfigPage() {
         <CardContent className="p-4 sm:p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             {/* Application Tab */}
-            <TabsContent value="application" className="space-y-6 mt-0">
+            <TabsContent value="application" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
               <Tabs value={applicationSubTab} onValueChange={(v) => setApplicationSubTab(v as typeof applicationSubTab)}>
-                <TabsList className="mb-6">
+                <TabsList className="mb-4 sm:mb-6">
                   <TabsTrigger value="settings">
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
@@ -435,8 +448,8 @@ export default function ConsoleConfigPage() {
                 </TabsList>
 
                 {/* Application Settings Sub-tab */}
-                <TabsContent value="settings" className="space-y-6 mt-0">
-                  <div className="grid gap-6 md:grid-cols-2">
+                <TabsContent value="settings" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                 {/* Basic Information */}
                 <Card>
                   <CardHeader>
@@ -648,36 +661,87 @@ export default function ConsoleConfigPage() {
                   <ConsoleFlagsPage />
                 </TabsContent>
 
-                {/* Jobs/Queue Sub-tab */}
+                {/* Jobs/Queue Sub-tab - Development Tasks */}
                 <TabsContent value="jobs" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
-                  {/* Controls */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className={cn("h-2 w-2 rounded-full", isLive ? "bg-green-500 animate-pulse" : "bg-gray-400")} />
-                      <span>{isLive ? 'Live monitoring' : 'Paused'}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setAutoRefresh(!autoRefresh)}
-                      >
-                        <RefreshCw className={cn("h-4 w-4 mr-2", autoRefresh && "animate-spin")} />
-                        {autoRefresh ? 'Auto-refresh' : 'Manual'}
-                      </Button>
-                    </div>
-                  </div>
+                  {/* Note: orgId should be provided from org context. For now, using placeholder. */}
+                  <DevelopmentTasksSection orgId={process.env.NEXT_PUBLIC_DEFAULT_ORG_ID || ''} />
+                </TabsContent>
 
-                  {/* Overview Metrics */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {/* Deployment Sub-tab */}
+                <TabsContent value="deployment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+                    {/* Build Configuration */}
                     <Card>
-                      <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-                        <BriefcaseBusiness className="h-4 w-4 text-primary" />
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5" />
+                          Build Configuration
+                        </CardTitle>
+                        <CardDescription>Build and deployment commands</CardDescription>
                       </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{jobsMetrics.total.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground mt-1">All time</p>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="buildCommand">Build Command</Label>
+                          <Input
+                            id="buildCommand"
+                            value={deploymentConfig.buildCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, buildCommand: e.target.value })}
+                            placeholder="pnpm build"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="startCommand">Start Command</Label>
+                          <Input
+                            id="startCommand"
+                            value={deploymentConfig.startCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, startCommand: e.target.value })}
+                            placeholder="pnpm start"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nodeVersion">Node Version</Label>
+                          <Input
+                            id="nodeVersion"
+                            value={deploymentConfig.nodeVersion}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, nodeVersion: e.target.value })}
+                            placeholder="18.x"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="healthCheckUrl">Health Check URL</Label>
+                          <Input
+                            id="healthCheckUrl"
+                            value={deploymentConfig.healthCheckUrl}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, healthCheckUrl: e.target.value })}
+                            placeholder="/api/health"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="autoDeploy">Auto Deploy</Label>
+                            <p className="text-xs text-muted-foreground">Automatically deploy on push</p>
+                          </div>
+                          <Switch
+                            id="autoDeploy"
+                            checked={deploymentConfig.autoDeploy}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, autoDeploy: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="enableRollback">Enable Rollback</Label>
+                            <p className="text-xs text-muted-foreground">Allow rolling back deployments</p>
+                          </div>
+                          <Switch
+                            id="enableRollback"
+                            checked={deploymentConfig.enableRollback}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, enableRollback: checked })}
+                          />
+                        </div>
+                        <Button className="w-full">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Configuration
+                        </Button>
                       </CardContent>
                     </Card>
 
@@ -1293,8 +1357,8 @@ export default function ConsoleConfigPage() {
                 </TabsContent>
 
                 {/* Deployment Sub-tab */}
-                <TabsContent value="deployment" className="space-y-6 mt-0">
-                  <div className="grid gap-6 md:grid-cols-2">
+                <TabsContent value="deployment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                     {/* Build Configuration */}
                     <Card>
                       <CardHeader>
@@ -1523,7 +1587,7 @@ export default function ConsoleConfigPage() {
             </TabsContent>
 
             {/* Environment Tab */}
-            <TabsContent value="environment" className="space-y-6 mt-0">
+            <TabsContent value="environment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-semibold">Environment Variables</h3>
@@ -1665,8 +1729,8 @@ export default function ConsoleConfigPage() {
             </TabsContent>
 
             {/* System Tab */}
-            <TabsContent value="system" className="space-y-6 mt-0">
-              <div className="grid gap-6 md:grid-cols-2">
+            <TabsContent value="system" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                 {/* Database Configuration */}
                 <Card>
                   <CardHeader>
@@ -1885,42 +1949,667 @@ export default function ConsoleConfigPage() {
               </div>
             </TabsContent>
 
-            {/* API & Keys Tab */}
-            <TabsContent value="api-keys" className="space-y-6 mt-0">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Key className="h-5 w-5" />
-                    API & Keys
-                  </CardTitle>
-                  <CardDescription>Manage API keys and authentication tokens</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Content for API & Keys will be displayed here. This includes API key generation, 
-                    token management, and access control settings.
-                  </p>
-                </CardContent>
-              </Card>
+            {/* External API & Keys Tab */}
+            <TabsContent value="external-api-keys" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+              <Tabs value={externalApiSubTab} onValueChange={(v) => setExternalApiSubTab(v as typeof externalApiSubTab)}>
+                <TabsList className="mb-4 sm:mb-6">
+                  <TabsTrigger value="api-keys">
+                    <Key className="h-4 w-4 mr-2" />
+                    API Keys
+                  </TabsTrigger>
+                  <TabsTrigger value="webhooks-outbound">
+                    <Webhook className="h-4 w-4 mr-2" />
+                    Webhooks (Outbound)
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* API Keys Sub-tab */}
+                <TabsContent value="api-keys" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">API Keys</h3>
+                      <p className="text-sm text-muted-foreground">Keys issued to developers for accessing your API</p>
+                    </div>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Generate Key
+                    </Button>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Active API Keys</CardTitle>
+                      <CardDescription>Keys that can access your API endpoints</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Key Name</TableHead>
+                            <TableHead className="hidden md:table-cell">Key Prefix</TableHead>
+                            <TableHead className="hidden lg:table-cell">Created</TableHead>
+                            <TableHead className="hidden lg:table-cell">Last Used</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Production API Key</TableCell>
+                            <TableCell className="hidden md:table-cell font-mono text-sm">sk_live_...</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-15</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2 hours ago</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Development API Key</TableCell>
+                            <TableCell className="hidden md:table-cell font-mono text-sm">sk_test_...</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-20</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">5 days ago</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Webhooks (Outbound) Sub-tab */}
+                <TabsContent value="webhooks-outbound" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Webhooks (Outbound)</h3>
+                      <p className="text-sm text-muted-foreground">Configure webhooks your app sends to external services</p>
+                    </div>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Webhook
+                    </Button>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Active Webhooks</CardTitle>
+                      <CardDescription>Endpoints that receive outbound webhook notifications</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Webhook Name</TableHead>
+                            <TableHead className="hidden md:table-cell">URL</TableHead>
+                            <TableHead className="hidden lg:table-cell">Events</TableHead>
+                            <TableHead className="hidden lg:table-cell">Last Sent</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Stripe Payment Webhook</TableCell>
+                            <TableCell className="hidden md:table-cell font-mono text-sm">https://api.stripe.com/...</TableCell>
+                            <TableCell className="hidden lg:table-cell">
+                              <Badge variant="outline" className="text-xs">payment.created</Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">5 minutes ago</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <RefreshCw className="h-3 w-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
             </TabsContent>
 
             {/* Automations Tab */}
-            <TabsContent value="automations" className="space-y-6 mt-0">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Workflow className="h-5 w-5" />
-                    Automations
-                  </CardTitle>
-                  <CardDescription>Manage automated workflows and triggers</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Content for Automations will be displayed here. This includes workflow management, 
-                    trigger configurations, and automation execution logs.
-                  </p>
-                </CardContent>
-              </Card>
+            <TabsContent value="automations" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+              <Tabs value={automationsSubTab} onValueChange={(v) => setAutomationsSubTab(v as typeof automationsSubTab)}>
+                <TabsList className="mb-4 sm:mb-6">
+                  <TabsTrigger value="workflow-status">
+                    <Activity className="h-4 w-4 mr-2" />
+                    Workflow Status
+                  </TabsTrigger>
+                  <TabsTrigger value="execution-history">
+                    <History className="h-4 w-4 mr-2" />
+                    Execution History
+                  </TabsTrigger>
+                  <TabsTrigger value="webhooks-inbound">
+                    <Webhook className="h-4 w-4 mr-2" />
+                    Webhooks (Inbound)
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Workflow Status Sub-tab */}
+                <TabsContent value="workflow-status" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Workflow Status</h3>
+                      <p className="text-sm text-muted-foreground">Monitor n8n workflows configured in your n8n instance</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Active Workflows</CardTitle>
+                        <Workflow className="h-4 w-4 text-primary" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">12</div>
+                        <p className="text-xs text-muted-foreground mt-1">Currently running</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Total Workflows</CardTitle>
+                        <Activity className="h-4 w-4 text-primary" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">48</div>
+                        <p className="text-xs text-muted-foreground mt-1">Configured in n8n</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">98.5%</div>
+                        <p className="text-xs text-muted-foreground mt-1">Last 24 hours</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Failed Runs</CardTitle>
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-red-600">3</div>
+                        <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Workflow Overview</CardTitle>
+                      <CardDescription>Recent workflow executions and status</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Workflow Name</TableHead>
+                            <TableHead className="hidden md:table-cell">Status</TableHead>
+                            <TableHead className="hidden lg:table-cell">Last Run</TableHead>
+                            <TableHead className="hidden lg:table-cell">Next Run</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Email Notification Workflow</TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Running
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">5 minutes ago</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">In 55 minutes</TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm" className="h-8">
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                View in n8n
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Data Sync Workflow</TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2 hours ago</TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">Daily at 3:00 AM</TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm" className="h-8">
+                                <ExternalLink className="h-3 w-3 mr-1" />
+                                View in n8n
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Execution History Sub-tab */}
+                <TabsContent value="execution-history" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Execution History</h3>
+                      <p className="text-sm text-muted-foreground">View n8n workflow execution logs</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Executions</CardTitle>
+                      <CardDescription>Workflow execution history from n8n</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Workflow</TableHead>
+                            <TableHead className="hidden md:table-cell">Status</TableHead>
+                            <TableHead className="hidden lg:table-cell">Started</TableHead>
+                            <TableHead className="hidden lg:table-cell">Duration</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Email Notification Workflow</TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Success
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-27 14:30:15</TableCell>
+                            <TableCell className="hidden lg:table-cell text-sm">2.3s</TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm" className="h-8">
+                                <Eye className="h-3 w-3 mr-1" />
+                                View Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Data Sync Workflow</TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <Badge variant="destructive">
+                                <XCircle className="h-3 w-3 mr-1" />
+                                Failed
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-27 12:15:42</TableCell>
+                            <TableCell className="hidden lg:table-cell text-sm">45s</TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm" className="h-8">
+                                <Eye className="h-3 w-3 mr-1" />
+                                View Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Webhooks (Inbound) Sub-tab */}
+                <TabsContent value="webhooks-inbound" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">Webhooks (Inbound)</h3>
+                      <p className="text-sm text-muted-foreground">Webhooks FROM n8n TO your app</p>
+                    </div>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Webhook Endpoint
+                    </Button>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Webhook Endpoints</CardTitle>
+                      <CardDescription>Configure endpoints to receive webhooks from n8n workflows</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Endpoint Name</TableHead>
+                            <TableHead className="hidden md:table-cell">URL Path</TableHead>
+                            <TableHead className="hidden lg:table-cell">Method</TableHead>
+                            <TableHead className="hidden lg:table-cell">Last Received</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium">Order Processing Webhook</TableCell>
+                            <TableCell className="hidden md:table-cell font-mono text-sm">/api/webhooks/n8n/orders</TableCell>
+                            <TableCell className="hidden lg:table-cell">
+                              <Badge variant="outline">POST</Badge>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">10 minutes ago</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Copy className="h-3 w-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </TabsContent>
+
+            {/* Integrations Tab */}
+            <TabsContent value="integrations" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Integrations</h3>
+                  <p className="text-sm text-muted-foreground">Manage third-party service connections</p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card className="hover:bg-accent transition-colors cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Zap className="h-5 w-5" />
+                        Stripe
+                      </CardTitle>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Connected
+                      </Badge>
+                    </div>
+                    <CardDescription>Payment processing and subscription management</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Status:</span>
+                        <span className="font-medium">Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Last synced:</span>
+                        <span className="font-medium">2 minutes ago</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:bg-accent transition-colors cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Workflow className="h-5 w-5" />
+                        n8n
+                      </CardTitle>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                        <CheckCircle2 className="h-3 w-3 mr-1" />
+                        Connected
+                      </Badge>
+                    </div>
+                    <CardDescription>Workflow automation and integration platform</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Status:</span>
+                        <span className="font-medium">Active</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Workflows:</span>
+                        <span className="font-medium">48 active</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="hover:bg-accent transition-colors cursor-pointer">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Link2 className="h-5 w-5" />
+                        Email Service
+                      </CardTitle>
+                      <Badge variant="outline">Not Configured</Badge>
+                    </div>
+                    <CardDescription>Email delivery and template management</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button variant="outline" className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Configure
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Integrations Tab */}
+            <TabsContent value="integrations" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+              <div className="space-y-6">
+                <div>
+                  <CardTitle className="mb-2">Third-Party Integrations</CardTitle>
+                  <CardDescription>
+                    Connect and manage third-party services for your application
+                  </CardDescription>
+                </div>
+
+                {/* Integrations Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Stripe Integration */}
+                  <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <DollarSign className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-base">Stripe</CardTitle>
+                          <CardDescription className="text-xs">Payment processing</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Status</span>
+                          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                            Connected
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Mode</span>
+                          <Badge variant="outline">Live</Badge>
+                        </div>
+                        <Button variant="outline" className="w-full mt-2">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Configure
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Email Integration */}
+                  <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <Mail className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-base">Email Service</CardTitle>
+                          <CardDescription className="text-xs">Transactional emails</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Status</span>
+                          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                            Connected
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Provider</span>
+                          <Badge variant="outline">SendGrid</Badge>
+                        </div>
+                        <Button variant="outline" className="w-full mt-2">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Configure
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Analytics Integration */}
+                  <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <CardHeader>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <BarChart3 className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-base">Analytics</CardTitle>
+                          <CardDescription className="text-xs">Usage analytics</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Status</span>
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                            Not Connected
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Provider</span>
+                          <Badge variant="outline">Google Analytics</Badge>
+                        </div>
+                        <Button variant="outline" className="w-full mt-2">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Connect
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Integration Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Integration Settings</CardTitle>
+                    <CardDescription>Global settings for all integrations</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Auto-sync Integration Data</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Automatically synchronize data with connected services
+                        </p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Webhook Notifications</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Enable webhook notifications for integration events
+                        </p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Error Alerts</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Send alerts when integration errors occur
+                        </p>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

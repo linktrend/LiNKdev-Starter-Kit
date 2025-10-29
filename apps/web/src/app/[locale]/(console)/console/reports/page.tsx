@@ -39,7 +39,11 @@ import {
   Database,
   Mail,
   Settings,
-  CalendarClock
+  CalendarClock,
+  TrendingUp,
+  TrendingDown,
+  PieChart,
+  LineChart
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { format } from 'date-fns';
@@ -221,7 +225,8 @@ const mockGeneratedReports: GeneratedReport[] = [
 ];
 
 export default function ConsoleReportsPage() {
-  const [activeTab, setActiveTab] = useState<'templates' | 'generated' | 'scheduled'>('templates');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'exports'>('overview');
+  const [exportsSubTab, setExportsSubTab] = useState<'templates' | 'generated' | 'scheduled'>('templates');
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf');
   const [reportFilters, setReportFilters] = useState<ReportFilter>({
@@ -236,6 +241,7 @@ export default function ConsoleReportsPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   // Filter templates
   const filteredTemplates = useMemo(() => {
@@ -346,43 +352,371 @@ export default function ConsoleReportsPage() {
     return groups;
   }, [filteredTemplates]);
 
+  // Calculate stats for Overview
+  const reportStats = useMemo(() => {
+    const totalGenerated = mockGeneratedReports.length;
+    const completed = mockGeneratedReports.filter(r => r.status === 'completed').length;
+    const generating = mockGeneratedReports.filter(r => r.status === 'generating').length;
+    const totalSize = mockGeneratedReports.reduce((sum, r) => {
+      if (r.size) {
+        const size = parseFloat(r.size.replace(' MB', '').replace(' KB', ''));
+        return sum + (r.size.includes('MB') ? size : size / 1000);
+      }
+      return sum;
+    }, 0);
+    
+    return { totalGenerated, completed, generating, totalSize };
+  }, []);
+
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Reports</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Generate and download comprehensive reports for your application
-          </p>
+      {/* Controls */}
+      <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+          <span>Live monitoring</span>
         </div>
-        <Button onClick={() => { setSelectedTemplate(null); setShowGenerateDialog(true); }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Custom Report
-        </Button>
+        <button
+          onClick={() => setAutoRefresh(!autoRefresh)}
+          className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-accent transition-colors"
+        >
+          <RefreshCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+          {autoRefresh ? 'Auto-refresh' : 'Manual'}
+        </button>
       </div>
+
+      {/* Overview Stats Cards - Only shown on Overview tab */}
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary flex-shrink-0" />
+                <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{reportStats.totalGenerated}</div>
+              <p className="text-xs text-muted-foreground mt-1">Generated reports</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{reportStats.completed}</div>
+              <p className="text-xs text-muted-foreground mt-1">Ready for download</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+              <div className="flex items-center gap-2">
+                <RefreshCw className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                <CardTitle className="text-sm font-medium">Generating</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{reportStats.generating}</div>
+              <p className="text-xs text-muted-foreground mt-1">In progress</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+              <div className="flex items-center gap-2">
+                <Database className="h-4 w-4 text-primary flex-shrink-0" />
+                <CardTitle className="text-sm font-medium">Total Size</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{reportStats.totalSize.toFixed(1)} MB</div>
+              <p className="text-xs text-muted-foreground mt-1">Data exported</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Main Content Tabs */}
       <Card>
-        <CardHeader>
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="generated">Generated Reports</TabsTrigger>
-              <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex items-center gap-4">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsList className="w-full sm:w-auto">
+                <TabsTrigger value="overview" className="flex-1 sm:flex-initial">
+                  <BarChart3 className="h-4 w-4 mr-1 sm:mr-2" />
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex-1 sm:flex-initial">
+                  <TrendingUp className="h-4 w-4 mr-1 sm:mr-2" />
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="exports" className="flex-1 sm:flex-initial">
+                  <DownloadCloud className="h-4 w-4 mr-1 sm:mr-2" />
+                  Exports
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-            {/* Templates Tab */}
-            <TabsContent value="templates" className="space-y-4 mt-0">
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-4 mt-0">
+              <div className="space-y-6">
+                {/* Key Metrics Summary */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Report Generation Trends</CardTitle>
+                      <CardDescription>Reports created over the last 30 days</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Today</span>
+                          <span className="text-sm font-medium">2 reports</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                          <div className="h-full bg-primary" style={{ width: '15%' }} />
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>Last 7 days: 8 reports</span>
+                          <span className="flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                            +12%
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Report Types Distribution</CardTitle>
+                      <CardDescription>Breakdown by report category</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {[
+                          { type: 'Audit', count: 5, color: 'bg-blue-500' },
+                          { type: 'Analytics', count: 3, color: 'bg-purple-500' },
+                          { type: 'Billing', count: 2, color: 'bg-green-500' },
+                          { type: 'Users', count: 1, color: 'bg-orange-500' },
+                        ].map((item) => (
+                          <div key={item.type} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className={`h-3 w-3 rounded-full ${item.color}`} />
+                              <span className="text-sm">{item.type}</span>
+                            </div>
+                            <span className="text-sm font-medium">{item.count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Recent Reports */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Recent Reports</CardTitle>
+                    <CardDescription>Latest generated reports</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {mockGeneratedReports.slice(0, 5).map((report) => (
+                        <div
+                          key={report.id}
+                          className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent transition-colors"
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {getFormatIcon(report.format)}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{report.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {format(report.createdAt, 'MMM dd, yyyy HH:mm')}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(report.status)}
+                            {report.status === 'completed' && (
+                              <Button variant="ghost" size="icon">
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Quick Actions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Quick Actions</CardTitle>
+                    <CardDescription>Common report generation tasks</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {[
+                        { name: 'Audit Log Report', icon: Shield, type: 'audit' },
+                        { name: 'User Analytics Report', icon: BarChart3, type: 'analytics' },
+                        { name: 'Billing Report', icon: DollarSign, type: 'billing' },
+                      ].map((template) => {
+                        const Icon = template.icon;
+                        const templateData = reportTemplates.find(t => t.type === template.type);
+                        return (
+                          <Button
+                            key={template.type}
+                            variant="outline"
+                            className="h-auto flex-col items-start p-4 gap-2"
+                            onClick={() => {
+                              if (templateData) {
+                                setSelectedTemplate(templateData);
+                                setReportName(`${templateData.name} - ${format(new Date(), 'MMM dd, yyyy')}`);
+                                setShowGenerateDialog(true);
+                              }
+                            }}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span className="text-sm font-medium">{template.name}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Analytics Tab */}
+            <TabsContent value="analytics" className="space-y-4 mt-0">
+              <div className="space-y-6">
+                {/* Usage Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                      <div className="flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-primary flex-shrink-0" />
+                        <CardTitle className="text-sm font-medium">Avg Reports/Day</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">3.2</div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <TrendingUp className="h-3 w-3 text-green-600" />
+                        <span className="text-xs text-muted-foreground">+8% from last month</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-primary flex-shrink-0" />
+                        <CardTitle className="text-sm font-medium">Active Users</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">124</div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <TrendingUp className="h-3 w-3 text-green-600" />
+                        <span className="text-xs text-muted-foreground">+15% from last month</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-primary flex-shrink-0" />
+                        <CardTitle className="text-sm font-medium">Avg Generation Time</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">2.4s</div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <TrendingDown className="h-3 w-3 text-green-600" />
+                        <span className="text-xs text-muted-foreground">-12% improvement</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Report Usage Trends */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Report Usage Trends</CardTitle>
+                    <CardDescription>Report generation activity over time</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/30">
+                      <div className="text-center">
+                        <LineChart className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">Chart visualization would appear here</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Top Report Types */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Most Used Report Types</CardTitle>
+                    <CardDescription>Report types sorted by usage frequency</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { type: 'Audit Log Report', count: 45, percentage: 35 },
+                        { type: 'User Analytics Report', count: 32, percentage: 25 },
+                        { type: 'Billing Report', count: 28, percentage: 22 },
+                        { type: 'Security Events Report', count: 15, percentage: 12 },
+                        { type: 'User Directory', count: 8, percentage: 6 },
+                      ].map((item) => (
+                        <div key={item.type} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{item.type}</span>
+                            <span className="text-sm text-muted-foreground">{item.count} uses</span>
+                          </div>
+                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-primary" style={{ width: `${item.percentage}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Exports Tab */}
+            <TabsContent value="exports" className="space-y-4 mt-0">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
+                <div>
+                  <h3 className="text-lg font-semibold">Export History</h3>
+                  <p className="text-sm text-muted-foreground">View and download previously generated reports</p>
+                </div>
+                <Button onClick={() => { setSelectedTemplate(null); setShowGenerateDialog(true); }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Generate Report
+                </Button>
+              </div>
+
               {/* Filters */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-4 sm:mb-6">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search report templates..."
+                    placeholder="Search reports..."
                     className="pl-9"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -405,65 +739,6 @@ export default function ConsoleReportsPage() {
                     <SelectItem value="email">Email</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              {/* Report Templates Grid */}
-              <div className="space-y-6">
-                {Object.entries(groupedTemplates).map(([category, templates]) => (
-                  <div key={category}>
-                    <h3 className="text-lg font-semibold mb-3">{category}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {templates.map((template) => {
-                        const Icon = template.icon;
-                        return (
-                          <Card
-                            key={template.id}
-                            className="cursor-pointer hover:border-primary transition-colors"
-                            onClick={() => {
-                              setSelectedTemplate(template);
-                              setReportName(`${template.name} - ${format(new Date(), 'MMM dd, yyyy')}`);
-                              setShowGenerateDialog(true);
-                            }}
-                          >
-                            <CardHeader>
-                              <div className="flex items-start justify-between">
-                                <div className="flex items-center gap-3">
-                                  <div className="p-2 rounded-lg bg-primary/10">
-                                    <Icon className="h-5 w-5 text-primary" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <CardTitle className="text-base">{template.name}</CardTitle>
-                                  </div>
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              <CardDescription className="text-sm">
-                                {template.description}
-                              </CardDescription>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </TabsContent>
-
-            {/* Generated Reports Tab */}
-            <TabsContent value="generated" className="space-y-4 mt-0">
-              {/* Filters */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search reports..."
-                    className="pl-9"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
                 <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
                   <SelectTrigger className="w-full sm:w-40">
                     <Filter className="h-4 w-4 mr-2" />
@@ -477,6 +752,45 @@ export default function ConsoleReportsPage() {
                     <SelectItem value="draft">Draft</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Report Templates Grid */}
+              <div className="mb-6">
+                <h3 className="text-base font-semibold mb-4">Report Templates</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {reportTemplates.map((template) => {
+                    const Icon = template.icon;
+                    return (
+                      <Card
+                        key={template.id}
+                        className="cursor-pointer hover:border-primary transition-colors"
+                        onClick={() => {
+                          setSelectedTemplate(template);
+                          setReportName(`${template.name} - ${format(new Date(), 'MMM dd, yyyy')}`);
+                          setShowGenerateDialog(true);
+                        }}
+                      >
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-lg bg-primary/10">
+                                <Icon className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <CardTitle className="text-base">{template.name}</CardTitle>
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <CardDescription className="text-sm">
+                            {template.description}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Generated Reports Table */}
@@ -579,25 +893,6 @@ export default function ConsoleReportsPage() {
                   </TableBody>
                 </Table>
               </div>
-            </TabsContent>
-
-            {/* Scheduled Reports Tab */}
-            <TabsContent value="scheduled" className="space-y-4 mt-0">
-              <Card>
-                <CardContent className="py-12">
-                  <div className="text-center">
-                    <CalendarClock className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">Scheduled Reports</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Schedule automatic report generation and delivery
-                    </p>
-                    <Button variant="outline">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create Schedule
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </TabsContent>
           </Tabs>
         </CardContent>

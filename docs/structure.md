@@ -72,9 +72,8 @@ The web app uses Next.js App Router with the following route groups:
 - ✅ `src/app/(console)/console/login/page.tsx` - Console login
 - 🔄 `src/app/(console)/console/health/page.tsx` - System health (stub)
 - 🔄 `src/app/(console)/console/db/page.tsx` - Database viewer (stub)
-- 🔄 `src/app/(console)/console/jobs/page.tsx` - Background tasks (stub)
-- 🔄 `src/app/(console)/console/flags/page.tsx` - Feature flags (stub)
 - 🔄 `src/app/(console)/console/env/page.tsx` - Environment management (stub)
+- ℹ️ `src/app/(console)/console/config/page.tsx` - Configuration (includes Jobs/Queue and Feature Flags tabs)
 - 🔄 `src/app/(console)/console/integrations/page.tsx` - Integrations (stub)
 - 🔄 `src/app/(console)/console/automations/page.tsx` - Automations (stub)
 - 🔄 `src/app/(console)/console/api/page.tsx` - API monitoring (stub)

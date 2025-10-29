@@ -65,9 +65,8 @@ export function PrivacySettingsModal({ isOpen, onClose }: PrivacySettingsModalPr
           {/* Profile Visibility */}
           <div>
             <label className="block text-sm text-muted-foreground mb-2">Profile Visibility</label>
-            <select className="w-full px-4 py-2.5 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+            <select className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <option selected>Public</option>
-              <option>Friends Only</option>
               <option>Private</option>
             </select>
           </div>

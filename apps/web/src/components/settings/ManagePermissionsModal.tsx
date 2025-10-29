@@ -13,6 +13,8 @@ interface ManagePermissionsModalProps {
 export function ManagePermissionsModal({ isOpen, onClose }: ManagePermissionsModalProps) {
   const [mounted, setMounted] = useState(false);
   const [showAddUser, setShowAddUser] = useState(false);
+  const [newUserFirstName, setNewUserFirstName] = useState('');
+  const [newUserLastName, setNewUserLastName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState('viewer');
   const [members, setMembers] = useState([
@@ -32,18 +34,20 @@ export function ManagePermissionsModal({ isOpen, onClose }: ManagePermissionsMod
   };
 
   const handleSubmitAddUser = async () => {
-    if (!newUserEmail) {
-      alert('Please enter an email address');
+    if (!newUserFirstName || !newUserLastName || !newUserEmail) {
+      alert('Please enter first name, last name, and email address');
       return;
     }
     const newMember = {
       id: String(members.length + 1),
-      name: newUserEmail.split('@')[0],
+      name: `${newUserFirstName} ${newUserLastName}`,
       email: newUserEmail,
       role: newUserRole,
     };
     setMembers([...members, newMember]);
     setShowAddUser(false);
+    setNewUserFirstName('');
+    setNewUserLastName('');
     setNewUserEmail('');
     setNewUserRole('viewer');
     alert('User added successfully!');
@@ -71,7 +75,7 @@ export function ManagePermissionsModal({ isOpen, onClose }: ManagePermissionsMod
       
       {/* Modal */}
       <div
-        className="relative w-full max-w-2xl rounded-lg border shadow-2xl overflow-hidden modal-bg"
+        className="relative w-full max-w-2xl max-h-[90vh] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -88,7 +92,7 @@ export function ManagePermissionsModal({ isOpen, onClose }: ManagePermissionsMod
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 overflow-y-auto flex-1">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">{members.length} team members</p>
             <Button onClick={handleAddUser} className="flex items-center gap-2">
@@ -101,6 +105,28 @@ export function ManagePermissionsModal({ isOpen, onClose }: ManagePermissionsMod
             <div className="mb-6 p-4 bg-muted rounded-lg border-2 border-primary">
               <h4 className="font-semibold mb-3">Add New User</h4>
               <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm text-muted-foreground mb-1">First Name</label>
+                    <input
+                      type="text"
+                      value={newUserFirstName}
+                      onChange={(e) => setNewUserFirstName(e.target.value)}
+                      placeholder="John"
+                      className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-muted-foreground mb-1">Last Name</label>
+                    <input
+                      type="text"
+                      value={newUserLastName}
+                      onChange={(e) => setNewUserLastName(e.target.value)}
+                      placeholder="Doe"
+                      className="w-full px-4 py-2 rounded-lg border border-input bg-background"
+                    />
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm text-muted-foreground mb-1">Email</label>
                   <input

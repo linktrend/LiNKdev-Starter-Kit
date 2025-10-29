@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Mail, Phone, MapPin, Camera, Building2, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ProfileEditModal from '@/components/profile/ProfileEditModal';
+import { ProfileEditModal } from '@/components/profile/ProfileEditModal';
 
 export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -38,10 +38,10 @@ export function DataSettingsModal({ isOpen, onClose }: DataSettingsModalProps) {
       
       {/* Modal */}
       <div
-        className="relative w-full max-w-md rounded-lg border shadow-2xl overflow-hidden modal-bg"
+        className="relative w-full max-w-3xl max-h-[90vh] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <div className="flex items-center gap-2">
             <Database className="h-5 w-5" />
             <h2 className="text-xl font-bold">Data Settings</h2>
@@ -55,7 +55,19 @@ export function DataSettingsModal({ isOpen, onClose }: DataSettingsModalProps) {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Storage Usage */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Storage</span>
+              <span className="text-sm text-muted-foreground">6.2 GB / 10 GB</span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div className="bg-primary h-2 rounded-full" style={{ width: '62%' }}></div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">3.8 GB remaining</p>
+          </div>
+
           {/* Backup Frequency */}
           <div>
             <label className="block text-sm text-muted-foreground mb-2">Backup Frequency</label>
@@ -90,7 +102,7 @@ export function DataSettingsModal({ isOpen, onClose }: DataSettingsModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3 p-6 border-t bg-muted">
+        <div className="flex gap-3 p-6 border-t bg-muted flex-shrink-0">
           <Button
             onClick={onClose}
             variant="outline"

@@ -62,7 +62,7 @@ export default function OnboardingPage({ params: { locale } }: OnboardingPagePro
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">Welcome!</h1>
           </div>
-          <p className="text-muted-foreground">Let's get you started</p>
+          <p className="text-muted-foreground">Let&apos;s get you started</p>
         </div>
 
         <StepIndicator currentStep={currentStep} totalSteps={totalSteps} className="mb-8" />
@@ -293,7 +293,7 @@ export default function OnboardingPage({ params: { locale } }: OnboardingPagePro
                   <Check className="h-10 w-10 text-primary" />
                 </div>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Welcome to LTM Starter Kit! You're all set to start building amazing applications.
+                  Welcome to LTM Starter Kit! You&apos;re all set to start building amazing applications.
                 </p>
               </div>
             )}

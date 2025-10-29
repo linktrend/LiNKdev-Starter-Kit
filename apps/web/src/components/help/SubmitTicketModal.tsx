@@ -32,7 +32,10 @@ export default function SubmitTicketModal({ isOpen, onClose }: SubmitTicketModal
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg border shadow-2xl modal-bg"
       >
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <h2 className="text-base text-muted-foreground">Submit Support Ticket</h2>
+          <div className="flex items-center gap-2">
+            <Send className="h-5 w-5 text-primary" />
+            <h2 className="text-base text-muted-foreground">Submit Support Ticket</h2>
+          </div>
           <button
             onClick={onClose}
             className="p-1 hover:bg-muted rounded-lg transition-all"

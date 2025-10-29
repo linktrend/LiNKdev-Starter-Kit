@@ -9,7 +9,8 @@ interface ProfileEditModalProps {
   onClose: () => void;
 }
 
-export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
+export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
+  const [showApprovalPopup, setShowApprovalPopup] = useState(false);
   const [formData, setFormData] = useState({
     username: 'johndoe167',
     displayName: 'John Doe',
@@ -39,11 +40,17 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
     bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces. I love working with modern design systems and bringing creative ideas to life through thoughtful design and collaboration.',
   });
 
-  const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | null>(null);
+  const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | 'invalid' | null>(null);
 
   const checkUsernameAvailability = (username: string) => {
     if (!username || username.length < 3) {
       setUsernameStatus(null);
+      return;
+    }
+    
+    // Admin usernames must end with '.admin'
+    if (!username.toLowerCase().endsWith('.admin')) {
+      setUsernameStatus('invalid');
       return;
     }
     
@@ -72,7 +79,19 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent submission if username doesn't end with '.admin'
+    if (!formData.username.toLowerCase().endsWith('.admin')) {
+      setUsernameStatus('invalid');
+      return;
+    }
+    
     console.log('Profile updated:', formData);
+    setShowApprovalPopup(true);
+  };
+
+  const handleApprovalClose = () => {
+    setShowApprovalPopup(false);
     onClose();
   };
 
@@ -327,7 +346,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
         <form onSubmit={handleSubmit} className="p-6 space-y-8">
           {/* Personal Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-card-foreground border-b border-border pb-2">Personal Information</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">Personal Information</h3>
             
             {/* Display Name and Username Fields */}
             <div className="flex items-end gap-4">
@@ -354,7 +373,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                   onChange={handleUsernameChange}
                   required
                   className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                  placeholder="Enter username"
+                  placeholder="username.admin"
                 />
               </div>
               <div className="flex-1 flex items-center h-[42px]">
@@ -381,6 +400,14 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                     Username not available
+                  </span>
+                )}
+                {usernameStatus === 'invalid' && (
+                  <span className="text-sm text-danger flex items-center gap-2">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Username must end with '.admin'
                   </span>
                 )}
               </div>
@@ -452,7 +479,8 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                  readOnly
+                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
                 />
               </div>
               <div className="col-span-3">
@@ -463,7 +491,8 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                   <select
                     value={formData.phoneCountryCode}
                     onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
-                    className="w-48 px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    disabled
+                    className="w-48 px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
                   >
                     <option value="">Country</option>
                     {phoneCountryCodes.map((item) => (
@@ -476,7 +505,8 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
                     type="tel"
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    readOnly
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -574,143 +604,7 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
               </div>
             </div>
             </div>
-            
-          {/* Professional Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-card-foreground border-b border-border pb-2">Professional Information</h3>
-            
-            {/* First Line: Title and Company */}
-            <div className="grid gap-4 grid-cols-5">
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalTitle}
-                  onChange={(e) => setFormData({ ...formData, professionalTitle: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-              <div className="col-span-3">
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Company
-                </label>
-                <input
-                  type="text"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-            </div>
-            
-            {/* Second Line: Apartment/Suite and Street Address */}
-            <div className="grid gap-4 grid-cols-5">
-              <div className="col-span-1">
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Apartment/Suite
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalAptSuite}
-                  onChange={(e) => setFormData({ ...formData, professionalAptSuite: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-              <div className="col-span-4">
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Street Address
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalStreetAddress1}
-                  onChange={(e) => setFormData({ ...formData, professionalStreetAddress1: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-            </div>
-            
-            {/* Third Line: Street Address 2 */}
-            <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">
-                Street Address 2
-              </label>
-              <input
-                type="text"
-                value={formData.professionalStreetAddress2}
-                onChange={(e) => setFormData({ ...formData, professionalStreetAddress2: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-              />
-            </div>
-            
-            {/* Fourth Line: City, State/Region, Postal Code, Country */}
-            <div className="grid gap-4" style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 2fr' }}>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalCity}
-                  onChange={(e) => setFormData({ ...formData, professionalCity: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  State/Region
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalState}
-                  onChange={(e) => setFormData({ ...formData, professionalState: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Postal Code
-                </label>
-                <input
-                  type="text"
-                  value={formData.professionalPostalCode}
-                  onChange={(e) => setFormData({ ...formData, professionalPostalCode: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Country
-                </label>
-                <select
-                  value={formData.professionalCountry}
-                  onChange={(e) => setFormData({ ...formData, professionalCountry: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                >
-                  {countries.map((country) => (
-                    <option key={country} value={country}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          {/* Bio */}
-          <div>
-            <h3 className="text-lg font-semibold text-card-foreground border-b border-border pb-2 mb-4">Bio</h3>
-            <textarea
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              rows={5}
-              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm resize-none"
-              placeholder="Tell us about yourself..."
-            />
-          </div>
-          
-          <div className="flex gap-4 justify-end pt-4 border-t border-border">
+          <div className="flex gap-4 justify-end pt-4">
             <Button
               type="button"
               onClick={onClose}
@@ -724,6 +618,30 @@ export default function ProfileEditModal({ isOpen, onClose }: ProfileEditModalPr
           </div>
         </form>
       </div>
+      
+      {/* Approval Popup */}
+      {showApprovalPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+          <div className="w-full max-w-md rounded-lg border shadow-2xl modal-bg text-card-foreground p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-card-foreground">Changes Submitted</h3>
+            </div>
+            <p className="text-sm text-card-foreground/70 mb-6">
+              Your profile changes have been submitted successfully. They are subject to approval by a super admin and will be reviewed soon. You will be notified once the changes are approved.
+            </p>
+            <div className="flex justify-end">
+              <Button onClick={handleApprovalClose}>
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

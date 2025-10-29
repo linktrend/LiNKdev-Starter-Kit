@@ -14,6 +14,8 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
   const [mounted, setMounted] = useState(false);
   const [showKeys, setShowKeys] = useState<{[key: number]: boolean}>({});
   const [activeTab, setActiveTab] = useState<'app' | 'provider'>('app');
+  const [showGeneratedKeyModal, setShowGeneratedKeyModal] = useState(false);
+  const [generatedKey, setGeneratedKey] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -38,7 +40,19 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
   };
 
   const handleCreateKey = async () => {
-    alert('New API key created successfully!');
+    // Generate a mock API key
+    const mockKey = 'sk-' + Array.from({ length: 48 }, () => 
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 62)]
+    ).join('');
+    
+    setGeneratedKey(mockKey);
+    setShowGeneratedKeyModal(true);
+  };
+
+  const handleCloseGeneratedKeyModal = () => {
+    setShowGeneratedKeyModal(false);
+    // Add the generated key to the list (in a real app, this would be an API call)
+    alert('API key added to your list!');
   };
 
   const handleDeleteKey = (id: number) => {
@@ -59,7 +73,7 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
       
       {/* Modal */}
       <div
-        className="relative w-full max-w-3xl max-h-[90vh] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
+        className="relative w-full max-w-3xl h-[600px] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
@@ -208,9 +222,6 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
                         >
                           {showKeys[key.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
-                        <button onClick={() => handleCopy(`sk-${key.name.toLowerCase().replace(' ', '-')}`)} className="p-2 hover:bg-accent rounded-lg transition-colors">
-                          <Copy className="h-4 w-4" />
-                        </button>
                         <button onClick={() => handleDeleteKey(key.id)} className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors">
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -235,6 +246,73 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
           </Button>
         </div>
       </div>
+
+      {/* Generated Key Modal */}
+      {showGeneratedKeyModal && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center p-4"
+          style={{ zIndex: 100000 }}
+        >
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 modal-backdrop"
+          />
+          
+          {/* Modal */}
+          <div className="relative w-full max-w-md rounded-lg border shadow-2xl overflow-hidden modal-bg">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <div className="flex items-center gap-2">
+                <Key className="h-5 w-5" />
+                <h2 className="text-xl font-bold">API Key Generated</h2>
+              </div>
+              <button
+                onClick={handleCloseGeneratedKeyModal}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-300 mb-2">Important!</p>
+                <p className="text-xs text-yellow-900 dark:text-yellow-300">Save this API key securely. You won't be able to see it again.</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-muted-foreground mb-2">Your API Key</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={generatedKey}
+                    className="flex-1 px-3 py-2 bg-background border border-input rounded-lg text-sm font-mono"
+                  />
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedKey);
+                      alert('API key copied to clipboard!');
+                    }}
+                    className="p-2 hover:bg-accent rounded-lg transition-colors"
+                    title="Copy API key"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end gap-3 p-6 border-t bg-muted">
+              <Button onClick={handleCloseGeneratedKeyModal}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 

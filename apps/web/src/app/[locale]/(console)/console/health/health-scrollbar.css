@@ -1,0 +1,42 @@
+/* Custom scrollbar styles for health check containers */
+.health-scroll-container::-webkit-scrollbar {
+  width: 10px;
+  display: block !important;
+}
+
+.health-scroll-container::-webkit-scrollbar-track {
+  background: rgb(244 244 245);
+  border-radius: 5px;
+}
+
+.health-scroll-container::-webkit-scrollbar-thumb {
+  background: rgb(161 161 170);
+  border-radius: 5px;
+}
+
+.health-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgb(113 113 122);
+}
+
+.dark .health-scroll-container::-webkit-scrollbar-track {
+  background: rgb(39 39 42);
+}
+
+.dark .health-scroll-container::-webkit-scrollbar-thumb {
+  background: rgb(113 113 122);
+}
+
+.dark .health-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgb(161 161 170);
+}
+
+/* Firefox */
+.health-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(161 161 170) rgb(244 244 245);
+}
+
+.dark .health-scroll-container {
+  scrollbar-color: rgb(113 113 122) rgb(39 39 42);
+}
+

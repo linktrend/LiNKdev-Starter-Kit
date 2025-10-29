@@ -13,6 +13,7 @@ const getScreenName = (pathname: string): string => {
   if (pathname.includes('/console/api-keys')) return 'API & Keys';
   if (pathname.includes('/console/config')) return 'Configuration';
   if (pathname.includes('/console/jobs')) return 'Jobs/Queue';
+  if (pathname.includes('/console/reports')) return 'Reports';
   if (pathname.includes('/console/automations')) return 'Automations';
   if (pathname.includes('/console/security')) return 'Security & Access';
   if (pathname.includes('/console/flags')) return 'Flags';
@@ -33,17 +34,26 @@ export default function ConsoleLayout({ children }: PropsWithChildren) {
     return <>{children}</>;
   }
 
+  const sidebarWidth = isSidebarCollapsed ? 80 : 280;
+
   return (
     <div className="flex min-h-screen">
       <ConsoleSidebar 
         locale={locale} 
-        userName="Admin User"
+        displayName="Sarah Johnson"
+        username="sarah.admin"
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
-      <div className="flex-1 flex flex-col">
+      <div 
+        className="flex flex-col min-w-0"
+        style={{
+          marginLeft: `${sidebarWidth}px`,
+          width: `calc(100vw - ${sidebarWidth}px)`,
+        }}
+      >
         <ConsoleTopbar locale={locale} screenName={screenName} />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 min-w-0 overflow-y-auto">
           {children}
         </main>
       </div>

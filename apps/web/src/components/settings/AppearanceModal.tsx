@@ -14,6 +14,7 @@ export function AppearanceModal({ isOpen, onClose }: AppearanceModalProps) {
   const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('light');
   const [compactMode, setCompactMode] = useState(false);
+  const [accentColor, setAccentColor] = useState('bg-primary');
 
   useEffect(() => {
     setMounted(true);
@@ -23,7 +24,7 @@ export function AppearanceModal({ isOpen, onClose }: AppearanceModalProps) {
 
   const handleSave = async () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Saving appearance settings...', { theme, compactMode });
+    console.log('Saving appearance settings...', { theme, compactMode, accentColor });
     alert('Appearance settings saved successfully!');
     onClose();
   };
@@ -126,31 +127,15 @@ export function AppearanceModal({ isOpen, onClose }: AppearanceModalProps) {
               {['bg-primary', 'bg-purple-500', 'bg-success', 'bg-orange-500', 'bg-pink-500'].map((color, i) => (
                 <button
                   key={i}
-                  className={`w-12 h-12 rounded-lg ${color} ${i === 0 ? 'ring-2 ring-offset-2 ring-gray-900' : ''}`}
+                  onClick={() => setAccentColor(color)}
+                  className={`w-12 h-12 rounded-lg ${color} ${
+                    accentColor === color ? 'ring-2 ring-offset-2 ring-gray-900' : ''
+                  } hover:opacity-80 transition-opacity`}
                 />
               ))}
             </div>
           </div>
 
-          {/* Compact Mode */}
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-semibold">Compact Mode</p>
-              <p className="text-sm text-muted-foreground">Reduce spacing for denser layouts</p>
-            </div>
-            <button
-              onClick={() => setCompactMode(!compactMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                compactMode ? 'bg-success' : 'bg-danger'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  compactMode ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
         </div>
 
         {/* Footer */}

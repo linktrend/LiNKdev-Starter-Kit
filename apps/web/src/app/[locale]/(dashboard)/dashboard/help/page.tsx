@@ -10,6 +10,8 @@ import FeatureRequestModal from '@/components/help/FeatureRequestModal';
 import ReportBugModal from '@/components/help/ReportBugModal';
 import UserSurveyModal from '@/components/help/UserSurveyModal';
 import ReleaseNotesModal from '@/components/help/ReleaseNotesModal';
+import UserDocumentationModal from '@/components/help/UserDocumentationModal';
+import FAQModal from '@/components/help/FAQModal';
 
 export default function HelpPage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -19,6 +21,8 @@ export default function HelpPage() {
   const [isReportBugModalOpen, setIsReportBugModalOpen] = useState(false);
   const [isUserSurveyModalOpen, setIsUserSurveyModalOpen] = useState(false);
   const [isReleaseNotesModalOpen, setIsReleaseNotesModalOpen] = useState(false);
+  const [isUserDocumentationModalOpen, setIsUserDocumentationModalOpen] = useState(false);
+  const [isFAQModalOpen, setIsFAQModalOpen] = useState(false);
 
   return (
     <>
@@ -29,8 +33,18 @@ export default function HelpPage() {
       <ReportBugModal isOpen={isReportBugModalOpen} onClose={() => setIsReportBugModalOpen(false)} />
       <UserSurveyModal isOpen={isUserSurveyModalOpen} onClose={() => setIsUserSurveyModalOpen(false)} />
       <ReleaseNotesModal isOpen={isReleaseNotesModalOpen} onClose={() => setIsReleaseNotesModalOpen(false)} />
+      <UserDocumentationModal isOpen={isUserDocumentationModalOpen} onClose={() => setIsUserDocumentationModalOpen(false)} />
+      <FAQModal 
+        isOpen={isFAQModalOpen} 
+        onClose={() => setIsFAQModalOpen(false)}
+        onOpenUserDocs={() => setIsUserDocumentationModalOpen(true)}
+        onOpenVideoTutorials={() => window.open('https://help.company.com/tutorials', '_blank')}
+        onOpenSupportTicket={() => setIsTicketModalOpen(true)}
+        onOpenLiveChat={() => setIsLiveChatModalOpen(true)}
+        onOpenScheduleCall={() => setIsScheduleCallModalOpen(true)}
+      />
     
-    <div className="min-h-screen p-8">
+    <div>
       <div className="max-w-6xl mx-auto">
         <div className="grid gap-6 md:grid-cols-2">
           <div 
@@ -45,7 +59,7 @@ export default function HelpPage() {
             </p>
             <div className="space-y-3">
               <Button 
-                onClick={() => window.open('https://help.company.com/faq', '_blank')}
+                onClick={() => setIsFAQModalOpen(true)}
                 className="w-full"
               >
                 <FileText className="h-4 w-4 mr-2" />
@@ -59,7 +73,7 @@ export default function HelpPage() {
                 Video Tutorials
               </Button>
               <Button 
-                onClick={() => window.open('https://help.company.com/docs', '_blank')}
+                onClick={() => setIsUserDocumentationModalOpen(true)}
                 className="w-full"
               >
                 <Book className="h-4 w-4 mr-2" />
@@ -139,7 +153,7 @@ export default function HelpPage() {
           </div>
 
           <div 
-            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col"
           >
             <div className="flex items-center gap-2 mb-4">
               <FileText className="h-6 w-6 text-primary" />
@@ -156,13 +170,13 @@ export default function HelpPage() {
                 <Eye className="h-4 w-4 mr-2" />
                 View Latest Updates
               </Button>
+            </div>
+            <div className="mt-auto pt-6">
               <div 
-                className="px-4 py-3 rounded-lg bg-success/10 border border-success/30"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 rounded-lg bg-success/10 border border-success/30 w-full"
               >
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-success" />
-                  <span className="text-sm text-success font-medium">Latest Version: 2.1.0 (01/12/2024)</span>
-                </div>
+                <CheckCircle className="h-4 w-4 text-success mr-2" />
+                <span className="text-sm text-success font-medium">Latest Version: 2.1.0</span>
               </div>
             </div>
           </div>

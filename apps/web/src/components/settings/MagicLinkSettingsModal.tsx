@@ -108,7 +108,7 @@ export function MagicLinkSettingsModal({ isOpen, onClose }: MagicLinkSettingsMod
           </div>
 
           {/* Notification Settings */}
-          <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-red-500 rounded-lg">
             <div>
               <p className="font-medium">Email Notifications</p>
               <p className="text-sm text-muted-foreground">Get notified when magic links are sent</p>

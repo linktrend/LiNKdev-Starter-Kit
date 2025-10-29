@@ -136,135 +136,151 @@ export function AddPaymentMethodModal({ isOpen, onClose, onAdd }: AddPaymentMeth
             </div>
           </div>
 
-          {/* Form Fields */}
-          {selectedMethod === 'card' && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="cardNumber" className="text-sm font-medium">
-                  Card Number *
-                </Label>
-                <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="cardholderName" className="text-sm font-medium">
-                  Cardholder Name *
-                </Label>
-                <Input
-                  id="cardholderName"
-                  placeholder="John Doe"
-                  value={cardholderName}
-                  onChange={(e) => setCardholderName(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+          {/* Form Fields - Fixed Height Container */}
+          <div className="min-h-[280px] space-y-4">
+            {selectedMethod === 'card' && (
+              <div className="space-y-4">
                 <div>
-                  <Label htmlFor="expiry" className="text-sm font-medium">
-                    Expiry *
+                  <Label htmlFor="cardNumber" className="text-sm font-medium">
+                    Card Number *
                   </Label>
                   <Input
-                    id="expiry"
-                    placeholder="MM/YY"
-                    value={expiry}
-                    onChange={(e) => setExpiry(e.target.value)}
+                    id="cardNumber"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
                     className="mt-2"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="cvv" className="text-sm font-medium">
-                    CVV *
+                  <Label htmlFor="cardholderName" className="text-sm font-medium">
+                    Cardholder Name *
                   </Label>
                   <Input
-                    id="cvv"
-                    placeholder="123"
-                    value={cvv}
-                    onChange={(e) => setCvv(e.target.value)}
+                    id="cardholderName"
+                    placeholder="John Doe"
+                    value={cardholderName}
+                    onChange={(e) => setCardholderName(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiry" className="text-sm font-medium">
+                      Expiry *
+                    </Label>
+                    <Input
+                      id="expiry"
+                      placeholder="MM/YY"
+                      value={expiry}
+                      onChange={(e) => setExpiry(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="cvv" className="text-sm font-medium">
+                      CVV *
+                    </Label>
+                    <Input
+                      id="cvv"
+                      placeholder="123"
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedMethod === 'paypal' && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="paypalEmail" className="text-sm font-medium">
+                    PayPal Email *
+                  </Label>
+                  <Input
+                    id="paypalEmail"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={paypalEmail}
+                    onChange={(e) => setPaypalEmail(e.target.value)}
                     className="mt-2"
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedMethod === 'paypal' && (
-            <div>
-              <Label htmlFor="paypalEmail" className="text-sm font-medium">
-                PayPal Email *
-              </Label>
-              <Input
-                id="paypalEmail"
-                type="email"
-                placeholder="your.email@example.com"
-                value={paypalEmail}
-                onChange={(e) => setPaypalEmail(e.target.value)}
-                className="mt-2"
-              />
-            </div>
-          )}
-
-          {selectedMethod === 'crypto' && (
-            <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium">
-                  Company Wallet Address (USDT ERC20)
-                </Label>
-                <div className="flex gap-2 mt-2">
+            {selectedMethod === 'crypto' && (
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium">
+                    Company Wallet Address (USDT ERC20)
+                  </Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input
+                      value={walletAddress}
+                      readOnly
+                      className="flex-1 font-mono text-sm"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCopy}
+                      className="px-4"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="transactionHash" className="text-sm font-medium">
+                    Transaction Hash *
+                  </Label>
                   <Input
-                    value={walletAddress}
-                    readOnly
-                    className="flex-1 font-mono text-sm"
+                    id="transactionHash"
+                    placeholder="0x..."
+                    value={transactionHash}
+                    onChange={(e) => setTransactionHash(e.target.value)}
+                    className="mt-2 font-mono text-sm"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCopy}
-                    className="px-4"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
+                </div>
+                
+                <div>
+                  <Label htmlFor="amountPaid" className="text-sm font-medium">
+                    Amount Paid (USDT) *
+                  </Label>
+                  <Input
+                    id="amountPaid"
+                    type="number"
+                    placeholder="0.00"
+                    value={amountPaid}
+                    onChange={(e) => setAmountPaid(e.target.value)}
+                    className="mt-2"
+                  />
                 </div>
               </div>
-              
-              <div>
-                <Label htmlFor="transactionHash" className="text-sm font-medium">
-                  Transaction Hash *
-                </Label>
-                <Input
-                  id="transactionHash"
-                  placeholder="0x..."
-                  value={transactionHash}
-                  onChange={(e) => setTransactionHash(e.target.value)}
-                  className="mt-2 font-mono text-sm"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="amountPaid" className="text-sm font-medium">
-                  Amount Paid (USDT) *
-                </Label>
-                <Input
-                  id="amountPaid"
-                  type="number"
-                  placeholder="0.00"
-                  value={amountPaid}
-                  onChange={(e) => setAmountPaid(e.target.value)}
-                  className="mt-2"
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
+
+          {/* Make Default Option */}
+          <div className="flex items-center gap-2 pt-2 border-t">
+            <input
+              type="checkbox"
+              id="makeDefault"
+              className="h-4 w-4 rounded border-border"
+            />
+            <Label htmlFor="makeDefault" className="text-sm cursor-pointer">
+              Make this payment method default
+            </Label>
+          </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3">
             <Button
               variant="outline"
               onClick={onClose}

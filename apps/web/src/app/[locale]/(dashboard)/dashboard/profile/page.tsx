@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Award, Activity, Camera, Building2, Briefcase } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Award, Activity, Camera, Building2, Briefcase, Shield, UserCog, BadgeCheck, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ProfileEditModal from '@/components/profile/ProfileEditModal';
+import { ProfileEditModal } from '@/components/profile/ProfileEditModal';
 
 export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  const profileData = {
+  const profileData = useMemo(() => ({
     personalTitle: 'Mr.',
     name: 'John',
     middleName: 'Michael',
@@ -28,13 +28,14 @@ export default function ProfilePage() {
     jobTitle: 'Senior Product Designer',
     company: 'Tech Innovations Inc.',
     bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces. I love working with modern design systems and bringing creative ideas to life through thoughtful design and collaboration.',
-  };
+  }), []);
 
-  const userStats = [
-    { label: 'Stat 1', value: '---', icon: Activity },
-    { label: 'Stat 2', value: '---', icon: Award },
-    { label: 'Stat 3', value: '---', icon: Calendar },
-  ];
+  const accountInfo = useMemo(() => ({
+    accountCreated: 'March 15, 2020 at 05:00 PM',
+    adminLevel: 'Super Admin',
+    profileStatus: 'Active',
+    twoFactorEnabled: false,
+  }), []);
 
   const fullName = `${profileData.name} ${profileData.middleName ? profileData.middleName + ' ' : ''}${profileData.lastName}`;
   const fullPhone = profileData.phoneNumber ? `${profileData.phoneCountryCode} ${profileData.phoneNumber}` : '';
@@ -78,7 +79,7 @@ export default function ProfilePage() {
     <>
       <ProfileEditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
       
-      <div className="min-h-screen p-8">
+      <div>
         <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid gap-6 md:grid-cols-3">
           {/* Card 1: Avatar, Display Name, Username, Edit Button */}
@@ -186,25 +187,59 @@ export default function ProfilePage() {
         <div
           className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm"
         >
-          <h3 className="text-xl font-bold text-card-foreground mb-2">Profile Statistics</h3>
-          <p className="text-sm text-card-foreground/70 mb-6">Your activity and achievements</p>
+          <h3 className="text-xl font-bold text-card-foreground mb-2">Account Information</h3>
+          <p className="text-sm text-card-foreground/70 mb-6">Administrative account details and settings</p>
           
-          <div className="grid gap-6 md:grid-cols-3 mb-6">
-            {userStats.map((stat, i) => {
-              const Icon = stat.icon;
-              return (
-                <div key={i} className="p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-all">
-                  <Icon className="h-5 w-5 text-primary mb-2" />
-                  <div className="text-2xl font-bold text-card-foreground">{stat.value}</div>
-                  <div className="text-sm text-card-foreground/70">{stat.label}</div>
+          <div className="space-y-6">
+            {/* Account Details Section */}
+            <div>
+              <h4 className="text-sm font-semibold text-card-foreground/90 mb-4 flex items-center gap-2">
+                <UserCog className="h-4 w-4" />
+                Account Details
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <Calendar className="h-4 w-4 flex-shrink-0 text-card-foreground/60" />
+                  <div>
+                    <span className="text-card-foreground/70">Account Created:</span>
+                    <span className="text-card-foreground ml-2">{accountInfo.accountCreated}</span>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+                
+                <div className="flex items-center gap-3 text-sm">
+                  <Shield className="h-4 w-4 flex-shrink-0 text-card-foreground/60" />
+                  <div>
+                    <span className="text-card-foreground/70">Admin Level:</span>
+                    <span className="text-card-foreground ml-2">{accountInfo.adminLevel}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 text-sm">
+                  <BadgeCheck className="h-4 w-4 flex-shrink-0 text-card-foreground/60" />
+                  <div>
+                    <span className="text-card-foreground/70">Profile Status:</span>
+                    <span className="text-card-foreground ml-2">{accountInfo.profileStatus}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div className="p-4 rounded-lg bg-white/5">
-            <h4 className="text-sm font-semibold text-card-foreground/50 mb-3">Skills</h4>
-            <p className="text-sm text-card-foreground/50">No skills added</p>
+            {/* Security Settings Section */}
+            <div className="pt-4 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-card-foreground/90 mb-4 flex items-center gap-2">
+                <Lock className="h-4 w-4" />
+                Security Settings
+              </h4>
+              <div className="flex items-center gap-3 text-sm">
+                <Shield className="h-4 w-4 flex-shrink-0 text-card-foreground/60" />
+                <div>
+                  <span className="text-card-foreground/70">2FA Status:</span>
+                  <span className={`ml-2 ${accountInfo.twoFactorEnabled ? 'text-green-500' : 'text-orange-500'}`}>
+                    {accountInfo.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

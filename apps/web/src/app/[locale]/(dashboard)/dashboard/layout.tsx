@@ -22,6 +22,9 @@ const getScreenName = (pathname: string, searchParams: URLSearchParams): string 
     }
     return 'Settings: Account'; // Default to Account tab
   }
+  if (pathname.includes('/module1')) return 'Module 1';
+  if (pathname.includes('/module2')) return 'Module 2';
+  if (pathname.includes('/module3')) return 'Module 3';
   if (pathname.includes('/dashboard')) return 'Home';
   return 'Home';
 };

@@ -35,11 +35,11 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
     onChange: (value: number) => void; 
     label: string;
   }) => (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <label className="block text-sm text-muted-foreground">
         {label} <span className="text-danger">*</span>
       </label>
-      <div className="flex gap-2">
+      <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -48,7 +48,7 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
             className="transition-all"
           >
             <Star
-              className={`h-8 w-8 ${
+              className={`h-6 w-6 ${
                 star <= value
                   ? 'fill-warning text-warning'
                   : 'text-muted-foreground hover:text-warning'
@@ -56,7 +56,7 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
             />
           </button>
         ))}
-        <span className="ml-2 text-sm text-muted-foreground/70 self-center">
+        <span className="ml-2 text-xs text-muted-foreground/70 self-center">
           {value > 0 ? `${value}/5` : 'Not rated'}
         </span>
       </div>
@@ -83,7 +83,7 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 space-y-4">
           <p className="text-sm text-muted-foreground/70">
             Help us improve by sharing your experience. All ratings are required.
           </p>
@@ -113,23 +113,24 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
           />
 
           <div>
-            <label className="block text-sm text-muted-foreground mb-2">
+            <label className="block text-sm text-muted-foreground mb-1">
               Additional Feedback (Optional)
             </label>
             <textarea
               value={formData.feedback}
               onChange={(e) => setFormData({ ...formData, feedback: e.target.value })}
-              rows={5}
-              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm resize-none"
+              rows={3}
+              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm resize-none"
               placeholder="Any other comments or suggestions?"
             />
           </div>
 
-          <div className="flex gap-4 justify-end pt-4 border-t border-border">
+          <div className="flex gap-3 justify-end pt-3 border-t border-border">
             <Button
               type="button"
               onClick={onClose}
               variant="outline"
+              size="sm"
             >
               Cancel
             </Button>
@@ -137,6 +138,7 @@ export default function UserSurveyModal({ isOpen, onClose }: UserSurveyModalProp
               type="submit"
               disabled={!isFormValid}
               className="flex items-center gap-2"
+              size="sm"
             >
               <Star className="h-4 w-4" />
               Submit Survey

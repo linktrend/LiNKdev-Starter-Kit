@@ -105,7 +105,7 @@ export function BiometricLoginModal({ isOpen, onClose }: BiometricLoginModalProp
                     onClick={handleFingerprint}
                     className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${
                       selectedType === 'fingerprint'
-                        ? 'border-primary bg-muted'
+                        ? 'border-primary bg-red-500'
                         : 'border-border hover:border-input'
                     }`}
                   >
@@ -116,7 +116,7 @@ export function BiometricLoginModal({ isOpen, onClose }: BiometricLoginModalProp
                     onClick={handleFaceID}
                     className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${
                       selectedType === 'faceid'
-                        ? 'border-primary bg-muted'
+                        ? 'border-primary bg-red-500'
                         : 'border-border hover:border-input'
                     }`}
                   >

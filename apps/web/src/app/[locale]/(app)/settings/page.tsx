@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Lock, Key, Globe, Palette, Bell, Eye, Database, Link2, UserCircle, Shield, FileText, Upload, Download, CreditCard, BarChart3, ArrowUpCircle, Settings as SettingsIcon } from 'lucide-react';
 
 interface SettingCardProps {
@@ -41,32 +42,39 @@ function SettingCard({ icon, title, description, actionLabel, onClick, titleActi
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('account');
-
-  const tabs = [
-    { id: 'account', label: 'Account' },
-    { id: 'security', label: 'Security' },
-    { id: 'preferences', label: 'Preferences' },
-    { id: 'data', label: 'Data & Integrations' },
-  ];
+  const [activeTab, setActiveTab] = useState<'account' | 'security' | 'preferences' | 'data'>('account');
 
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {tabs.map((tab) => (
-            <Button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              variant={activeTab === tab.id ? 'default' : 'outline'}
-              className="whitespace-nowrap"
-            >
-              {tab.label}
-            </Button>
-          ))}
-        </div>
-
-        {activeTab === 'account' && (
+        <Card>
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex items-center gap-4">
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+                <TabsList className="w-full sm:w-auto">
+                  <TabsTrigger value="account" className="flex-1 sm:flex-initial">
+                    <User className="h-4 w-4 mr-1 sm:mr-2" />
+                    Account
+                  </TabsTrigger>
+                  <TabsTrigger value="security" className="flex-1 sm:flex-initial">
+                    <Shield className="h-4 w-4 mr-1 sm:mr-2" />
+                    Security
+                  </TabsTrigger>
+                  <TabsTrigger value="preferences" className="flex-1 sm:flex-initial">
+                    <Palette className="h-4 w-4 mr-1 sm:mr-2" />
+                    Preferences
+                  </TabsTrigger>
+                  <TabsTrigger value="data" className="flex-1 sm:flex-initial">
+                    <Database className="h-4 w-4 mr-1 sm:mr-2" />
+                    Data & Integrations
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsContent value="account" className="space-y-4 mt-0">
           <div className="grid gap-6 md:grid-cols-2">
             <SettingCard
               icon={<User className="h-5 w-5 text-primary" />}
@@ -109,9 +117,9 @@ export default function SettingsPage() {
               </div>
             </SettingCard>
           </div>
-        )}
+              </TabsContent>
 
-        {activeTab === 'security' && (
+              <TabsContent value="security" className="space-y-4 mt-0">
           <div className="grid gap-6 md:grid-cols-2">
             <SettingCard
               icon={<Lock className="h-5 w-5 text-primary" />}
@@ -185,6 +193,7 @@ export default function SettingsPage() {
                   <select className="w-full px-4 py-2 rounded-lg border bg-background">
                     <option>Light</option>
                     <option>Dark</option>
+                    <option>Auto</option>
                   </select>
                 </div>
               </div>
@@ -228,9 +237,9 @@ export default function SettingsPage() {
               </div>
             </SettingCard>
           </div>
-        )}
+              </TabsContent>
 
-        {activeTab === 'data' && (
+              <TabsContent value="data" className="space-y-4 mt-0">
           <div className="grid gap-6 md:grid-cols-2">
             <SettingCard
               icon={<Upload className="h-5 w-5 text-primary" />}
@@ -264,7 +273,10 @@ export default function SettingsPage() {
               onClick={() => {}}
             />
           </div>
-        )}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

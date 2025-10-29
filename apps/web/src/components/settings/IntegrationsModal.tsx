@@ -73,34 +73,34 @@ export function IntegrationsModal({ isOpen, onClose }: IntegrationsModalProps) {
                   <Link2 className="h-5 w-5 text-foreground" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{integration.name}</p>
-                    {integration.connected && (
-                      <span className="px-2 py-0.5 bg-success/20 text-success text-xs font-medium rounded-full">
-                        Connected
-                      </span>
-                    )}
-                  </div>
+                  <p className="font-medium">{integration.name}</p>
                   <p className="text-sm text-muted-foreground">{integration.description}</p>
                 </div>
               </div>
-              {integration.connected ? (
-                <button 
-                  onClick={() => handleToggleIntegration(integration.id)}
-                  className="px-4 py-2 text-danger border border-danger/20 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-danger/10 transition-colors min-w-[130px] justify-center"
-                >
-                  <XCircle className="h-4 w-4" />
-                  Disconnect
-                </button>
-              ) : (
-                <Button 
-                  onClick={() => handleToggleIntegration(integration.id)}
-                  className="flex items-center gap-2 min-w-[130px] justify-center"
-                >
-                  <Check className="h-4 w-4" />
-                  Connect
-                </Button>
-              )}
+              <div className="flex items-center gap-3">
+                {integration.connected && (
+                  <span className="px-2 py-0.5 bg-success/20 text-success text-xs font-medium rounded-full">
+                    Connected
+                  </span>
+                )}
+                {integration.connected ? (
+                  <button 
+                    onClick={() => handleToggleIntegration(integration.id)}
+                    className="px-4 py-2 text-danger border border-danger/20 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-danger/10 transition-colors min-w-[130px] justify-center"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Disconnect
+                  </button>
+                ) : (
+                  <Button 
+                    onClick={() => handleToggleIntegration(integration.id)}
+                    className="flex items-center gap-2 min-w-[130px] justify-center"
+                  >
+                    <Check className="h-4 w-4" />
+                    Connect
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
         </div>

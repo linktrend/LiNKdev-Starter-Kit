@@ -13,7 +13,7 @@ interface LocaleSettingsModalProps {
 export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProps) {
   const [mounted, setMounted] = useState(false);
   const [language, setLanguage] = useState('English');
-  const [region, setRegion] = useState('United States');
+  const [region, setRegion] = useState('North America');
   const [calendar, setCalendar] = useState('Gregorian');
   const [measurement, setMeasurement] = useState('Metric');
   const [dateFormat, setDateFormat] = useState('MM/DD/YYYY');
@@ -71,8 +71,7 @@ export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProp
             <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <option>English</option>
               <option>Spanish</option>
-              <option>French</option>
-              <option>German</option>
+              <option>繁體中文</option>
             </select>
           </div>
 
@@ -80,10 +79,14 @@ export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProp
           <div>
             <label className="block text-sm text-muted-foreground mb-2">Region</label>
             <select value={region} onChange={(e) => setRegion(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
-              <option>United States</option>
-              <option>United Kingdom</option>
-              <option>Canada</option>
-              <option>Australia</option>
+              <option>North America</option>
+              <option>Latin America</option>
+              <option>Europe</option>
+              <option>Africa</option>
+              <option>Middle East</option>
+              <option>East Asia</option>
+              <option>South East Asia</option>
+              <option>Oceania</option>
             </select>
           </div>
 
@@ -92,7 +95,6 @@ export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProp
             <label className="block text-sm text-muted-foreground mb-2">Calendar</label>
             <select value={calendar} onChange={(e) => setCalendar(e.target.value)} className="w-full px-4 py-2.5 bg-background text-foreground border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
               <option>Gregorian</option>
-              <option>Julian</option>
               <option>Islamic</option>
               <option>Hebrew</option>
             </select>
@@ -124,7 +126,7 @@ export function LocaleSettingsModal({ isOpen, onClose }: LocaleSettingsModalProp
               <option>USD ($)</option>
               <option>EUR (€)</option>
               <option>GBP (£)</option>
-              <option>JPY (¥)</option>
+              <option>TWD (NT$)</option>
             </select>
           </div>
         </div>

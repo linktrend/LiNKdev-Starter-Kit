@@ -91,7 +91,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     marketing: { ...notifications.marketing, email: !notifications.marketing.email }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.marketing.email ? 'bg-success' : 'bg-muted'
+                    notifications.marketing.email ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -133,7 +133,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     features: { ...notifications.features, email: !notifications.features.email }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.features.email ? 'bg-success' : 'bg-muted'
+                    notifications.features.email ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -150,7 +150,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     features: { ...notifications.features, inApp: !notifications.features.inApp }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.features.inApp ? 'bg-success' : 'bg-muted'
+                    notifications.features.inApp ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -175,7 +175,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     security: { ...notifications.security, email: !notifications.security.email }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.security.email ? 'bg-success' : 'bg-muted'
+                    notifications.security.email ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -192,7 +192,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     security: { ...notifications.security, inApp: !notifications.security.inApp }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.security.inApp ? 'bg-success' : 'bg-muted'
+                    notifications.security.inApp ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -217,7 +217,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     legal: { ...notifications.legal, email: !notifications.legal.email }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.legal.email ? 'bg-success' : 'bg-muted'
+                    notifications.legal.email ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span
@@ -276,7 +276,7 @@ export function NotificationPreferencesModal({ isOpen, onClose }: NotificationPr
                     updates: { ...notifications.updates, inApp: !notifications.updates.inApp }
                   })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    notifications.updates.inApp ? 'bg-success' : 'bg-muted'
+                    notifications.updates.inApp ? 'bg-success' : 'bg-red-500'
                   }`}
                 >
                   <span

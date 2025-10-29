@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Phone, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -12,15 +12,18 @@ interface ScheduleCallModalProps {
 export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModalProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
-  const [callType, setCallType] = useState('video');
+  const [callType] = useState('call');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
-  const [currentMonth1, setCurrentMonth1] = useState(new Date());
-  const [currentMonth2, setCurrentMonth2] = useState(() => {
-    const nextMonth = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-    return nextMonth;
-  });
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Reset selections when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedDate(null);
+      setSelectedTime('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -62,11 +65,8 @@ export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModal
     return days;
   };
 
-  const navigateMonth = (calendar: 1 | 2, direction: 'prev' | 'next') => {
-    const setter = calendar === 1 ? setCurrentMonth1 : setCurrentMonth2;
-    const current = calendar === 1 ? currentMonth1 : currentMonth2;
-    
-    setter(prevDate => {
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentMonth(prevDate => {
       const newDate = new Date(prevDate);
       newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
       return newDate;
@@ -79,42 +79,42 @@ export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModal
     return date >= today;
   };
 
-  const renderCalendar = (monthDate: Date, calendarNumber: 1 | 2) => {
+  const renderCalendar = (monthDate: Date) => {
     const days = getDaysInMonth(monthDate);
     const monthName = monthDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     return (
       <div className="flex-1">
-        <div className="flex items-center justify-between mb-3 px-2">
+        <div className="flex items-center justify-between mb-2 px-1">
           <button
             type="button"
-            onClick={() => navigateMonth(calendarNumber, 'prev')}
-            className="p-1 hover:bg-muted rounded transition-all"
+            onClick={() => navigateMonth('prev')}
+            className="p-0.5 hover:bg-muted rounded transition-all"
           >
-            <ChevronLeft className="h-4 w-4 text-foreground" />
+            <ChevronLeft className="h-3 w-3 text-foreground" />
           </button>
-          <h3 className="text-sm text-muted-foreground">{monthName}</h3>
+          <h3 className="text-xs text-muted-foreground">{monthName}</h3>
           <button
             type="button"
-            onClick={() => navigateMonth(calendarNumber, 'next')}
-            className="p-1 hover:bg-muted rounded transition-all"
+            onClick={() => navigateMonth('next')}
+            className="p-0.5 hover:bg-muted rounded transition-all"
           >
-            <ChevronRight className="h-4 w-4 text-foreground" />
+            <ChevronRight className="h-3 w-3 text-foreground" />
           </button>
         </div>
         
-        <div className="grid grid-cols-7 gap-1 mb-2 text-center">
+        <div className="grid grid-cols-7 gap-0.5 mb-1 text-center">
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
-            <div key={idx} className="text-xs text-muted-foreground/60 p-1">
+            <div key={idx} className="text-[10px] text-muted-foreground/60 p-0.5">
               {day}
             </div>
           ))}
         </div>
         
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-0.5">
           {days.map((date, idx) => {
             if (!date) {
-              return <div key={`empty-${idx}`} className="aspect-square" />;
+              return <div key={`empty-${idx}`} className="h-6 w-6" />;
             }
             
             const isSelectable = isDateSelectable(date);
@@ -126,12 +126,11 @@ export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModal
                 type="button"
                 onClick={() => isSelectable && setSelectedDate(date)}
                 disabled={!isSelectable}
-                style={isSelected ? { backgroundColor: '#0C115B' } : {}}
-                className={`aspect-square p-1 rounded-lg text-xs font-medium transition-all ${
+                className={`h-6 w-6 p-0 rounded text-[10px] font-medium transition-all ${
                   isSelected
-                    ? 'text-primary-foreground shadow-md'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-md'
                     : isSelectable
-                    ? 'bg-white hover:bg-muted border border-input'
+                    ? 'bg-background hover:bg-primary/10 border border-input hover:border-primary'
                     : 'text-muted-foreground cursor-not-allowed'
                 }`}
               >
@@ -163,91 +162,58 @@ export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModal
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Call Type */}
+          {/* Calendar and Time Selection */}
           <div>
-            <label className="block text-sm text-muted-foreground mb-2">
-              Call Type <span className="text-danger">*</span>
-            </label>
-            <div className="grid gap-3 md:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setCallType('video')}
-                className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
-                  callType === 'video'
-                    ? 'border-primary bg-primary/20 text-primary'
-                    : 'border-input bg-background text-foreground hover:border-gray-400'
-                }`}
-              >
-                Video Call
-              </button>
-              <button
-                type="button"
-                onClick={() => setCallType('phone')}
-                className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
-                  callType === 'phone'
-                    ? 'border-primary bg-primary/20 text-primary'
-                    : 'border-input bg-background text-foreground hover:border-gray-400'
-                }`}
-              >
-                Phone Call
-              </button>
-            </div>
-          </div>
-
-          {/* Dual Calendar Date Selection */}
-          <div>
-            <label className="block text-sm text-muted-foreground mb-3">
-              Select Date <span className="text-danger">*</span>
-            </label>
-            <div className="flex gap-4 p-4 bg-muted rounded-lg">
-              {renderCalendar(currentMonth1, 1)}
-              <div className="w-px bg-border" />
-              {renderCalendar(currentMonth2, 2)}
-            </div>
-          </div>
-
-          {/* Time Selection */}
-          {selectedDate && (
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Select Time (EST) <span className="text-danger">*</span>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm text-muted-foreground">
+                Select Date & Time <span className="text-danger">*</span>
               </label>
-              <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto p-2 bg-muted rounded-lg">
-                {timeSlots.map((time) => (
-                  <button
-                    key={time}
-                    type="button"
-                    onClick={() => setSelectedTime(time)}
-                    style={selectedTime === time ? { backgroundColor: '#0C115B', borderColor: '#0C115B' } : {}}
-                    className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
-                      selectedTime === time
-                        ? 'text-primary-foreground shadow-md'
-                        : 'border-input bg-background text-foreground hover:border-gray-400'
-                    }`}
-                  >
-                    {time}
-                  </button>
-                ))}
+              {selectedDate && (
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  Available Times for {selectedDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </h4>
+              )}
+            </div>
+            <div className="flex gap-4">
+              {/* Calendar on the left */}
+              <div className="w-64">
+                <div className="p-2 bg-muted rounded-lg">
+                  {renderCalendar(currentMonth)}
+                </div>
+              </div>
+              
+              {/* Available times on the right */}
+              <div className="flex-1">
+                {selectedDate ? (
+                  <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-2 bg-muted rounded-lg">
+                    {timeSlots.map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setSelectedTime(time)}
+                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                          selectedTime === time
+                            ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                            : 'border-input bg-background text-foreground hover:border-primary hover:bg-primary/10'
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-32 bg-muted rounded-lg">
+                    <p className="text-sm text-muted-foreground">Select a date to see available times</p>
+                  </div>
+                )}
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Phone Number (if phone call) */}
-          {callType === 'phone' && (
-            <div>
-              <label className="block text-sm text-muted-foreground mb-2">
-                Phone Number <span className="text-danger">*</span>
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required={callType === 'phone'}
-                className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                placeholder="+1 (555) 123-4567"
-              />
-            </div>
-          )}
 
           {/* Notes */}
           <div>
@@ -264,13 +230,17 @@ export default function ScheduleCallModal({ isOpen, onClose }: ScheduleCallModal
           </div>
 
           {/* Summary */}
-          {selectedDate && selectedTime && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm font-medium text-blue-900">
+          {selectedDate && (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm font-medium text-green-900">
                 <Calendar className="inline h-4 w-4 mr-1" />
                 {selectedDate.toLocaleDateString('en-GB')}
-                <Clock className="inline h-4 w-4 ml-4 mr-1" />
-                {selectedTime} EST
+                {selectedTime && (
+                  <>
+                    <Clock className="inline h-4 w-4 ml-4 mr-1" />
+                    {selectedTime} EST
+                  </>
+                )}
               </p>
             </div>
           )}

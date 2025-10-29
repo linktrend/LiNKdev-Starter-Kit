@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Lock, Key, Settings2, Globe, Palette, Bell, Shield, Eye, FileText, Upload, Database, Link2, UserCircle, Key as KeyIcon, CreditCard, BarChart3, ArrowUpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,7 +66,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <div className="min-h-screen p-8">
+      <div>
         <div className="max-w-6xl mx-auto">
           <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
             {tabs.map((tab) => (
@@ -92,8 +92,8 @@ export default function SettingsPage() {
                 description=""
               >
                 <div className="mb-6">
-                  <p className="font-semibold text-card-foreground mb-1">John Doe</p>
-                  <p className="text-sm text-card-foreground/60">john.doe@example.com</p>
+                  <p className="font-semibold text-card-foreground">John Doe</p>
+                  <p className="text-sm text-card-foreground/60 mt-1">john.doe@example.com</p>
                 </div>
                 <Button 
                   onClick={() => router.push('/en/dashboard/profile')}
@@ -116,22 +116,27 @@ export default function SettingsPage() {
                     Upgrade
                   </button>
                 }
-                description="Current plan and billing information"
+                description=""
               >
-                <div className="mb-6">
-                  <p className="text-sm text-card-foreground/60">Free Plan - Limited Features</p>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-card-foreground">Current Plan</p>
+                  <p className="text-sm font-medium text-card-foreground">Free Plan - All Basic Features Included</p>
                 </div>
                 <Button onClick={() => setBillingModalOpen(true)} className="w-full mt-auto">
                   <CreditCard className="h-4 w-4 mr-2" />
-                  Manage Billing
+                  Manage Plan & Billing
                 </Button>
               </SettingCard>
 
               <SettingCard
                 icon={<BarChart3 />}
                 title="Usage"
-                description="Monthly data usage statistics"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground mb-1">Billing Period Usage</p>
+                  <p className="text-sm text-card-foreground/70">Monthly data usage statistics</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setUsageModalOpen(true)} className="w-full mt-auto">
                   <BarChart3 className="h-4 w-4 mr-2" />
@@ -146,8 +151,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<Lock />}
                 title="Login Credentials"
-                description="Manage your password and biometric authentication"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">Manage Access</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Manage your magic link and biometric authentication</p>
+                </div>
                 <div className="flex-1" />
                 <div className="space-y-3 mt-auto">
                   <Button onClick={() => setPasswordModalOpen(true)} className="w-full">
@@ -156,7 +165,7 @@ export default function SettingsPage() {
                   </Button>
                   <Button onClick={() => setBiometricModalOpen(true)} className="w-full">
                     <UserCircle className="h-4 w-4 mr-2" />
-                    Edit Biometric Login
+                    Edit Biometric Settings
                   </Button>
                 </div>
               </SettingCard>
@@ -166,9 +175,12 @@ export default function SettingsPage() {
                 title="Two-Factor Authentication"
                 description=""
               >
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-sm text-card-foreground/70">2FA Status</span>
-                  <span className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium">Disabled</span>
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground mb-3">Secure Account</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-card-foreground/70">2FA Status</span>
+                    <span className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium">Disabled</span>
+                  </div>
                 </div>
                 <Button onClick={() => setTwoFactorModalOpen(true)} className="w-full mt-auto">
                   <Shield className="h-4 w-4 mr-2" />
@@ -179,8 +191,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<Settings2 />}
                 title="User Roles & Permissions"
-                description="Manage access levels for shared accounts"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">Add or Remove Users</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Manage access levels for shared accounts</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setPermissionsModalOpen(true)} className="w-full mt-auto">
                   <Settings2 className="h-4 w-4 mr-2" />
@@ -191,8 +207,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<FileText />}
                 title="Session & Activity Logs"
-                description="View and manage active sessions and activity history"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">Activity</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">View and manage active sessions and activity history</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setSessionsModalOpen(true)} className="w-full mt-auto">
                   <FileText className="h-4 w-4 mr-2" />
@@ -215,15 +235,20 @@ export default function SettingsPage() {
                       <option value="">Application Language</option>
                       <option>English</option>
                       <option>Spanish</option>
+                      <option>繁體中文</option>
                     </select>
                   </div>
                   <div>
                     <select className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground shadow-sm">
                       <option value="">Region</option>
-                      <option>United States</option>
-                      <option>United Kingdom</option>
-                      <option>Canada</option>
-                      <option>Australia</option>
+                      <option>North America</option>
+                      <option>Latin America</option>
+                      <option>Europe</option>
+                      <option>Africa</option>
+                      <option>Middle East</option>
+                      <option>East Asia</option>
+                      <option>South East Asia</option>
+                      <option>Oceania</option>
                     </select>
                   </div>
                 </div>
@@ -245,6 +270,7 @@ export default function SettingsPage() {
                       <option value="">Theme</option>
                       <option>Light</option>
                       <option>Dark</option>
+                      <option>Auto</option>
                     </select>
                   </div>
                   <div>
@@ -293,11 +319,11 @@ export default function SettingsPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-card-foreground">Data Sharing</span>
-                    <div className="px-3 py-1 rounded-full bg-gray-500/20 text-gray-700 text-xs font-medium border border-gray-500/30">Off</div>
+                    <div className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium border border-danger/30">Off</div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-card-foreground">Analytics Tracking</span>
-                    <div className="px-3 py-1 rounded-full bg-gray-500/20 text-gray-700 text-xs font-medium border border-gray-500/30">Off</div>
+                    <div className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium border border-danger/30">Off</div>
                   </div>
                 </div>
                 <div className="flex-1" />
@@ -314,8 +340,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<Upload />}
                 title="Data Import/Export"
-                description="Upload or export financial data in various formats"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">Upload & Download</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Your data in various formats</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setImportExportModalOpen(true)} className="w-full mt-auto">
                   <Upload className="h-4 w-4 mr-2" />
@@ -326,8 +356,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<Database />}
                 title="Data Settings"
-                description="Data retention policy, backup and restore settings"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">Data Storage and Settings</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Data retention policy, backup and restore settings</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setDataSettingsModalOpen(true)} className="w-full mt-auto">
                   <Database className="h-4 w-4 mr-2" />
@@ -338,8 +372,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<Link2 />}
                 title="Integrations"
-                description="Manage webhooks, integrations and linked accounts"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">External Accounts</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Manage webhooks, integrations and linked accounts</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setIntegrationsModalOpen(true)} className="w-full mt-auto">
                   <Link2 className="h-4 w-4 mr-2" />
@@ -350,8 +388,12 @@ export default function SettingsPage() {
               <SettingCard
                 icon={<KeyIcon />}
                 title="API Access"
-                description="Generate and manage API keys for third-party apps"
+                description=""
               >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground">App & Third Party APIs</p>
+                  <p className="text-sm text-card-foreground/70 mt-1">Generate and manage all your API keys</p>
+                </div>
                 <div className="flex-1" />
                 <Button onClick={() => setAPIKeysModalOpen(true)} className="w-full mt-auto">
                   <KeyIcon className="h-4 w-4 mr-2" />
@@ -397,22 +439,47 @@ function SettingCard({
   description: string;
   children: React.ReactNode;
 }) {
+  // Extract first child if it's a div with mb-6 or space-y-1
+  const childrenArray = React.Children.toArray(children);
+  const firstChild = childrenArray[0];
+  const isFirstChildDiv = React.isValidElement(firstChild) && 
+    firstChild.type === 'div' && 
+    (firstChild.props.className?.includes('mb-6') || firstChild.props.className?.includes('space-y-1'));
+  
+  const remainingChildren = isFirstChildDiv ? childrenArray.slice(1) : childrenArray;
+  
+  // Clone first child and remove mb-6 class
+  const adjustedFirstChild = isFirstChildDiv && React.isValidElement(firstChild)
+    ? React.cloneElement(firstChild as React.ReactElement<any>, {
+        className: firstChild.props.className?.replace('mb-6', '').replace(/\s+/g, ' ').trim()
+      })
+    : null;
+
   return (
     <div
       className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm h-[280px] flex flex-col"
     >
-      <div className="flex items-start gap-3 mb-4 flex-shrink-0">
+      <div className="flex items-start gap-3 mb-3 flex-shrink-0">
         <div className="text-primary">{icon}</div>
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-card-foreground">{title}</h3>
             {titleAction}
           </div>
-          {description && <p className="text-sm text-card-foreground/70 mt-1">{description}</p>}
         </div>
       </div>
+      {description && (
+        <div className="mb-3 flex-shrink-0">
+          <p className="text-sm text-card-foreground/70">{description}</p>
+        </div>
+      )}
+      {adjustedFirstChild && (
+        <div className="mb-3 flex-shrink-0">
+          {adjustedFirstChild}
+        </div>
+      )}
       <div className="flex-1 flex flex-col">
-        {children}
+        {remainingChildren}
       </div>
     </div>
   );

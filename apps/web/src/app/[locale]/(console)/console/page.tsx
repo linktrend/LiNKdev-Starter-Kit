@@ -3,14 +3,16 @@ import { Terminal, Server, Database, Activity } from 'lucide-react';
 
 export default function ConsoleOverviewPage() {
   return (
-    <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">CPU Usage</CardTitle>
-            <Activity className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium">CPU Usage</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-center">
             <div className="text-2xl font-bold">45%</div>
             <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mt-2">
               <div className="h-full bg-primary" style={{ width: '45%' }} />
@@ -20,10 +22,12 @@ export default function ConsoleOverviewPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Memory</CardTitle>
-            <Server className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <Server className="h-4 w-4 text-warning" />
+              <CardTitle className="text-sm font-medium">Memory</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-center">
             <div className="text-2xl font-bold">6.2 GB</div>
             <p className="text-xs text-muted-foreground mt-1">of 16 GB total</p>
           </CardContent>
@@ -31,10 +35,12 @@ export default function ConsoleOverviewPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Database</CardTitle>
-            <Database className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <Database className="h-4 w-4 text-success" />
+              <CardTitle className="text-sm font-medium">Database</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-center">
             <div className="text-2xl font-bold">Online</div>
             <p className="text-xs text-green-600 mt-1">All systems operational</p>
           </CardContent>
@@ -42,10 +48,12 @@ export default function ConsoleOverviewPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">API Calls</CardTitle>
-            <Terminal className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2">
+              <Terminal className="h-4 w-4 text-danger" />
+              <CardTitle className="text-sm font-medium">API Calls</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-center">
             <div className="text-2xl font-bold">1.2M</div>
             <p className="text-xs text-muted-foreground mt-1">Last 24 hours</p>
           </CardContent>

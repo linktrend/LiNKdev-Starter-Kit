@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Download, Upload, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,8 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
     settings: true,
     activity: false,
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -34,10 +36,25 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
   };
 
   const handleImport = async () => {
+    if (!selectedFile) {
+      alert('Please select a file to import');
+      return;
+    }
     await new Promise(resolve => setTimeout(resolve, 2000));
-    console.log('Importing data...');
+    console.log('Importing data from file:', selectedFile.name);
     alert('Data imported successfully!');
     onClose();
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
   };
 
   const modalContent = (
@@ -116,12 +133,25 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
                 <div className="space-y-2">
                   {Object.entries(exportData).map(([key, value]) => (
                     <label key={key} className="flex items-center gap-3 p-3 bg-muted rounded-lg cursor-pointer hover:bg-muted">
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        onChange={() => setExportData({ ...exportData, [key]: !value })}
-                        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-[#1a1f5c]"
-                      />
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={value}
+                          onChange={() => setExportData({ ...exportData, [key]: !value })}
+                          className="sr-only"
+                        />
+                        <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                          value 
+                            ? 'bg-primary border-primary' 
+                            : 'bg-white border-gray-300'
+                        }`}>
+                          {value && (
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
                       <span className="capitalize">{key}</span>
                     </label>
                   ))}
@@ -136,9 +166,19 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground mb-4">Select a file to import your data</p>
-                <Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json,.csv"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button onClick={handleChooseFile}>
                   Choose File
                 </Button>
+                {selectedFile && (
+                  <p className="text-sm text-primary mt-2">Selected: {selectedFile.name}</p>
+                )}
               </div>
 
               {/* Warning */}

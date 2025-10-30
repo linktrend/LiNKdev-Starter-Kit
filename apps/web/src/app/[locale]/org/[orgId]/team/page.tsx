@@ -168,7 +168,7 @@ export default async function OrgTeamPage({ params }: OrgTeamPageProps) {
                     </div>
                     <div>
                       <p className="text-sm font-medium">John Doe</p>
-                      <p className="text-xs text-muted-foreground">john@example.com</p>
+                      <p className="text-xs text-muted-foreground">johndoe167</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -189,7 +189,7 @@ export default async function OrgTeamPage({ params }: OrgTeamPageProps) {
                     </div>
                     <div>
                       <p className="text-sm font-medium">Jane Smith</p>
-                      <p className="text-xs text-muted-foreground">jane@example.com</p>
+                      <p className="text-xs text-muted-foreground">janesmith92</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -210,7 +210,7 @@ export default async function OrgTeamPage({ params }: OrgTeamPageProps) {
                     </div>
                     <div>
                       <p className="text-sm font-medium">Bob Johnson</p>
-                      <p className="text-xs text-muted-foreground">bob@example.com</p>
+                      <p className="text-xs text-muted-foreground">bobjohnson10</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">

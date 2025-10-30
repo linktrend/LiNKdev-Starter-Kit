@@ -32,7 +32,8 @@ import {
   Rocket,
   Globe,
   Cpu,
-  Plug
+  Plug,
+  CreditCard
 } from 'lucide-react';
 
 interface ConsoleSidebarProps {
@@ -57,6 +58,7 @@ const consoleNavItems: NavItem[] = [
   { href: '/console/health', label: 'Health Checks', icon: HeartPulse, path: '/console/health' },
   { href: '/console/database', label: 'Database', icon: Database, path: '/console/database' },
   { href: '/console/errors', label: 'Errors & Logs', icon: Bug, path: '/console/errors' },
+  { href: '/console/billing', label: 'Billing & Subscriptions', icon: CreditCard, path: '/console/billing' },
   { href: '/console/reports', label: 'Reports', icon: FileText, path: '/console/reports' },
   { href: '/console/security', label: 'Security & Access', icon: Shield, path: '/console/security' },
   {
@@ -64,25 +66,6 @@ const consoleNavItems: NavItem[] = [
     label: 'Configuration',
     icon: Settings2,
     path: '/console/config',
-    children: [
-      {
-        href: '/console/config/application',
-        label: 'Application',
-        icon: AppWindow,
-        path: '/console/config/application',
-        children: [
-          { href: '/console/config/application/settings', label: 'Settings', icon: Settings, path: '/console/config/application/settings' },
-          { href: '/console/config/application/feature-flags', label: 'Feature Flags', icon: Flag, path: '/console/config/application/feature-flags' },
-          { href: '/console/config/application/jobs', label: 'Jobs/Queue', icon: Clock, path: '/console/config/application/jobs' },
-          { href: '/console/config/application/deployment', label: 'Deployment', icon: Rocket, path: '/console/config/application/deployment' },
-        ]
-      },
-      { href: '/console/config/environment', label: 'Environment', icon: Globe, path: '/console/config/environment' },
-      { href: '/console/config/system', label: 'System', icon: Cpu, path: '/console/config/system' },
-      { href: '/console/config/api-keys', label: 'External API & Keys', icon: Key, path: '/console/config/api-keys' },
-      { href: '/console/config/automations', label: 'Automations', icon: Workflow, path: '/console/config/automations' },
-      { href: '/console/config/integrations', label: 'Integrations', icon: Plug, path: '/console/config/integrations' },
-    ]
   },
 ];
 

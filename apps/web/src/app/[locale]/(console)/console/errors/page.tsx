@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -37,6 +38,7 @@ import {
   Circle
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { formatDateTimeExact } from '@/utils/formatDateTime';
 
 // Types
 type ErrorSeverity = 'critical' | 'error' | 'warning';
@@ -581,7 +583,7 @@ export default function ConsoleErrorsPage() {
                             <TableHead className="hidden lg:table-cell w-[120px]">Source</TableHead>
                             <TableHead className="hidden sm:table-cell">Priority</TableHead>
                             <TableHead className="hidden xl:table-cell">Occurrences</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[100px]">Status</TableHead>
+                            <TableHead className="hidden lg:table-cell w-[100px] text-center">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -623,12 +625,12 @@ export default function ConsoleErrorsPage() {
                                     >
                                       {expandedErrors.has(error.id) ? (
                                         <>
-                                          <ChevronUp className="h-3 w-3" />
+                                      <ChevronUp className="h-3 w-3" />
                                           <span>Details</span>
                                         </>
                                       ) : (
                                         <>
-                                          <ChevronDown className="h-3 w-3" />
+                                      <ChevronDown className="h-3 w-3" />
                                           <span>Details</span>
                                         </>
                                       )}
@@ -642,16 +644,16 @@ export default function ConsoleErrorsPage() {
                                     </div>
                                     <div className="flex flex-wrap items-center gap-2 mt-1 lg:hidden">
                                       {error.source && (
-                                        <Badge variant="outline" className="text-xs">{error.source}</Badge>
+                                        <Badge className={getBadgeClasses('outline')}>{error.source}</Badge>
                                       )}
                                       <div className="flex items-center gap-1">
                                         <Activity className="h-3 w-3 text-muted-foreground" />
                                         <span className="text-xs">{error.count}</span>
                                       </div>
                                       {getErrorResolved(error) ? (
-                                        <Badge variant="secondary" className="text-xs">Closed</Badge>
+                                        <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
-                                        <Badge variant="destructive" className="text-xs">Open</Badge>
+                                        <Badge className={getBadgeClasses('success.soft')}>Open</Badge>
                                       )}
                                     </div>
                                   </div>
@@ -686,16 +688,14 @@ export default function ConsoleErrorsPage() {
                                 <div className="w-full flex justify-center">
                                   {getErrorResolved(error) ? (
                                     <Badge 
-                                      variant="secondary" 
-                                      className="w-[80px] flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity"
+                                      className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
                                       onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
                                     >
                                       Closed
                                     </Badge>
                                   ) : (
                                     <Badge 
-                                      variant="destructive" 
-                                      className="w-[80px] flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity"
+                                      className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
                                       onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
                                     >
                                       Open
@@ -720,9 +720,9 @@ export default function ConsoleErrorsPage() {
                                     <div>
                                       <h4 className="font-medium mb-2">Status</h4>
                                       {getErrorResolved(error) ? (
-                                        <Badge variant="secondary">Closed</Badge>
+                                        <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
-                                        <Badge variant="destructive">Open</Badge>
+                                        <Badge className={getBadgeClasses('success.soft')}>Open</Badge>
                                       )}
                                     </div>
                                     </div>
@@ -834,7 +834,7 @@ export default function ConsoleErrorsPage() {
                             <TableHead className="hidden lg:table-cell w-[150px]">Service</TableHead>
                             <TableHead className="hidden xl:table-cell w-[120px]">Source</TableHead>
                             <TableHead className="hidden xl:table-cell">Occurrences</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[100px]">Status</TableHead>
+                            <TableHead className="hidden lg:table-cell w-[100px] text-center">Status</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -854,15 +854,8 @@ export default function ConsoleErrorsPage() {
                         filteredLogs.map((log) => (
                           <React.Fragment key={log.id}>
                             <TableRow>
-                              <TableCell className="hidden md:table-cell w-[160px]">
-                                <div className="flex flex-col">
-                                  <span className="text-sm">
-                                    {log.timestamp.toLocaleDateString()}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {log.timestamp.toLocaleTimeString()}
-                                  </span>
-                                </div>
+                              <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                                {formatDateTimeExact(log.timestamp)}
                               </TableCell>
                               <TableCell>
                                 <div className="min-w-0">
@@ -893,19 +886,19 @@ export default function ConsoleErrorsPage() {
                                     </div>
                                     <div className="flex flex-wrap items-center gap-2 mt-1 lg:hidden">
                                       {log.service && (
-                                        <Badge variant="outline" className="text-xs">{log.service}</Badge>
+                                        <Badge className={getBadgeClasses('service')}>{log.service}</Badge>
                                       )}
                                       {log.source && (
-                                        <Badge variant="outline" className="text-xs">{log.source}</Badge>
+                                        <Badge className={getBadgeClasses('source')}>{log.source}</Badge>
                                       )}
                                       <div className="flex items-center gap-1">
                                         <Activity className="h-3 w-3 text-muted-foreground" />
                                         <span className="text-xs">1</span>
                                       </div>
                                       {getLogResolved(log) ? (
-                                        <Badge variant="secondary" className="text-xs">Closed</Badge>
+                                        <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
-                                        <Badge variant="destructive" className="text-xs">Open</Badge>
+                                        <Badge className={getBadgeClasses('success.soft')}>Open</Badge>
                                       )}
                                     </div>
                                   </div>
@@ -942,16 +935,14 @@ export default function ConsoleErrorsPage() {
                                 <div className="w-full flex justify-center">
                                   {getLogResolved(log) ? (
                                     <Badge 
-                                      variant="secondary" 
-                                      className="w-[80px] flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity"
+                                      className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
                                       onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
                                     >
                                       Closed
                                     </Badge>
                                   ) : (
                                     <Badge 
-                                      variant="destructive" 
-                                      className="w-[80px] flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity"
+                                      className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
                                       onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
                                     >
                                       Open
@@ -975,9 +966,9 @@ export default function ConsoleErrorsPage() {
                                     <div>
                                       <h4 className="font-medium mb-2">Status</h4>
                                       {getLogResolved(log) ? (
-                                        <Badge variant="secondary">Closed</Badge>
+                                        <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
-                                        <Badge variant="destructive">Open</Badge>
+                                        <Badge className={getBadgeClasses('success.soft')}>Open</Badge>
                                       )}
                                     </div>
                                     {log.metadata && (

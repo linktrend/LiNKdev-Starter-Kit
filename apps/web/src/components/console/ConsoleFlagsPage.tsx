@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Switch } from '@/components/ui/switch';
 import {
   Table,
@@ -167,19 +168,7 @@ const mockFlags: FeatureFlag[] = [
   },
 ];
 
-const categoryColors = {
-  core: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  billing: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  analytics: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-  beta: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
-  security: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-};
-
-const environmentColors = {
-  development: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
-  staging: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  production: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-};
+// Category and environment badges derive from centralized presets
 
 export function ConsoleFlagsPage() {
   const [flags, setFlags] = useState<FeatureFlag[]>(mockFlags);
@@ -580,10 +569,13 @@ export function ConsoleFlagsPage() {
 
                       {/* Badges */}
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge className={categoryColors[flag.category]}>
+                        <Badge className={getBadgeClasses('tag')}>
                           {flag.category}
                         </Badge>
-                        <Badge className={environmentColors[flag.environment]}>
+                        <Badge className={getBadgeClasses(
+                          flag.environment === 'production' ? 'env.production' :
+                          flag.environment === 'staging' ? 'env.staging' : 'env.development'
+                        )}>
                           {flag.environment}
                         </Badge>
                       </div>

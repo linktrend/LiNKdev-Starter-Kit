@@ -169,3 +169,18 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+
+/* Global styling for bin (trash) icons to be red across the app */
+@layer utilities {
+  /* Target lucide by attribute and class to maximize coverage and precedence */
+  svg[data-lucide="trash"],
+  svg[data-lucide="trash-2"],
+  svg[data-lucide*="trash"],
+  .lucide.lucide-trash,
+  .lucide.lucide-trash-2,
+  .lucide[class*="trash"] {
+    /* Use Tailwind theme tokens with important to win specificity battles */
+    color: theme('colors.red.600') !important;
+    stroke: theme('colors.red.600') !important;
+  }
+}

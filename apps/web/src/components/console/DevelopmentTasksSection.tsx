@@ -549,11 +549,11 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                   <TableHeader>
                     <TableRow>
                       <TableHead>Task</TableHead>
-                      <TableHead className="hidden sm:table-cell">Status</TableHead>
+                      <TableHead className="hidden sm:table-cell text-center w-[96px]">Status</TableHead>
                       <TableHead className="hidden md:table-cell">Priority</TableHead>
                       <TableHead className="hidden md:table-cell">Assignee</TableHead>
                       <TableHead className="hidden lg:table-cell">Due Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="text-center w-[96px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -615,7 +615,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                               '-'
                             )}
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="w-[96px] text-right">
                             <div className="flex justify-end gap-2">
                               <TooltipProvider>
                                 <Tooltip>

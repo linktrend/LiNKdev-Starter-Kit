@@ -123,7 +123,7 @@ export function RecordTable({
                     {field.label}
                   </TableHead>
                 ))}
-                <TableHead className="w-12">Actions</TableHead>
+                <TableHead className="text-center w-[96px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -143,7 +143,7 @@ export function RecordTable({
                         {formatValue(record.data[field.key], field.type)}
                       </TableCell>
                     ))}
-                    <TableCell>
+                    <TableCell className="w-[96px] text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">

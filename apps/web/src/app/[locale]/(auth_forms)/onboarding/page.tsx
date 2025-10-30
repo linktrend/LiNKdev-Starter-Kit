@@ -10,6 +10,7 @@ import { StepIndicator } from '@/components/ui/step-indicator';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { cn } from '@/lib/utils';
 import { Sparkles, ArrowRight, ArrowLeft, Check, Code, Palette, BarChart3 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const roleOptions = [
   { id: 'developer', labelKey: 'Developer', descKey: 'Building software and applications', icon: Code },
@@ -157,12 +158,10 @@ export default function OnboardingPage({ params: { locale } }: OnboardingPagePro
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     id="terms"
                     checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-2"
+                    onCheckedChange={(v) => setAcceptedTerms(Boolean(v))}
                   />
                   <label htmlFor="terms" className="text-sm text-muted-foreground">
                     By continuing, you accept our Privacy Policy and Terms of Use

@@ -14,7 +14,7 @@ const getScreenName = (pathname: string): string => {
   if (pathname.includes('/console/config/application')) return 'Configuration > Application';
   if (pathname.includes('/console/config/integrations')) return 'Configuration > Integrations';
   if (pathname.includes('/console/config/automations')) return 'Configuration > Automations';
-  if (pathname.includes('/console/config/api-keys')) return 'Configuration > External API & Keys';
+  if (pathname.includes('/console/config/api-keys')) return 'Configuration > External API';
   if (pathname.includes('/console/config/system')) return 'Configuration > System';
   if (pathname.includes('/console/config/environment')) return 'Configuration > Environment';
   if (pathname.includes('/console/config')) return 'Configuration';
@@ -22,6 +22,7 @@ const getScreenName = (pathname: string): string => {
   // Other console routes
   if (pathname.includes('/console/security')) return 'Security & Access';
   if (pathname.includes('/console/reports')) return 'Reports';
+  if (pathname.includes('/console/billing')) return 'Billing & Subscriptions';
   if (pathname.includes('/console/errors')) return 'Errors & Logs';
   if (pathname.includes('/console/database')) return 'Database';
   if (pathname.includes('/console/health')) return 'Health Checks';

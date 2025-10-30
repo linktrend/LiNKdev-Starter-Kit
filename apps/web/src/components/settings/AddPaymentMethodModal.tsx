@@ -6,6 +6,7 @@ import { X, CreditCard, DollarSign, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface AddPaymentMethodModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export function AddPaymentMethodModal({ isOpen, onClose, onAdd }: AddPaymentMeth
   const [walletAddress] = useState('0x742d35Cc6634C0532925a3b844Bc9e75');
   const [transactionHash, setTransactionHash] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
+  const [makeDefault, setMakeDefault] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -269,11 +271,7 @@ export function AddPaymentMethodModal({ isOpen, onClose, onAdd }: AddPaymentMeth
 
           {/* Make Default Option */}
           <div className="flex items-center gap-2 pt-2 border-t">
-            <input
-              type="checkbox"
-              id="makeDefault"
-              className="h-4 w-4 rounded border-border"
-            />
+            <Checkbox id="makeDefault" checked={makeDefault} onCheckedChange={(v) => setMakeDefault(Boolean(v))} />
             <Label htmlFor="makeDefault" className="text-sm cursor-pointer">
               Make this payment method default
             </Label>

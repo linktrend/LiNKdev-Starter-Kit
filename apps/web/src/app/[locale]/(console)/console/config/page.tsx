@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getBadgeClasses } from '@/components/ui/badge.presets';
 import {
   Select,
   SelectContent,
@@ -73,6 +74,7 @@ import {
   BarChart3,
   Mail,
 } from 'lucide-react';
+import { formatDateTimeExact } from '@/utils/formatDateTime';
 
 // Mock data for environment variables
 const mockEnvVars = [
@@ -201,7 +203,7 @@ const generateQueueStats = (jobs: Job[]): QueueStats[] => {
 };
 
 export default function ConsoleConfigPage() {
-  const [activeTab, setActiveTab] = useState<'application' | 'environment' | 'system' | 'external-api-keys' | 'automations' | 'integrations'>('application');
+  const [activeTab, setActiveTab] = useState<'application' | 'environment' | 'system' | 'external-api' | 'automations' | 'integrations'>('application');
   const [applicationSubTab, setApplicationSubTab] = useState<'settings' | 'feature-flags' | 'jobs' | 'deployment'>('settings');
   const [externalApiSubTab, setExternalApiSubTab] = useState<'api-keys' | 'webhooks-outbound'>('api-keys');
   const [automationsSubTab, setAutomationsSubTab] = useState<'workflow-status' | 'execution-history' | 'webhooks-inbound'>('workflow-status');
@@ -347,7 +349,7 @@ export default function ConsoleConfigPage() {
     const variants: Record<JobStatus, { variant: any; className: string }> = {
       queued: { variant: 'secondary', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' },
       running: { variant: 'secondary', className: 'bg-primary/10 text-primary' },
-      completed: { variant: 'secondary', className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' },
+      completed: { variant: 'outline', className: 'border border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-900/20 dark:text-green-300' },
       failed: { variant: 'destructive', className: '' },
       cancelled: { variant: 'secondary', className: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' },
       paused: { variant: 'secondary', className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100' },
@@ -355,7 +357,7 @@ export default function ConsoleConfigPage() {
 
     const config = variants[status];
     return (
-      <Badge variant={config.variant} className={config.className}>
+      <Badge variant={config.variant} className={cn(config.className, 'font-normal')}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -388,13 +390,18 @@ export default function ConsoleConfigPage() {
     return queue.charAt(0).toUpperCase() + queue.slice(1);
   };
 
+  const formatDateTimeExact = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
       <Card>
-        <CardHeader className="p-4 sm:p-6">
+        <CardHeader className="p-4 sm:p-6 pb-2">
           <div className="flex items-center gap-4">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-              <TabsList className="w-full sm:w-auto">
+              <TabsList className="w-full flex-wrap gap-1 justify-start sm:w-auto">
                 <TabsTrigger value="application" className="flex-1 sm:flex-initial">
                   <Settings className="h-4 w-4 mr-1 sm:mr-2" />
                   Application
@@ -407,7 +414,7 @@ export default function ConsoleConfigPage() {
                   <Server className="h-4 w-4 mr-1 sm:mr-2" />
                   System
                 </TabsTrigger>
-                <TabsTrigger value="external-api-keys" className="flex-1 sm:flex-initial">
+                <TabsTrigger value="external-api" className="flex-1 sm:flex-initial">
                   <Key className="h-4 w-4 mr-1 sm:mr-2" />
                   External API & Keys
                 </TabsTrigger>
@@ -423,12 +430,12 @@ export default function ConsoleConfigPage() {
             </Tabs>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6">
+        <CardContent className="p-4 sm:p-6 pt-2">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             {/* Application Tab */}
             <TabsContent value="application" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
               <Tabs value={applicationSubTab} onValueChange={(v) => setApplicationSubTab(v as typeof applicationSubTab)}>
-                <TabsList className="mb-4 sm:mb-6">
+                <TabsList className="mb-4 sm:mb-6 flex-wrap gap-1 justify-start">
                   <TabsTrigger value="settings">
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
@@ -454,7 +461,7 @@ export default function ConsoleConfigPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Building2 className="h-5 w-5" />
+                      <Building2 className="h-5 w-5 text-blue-500" />
                       Basic Information
                     </CardTitle>
                     <CardDescription>Core application settings</CardDescription>
@@ -492,7 +499,7 @@ export default function ConsoleConfigPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Globe className="h-5 w-5" />
+                      <Globe className="h-5 w-5 text-emerald-500" />
                       Localization
                     </CardTitle>
                     <CardDescription>Language and regional settings</CardDescription>
@@ -545,7 +552,7 @@ export default function ConsoleConfigPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Shield className="h-5 w-5" />
+                      <Shield className="h-5 w-5 text-amber-500" />
                       API Rate Limiting
                     </CardTitle>
                     <CardDescription>Control API request limits</CardDescription>
@@ -579,7 +586,7 @@ export default function ConsoleConfigPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Clock className="h-5 w-5" />
+                      <Clock className="h-5 w-5 text-purple-500" />
                       Session Management
                     </CardTitle>
                     <CardDescription>User session configuration</CardDescription>
@@ -612,7 +619,7 @@ export default function ConsoleConfigPage() {
                 <Card className="md:col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Activity className="h-5 w-5" />
+                      <Activity className="h-5 w-5 text-rose-500" />
                       Logging & Audit
                     </CardTitle>
                     <CardDescription>Configure application logging and audit trails</CardDescription>
@@ -979,8 +986,8 @@ export default function ConsoleConfigPage() {
                                   <TableHead className="hidden md:table-cell">Priority</TableHead>
                                   <TableHead className="hidden lg:table-cell">Progress</TableHead>
                                   <TableHead className="hidden md:table-cell">Started</TableHead>
-                                  <TableHead>Status</TableHead>
-                                  <TableHead className="text-right">Actions</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -1143,8 +1150,2075 @@ export default function ConsoleConfigPage() {
                                   <TableHead className="hidden md:table-cell">Priority</TableHead>
                                   <TableHead className="hidden lg:table-cell">Duration</TableHead>
                                   <TableHead className="hidden md:table-cell">Completed</TableHead>
-                                  <TableHead>Status</TableHead>
-                                  <TableHead className="text-right">Actions</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {historyJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No history found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  historyJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.duration && <span>{formatDuration(job.duration)}</span>}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell text-sm">
+                                          {formatDuration(job.duration)}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.completedAt ? job.completedAt.toLocaleString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'failed' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <RefreshCw className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Retry</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                      {expandedJobs.has(job.id) && job.error && (
+                                        <TableRow>
+                                          <TableCell colSpan={7} className="bg-muted/50">
+                                            <div className="p-4 space-y-2">
+                                              <div className="flex items-start gap-2">
+                                                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                                                <div>
+                                                  <p className="font-medium text-sm">Error Details</p>
+                                                  <p className="text-sm text-muted-foreground mt-1">{job.error}</p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+
+                  {/* Job Details Dialog */}
+                  <Dialog open={selectedJob !== null} onOpenChange={(open) => !open && setSelectedJob(null)}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{selectedJob?.name}</DialogTitle>
+                        <DialogDescription>
+                          Job ID: {selectedJob?.id}
+                        </DialogDescription>
+                      </DialogHeader>
+                      {selectedJob && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium mb-1">Status</p>
+                              {getStatusBadge(selectedJob.status)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Queue</p>
+                              <Badge variant="outline" className="capitalize">
+                                {formatQueueName(selectedJob.queue)}
+                              </Badge>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Priority</p>
+                              {getPriorityBadge(selectedJob.priority)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Attempts</p>
+                              <p className="text-sm">
+                                {selectedJob.attempts} / {selectedJob.maxAttempts}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Created At</p>
+                              <p className="text-sm text-muted-foreground">
+                                {selectedJob.createdAt.toLocaleString()}
+                              </p>
+                            </div>
+                            {selectedJob.startedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Started At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.startedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.completedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Completed At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.completedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.duration && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Duration</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {formatDuration(selectedJob.duration)}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.workerId && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Worker</p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  {selectedJob.workerId}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {selectedJob.status === 'running' && selectedJob.progress > 0 && (
+                            <div>
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="text-sm font-medium">Progress</p>
+                                <span className="text-sm text-muted-foreground">{selectedJob.progress}%</span>
+                              </div>
+                              <Progress value={selectedJob.progress} />
+                            </div>
+                          )}
+
+                          {selectedJob.error && (
+                            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+                              <div className="flex items-start gap-2">
+                                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                                <div>
+                                  <p className="font-medium text-red-800 dark:text-red-200">Error</p>
+                                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                                    {selectedJob.error}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {selectedJob.metadata && Object.keys(selectedJob.metadata).length > 0 && (
+                            <div>
+                              <p className="text-sm font-medium mb-2">Metadata</p>
+                              <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto">
+                                {JSON.stringify(selectedJob.metadata, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </TabsContent>
+
+                {/* Deployment Sub-tab */}
+                <TabsContent value="deployment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+                    {/* Build Configuration */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5" />
+                          Build Configuration
+                        </CardTitle>
+                        <CardDescription>Build and deployment commands</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="buildCommand">Build Command</Label>
+                          <Input
+                            id="buildCommand"
+                            value={deploymentConfig.buildCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, buildCommand: e.target.value })}
+                            placeholder="pnpm build"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="startCommand">Start Command</Label>
+                          <Input
+                            id="startCommand"
+                            value={deploymentConfig.startCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, startCommand: e.target.value })}
+                            placeholder="pnpm start"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nodeVersion">Node Version</Label>
+                          <Input
+                            id="nodeVersion"
+                            value={deploymentConfig.nodeVersion}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, nodeVersion: e.target.value })}
+                            placeholder="18.x"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="healthCheckUrl">Health Check URL</Label>
+                          <Input
+                            id="healthCheckUrl"
+                            value={deploymentConfig.healthCheckUrl}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, healthCheckUrl: e.target.value })}
+                            placeholder="/api/health"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="autoDeploy">Auto Deploy</Label>
+                            <p className="text-xs text-muted-foreground">Automatically deploy on push</p>
+                          </div>
+                          <Switch
+                            id="autoDeploy"
+                            checked={deploymentConfig.autoDeploy}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, autoDeploy: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="enableRollback">Enable Rollback</Label>
+                            <p className="text-xs text-muted-foreground">Allow rolling back deployments</p>
+                          </div>
+                          <Switch
+                            id="enableRollback"
+                            checked={deploymentConfig.enableRollback}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, enableRollback: checked })}
+                          />
+                        </div>
+                        <Button className="w-full">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Configuration
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Active</CardTitle>
+                        <Activity className="h-4 w-4 text-primary" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {jobsMetrics.queued + jobsMetrics.running}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.queued} queued, {jobsMetrics.running} running
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{jobsMetrics.successRate}%</div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.completed.toLocaleString()} completed
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Failed</CardTitle>
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-red-600">{jobsMetrics.failed}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Queue Statistics */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Queue Statistics</CardTitle>
+                      <CardDescription>Overview of jobs across all queues</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {queueStats.map((stat) => (
+                          <div
+                            key={stat.name}
+                            className="p-4 rounded-lg border bg-card hover:bg-accent transition-colors"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold capitalize">{formatQueueName(stat.name)}</h4>
+                              <Badge variant="outline">{stat.total}</Badge>
+                            </div>
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Queued:</span>
+                                <span className="font-medium text-blue-600">{stat.queued}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Running:</span>
+                                <span className="font-medium text-primary">{stat.running}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Completed:</span>
+                                <span className="font-medium text-green-600">{stat.completed}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Failed:</span>
+                                <span className="font-medium text-red-600">{stat.failed}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Main Content Tabs */}
+                  <Card>
+                    <CardHeader>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="overview">Overview</TabsTrigger>
+                          <TabsTrigger value="active">Active Jobs</TabsTrigger>
+                          <TabsTrigger value="history">History</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        {/* Overview Tab */}
+                        <TabsContent value="overview" className="space-y-4 mt-0">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Queue Status Overview */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Queue Status</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-4">
+                                  {queueStats.map((stat) => (
+                                    <div key={stat.name}>
+                                      <div className="flex items-center justify-between mb-1">
+                                        <span className="text-sm font-medium capitalize">{formatQueueName(stat.name)}</span>
+                                        <span className="text-sm text-muted-foreground">{stat.total} total</span>
+                                      </div>
+                                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                        <div className="h-full flex">
+                                          {stat.queued > 0 && (
+                                            <div 
+                                              className="bg-blue-500" 
+                                              style={{ width: `${(stat.queued / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.running > 0 && (
+                                            <div 
+                                              className="bg-primary" 
+                                              style={{ width: `${(stat.running / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.completed > 0 && (
+                                            <div 
+                                              className="bg-green-500" 
+                                              style={{ width: `${(stat.completed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.failed > 0 && (
+                                            <div 
+                                              className="bg-red-500" 
+                                              style={{ width: `${(stat.failed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            {/* Recent Jobs */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Recent Jobs</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  {allJobs.slice(0, 5).map((job) => (
+                                    <div
+                                      key={job.id}
+                                      className="flex items-center justify-between p-2 rounded-lg hover:bg-accent transition-colors"
+                                    >
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        {getStatusIcon(job.status)}
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium truncate">{job.name}</p>
+                                          <p className="text-xs text-muted-foreground truncate">
+                                            {formatQueueName(job.queue)} • {job.createdAt.toLocaleTimeString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {getStatusBadge(job.status)}
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </TabsContent>
+
+                        {/* Active Jobs Tab */}
+                        <TabsContent value="active" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="queued">Queued</SelectItem>
+                                <SelectItem value="running">Running</SelectItem>
+                                <SelectItem value="paused">Paused</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Select value={priorityFilter} onValueChange={(v) => setPriorityFilter(v as typeof priorityFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Priority" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Priority</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="normal">Normal</SelectItem>
+                                <SelectItem value="low">Low</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Active Jobs Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Progress</TableHead>
+                                  <TableHead className="hidden md:table-cell">Started</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {activeJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No active jobs found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  activeJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.status === 'running' && job.progress > 0 && (
+                                                <span>{job.progress}%</span>
+                                              )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell">
+                                          {job.status === 'running' && job.progress > 0 ? (
+                                            <div className="w-32">
+                                              <Progress value={job.progress} className="h-2" />
+                                              <span className="text-xs text-muted-foreground mt-1">{job.progress}%</span>
+                                            </div>
+                                          ) : (
+                                            <span className="text-sm text-muted-foreground">-</span>
+                                          )}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.startedAt ? job.startedAt.toLocaleTimeString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'running' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Pause className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Pause</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            {job.status === 'queued' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Play className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Start Now</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button variant="ghost" size="icon">
+                                                    <Trash2 className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Cancel</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+
+                        {/* History Tab */}
+                        <TabsContent value="history" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="completed">Completed</SelectItem>
+                                <SelectItem value="failed">Failed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* History Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Duration</TableHead>
+                                  <TableHead className="hidden md:table-cell">Completed</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {historyJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No history found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  historyJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.duration && <span>{formatDuration(job.duration)}</span>}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell text-sm">
+                                          {formatDuration(job.duration)}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.completedAt ? job.completedAt.toLocaleString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'failed' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <RefreshCw className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Retry</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                      {expandedJobs.has(job.id) && job.error && (
+                                        <TableRow>
+                                          <TableCell colSpan={7} className="bg-muted/50">
+                                            <div className="p-4 space-y-2">
+                                              <div className="flex items-start gap-2">
+                                                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                                                <div>
+                                                  <p className="font-medium text-sm">Error Details</p>
+                                                  <p className="text-sm text-muted-foreground mt-1">{job.error}</p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+
+                  {/* Job Details Dialog */}
+                  <Dialog open={selectedJob !== null} onOpenChange={(open) => !open && setSelectedJob(null)}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{selectedJob?.name}</DialogTitle>
+                        <DialogDescription>
+                          Job ID: {selectedJob?.id}
+                        </DialogDescription>
+                      </DialogHeader>
+                      {selectedJob && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium mb-1">Status</p>
+                              {getStatusBadge(selectedJob.status)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Queue</p>
+                              <Badge variant="outline" className="capitalize">
+                                {formatQueueName(selectedJob.queue)}
+                              </Badge>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Priority</p>
+                              {getPriorityBadge(selectedJob.priority)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Attempts</p>
+                              <p className="text-sm">
+                                {selectedJob.attempts} / {selectedJob.maxAttempts}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Created At</p>
+                              <p className="text-sm text-muted-foreground">
+                                {selectedJob.createdAt.toLocaleString()}
+                              </p>
+                            </div>
+                            {selectedJob.startedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Started At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.startedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.completedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Completed At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.completedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.duration && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Duration</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {formatDuration(selectedJob.duration)}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.workerId && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Worker</p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  {selectedJob.workerId}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {selectedJob.status === 'running' && selectedJob.progress > 0 && (
+                            <div>
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="text-sm font-medium">Progress</p>
+                                <span className="text-sm text-muted-foreground">{selectedJob.progress}%</span>
+                              </div>
+                              <Progress value={selectedJob.progress} />
+                            </div>
+                          )}
+
+                          {selectedJob.error && (
+                            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+                              <div className="flex items-start gap-2">
+                                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                                <div>
+                                  <p className="font-medium text-red-800 dark:text-red-200">Error</p>
+                                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                                    {selectedJob.error}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {selectedJob.metadata && Object.keys(selectedJob.metadata).length > 0 && (
+                            <div>
+                              <p className="text-sm font-medium mb-2">Metadata</p>
+                              <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto">
+                                {JSON.stringify(selectedJob.metadata, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </TabsContent>
+
+                {/* Deployment Sub-tab */}
+                <TabsContent value="deployment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+                    {/* Build Configuration */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5" />
+                          Build Configuration
+                        </CardTitle>
+                        <CardDescription>Build and deployment commands</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="buildCommand">Build Command</Label>
+                          <Input
+                            id="buildCommand"
+                            value={deploymentConfig.buildCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, buildCommand: e.target.value })}
+                            placeholder="pnpm build"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="startCommand">Start Command</Label>
+                          <Input
+                            id="startCommand"
+                            value={deploymentConfig.startCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, startCommand: e.target.value })}
+                            placeholder="pnpm start"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nodeVersion">Node Version</Label>
+                          <Input
+                            id="nodeVersion"
+                            value={deploymentConfig.nodeVersion}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, nodeVersion: e.target.value })}
+                            placeholder="18.x"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="healthCheckUrl">Health Check URL</Label>
+                          <Input
+                            id="healthCheckUrl"
+                            value={deploymentConfig.healthCheckUrl}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, healthCheckUrl: e.target.value })}
+                            placeholder="/api/health"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="autoDeploy">Auto Deploy</Label>
+                            <p className="text-xs text-muted-foreground">Automatically deploy on push</p>
+                          </div>
+                          <Switch
+                            id="autoDeploy"
+                            checked={deploymentConfig.autoDeploy}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, autoDeploy: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="enableRollback">Enable Rollback</Label>
+                            <p className="text-xs text-muted-foreground">Allow rolling back deployments</p>
+                          </div>
+                          <Switch
+                            id="enableRollback"
+                            checked={deploymentConfig.enableRollback}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, enableRollback: checked })}
+                          />
+                        </div>
+                        <Button className="w-full">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Configuration
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Active</CardTitle>
+                        <Activity className="h-4 w-4 text-primary" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {jobsMetrics.queued + jobsMetrics.running}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.queued} queued, {jobsMetrics.running} running
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{jobsMetrics.successRate}%</div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.completed.toLocaleString()} completed
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Failed</CardTitle>
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-red-600">{jobsMetrics.failed}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Queue Statistics */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Queue Statistics</CardTitle>
+                      <CardDescription>Overview of jobs across all queues</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {queueStats.map((stat) => (
+                          <div
+                            key={stat.name}
+                            className="p-4 rounded-lg border bg-card hover:bg-accent transition-colors"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold capitalize">{formatQueueName(stat.name)}</h4>
+                              <Badge variant="outline">{stat.total}</Badge>
+                            </div>
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Queued:</span>
+                                <span className="font-medium text-blue-600">{stat.queued}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Running:</span>
+                                <span className="font-medium text-primary">{stat.running}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Completed:</span>
+                                <span className="font-medium text-green-600">{stat.completed}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Failed:</span>
+                                <span className="font-medium text-red-600">{stat.failed}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Main Content Tabs */}
+                  <Card>
+                    <CardHeader>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="overview">Overview</TabsTrigger>
+                          <TabsTrigger value="active">Active Jobs</TabsTrigger>
+                          <TabsTrigger value="history">History</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        {/* Overview Tab */}
+                        <TabsContent value="overview" className="space-y-4 mt-0">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Queue Status Overview */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Queue Status</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-4">
+                                  {queueStats.map((stat) => (
+                                    <div key={stat.name}>
+                                      <div className="flex items-center justify-between mb-1">
+                                        <span className="text-sm font-medium capitalize">{formatQueueName(stat.name)}</span>
+                                        <span className="text-sm text-muted-foreground">{stat.total} total</span>
+                                      </div>
+                                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                        <div className="h-full flex">
+                                          {stat.queued > 0 && (
+                                            <div 
+                                              className="bg-blue-500" 
+                                              style={{ width: `${(stat.queued / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.running > 0 && (
+                                            <div 
+                                              className="bg-primary" 
+                                              style={{ width: `${(stat.running / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.completed > 0 && (
+                                            <div 
+                                              className="bg-green-500" 
+                                              style={{ width: `${(stat.completed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.failed > 0 && (
+                                            <div 
+                                              className="bg-red-500" 
+                                              style={{ width: `${(stat.failed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            {/* Recent Jobs */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Recent Jobs</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  {allJobs.slice(0, 5).map((job) => (
+                                    <div
+                                      key={job.id}
+                                      className="flex items-center justify-between p-2 rounded-lg hover:bg-accent transition-colors"
+                                    >
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        {getStatusIcon(job.status)}
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium truncate">{job.name}</p>
+                                          <p className="text-xs text-muted-foreground truncate">
+                                            {formatQueueName(job.queue)} • {job.createdAt.toLocaleTimeString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {getStatusBadge(job.status)}
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </TabsContent>
+
+                        {/* Active Jobs Tab */}
+                        <TabsContent value="active" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="queued">Queued</SelectItem>
+                                <SelectItem value="running">Running</SelectItem>
+                                <SelectItem value="paused">Paused</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Select value={priorityFilter} onValueChange={(v) => setPriorityFilter(v as typeof priorityFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Priority" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Priority</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="normal">Normal</SelectItem>
+                                <SelectItem value="low">Low</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Active Jobs Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Progress</TableHead>
+                                  <TableHead className="hidden md:table-cell">Started</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {activeJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No active jobs found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  activeJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.status === 'running' && job.progress > 0 && (
+                                                <span>{job.progress}%</span>
+                                              )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell">
+                                          {job.status === 'running' && job.progress > 0 ? (
+                                            <div className="w-32">
+                                              <Progress value={job.progress} className="h-2" />
+                                              <span className="text-xs text-muted-foreground mt-1">{job.progress}%</span>
+                                            </div>
+                                          ) : (
+                                            <span className="text-sm text-muted-foreground">-</span>
+                                          )}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.startedAt ? job.startedAt.toLocaleTimeString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'running' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Pause className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Pause</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            {job.status === 'queued' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Play className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Start Now</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button variant="ghost" size="icon">
+                                                    <Trash2 className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Cancel</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+
+                        {/* History Tab */}
+                        <TabsContent value="history" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="completed">Completed</SelectItem>
+                                <SelectItem value="failed">Failed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* History Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Duration</TableHead>
+                                  <TableHead className="hidden md:table-cell">Completed</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {historyJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No history found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  historyJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.duration && <span>{formatDuration(job.duration)}</span>}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell text-sm">
+                                          {formatDuration(job.duration)}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.completedAt ? job.completedAt.toLocaleString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'failed' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <RefreshCw className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Retry</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                      {expandedJobs.has(job.id) && job.error && (
+                                        <TableRow>
+                                          <TableCell colSpan={7} className="bg-muted/50">
+                                            <div className="p-4 space-y-2">
+                                              <div className="flex items-start gap-2">
+                                                <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                                                <div>
+                                                  <p className="font-medium text-sm">Error Details</p>
+                                                  <p className="text-sm text-muted-foreground mt-1">{job.error}</p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </TableCell>
+                                        </TableRow>
+                                      )}
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+
+                  {/* Job Details Dialog */}
+                  <Dialog open={selectedJob !== null} onOpenChange={(open) => !open && setSelectedJob(null)}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{selectedJob?.name}</DialogTitle>
+                        <DialogDescription>
+                          Job ID: {selectedJob?.id}
+                        </DialogDescription>
+                      </DialogHeader>
+                      {selectedJob && (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <p className="text-sm font-medium mb-1">Status</p>
+                              {getStatusBadge(selectedJob.status)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Queue</p>
+                              <Badge variant="outline" className="capitalize">
+                                {formatQueueName(selectedJob.queue)}
+                              </Badge>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Priority</p>
+                              {getPriorityBadge(selectedJob.priority)}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Attempts</p>
+                              <p className="text-sm">
+                                {selectedJob.attempts} / {selectedJob.maxAttempts}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1">Created At</p>
+                              <p className="text-sm text-muted-foreground">
+                                {selectedJob.createdAt.toLocaleString()}
+                              </p>
+                            </div>
+                            {selectedJob.startedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Started At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.startedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.completedAt && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Completed At</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {selectedJob.completedAt.toLocaleString()}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.duration && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Duration</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {formatDuration(selectedJob.duration)}
+                                </p>
+                              </div>
+                            )}
+                            {selectedJob.workerId && (
+                              <div>
+                                <p className="text-sm font-medium mb-1">Worker</p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  {selectedJob.workerId}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {selectedJob.status === 'running' && selectedJob.progress > 0 && (
+                            <div>
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="text-sm font-medium">Progress</p>
+                                <span className="text-sm text-muted-foreground">{selectedJob.progress}%</span>
+                              </div>
+                              <Progress value={selectedJob.progress} />
+                            </div>
+                          )}
+
+                          {selectedJob.error && (
+                            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
+                              <div className="flex items-start gap-2">
+                                <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                                <div>
+                                  <p className="font-medium text-red-800 dark:text-red-200">Error</p>
+                                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                                    {selectedJob.error}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {selectedJob.metadata && Object.keys(selectedJob.metadata).length > 0 && (
+                            <div>
+                              <p className="text-sm font-medium mb-2">Metadata</p>
+                              <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto">
+                                {JSON.stringify(selectedJob.metadata, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </TabsContent>
+
+                {/* Deployment Sub-tab */}
+                <TabsContent value="deployment" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+                  <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
+                    {/* Build Configuration */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Cloud className="h-5 w-5" />
+                          Build Configuration
+                        </CardTitle>
+                        <CardDescription>Build and deployment commands</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="buildCommand">Build Command</Label>
+                          <Input
+                            id="buildCommand"
+                            value={deploymentConfig.buildCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, buildCommand: e.target.value })}
+                            placeholder="pnpm build"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="startCommand">Start Command</Label>
+                          <Input
+                            id="startCommand"
+                            value={deploymentConfig.startCommand}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, startCommand: e.target.value })}
+                            placeholder="pnpm start"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nodeVersion">Node Version</Label>
+                          <Input
+                            id="nodeVersion"
+                            value={deploymentConfig.nodeVersion}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, nodeVersion: e.target.value })}
+                            placeholder="18.x"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="healthCheckUrl">Health Check URL</Label>
+                          <Input
+                            id="healthCheckUrl"
+                            value={deploymentConfig.healthCheckUrl}
+                            onChange={(e) => setDeploymentConfig({ ...deploymentConfig, healthCheckUrl: e.target.value })}
+                            placeholder="/api/health"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="autoDeploy">Auto Deploy</Label>
+                            <p className="text-xs text-muted-foreground">Automatically deploy on push</p>
+                          </div>
+                          <Switch
+                            id="autoDeploy"
+                            checked={deploymentConfig.autoDeploy}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, autoDeploy: checked })}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label htmlFor="enableRollback">Enable Rollback</Label>
+                            <p className="text-xs text-muted-foreground">Allow rolling back deployments</p>
+                          </div>
+                          <Switch
+                            id="enableRollback"
+                            checked={deploymentConfig.enableRollback}
+                            onCheckedChange={(checked) => setDeploymentConfig({ ...deploymentConfig, enableRollback: checked })}
+                          />
+                        </div>
+                        <Button className="w-full">
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Configuration
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Active</CardTitle>
+                        <Activity className="h-4 w-4 text-primary" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {jobsMetrics.queued + jobsMetrics.running}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.queued} queued, {jobsMetrics.running} running
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-green-600">{jobsMetrics.successRate}%</div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {jobsMetrics.completed.toLocaleString()} completed
+                        </p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardTitle className="text-sm font-medium">Failed</CardTitle>
+                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold text-red-600">{jobsMetrics.failed}</div>
+                        <p className="text-xs text-muted-foreground mt-1">Requires attention</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Queue Statistics */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Queue Statistics</CardTitle>
+                      <CardDescription>Overview of jobs across all queues</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {queueStats.map((stat) => (
+                          <div
+                            key={stat.name}
+                            className="p-4 rounded-lg border bg-card hover:bg-accent transition-colors"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-semibold capitalize">{formatQueueName(stat.name)}</h4>
+                              <Badge variant="outline">{stat.total}</Badge>
+                            </div>
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Queued:</span>
+                                <span className="font-medium text-blue-600">{stat.queued}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Running:</span>
+                                <span className="font-medium text-primary">{stat.running}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Completed:</span>
+                                <span className="font-medium text-green-600">{stat.completed}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Failed:</span>
+                                <span className="font-medium text-red-600">{stat.failed}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Main Content Tabs */}
+                  <Card>
+                    <CardHeader>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        <TabsList className="grid w-full grid-cols-3">
+                          <TabsTrigger value="overview">Overview</TabsTrigger>
+                          <TabsTrigger value="active">Active Jobs</TabsTrigger>
+                          <TabsTrigger value="history">History</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </CardHeader>
+                    <CardContent>
+                      <Tabs value={jobsTab} onValueChange={(v) => setJobsTab(v as typeof jobsTab)}>
+                        {/* Overview Tab */}
+                        <TabsContent value="overview" className="space-y-4 mt-0">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            {/* Queue Status Overview */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Queue Status</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-4">
+                                  {queueStats.map((stat) => (
+                                    <div key={stat.name}>
+                                      <div className="flex items-center justify-between mb-1">
+                                        <span className="text-sm font-medium capitalize">{formatQueueName(stat.name)}</span>
+                                        <span className="text-sm text-muted-foreground">{stat.total} total</span>
+                                      </div>
+                                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                        <div className="h-full flex">
+                                          {stat.queued > 0 && (
+                                            <div 
+                                              className="bg-blue-500" 
+                                              style={{ width: `${(stat.queued / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.running > 0 && (
+                                            <div 
+                                              className="bg-primary" 
+                                              style={{ width: `${(stat.running / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.completed > 0 && (
+                                            <div 
+                                              className="bg-green-500" 
+                                              style={{ width: `${(stat.completed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                          {stat.failed > 0 && (
+                                            <div 
+                                              className="bg-red-500" 
+                                              style={{ width: `${(stat.failed / stat.total) * 100}%` }}
+                                            />
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            {/* Recent Jobs */}
+                            <Card>
+                              <CardHeader>
+                                <CardTitle className="text-base">Recent Jobs</CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-3">
+                                  {allJobs.slice(0, 5).map((job) => (
+                                    <div
+                                      key={job.id}
+                                      className="flex items-center justify-between p-2 rounded-lg hover:bg-accent transition-colors"
+                                    >
+                                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        {getStatusIcon(job.status)}
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium truncate">{job.name}</p>
+                                          <p className="text-xs text-muted-foreground truncate">
+                                            {formatQueueName(job.queue)} • {job.createdAt.toLocaleTimeString()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {getStatusBadge(job.status)}
+                                    </div>
+                                  ))}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </TabsContent>
+
+                        {/* Active Jobs Tab */}
+                        <TabsContent value="active" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="queued">Queued</SelectItem>
+                                <SelectItem value="running">Running</SelectItem>
+                                <SelectItem value="paused">Paused</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Select value={priorityFilter} onValueChange={(v) => setPriorityFilter(v as typeof priorityFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Priority" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Priority</SelectItem>
+                                <SelectItem value="urgent">Urgent</SelectItem>
+                                <SelectItem value="high">High</SelectItem>
+                                <SelectItem value="normal">Normal</SelectItem>
+                                <SelectItem value="low">Low</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Active Jobs Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Progress</TableHead>
+                                  <TableHead className="hidden md:table-cell">Started</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {activeJobs.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                                      No active jobs found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  activeJobs.map((job) => (
+                                    <Fragment key={job.id}>
+                                      <TableRow>
+                                        <TableCell>
+                                          <div className="flex flex-col gap-1">
+                                            <div className="flex items-center gap-2">
+                                              {getStatusIcon(job.status)}
+                                              <span className="font-medium">{job.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap sm:hidden text-xs text-muted-foreground">
+                                              <span className="capitalize">{formatQueueName(job.queue)}</span>
+                                              {getPriorityBadge(job.priority)}
+                                              {job.status === 'running' && job.progress > 0 && (
+                                                <span>{job.progress}%</span>
+                                              )}
+                                            </div>
+                                            <p className="text-xs text-muted-foreground font-mono">{job.id}</p>
+                                          </div>
+                                        </TableCell>
+                                        <TableCell className="hidden sm:table-cell">
+                                          <Badge variant="outline" className="capitalize">
+                                            {formatQueueName(job.queue)}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell">
+                                          {getPriorityBadge(job.priority)}
+                                        </TableCell>
+                                        <TableCell className="hidden lg:table-cell">
+                                          {job.status === 'running' && job.progress > 0 ? (
+                                            <div className="w-32">
+                                              <Progress value={job.progress} className="h-2" />
+                                              <span className="text-xs text-muted-foreground mt-1">{job.progress}%</span>
+                                            </div>
+                                          ) : (
+                                            <span className="text-sm text-muted-foreground">-</span>
+                                          )}
+                                        </TableCell>
+                                        <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                                          {job.startedAt ? job.startedAt.toLocaleTimeString() : '-'}
+                                        </TableCell>
+                                        <TableCell>
+                                          {getStatusBadge(job.status)}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                          <div className="flex justify-end gap-2">
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => setSelectedJob(job)}
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>View Details</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                            {job.status === 'running' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Pause className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Pause</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            {job.status === 'queued' && (
+                                              <TooltipProvider>
+                                                <Tooltip>
+                                                  <TooltipTrigger asChild>
+                                                    <Button variant="ghost" size="icon">
+                                                      <Play className="h-4 w-4" />
+                                                    </Button>
+                                                  </TooltipTrigger>
+                                                  <TooltipContent>Start Now</TooltipContent>
+                                                </Tooltip>
+                                              </TooltipProvider>
+                                            )}
+                                            <TooltipProvider>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <Button variant="ghost" size="icon">
+                                                    <Trash2 className="h-4 w-4" />
+                                                  </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>Cancel</TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                    </Fragment>
+                                  ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TabsContent>
+
+                        {/* History Tab */}
+                        <TabsContent value="history" className="space-y-4 mt-0">
+                          {/* Filters */}
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                            <div className="relative flex-1">
+                              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search jobs..."
+                                className="pl-9"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                            </div>
+                            <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <Filter className="h-4 w-4 mr-2" />
+                                <SelectValue placeholder="Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="completed">Completed</SelectItem>
+                                <SelectItem value="failed">Failed</SelectItem>
+                                <SelectItem value="cancelled">Cancelled</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Select value={queueFilter} onValueChange={(v) => setQueueFilter(v as typeof queueFilter)}>
+                              <SelectTrigger className="w-full sm:w-40">
+                                <SelectValue placeholder="Queue" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Queues</SelectItem>
+                                {['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'].map((q) => (
+                                  <SelectItem key={q} value={q}>{formatQueueName(q as QueueType)}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* History Table */}
+                          <div className="overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Job</TableHead>
+                                  <TableHead className="hidden sm:table-cell">Queue</TableHead>
+                                  <TableHead className="hidden md:table-cell">Priority</TableHead>
+                                  <TableHead className="hidden lg:table-cell">Duration</TableHead>
+                                  <TableHead className="hidden md:table-cell">Completed</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -1485,8 +3559,8 @@ export default function ConsoleConfigPage() {
                             <TableHead className="hidden lg:table-cell">Branch</TableHead>
                             <TableHead className="hidden md:table-cell">Deployed At</TableHead>
                             <TableHead className="hidden lg:table-cell">Duration</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                                  <TableHead className="text-center w-[96px]">Status</TableHead>
+                                  <TableHead className="text-center w-[96px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1621,7 +3695,7 @@ export default function ConsoleConfigPage() {
                         <TableHead className="hidden lg:table-cell">Environment</TableHead>
                         <TableHead className="hidden lg:table-cell">Type</TableHead>
                         <TableHead className="hidden lg:table-cell">Last Updated</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-center">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -1652,35 +3726,32 @@ export default function ConsoleConfigPage() {
                             </div>
                           </TableCell>
                           <TableCell className="hidden lg:table-cell">
-                            <Badge variant="secondary">{envVar.environment}</Badge>
+                            <span className="text-sm">{envVar.environment}</span>
                           </TableCell>
                           <TableCell className="hidden lg:table-cell">
-                            <Badge variant={envVar.type === 'secret' ? 'default' : 'outline'}>
-                              {envVar.type === 'secret' ? (
-                                <Lock className="h-3 w-3 mr-1" />
-                              ) : null}
-                              {envVar.type}
+                            <Badge variant={envVar.type === 'secret' ? 'secondary' : 'destructive'} className="gap-0">
+                              {envVar.type === 'secret' ? 'Secret' : 'Public'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
-                            {envVar.lastUpdated}
+                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                            {formatDateTimeExact(envVar.lastUpdated.replace(' ', 'T'))}
                           </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-1">
+                          <TableCell className="text-center">
+                            <div className="flex justify-center gap-1">
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 className="h-8 w-8 p-0"
                                 onClick={() => copyToClipboard(envVar.value)}
                               >
-                                <Copy className="h-3 w-3" />
+                                <Copy className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 className="h-8 w-8 p-0"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-4 w-4 text-red-500" />
                               </Button>
                             </div>
                           </TableCell>
@@ -1695,7 +3766,7 @@ export default function ConsoleConfigPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5" />
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
                     Environment Health
                   </CardTitle>
                   <CardDescription>Status of environment-specific services</CardDescription>
@@ -1950,7 +4021,7 @@ export default function ConsoleConfigPage() {
             </TabsContent>
 
             {/* External API & Keys Tab */}
-            <TabsContent value="external-api-keys" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
+            <TabsContent value="external-api" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
               <Tabs value={externalApiSubTab} onValueChange={(v) => setExternalApiSubTab(v as typeof externalApiSubTab)}>
                 <TabsList className="mb-4 sm:mb-6">
                   <TabsTrigger value="api-keys">
@@ -1989,16 +4060,16 @@ export default function ConsoleConfigPage() {
                             <TableHead className="hidden md:table-cell">Key Prefix</TableHead>
                             <TableHead className="hidden lg:table-cell">Created</TableHead>
                             <TableHead className="hidden lg:table-cell">Last Used</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           <TableRow>
                             <TableCell className="font-medium">Production API Key</TableCell>
                             <TableCell className="hidden md:table-cell font-mono text-sm">sk_live_...</TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-15</TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2 hours ago</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact('2025-01-15T00:00:00')}</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact(new Date(Date.now() - 2 * 60 * 60 * 1000))}</TableCell>
                             <TableCell>
                               <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                                 <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -2019,8 +4090,8 @@ export default function ConsoleConfigPage() {
                           <TableRow>
                             <TableCell className="font-medium">Development API Key</TableCell>
                             <TableCell className="hidden md:table-cell font-mono text-sm">sk_test_...</TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-20</TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">5 days ago</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact('2025-01-20T00:00:00')}</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact(new Date(Date.now() - 5 * 24 * 60 * 60 * 1000))}</TableCell>
                             <TableCell>
                               <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
                                 <CheckCircle2 className="h-3 w-3 mr-1" />
@@ -2070,8 +4141,8 @@ export default function ConsoleConfigPage() {
                             <TableHead className="hidden md:table-cell">URL</TableHead>
                             <TableHead className="hidden lg:table-cell">Events</TableHead>
                             <TableHead className="hidden lg:table-cell">Last Sent</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2279,7 +4350,7 @@ export default function ConsoleConfigPage() {
                                 Success
                               </Badge>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-27 14:30:15</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact('2025-01-27T14:30:15')}</TableCell>
                             <TableCell className="hidden lg:table-cell text-sm">2.3s</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm" className="h-8">
@@ -2296,7 +4367,7 @@ export default function ConsoleConfigPage() {
                                 Failed
                               </Badge>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">2025-01-27 12:15:42</TableCell>
+                            <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">{formatDateTimeExact('2025-01-27T12:15:42')}</TableCell>
                             <TableCell className="hidden lg:table-cell text-sm">45s</TableCell>
                             <TableCell>
                               <Button variant="ghost" size="sm" className="h-8">
@@ -2338,7 +4409,7 @@ export default function ConsoleConfigPage() {
                             <TableHead className="hidden lg:table-cell">Method</TableHead>
                             <TableHead className="hidden lg:table-cell">Last Received</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="text-center w-[96px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2346,14 +4417,11 @@ export default function ConsoleConfigPage() {
                             <TableCell className="font-medium">Order Processing Webhook</TableCell>
                             <TableCell className="hidden md:table-cell font-mono text-sm">/api/webhooks/n8n/orders</TableCell>
                             <TableCell className="hidden lg:table-cell">
-                              <Badge variant="outline">POST</Badge>
+                              <Badge className={getBadgeClasses('http.post')}>POST</Badge>
                             </TableCell>
                             <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">10 minutes ago</TableCell>
                             <TableCell>
-                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                Active
-                              </Badge>
+                              <Badge className={getBadgeClasses('security.active')}>Active</Badge>
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-2">

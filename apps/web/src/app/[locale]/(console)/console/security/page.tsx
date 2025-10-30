@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -43,6 +44,8 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/utils/cn';
+import { formatDateTimeExact } from '@/utils/formatDateTime';
+import { getUserDisplay } from '@/utils/userDisplay';
 
 // Mock data types
 interface User {
@@ -91,6 +94,71 @@ interface Session {
   createdAt: Date;
   lastActivity: Date;
   isActive: boolean;
+}
+
+// Mock organisation mapping for users (userId -> organisation name)
+const mockUserOrganisation: Record<string, string> = {
+  '1': 'Acme Corp',
+  '2': 'Globex',
+  '3': 'Initech',
+};
+
+function formatDateTimeDDMMYYYYHHMMSS(date: Date): string {
+  const two = (n: number) => n.toString().padStart(2, '0');
+  const day = two(date.getDate());
+  const month = two(date.getMonth() + 1);
+  const year = date.getFullYear();
+  const hours = two(date.getHours());
+  const minutes = two(date.getMinutes());
+  const seconds = two(date.getSeconds());
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+function formatDateDDMMYYYY(date: Date): string {
+  const two = (n: number) => n.toString().padStart(2, '0');
+  const day = two(date.getDate());
+  const month = two(date.getMonth() + 1);
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function formatTimeHHMMSS(date: Date): string {
+  const two = (n: number) => n.toString().padStart(2, '0');
+  const hours = two(date.getHours());
+  const minutes = two(date.getMinutes());
+  const seconds = two(date.getSeconds());
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function getAuditUserDisplay(userId: string) {
+  const user = mockUsers.find((u) => u.id === userId);
+  return getUserDisplay(user);
+}
+
+// Map audit actions to standardized badge presets for consistent color/size
+function actionToPreset(action: string): string {
+  switch (action) {
+    case 'created':
+    case 'accepted':
+    case 'succeeded':
+    case 'completed':
+      return 'success.soft';
+    case 'updated':
+    case 'started':
+    case 'stopped':
+    case 'role_changed':
+      return 'info.soft';
+    case 'deleted':
+    case 'failed':
+    case 'rejected':
+    case 'cancelled':
+      return 'danger.soft';
+    case 'invited':
+    case 'snoozed':
+      return 'warning.soft';
+    default:
+      return 'outline';
+  }
 }
 
 // Mock data
@@ -214,6 +282,64 @@ export default function ConsoleSecurityPage() {
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
   const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showGrantedOnly, setShowGrantedOnly] = useState(false);
+  const [matrixScope, setMatrixScope] = useState<'application' | 'console'>('application');
+  const [selectedResource, setSelectedResource] = useState<'' | 'Users' | 'Records' | 'Roles' | 'Audit Logs'>('');
+  const [selectedAction, setSelectedAction] = useState<'' | 'read' | 'write' | 'delete' | 'manage'>('');
+  const [selectedUserRole, setSelectedUserRole] = useState<string>('');
+
+  // Fixed role taxonomy across User and Console applications (ordered from most restricted to full access)
+  const ROLE_GROUPS = useMemo(() => ({
+    userStandard: {
+      label: 'User Application — Standard Users',
+      roles: [
+        { id: 'std-free', name: 'Standard User Free', description: 'Limited access', permissions: ['read'], userCount: 0 },
+        { id: 'std-basic', name: 'Standard User Basic', description: 'Basic access', permissions: ['read'], userCount: 0 },
+        { id: 'std-pro', name: 'Standard User Pro', description: 'Pro access', permissions: ['read', 'write'], userCount: 0 },
+        { id: 'std-enterprise', name: 'Standard User Enterprise', description: 'Enterprise access', permissions: ['read', 'write'], userCount: 0 },
+      ],
+    },
+    userManager: {
+      label: 'User Application — Manager Users',
+      roles: [
+        { id: 'mgr', name: 'Manager User Manager', description: 'Team management', permissions: ['read', 'write', 'manage_team'], userCount: 0 },
+        { id: 'mgr-sr', name: 'Manager User Senior Manager', description: 'Advanced team management', permissions: ['read', 'write', 'manage_team'], userCount: 0 },
+      ],
+    },
+    consoleManager: {
+      label: 'Console Application — Manager Users',
+      roles: [
+        { id: 'c-mgr', name: 'Administrator User Admin', description: 'Administrative access', permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 0 },
+        { id: 'c-mgr-sr', name: 'Administrator User Senior Admin', description: 'Full administrative access', permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles'], userCount: 0 },
+      ],
+    },
+  }), []);
+
+  const ALL_ROLES_ORDERED = useMemo(() => (
+    [
+      ...ROLE_GROUPS.userStandard.roles,
+      ...ROLE_GROUPS.userManager.roles,
+      ...ROLE_GROUPS.consoleManager.roles,
+    ]
+  ), [ROLE_GROUPS]);
+
+  const APPLICATION_ROLES = useMemo(() => ([
+    ...ROLE_GROUPS.userStandard.roles,
+    ...ROLE_GROUPS.userManager.roles,
+  ]), [ROLE_GROUPS]);
+
+  const CONSOLE_ROLES = useMemo(() => ([
+    ...ROLE_GROUPS.userManager.roles,
+    ...ROLE_GROUPS.consoleManager.roles,
+  ]), [ROLE_GROUPS]);
+
+  const RESOURCES = useMemo(() => (
+    ['Users', 'Records', 'Roles', 'Audit Logs'] as const
+  ), []);
+
+  const ACTIONS = useMemo(() => (
+    ['read', 'write', 'delete', 'manage'] as const
+  ), []);
   
   // State for managing user status (for toggling)
   const [userStatusMap, setUserStatusMap] = useState<Map<string, User['status']>>(new Map());
@@ -277,14 +403,11 @@ export default function ConsoleSecurityPage() {
   const getStatusBadge = (status: User['status']) => {
     switch (status) {
       case 'active':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 flex items-center gap-1">
-          <CheckCircle2 className="h-3 w-3" />
-          Active
-        </Badge>;
+        return <Badge className={getBadgeClasses('security.active')}>Active</Badge>;
       case 'inactive':
-        return <Badge variant="secondary" className="bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">Inactive</Badge>;
+        return <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>;
       case 'suspended':
-        return <Badge variant="destructive">Suspended</Badge>;
+        return <Badge className={getBadgeClasses('security.suspended')}>Suspended</Badge>;
     }
   };
 
@@ -448,46 +571,59 @@ export default function ConsoleSecurityPage() {
               </div>
 
               <div className="overflow-x-auto">
-                <Table>
+                <Table className="w-full">
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="hidden sm:table-cell">Organisation</TableHead>
                       <TableHead>User</TableHead>
                       <TableHead className="hidden md:table-cell">Role</TableHead>
-                      <TableHead className="hidden lg:table-cell">Status</TableHead>
-                      <TableHead className="hidden lg:table-cell">Last Login</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="hidden md:table-cell text-center">Status</TableHead>
+                      <TableHead className="hidden md:table-cell">Last Login</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                           No users found
                         </TableCell>
                       </TableRow>
                     ) : (
                       filteredUsers.map((user) => (
                         <TableRow key={user.id}>
+                          <TableCell className="hidden sm:table-cell align-top">
+                            <div className="min-w-[108px] md:min-w-[126px] max-w-[144px]">
+                              <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate block whitespace-nowrap">
+                                {mockUserOrganisation[user.id] ?? '—'}
+                              </span>
+                            </div>
+                          </TableCell>
                           <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="font-medium">{user.name}</div>
-                              <div className="text-sm text-muted-foreground">{user.email}</div>
+                            <div className="flex flex-col gap-1 min-w-[126px] md:min-w-[140px] max-w-[168px] md:max-w-[210px]">
+                              <div className="font-medium truncate whitespace-nowrap">{getUserDisplay({ name: user.name, email: user.email }).primary}</div>
+                              <div className="text-sm text-muted-foreground truncate whitespace-nowrap">{getUserDisplay({ name: user.name, email: user.email }).secondary}</div>
                             </div>
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            <Badge variant="outline" className="capitalize">{user.role}</Badge>
+                            <span className="capitalize text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap max-w-[140px]">
+                              {user.role}
+                            </span>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <div className="flex items-center gap-2">
-                              <Switch
-                                checked={getUserStatus(user) === 'active'}
-                                onCheckedChange={() => toggleUserStatus(user.id, getUserStatus(user))}
-                              />
+                          <TableCell className="hidden md:table-cell">
+                            <div className="flex items-center justify-center">
                               {getStatusBadge(getUserStatus(user))}
                             </div>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                            {user.lastLogin ? user.lastLogin.toLocaleString() : 'Never'}
+                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell whitespace-nowrap">
+                            {user.lastLogin ? (
+                              <div className="flex flex-col leading-tight">
+                                <span className="text-sm">{formatDateDDMMYYYY(user.lastLogin)}</span>
+                                <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(user.lastLogin)}</span>
+                              </div>
+                            ) : (
+                              '—'
+                            )}
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
@@ -510,9 +646,46 @@ export default function ConsoleSecurityPage() {
             {/* Access Control Tab */}
             <TabsContent value="access-control" className="space-y-4 mt-0">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-                <div>
-                  <CardTitle className="text-base">Roles & Permissions</CardTitle>
-                  <CardDescription>Manage user roles and their permissions</CardDescription>
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 w-full sm:w-auto">
+                  <Select value={matrixScope} onValueChange={(v) => setMatrixScope(v as typeof matrixScope)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="App" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="application">User Application</SelectItem>
+                      <SelectItem value="console">Console</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={selectedResource} onValueChange={(v) => setSelectedResource(v as typeof selectedResource)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Resource" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RESOURCES.map(r => (
+                        <SelectItem key={r} value={r}>{r}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={selectedAction} onValueChange={(v) => setSelectedAction(v as typeof selectedAction)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Action" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ACTIONS.map(a => (
+                        <SelectItem key={a} value={a}>{a}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={selectedUserRole} onValueChange={(v) => setSelectedUserRole(v)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="User" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
+                        <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button onClick={() => setIsCreateRoleOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -520,96 +693,79 @@ export default function ConsoleSecurityPage() {
                 </Button>
               </div>
 
-              {/* Roles Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
-                {mockRoles.map((role) => (
-                  <Card key={role.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-base">{role.name}</CardTitle>
-                          <CardDescription className="mt-1">{role.description}</CardDescription>
-                        </div>
-                        <Badge variant="outline">{role.userCount} users</Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <Label className="text-xs text-muted-foreground">Permissions</Label>
-                        <div className="flex flex-wrap gap-1">
-                          {role.permissions.map((permission, idx) => (
-                            <Badge key={idx} variant="secondary" className="text-xs">
-                              {permission}
-                            </Badge>
-                          ))}
-                        </div>
-                        <div className="flex gap-2 pt-2">
-                          <Button variant="outline" size="sm" className="flex-1">
-                            <Edit className="h-3 w-3 mr-1" />
-                            Edit
-                          </Button>
-                          <Button variant="outline" size="sm" className="flex-1">
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Delete
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              {/* Roles Grid removed per request */}
 
               {/* Permissions Matrix */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Permissions Matrix</CardTitle>
-                  <CardDescription>View which roles have access to which resources and actions</CardDescription>
+                  {/* Header removed per request */}
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Resource / Action</TableHead>
-                          {mockRoles.map(role => (
-                            <TableHead key={role.id} className="text-center">
-                              {role.name}
-                            </TableHead>
+                          <TableHead className="sticky left-0 z-10 bg-background">Resource</TableHead>
+                          <TableHead className="sticky left-[140px] z-10 bg-background">Action</TableHead>
+                          {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
+                            <TableHead key={role.id} className="text-center whitespace-nowrap">{role.name}</TableHead>
                           ))}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {[
-                          { resource: 'Users', actions: ['read', 'write', 'delete', 'manage'] },
-                          { resource: 'Records', actions: ['read', 'write', 'delete'] },
-                          { resource: 'Roles', actions: ['read', 'write', 'manage'] },
-                          { resource: 'Audit Logs', actions: ['read'] },
-                        ].map((item, idx) => (
-                          item.actions.map((action, actionIdx) => (
-                            <TableRow key={`${item.resource}-${action}-${idx}-${actionIdx}`}>
-                              {actionIdx === 0 && (
-                                <TableCell rowSpan={item.actions.length} className="font-medium align-middle">
-                                  {item.resource}
-                                </TableCell>
-                              )}
-                              <TableCell className="text-sm text-muted-foreground">{action}</TableCell>
-                              {mockRoles.map(role => {
-                                const hasPermission = role.permissions.includes(action) || 
-                                  role.permissions.includes(`${action}_${item.resource.toLowerCase()}`) ||
-                                  (role.name === 'Admin' && action !== 'manage_users');
-                                return (
-                                  <TableCell key={role.id} className="text-center">
-                                    {hasPermission ? (
-                                      <CheckCircle2 className="h-5 w-5 text-green-600 mx-auto" />
-                                    ) : (
-                                      <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto" />
-                                    )}
+                        {RESOURCES.map((resource) => ({ resource, actions: (resource === 'Audit Logs' ? ['read'] : ['read', 'write', ...(resource === 'Records' || resource === 'Users' || resource === 'Roles' ? ['delete'] : []), ...(resource === 'Users' || resource === 'Roles' ? ['manage'] : [])]) as string[] }))
+                          .flatMap((item) => {
+                          const matchesQuery = (key: string) => key.toLowerCase().includes(searchQuery.toLowerCase());
+                          const displayedRoles = (matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES);
+                          const actionRows = item.actions
+                            .filter(a => (selectedResource === '' || item.resource === selectedResource))
+                            .filter(a => (selectedAction === '' || a === selectedAction))
+                            .filter(a => matchesQuery(item.resource) || matchesQuery(a) || searchQuery === '')
+                            .filter(a => {
+                              if (!showGrantedOnly) return true;
+                              // Keep action row only if any displayed role has the permission
+                              return displayedRoles.some(role => {
+                                const has = role.permissions.includes(a) ||
+                                  role.permissions.includes(`${a}_${item.resource.toLowerCase()}`) ||
+                                  (role.name.includes('Senior Admin') && a !== 'manage_users');
+                                return has;
+                              });
+                            })
+                            .map((action, actionIdx, arr) => {
+                              return (
+                                <TableRow key={`${item.resource}-${action}`} className={actionIdx % 2 === 1 ? 'bg-muted/30' : ''}>
+                                  {actionIdx === 0 && (
+                                    <TableCell rowSpan={arr.length} className="font-medium align-middle sticky left-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                                      <div className="min-w-[140px]">
+                                        {item.resource}
+                                      </div>
+                                    </TableCell>
+                                  )}
+                                  <TableCell className="text-xs sm:text-sm text-muted-foreground">
+                                    <Badge variant="outline" className="px-1.5 py-0 text-[10px] sm:text-[11px]">{action}</Badge>
                                   </TableCell>
-                                );
-                              })}
-                            </TableRow>
-                          ))
-                        ))}
+                                  {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES)
+                                    .filter(role => (selectedUserRole === '' || role.name === selectedUserRole))
+                                    .map(role => {
+                                    const hasPermission = role.permissions.includes(action) ||
+                                      role.permissions.includes(`${action}_${item.resource.toLowerCase()}`) ||
+                                      (role.name.includes('Senior Admin') && action !== 'manage_users');
+                                    // optional: show-only-granted could hide denied cells; keeping all visible for clarity
+                                    return (
+                                      <TableCell key={role.id} className="text-center">
+                                        {hasPermission ? (
+                                          <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mx-auto" />
+                                        ) : (
+                                          <XCircle className={cn('h-4 w-4 sm:h-5 sm:w-5 mx-auto text-red-600 dark:text-red-400', showGrantedOnly ? 'opacity-20' : '')} />
+                                        )}
+                                      </TableCell>
+                                    );
+                                  })}
+                                </TableRow>
+                              );
+                            });
+                          return actionRows;
+                        })}
                       </TableBody>
                     </Table>
                   </div>
@@ -650,7 +806,7 @@ export default function ConsoleSecurityPage() {
                     <TableRow>
                       <TableHead className="hidden md:table-cell">Timestamp</TableHead>
                       <TableHead>User</TableHead>
-                      <TableHead className="hidden lg:table-cell">Action</TableHead>
+                      <TableHead className="hidden lg:table-cell text-center">Action</TableHead>
                       <TableHead className="hidden lg:table-cell">Resource</TableHead>
                       <TableHead className="hidden md:table-cell">IP Address</TableHead>
                       <TableHead className="text-right">Details</TableHead>
@@ -666,22 +822,36 @@ export default function ConsoleSecurityPage() {
                     ) : (
                       filteredAuditEntries.map((entry) => (
                         <TableRow key={entry.id}>
-                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                            {entry.timestamp.toLocaleString()}
+                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                            <div className="leading-tight">
+                              <div>{formatDateDDMMYYYY(entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp))}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {formatTimeHHMMSS(entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp))}
+                              </div>
+                            </div>
                           </TableCell>
                           <TableCell>
-                            <div className="font-medium">{entry.userName}</div>
-                            <div className="text-xs text-muted-foreground md:hidden">
-                              {entry.timestamp.toLocaleTimeString()}
+                            {(() => {
+                              const d = getAuditUserDisplay(entry.userId);
+                              return (
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{d.primary}</span>
+                                  <span className="text-xs text-muted-foreground">@{d.secondary}</span>
+                                </div>
+                              );
+                            })()}
+                          </TableCell>
+                          <TableCell className="hidden lg:table-cell">
+                            <div className="flex justify-center">
+                              <Badge className={getBadgeClasses(actionToPreset(entry.action)) + ' capitalize'}>
+                                {entry.action}
+                              </Badge>
                             </div>
                           </TableCell>
                           <TableCell className="hidden lg:table-cell">
-                            <Badge variant="outline" className="capitalize">{entry.action}</Badge>
+                            <span className="text-sm capitalize">{entry.resource}</span>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <Badge variant="secondary" className="capitalize">{entry.resource}</Badge>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground font-mono">
+                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                             {entry.ip}
                           </TableCell>
                           <TableCell className="text-right">
@@ -719,13 +889,13 @@ export default function ConsoleSecurityPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead className="hidden md:table-cell">IP Address</TableHead>
-                      <TableHead className="hidden lg:table-cell">User Agent</TableHead>
-                      <TableHead className="hidden md:table-cell">Created</TableHead>
-                      <TableHead className="hidden lg:table-cell">Last Activity</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="w-[220px]">User</TableHead>
+                      <TableHead className="hidden md:table-cell w-[160px]">IP Address</TableHead>
+                      <TableHead className="hidden lg:table-cell w-[320px]">User Agent</TableHead>
+                      <TableHead className="hidden md:table-cell w-[160px]">Created</TableHead>
+                      <TableHead className="hidden lg:table-cell w-[160px]">Last Activity</TableHead>
+                      <TableHead className="w-[120px]">Status</TableHead>
+                      <TableHead className="text-center w-[96px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -739,31 +909,52 @@ export default function ConsoleSecurityPage() {
                       filteredSessions.map((session) => (
                         <TableRow key={session.id}>
                           <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="font-medium">{session.userName}</div>
-                              <div className="text-sm text-muted-foreground">{session.email}</div>
+                            <div className="flex flex-col gap-1 min-w-[180px] max-w-[220px]">
+                              <div className="font-medium truncate whitespace-nowrap">{getUserDisplay({ name: session.userName, email: session.email }).primary}</div>
+                              <div className="text-xs text-muted-foreground truncate whitespace-nowrap">@{getUserDisplay({ name: session.userName, email: session.email }).secondary}</div>
                             </div>
                           </TableCell>
-                          <TableCell className="hidden md:table-cell text-sm font-mono">
-                            {session.ipAddress}
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                            <div className="max-w-xs truncate">{session.userAgent}</div>
-                          </TableCell>
                           <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                            {session.createdAt.toLocaleString()}
+                            <div className="max-w-[160px] truncate whitespace-nowrap">{session.ipAddress}</div>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                            {session.lastActivity.toLocaleString()}
+                          <TableCell className="hidden lg:table-cell">
+                            {(() => {
+                              const match = session.userAgent.match(/^(^[^()]+)|^([^()]+)(?:\(([^)]+)\))?/);
+                              const uaMain = (() => {
+                                const m = session.userAgent.match(/^([^()]+)/);
+                                return (m && m[1] ? m[1].trim() : session.userAgent);
+                              })();
+                              const uaParen = (() => {
+                                const m = session.userAgent.match(/\(([^)]+)\)/);
+                                return m && m[1] ? m[1].trim() : '';
+                              })();
+                              return (
+                                <div className="max-w-[320px] leading-tight">
+                                  <div className="text-sm truncate whitespace-nowrap">{uaMain}</div>
+                                  {uaParen && (
+                                    <div className="text-xs text-muted-foreground truncate whitespace-nowrap">{uaParen}</div>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </TableCell>
+                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                            <div className="flex flex-col leading-tight">
+                              <span className="text-sm">{formatDateDDMMYYYY(session.createdAt)}</span>
+                              <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(session.createdAt)}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                            <div className="flex flex-col leading-tight">
+                              <span className="text-sm">{formatDateDDMMYYYY(session.lastActivity)}</span>
+                              <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(session.lastActivity)}</span>
+                            </div>
                           </TableCell>
                           <TableCell>
                             {session.isActive ? (
-                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                                <Activity className="h-3 w-3 mr-1" />
-                                Active
-                              </Badge>
+                              <Badge className={getBadgeClasses('security.active')}>Active</Badge>
                             ) : (
-                              <Badge variant="secondary">Inactive</Badge>
+                              <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>
                             )}
                           </TableCell>
                           <TableCell className="text-right">

@@ -25,6 +25,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import {  } from '@/components/ui/';
 import { Reminder, ReminderStatus, ReminderPriority } from '@starter/types';
 import { api } from '@/trpc/react';
+import { formatDateTimeExact } from '@/utils/formatDateTime';
 
 interface ReminderTableProps {
   reminders: Reminder[];
@@ -124,7 +125,7 @@ export function ReminderTable({
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'No due date';
-    return new Date(dateString).toLocaleString();
+    return formatDateTimeExact(dateString);
   };
 
   const isOverdue = (reminder: Reminder) => {
@@ -187,9 +188,9 @@ export function ReminderTable({
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Priority</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-center w-[96px]">Status</TableHead>
                 <TableHead>Due Date</TableHead>
-                <TableHead className="w-12">Actions</TableHead>
+                <TableHead className="text-center w-[96px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -227,18 +228,17 @@ export function ReminderTable({
                         <span className="capitalize">{reminder.priority}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(reminder.status)}>
-                        {reminder.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        {formatDate(reminder.due_at)}
+                    <TableCell className="w-[96px]">
+                      <div className="flex justify-center">
+                        <Badge className={getStatusColor(reminder.status)}>
+                          {reminder.status}
+                        </Badge>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                      {formatDate(reminder.due_at)}
+                    </TableCell>
+                    <TableCell className="w-[96px] text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">

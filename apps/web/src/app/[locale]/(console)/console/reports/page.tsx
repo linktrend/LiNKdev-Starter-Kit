@@ -242,6 +242,91 @@ export default function ConsoleReportsPage() {
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [autoRefresh, setAutoRefresh] = useState(true);
+  
+  // Analytics: time range and filters
+  const timeRanges = [7, 30, 90, 180, 365] as const;
+  type TimeRange = typeof timeRanges[number];
+  const [analyticsRange, setAnalyticsRange] = useState<TimeRange>(90);
+  const [analyticsPlan, setAnalyticsPlan] = useState<'all' | 'free' | 'pro' | 'enterprise'>('all');
+  const [analyticsSegment, setAnalyticsSegment] = useState<'all' | 'sm' | 'mid' | 'enterprise'>('all');
+
+  // Analytics mock data generation
+  type SeriesPoint = { date: string; value: number };
+  function generateSeries(days: number, base: number, variance: number, trend: number = 0): SeriesPoint[] {
+    const today = new Date();
+    const series: SeriesPoint[] = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const noise = (Math.random() - 0.5) * variance * 2;
+      const val = Math.max(0, Math.round(base + noise + trend * (days - i)));
+      series.push({ date: d.toISOString().slice(0, 10), value: val });
+    }
+    return series;
+  }
+
+  const analyticsData = useMemo(() => {
+    const days = analyticsRange;
+    // Product usage
+    const dau = generateSeries(days, 220, 40, 0.1);
+    const wau = generateSeries(days, 900, 120, 0.5);
+    const mau = generateSeries(days, 3200, 300, 1);
+    const activeOrgs = generateSeries(days, 75, 10, 0.1);
+    const sessions = generateSeries(days, 1800, 250, 2);
+
+    // Growth & retention
+    const signups = generateSeries(days, 35, 8, 0.1);
+    const churnRate = generateSeries(days, 4, 1, 0); // percent basis points
+    const retention = generateSeries(days, 62, 5, 0.05);
+
+    // Feature usage
+    const featureAdoption = generateSeries(days, 45, 10, 0.2);
+
+    // Funnels (mock steps counts)
+    const funnel = {
+      signup: Math.max(1000, 1200 + Math.round((Math.random() - 0.5) * 200)),
+      activation: Math.max(600, 700 + Math.round((Math.random() - 0.5) * 140)),
+      paid: Math.max(200, 260 + Math.round((Math.random() - 0.5) * 60))
+    };
+
+    // Performance
+    const latencyP95 = generateSeries(days, 420, 60, -0.2);
+    const errorRate = generateSeries(days, 1.2, 0.5, 0);
+    const apiVolume = generateSeries(days, 5200, 800, 3);
+
+    // Revenue
+    const mrr = generateSeries(days, 18000, 1200, 30);
+    const planMix = [
+      { plan: 'Free', pct: 54 },
+      { plan: 'Pro', pct: 34 },
+      { plan: 'Enterprise', pct: 12 },
+    ];
+
+    return { dau, wau, mau, activeOrgs, sessions, signups, churnRate, retention, featureAdoption, funnel, latencyP95, errorRate, apiVolume, mrr, planMix };
+  }, [analyticsRange, analyticsPlan, analyticsSegment]);
+
+  function sumSeries(series: SeriesPoint[]) {
+    return series.reduce((s, p) => s + p.value, 0);
+  }
+
+  function latest(series: SeriesPoint[]) {
+    return series[series.length - 1]?.value ?? 0;
+  }
+
+  function downloadCsv(filename: string, rows: Array<Record<string, string | number>>) {
+    if (!rows.length) return;
+    const headers = Object.keys(rows[0]);
+    const csv = [headers.join(','), ...rows.map(r => headers.map(h => String(r[h])).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 
   // Filter templates
   const filteredTemplates = useMemo(() => {
@@ -266,6 +351,9 @@ export default function ConsoleReportsPage() {
   // Filter generated reports
   const filteredReports = useMemo(() => {
     let filtered = mockGeneratedReports;
+
+    // Ensure only completed reports show in the table so Size is always present
+    filtered = filtered.filter(r => r.status === 'completed');
 
     if (statusFilter !== 'all') {
       filtered = filtered.filter(r => r.status === statusFilter);
@@ -304,14 +392,14 @@ export default function ConsoleReportsPage() {
     const variants: Record<ReportStatus, { variant: any; className: string; icon: any }> = {
       draft: { variant: 'secondary', className: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200', icon: FileText },
       generating: { variant: 'secondary', className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100', icon: RefreshCw },
-      completed: { variant: 'secondary', className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100', icon: CheckCircle2 },
+      completed: { variant: 'outline', className: 'border-green-300 text-green-700 bg-green-50 dark:border-green-700 dark:text-green-300 dark:bg-green-900/30', icon: CheckCircle2 },
       failed: { variant: 'destructive', className: '', icon: AlertCircle },
     };
 
     const config = variants[status];
     const Icon = config.icon;
     return (
-      <Badge variant={config.variant} className={cn(config.className, 'flex items-center gap-1')}>
+      <Badge variant={config.variant} className={cn(config.className, 'flex items-center gap-1 font-normal')}>
         {status === 'generating' && <Icon className="h-3 w-3 animate-spin" />}
         {status !== 'generating' && <Icon className="h-3 w-3" />}
         {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -385,62 +473,7 @@ export default function ConsoleReportsPage() {
         </button>
       </div>
 
-      {/* Overview Stats Cards - Only shown on Overview tab */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary flex-shrink-0" />
-                <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{reportStats.totalGenerated}</div>
-              <p className="text-xs text-muted-foreground mt-1">Generated reports</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-                <CardTitle className="text-sm font-medium">Completed</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{reportStats.completed}</div>
-              <p className="text-xs text-muted-foreground mt-1">Ready for download</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-              <div className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                <CardTitle className="text-sm font-medium">Generating</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{reportStats.generating}</div>
-              <p className="text-xs text-muted-foreground mt-1">In progress</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-              <div className="flex items-center gap-2">
-                <Database className="h-4 w-4 text-primary flex-shrink-0" />
-                <CardTitle className="text-sm font-medium">Total Size</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{reportStats.totalSize.toFixed(1)} MB</div>
-              <p className="text-xs text-muted-foreground mt-1">Data exported</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      
 
       {/* Main Content Tabs */}
       <Card>
@@ -465,6 +498,62 @@ export default function ConsoleReportsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">
+          {/* Overview Stats Cards - moved under tabs header */}
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-primary flex-shrink-0" />
+                    <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{reportStats.totalGenerated}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Generated reports</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <CardTitle className="text-sm font-medium">Completed</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">{reportStats.completed}</div>
+                  <p className="text-xs text-muted-foreground mt-1">Ready for download</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                    <CardTitle className="text-sm font-medium">Generating</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600">{reportStats.generating}</div>
+                  <p className="text-xs text-muted-foreground mt-1">In progress</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
+                  <div className="flex items-center gap-2">
+                    <Database className="h-4 w-4 text-primary flex-shrink-0" />
+                    <CardTitle className="text-sm font-medium">Total Size</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{reportStats.totalSize.toFixed(1)} MB</div>
+                  <p className="text-xs text-muted-foreground mt-1">Data exported</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-4 mt-0">
@@ -543,8 +632,6 @@ export default function ConsoleReportsPage() {
                                 {format(report.createdAt, 'MMM dd, yyyy HH:mm')}
                               </p>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-2">
                             {getStatusBadge(report.status)}
                             {report.status === 'completed' && (
                               <Button variant="ghost" size="icon">
@@ -573,6 +660,14 @@ export default function ConsoleReportsPage() {
                       ].map((template) => {
                         const Icon = template.icon;
                         const templateData = reportTemplates.find(t => t.type === template.type);
+                          const colorClass =
+                            template.type === 'audit'
+                              ? 'text-blue-600'
+                              : template.type === 'analytics'
+                              ? 'text-purple-600'
+                              : template.type === 'billing'
+                              ? 'text-green-600'
+                              : 'text-primary';
                         return (
                           <Button
                             key={template.type}
@@ -585,8 +680,8 @@ export default function ConsoleReportsPage() {
                                 setShowGenerateDialog(true);
                               }
                             }}
-                          >
-                            <Icon className="h-5 w-5" />
+                            >
+                            <Icon className={`h-5 w-5 ${colorClass}`} />
                             <span className="text-sm font-medium">{template.name}</span>
                           </Button>
                         );
@@ -600,98 +695,459 @@ export default function ConsoleReportsPage() {
             {/* Analytics Tab */}
             <TabsContent value="analytics" className="space-y-4 mt-0">
               <div className="space-y-6">
-                {/* Usage Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-                      <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-primary flex-shrink-0" />
-                        <CardTitle className="text-sm font-medium">Avg Reports/Day</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">3.2</div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <TrendingUp className="h-3 w-3 text-green-600" />
-                        <span className="text-xs text-muted-foreground">+8% from last month</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-primary flex-shrink-0" />
-                        <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">124</div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <TrendingUp className="h-3 w-3 text-green-600" />
-                        <span className="text-xs text-muted-foreground">+15% from last month</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary flex-shrink-0" />
-                        <CardTitle className="text-sm font-medium">Avg Generation Time</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">2.4s</div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <TrendingDown className="h-3 w-3 text-green-600" />
-                        <span className="text-xs text-muted-foreground">-12% improvement</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                {/* Controls for analytics */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <span>Product analytics (mock)</span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Select value={String(analyticsRange)} onValueChange={(v) => setAnalyticsRange(Number(v) as TimeRange)}>
+                      <SelectTrigger className="w-full sm:w-36">
+                        <SelectValue placeholder="Range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeRanges.map((d) => (
+                          <SelectItem key={d} value={String(d)}>{d}d</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={analyticsPlan} onValueChange={(v) => setAnalyticsPlan(v as typeof analyticsPlan)}>
+                      <SelectTrigger className="w-full sm:w-36">
+                        <SelectValue placeholder="Plan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All plans</SelectItem>
+                        <SelectItem value="free">Free</SelectItem>
+                        <SelectItem value="pro">Pro</SelectItem>
+                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={analyticsSegment} onValueChange={(v) => setAnalyticsSegment(v as typeof analyticsSegment)}>
+                      <SelectTrigger className="w-full sm:w-40">
+                        <SelectValue placeholder="Segment" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All orgs</SelectItem>
+                        <SelectItem value="sm">SMB</SelectItem>
+                        <SelectItem value="mid">Mid-market</SelectItem>
+                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                {/* Report Usage Trends */}
+                {/* 1) Product Usage */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Report Usage Trends</CardTitle>
-                    <CardDescription>Report generation activity over time</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 flex items-center justify-center border rounded-lg bg-muted/30">
-                      <div className="text-center">
-                        <LineChart className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">Chart visualization would appear here</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Product Usage</CardTitle>
+                        <CardDescription>DAU/WAU/MAU, active orgs, sessions</CardDescription>
                       </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('product-usage.csv', analyticsData.dau.map((p, i) => ({ date: p.date, dau: p.value, wau: analyticsData.wau[i]?.value ?? 0, mau: analyticsData.mau[i]?.value ?? 0, activeOrgs: analyticsData.activeOrgs[i]?.value ?? 0, sessions: analyticsData.sessions[i]?.value ?? 0 })))}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">DAU</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.dau)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">WAU</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.wau)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">MAU</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.mau)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Active Orgs</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.activeOrgs)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Sessions</div>
+                        <div className="text-xl font-semibold">{sumSeries(analyticsData.sessions)}</div>
+                      </div>
+                    </div>
+                    <div className="h-40 rounded-lg border bg-muted/30 overflow-hidden">
+                      <div className="h-full w-full grid grid-cols-12 gap-1 p-2">
+                        {analyticsData.dau.slice(-12).map((p, idx) => (
+                          <div key={p.date} className="flex flex-col justify-end">
+                            <div className="bg-primary/60" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.dau.map(s=>s.value))||1)) * 100)}%` }} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Org</TableHead>
+                            <TableHead>Active Users</TableHead>
+                            <TableHead>Sessions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {[
+                            { org: 'Acme Inc', users: 124, sessions: 980 },
+                            { org: 'Globex', users: 88, sessions: 720 },
+                            { org: 'Initech', users: 76, sessions: 610 },
+                          ].map((r) => (
+                            <TableRow key={r.org} className="hover:bg-accent">
+                              <TableCell className="font-medium">{r.org}</TableCell>
+                              <TableCell>{r.users}</TableCell>
+                              <TableCell>{r.sessions}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Top Report Types */}
+                {/* 2) Growth & Retention */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Most Used Report Types</CardTitle>
-                    <CardDescription>Report types sorted by usage frequency</CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Growth & Retention</CardTitle>
+                        <CardDescription>Signups, churn, cohorts</CardDescription>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('growth-retention.csv', analyticsData.signups.map((p, i) => ({ date: p.date, signups: p.value, churnRate: analyticsData.churnRate[i]?.value ?? 0, retention: analyticsData.retention[i]?.value ?? 0 })))}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">New Signups</div>
+                        <div className="text-xl font-semibold">{sumSeries(analyticsData.signups)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Churn Rate</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.churnRate)}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Retention</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.retention)}%</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                        <div className="text-xs mb-2 text-muted-foreground">Signups trend</div>
+                        <div className="h-[120px] grid grid-cols-12 gap-1">
+                          {analyticsData.signups.slice(-12).map((p) => (
+                            <div key={p.date} className="bg-primary/60" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.signups.map(s=>s.value))||1)) * 100)}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                        <div className="text-xs mb-2 text-muted-foreground">Churn trend</div>
+                        <div className="h-[120px] grid grid-cols-12 gap-1">
+                          {analyticsData.churnRate.slice(-12).map((p) => (
+                            <div key={p.date} className="bg-red-500/70" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.churnRate.map(s=>s.value))||1)) * 100)}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Cohort</TableHead>
+                            <TableHead>W1</TableHead>
+                            <TableHead>W2</TableHead>
+                            <TableHead>W3</TableHead>
+                            <TableHead>W4</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {['2025-09', '2025-10', '2025-11'].map((cohort) => (
+                            <TableRow key={cohort} className="hover:bg-accent">
+                              <TableCell className="font-medium">{cohort}</TableCell>
+                              {[0,1,2,3].map((w) => (
+                                <TableCell key={w}>
+                                  <Badge variant="secondary">{60 - w*5 + Math.round(Math.random()*5)}%</Badge>
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 3) Feature Usage */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Feature Usage</CardTitle>
+                        <CardDescription>Adoption and flag impact</CardDescription>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('feature-usage.csv', [{ feature: 'Projects', adoption: 68, dailyActive: 340, flagImpact: '+5%' }, { feature: 'Integrations', adoption: 52, dailyActive: 220, flagImpact: '+2%' }, { feature: 'Automation', adoption: 34, dailyActive: 150, flagImpact: '+9%' }])}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Features/org (avg)</div>
+                        <div className="text-xl font-semibold">7.2</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Top feature</div>
+                        <div className="text-xl font-semibold">Projects</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Adoption trend</div>
+                        <div className="text-xl font-semibold">+{latest(analyticsData.featureAdoption)}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Flag impact</div>
+                        <div className="text-xl font-semibold">+5%</div>
+                      </div>
+                    </div>
+                    <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                      <div className="text-xs mb-2 text-muted-foreground">Feature adoption</div>
+                      <div className="h-[120px] grid grid-cols-12 gap-1">
+                        {analyticsData.featureAdoption.slice(-12).map((p, i) => (
+                          <div key={i} className="bg-primary/60" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.featureAdoption.map(s=>s.value))||1)) * 100)}%` }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Feature</TableHead>
+                            <TableHead>Adoption</TableHead>
+                            <TableHead>Daily Active</TableHead>
+                            <TableHead>Flag Impact</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {[
+                            { feature: 'Projects', adoption: '68%', daily: 340, impact: '+5% (flag on)' },
+                            { feature: 'Integrations', adoption: '52%', daily: 220, impact: '+2% (flag on)' },
+                            { feature: 'Automation', adoption: '34%', daily: 150, impact: '+9% (flag flip 10/10)' },
+                          ].map((r) => (
+                            <TableRow key={r.feature} className="hover:bg-accent">
+                              <TableCell className="font-medium">{r.feature}</TableCell>
+                              <TableCell>{r.adoption}</TableCell>
+                              <TableCell>{r.daily}</TableCell>
+                              <TableCell>{r.impact}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 4) Funnels */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Funnels</CardTitle>
+                        <CardDescription>Signup → Activation → Conversion</CardDescription>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('funnels.csv', [{ step: 'Signup', count: analyticsData.funnel.signup }, { step: 'Activation', count: analyticsData.funnel.activation }, { step: 'Paid', count: analyticsData.funnel.paid }])}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Signup → Activation</div>
+                        <div className="text-xl font-semibold">{Math.round((analyticsData.funnel.activation / analyticsData.funnel.signup) * 100)}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Activation → Paid</div>
+                        <div className="text-xl font-semibold">{Math.round((analyticsData.funnel.paid / analyticsData.funnel.activation) * 100)}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Overall</div>
+                        <div className="text-xl font-semibold">{Math.round((analyticsData.funnel.paid / analyticsData.funnel.signup) * 100)}%</div>
+                      </div>
+                    </div>
+                    <div className="h-40 rounded-lg border bg-muted/30 p-4 flex items-end gap-4">
                       {[
-                        { type: 'Audit Log Report', count: 45, percentage: 35 },
-                        { type: 'User Analytics Report', count: 32, percentage: 25 },
-                        { type: 'Billing Report', count: 28, percentage: 22 },
-                        { type: 'Security Events Report', count: 15, percentage: 12 },
-                        { type: 'User Directory', count: 8, percentage: 6 },
-                      ].map((item) => (
-                        <div key={item.type} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">{item.type}</span>
-                            <span className="text-sm text-muted-foreground">{item.count} uses</span>
-                          </div>
-                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div className="h-full bg-primary" style={{ width: `${item.percentage}%` }} />
-                          </div>
+                        { label: 'Signup', value: analyticsData.funnel.signup, color: 'bg-primary/70' },
+                        { label: 'Activation', value: analyticsData.funnel.activation, color: 'bg-primary/60' },
+                        { label: 'Paid', value: analyticsData.funnel.paid, color: 'bg-primary/50' },
+                      ].map((s) => (
+                        <div key={s.label} className="flex-1 flex flex-col items-center gap-2">
+                          <div className={`w-8 ${s.color}`} style={{ height: `${(s.value / Math.max(analyticsData.funnel.signup, 1)) * 100}%` }} />
+                          <div className="text-xs text-muted-foreground">{s.label}</div>
                         </div>
                       ))}
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Plan</TableHead>
+                            <TableHead>Signup</TableHead>
+                            <TableHead>Activation</TableHead>
+                            <TableHead>Paid</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {[
+                            { plan: 'Free', s: 900, a: 500, p: 120 },
+                            { plan: 'Pro', s: 250, a: 180, p: 110 },
+                            { plan: 'Enterprise', s: 80, a: 60, p: 30 },
+                          ].map((r) => (
+                            <TableRow key={r.plan} className="hover:bg-accent">
+                              <TableCell className="font-medium">{r.plan}</TableCell>
+                              <TableCell>{r.s}</TableCell>
+                              <TableCell>{r.a}</TableCell>
+                              <TableCell>{r.p}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 5) Performance */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Performance (High-level)</CardTitle>
+                        <CardDescription>Latency, error rates, API volume</CardDescription>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('performance.csv', analyticsData.latencyP95.map((p, i) => ({ date: p.date, p95: p.value, errorPct: analyticsData.errorRate[i]?.value ?? 0, api: analyticsData.apiVolume[i]?.value ?? 0 })))}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">P95 Latency</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.latencyP95)} ms</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Error Rate</div>
+                        <div className="text-xl font-semibold">{latest(analyticsData.errorRate)}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">API Volume</div>
+                        <div className="text-xl font-semibold">{sumSeries(analyticsData.apiVolume)}</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                        <div className="text-xs mb-2 text-muted-foreground">Latency trend</div>
+                        <div className="h-[120px] grid grid-cols-12 gap-1">
+                          {analyticsData.latencyP95.slice(-12).map((p) => (
+                            <div key={p.date} className="bg-primary/60" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.latencyP95.map(s=>s.value))||1)) * 100)}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                        <div className="text-xs mb-2 text-muted-foreground">Error rate trend</div>
+                        <div className="h-[120px] grid grid-cols-12 gap-1">
+                          {analyticsData.errorRate.slice(-12).map((p) => (
+                            <div key={p.date} className="bg-red-500/70" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.errorRate.map(s=>s.value))||1)) * 100)}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Endpoint</TableHead>
+                            <TableHead>Req/min</TableHead>
+                            <TableHead>Error %</TableHead>
+                            <TableHead>P95 (ms)</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {[
+                            { path: 'POST /api/auth/login', rpm: 120, err: '0.4%', p95: 380 },
+                            { path: 'GET /api/projects', rpm: 210, err: '0.9%', p95: 420 },
+                            { path: 'POST /api/checkout', rpm: 60, err: '1.8%', p95: 520 },
+                          ].map((r) => (
+                            <TableRow key={r.path} className="hover:bg-accent">
+                              <TableCell className="font-medium">{r.path}</TableCell>
+                              <TableCell>{r.rpm}</TableCell>
+                              <TableCell>{r.err}</TableCell>
+                              <TableCell>{r.p95}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 6) Revenue KPIs */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-base">Revenue KPIs</CardTitle>
+                        <CardDescription>Summary only (see Billing for details)</CardDescription>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => downloadCsv('revenue.csv', analyticsData.mrr.map((p) => ({ date: p.date, mrr: p.value })))}>
+                        <Download className="h-4 w-4 mr-2" /> Export CSV
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">MRR</div>
+                        <div className="text-xl font-semibold">${latest(analyticsData.mrr).toLocaleString()}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">ARR</div>
+                        <div className="text-xl font-semibold">${(latest(analyticsData.mrr) * 12).toLocaleString()}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Revenue Churn</div>
+                        <div className="text-xl font-semibold">{Math.max(0, 5 - Math.round(Math.random()*2))}%</div>
+                      </div>
+                      <div className="p-3 rounded-lg border">
+                        <div className="text-xs text-muted-foreground">Trial → Paid</div>
+                        <div className="text-xl font-semibold">{25 + Math.round(Math.random()*5)}%</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="h-40 rounded-lg border bg-muted/30 p-2">
+                        <div className="text-xs mb-2 text-muted-foreground">MRR trend</div>
+                        <div className="h-[120px] grid grid-cols-12 gap-1">
+                          {analyticsData.mrr.slice(-12).map((p) => (
+                            <div key={p.date} className="bg-primary/60" style={{ height: `${Math.min(100, (p.value / (Math.max(...analyticsData.mrr.map(s=>s.value))||1)) * 100)}%` }} />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="h-40 rounded-lg border bg-muted/30 p-4 flex items-center justify-center">
+                        <div className="flex items-center gap-6">
+                          {analyticsData.planMix.map((p) => (
+                            <div key={p.plan} className="flex items-center gap-2">
+                              <div className="h-3 w-3 rounded-full bg-primary" />
+                              <span className="text-sm">{p.plan}</span>
+                              <Badge variant="secondary">{p.pct}%</Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -801,16 +1257,15 @@ export default function ConsoleReportsPage() {
                       <TableHead>Report Name</TableHead>
                       <TableHead className="hidden md:table-cell">Type</TableHead>
                       <TableHead className="hidden lg:table-cell">Format</TableHead>
-                      <TableHead className="hidden md:table-cell">Status</TableHead>
                       <TableHead className="hidden lg:table-cell">Created</TableHead>
                       <TableHead className="hidden lg:table-cell">Size</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredReports.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                           No reports found
                         </TableCell>
                       </TableRow>
@@ -831,9 +1286,7 @@ export default function ConsoleReportsPage() {
                               </div>
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
-                              <Badge variant="outline" className="capitalize">
-                                {report.type}
-                              </Badge>
+                              <span className="capitalize text-sm">{report.type}</span>
                             </TableCell>
                             <TableCell className="hidden lg:table-cell">
                               <div className="flex items-center gap-2">
@@ -841,29 +1294,24 @@ export default function ConsoleReportsPage() {
                                 <span className="text-sm">{getFormatName(report.format)}</span>
                               </div>
                             </TableCell>
-                            <TableCell className="hidden md:table-cell">
-                              {getStatusBadge(report.status)}
-                            </TableCell>
                             <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                              {report.createdAt.toLocaleString()}
+                              {format(report.createdAt, 'dd/MM/yyyy HH:mm:ss')}
                             </TableCell>
                             <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                               {report.size || '-'}
                             </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                {report.status === 'completed' && report.downloadUrl && (
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <Button variant="ghost" size="icon">
-                                          <Download className="h-4 w-4" />
-                                        </Button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Download</TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                )}
+                            <TableCell className="text-center">
+                              <div className="flex justify-center gap-2">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button variant="ghost" size="icon">
+                                        <Download className="h-4 w-4" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Download</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
@@ -878,7 +1326,7 @@ export default function ConsoleReportsPage() {
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <Button variant="ghost" size="icon">
-                                        <Trash2 className="h-4 w-4" />
+                                        <Trash2 className="h-4 w-4 text-red-600" />
                                       </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>Delete</TooltipContent>

@@ -15,6 +15,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { useState } from 'react';
+import { formatDateTimeExact } from '@/utils/formatDateTime';
 
 interface AuditTableProps {
   logs: AuditLog[];
@@ -126,13 +127,8 @@ export function AuditTable({ logs, isLoading, onLoadMore, hasMore }: AuditTableP
             {logs.map((log) => (
               <React.Fragment key={log.id}>
                 <TableRow>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm">
-                        {new Date(log.created_at).toLocaleString()}
-                      </span>
-                    </div>
+                  <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                    {formatDateTimeExact(log.created_at)}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

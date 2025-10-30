@@ -3,6 +3,7 @@
 import { useState, Fragment } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -261,7 +262,7 @@ export default function ConsoleDatabasePage() {
                         <TableHead className="hidden md:table-cell">Size</TableHead>
                         <TableHead className="hidden lg:table-cell">Description</TableHead>
                         <TableHead className="hidden lg:table-cell">RLS</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-center w-[96px]">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -440,9 +441,9 @@ export default function ConsoleDatabasePage() {
                                 <TableCell className="font-mono text-sm break-all">{column.type}</TableCell>
                                 <TableCell className="hidden md:table-cell">
                                   {column.nullable ? (
-                                    <Badge variant="secondary">Yes</Badge>
+                                    <Badge className={getBadgeClasses('boolean.yes')}>Yes</Badge>
                                   ) : (
-                                    <Badge variant="outline">No</Badge>
+                                    <Badge className={getBadgeClasses('boolean.no')}>No</Badge>
                                   )}
                                 </TableCell>
                                 <TableCell className="hidden lg:table-cell font-mono text-sm text-muted-foreground break-all">
@@ -598,7 +599,7 @@ export default function ConsoleDatabasePage() {
                       <TableHead>Query</TableHead>
                       <TableHead>Duration</TableHead>
                       <TableHead className="hidden sm:table-cell">Calls</TableHead>
-                      <TableHead>Status</TableHead>
+                            <TableHead className="text-center w-[96px]">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                     <TableBody>
@@ -609,9 +610,7 @@ export default function ConsoleDatabasePage() {
                         <TableCell>234ms</TableCell>
                         <TableCell className="hidden sm:table-cell">156</TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                            Slow
-                          </Badge>
+                          <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -621,9 +620,7 @@ export default function ConsoleDatabasePage() {
                         <TableCell>189ms</TableCell>
                         <TableCell className="hidden sm:table-cell">89</TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">
-                            Slow
-                          </Badge>
+                          <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -685,16 +682,12 @@ export default function ConsoleDatabasePage() {
                           </TableCell>
                           <TableCell>{query.duration}</TableCell>
                           <TableCell className="hidden sm:table-cell">{query.rows.toLocaleString()}</TableCell>
-                          <TableCell>
-                              <div className="w-[80px] flex justify-center">
+                          <TableCell className="w-[96px]">
+                              <div className="flex justify-center">
                                 {query.status === 'success' ? (
-                                  <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 w-[80px] flex justify-center items-center">
-                                    Success
-                                  </Badge>
+                                  <Badge className={`${getBadgeClasses('success.soft')} w-16 flex justify-center items-center`}>Success</Badge>
                                 ) : (
-                                  <Badge variant="destructive" className="w-[80px] flex justify-center items-center">
-                                    Error
-                                  </Badge>
+                                  <Badge className={`${getBadgeClasses('danger.soft')} w-16 flex justify-center items-center`}>Error</Badge>
                                 )}
                               </div>
                             </TableCell>
@@ -719,13 +712,9 @@ export default function ConsoleDatabasePage() {
                                     <div>
                                       <h4 className="font-medium mb-2">Status</h4>
                             {query.status === 'success' ? (
-                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                                          Success
-                              </Badge>
+                              <Badge className={`${getBadgeClasses('success.soft')} w-16 flex justify-center items-center`}>Success</Badge>
                             ) : (
-                              <Badge variant="destructive">
-                                          Error
-                              </Badge>
+                              <Badge className={`${getBadgeClasses('danger.soft')} w-16 flex justify-center items-center`}>Error</Badge>
                             )}
                                     </div>
                                   </div>
@@ -800,9 +789,9 @@ export default function ConsoleDatabasePage() {
                               <TableCell className="font-mono text-sm">{column.type}</TableCell>
                               <TableCell>
                                 {column.nullable ? (
-                                  <Badge variant="secondary">Yes</Badge>
+                                  <Badge className={getBadgeClasses('boolean.yes')}>Yes</Badge>
                                 ) : (
-                                  <Badge variant="outline">No</Badge>
+                                  <Badge className={getBadgeClasses('boolean.no')}>No</Badge>
                                 )}
                               </TableCell>
                               <TableCell className="font-mono text-sm text-muted-foreground">{column.default || '-'}</TableCell>

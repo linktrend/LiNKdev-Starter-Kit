@@ -511,7 +511,7 @@ export default function ConsoleHealthPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Service</TableHead>
-                    <TableHead className="hidden sm:table-cell text-center">Status</TableHead>
+                    <TableHead className="hidden sm:table-cell text-center w-[96px]">Status</TableHead>
                     <TableHead className="hidden md:table-cell">Uptime</TableHead>
                     <TableHead className="hidden lg:table-cell">Response Time</TableHead>
                     <TableHead className="hidden xl:table-cell">Last Check</TableHead>

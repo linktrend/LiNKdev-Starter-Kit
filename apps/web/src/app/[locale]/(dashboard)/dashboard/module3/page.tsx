@@ -159,7 +159,7 @@ export default function Module3Page() {
                 <p className="font-medium">Complete Module 1</p>
                 <p className="text-sm text-muted-foreground">Foundation concepts and basics</p>
               </div>
-              <Badge variant="secondary">Completed</Badge>
+              <Badge variant="outline" className="border border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-900/20 dark:text-green-300 font-normal">Completed</Badge>
             </div>
             
             <div className="flex items-center gap-4">

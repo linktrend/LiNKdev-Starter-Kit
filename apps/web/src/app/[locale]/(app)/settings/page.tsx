@@ -158,9 +158,9 @@ export default function SettingsPage() {
               onClick={() => {}}
             />
           </div>
-        )}
+              </TabsContent>
 
-        {activeTab === 'preferences' && (
+              <TabsContent value="preferences" className="space-y-4 mt-0">
           <div className="grid gap-6 md:grid-cols-2">
             <SettingCard
               icon={<Globe className="h-5 w-5 text-primary" />}

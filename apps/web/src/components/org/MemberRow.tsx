@@ -13,6 +13,7 @@ import {  } from '@/components/ui/';
 import { OrganizationMember, OrgRole } from '@starter/types';
 import { api } from '@/trpc/react';
 import { canManageMembers, canChangeRole } from '@/utils/org';
+import { getUserDisplay } from '@/utils/userDisplay';
 
 interface MemberRowProps {
   member: OrganizationMember;
@@ -106,10 +107,10 @@ export function MemberRow({
           </div>
           <div>
             <p className="font-medium">
-              {member.user?.user_metadata?.full_name || member.user?.email || 'Unknown User'}
+              {getUserDisplay(member.user).primary}
             </p>
             <p className="text-sm text-muted-foreground">
-              {member.user?.email}
+              {getUserDisplay(member.user).secondary}
             </p>
           </div>
         </div>

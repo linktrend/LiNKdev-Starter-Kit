@@ -87,7 +87,7 @@ export default function AutomationsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Workflow Name</TableHead>
-                      <TableHead className="hidden md:table-cell">Status</TableHead>
+                      <TableHead className="hidden md:table-cell text-center">Status</TableHead>
                       <TableHead className="hidden lg:table-cell">Last Run</TableHead>
                       <TableHead className="hidden lg:table-cell">Next Run</TableHead>
                       <TableHead>Actions</TableHead>

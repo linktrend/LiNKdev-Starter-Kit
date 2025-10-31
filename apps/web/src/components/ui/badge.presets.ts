@@ -131,7 +131,7 @@ export function getBadgeClasses(use: PresetKey): string {
     // Deployment
     case 'deployment.success': return BASE.successSoft;
     case 'deployment.in_progress': return BASE.warningSoft;
-    case 'deployment.failed': return BASE.dangerSolid;
+    case 'deployment.failed': return BASE.dangerSoft;
 
     // Priority
     case 'priority.low': return BASE.successSoft;

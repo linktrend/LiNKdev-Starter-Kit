@@ -80,7 +80,7 @@ export default function EnvironmentPage() {
 
             <Card>
               <CardContent className="p-0">
-                <Table>
+                <Table className="font-sans not-prose [&_th]:font-sans [&_td]:font-sans [&_code]:font-sans">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Key</TableHead>
@@ -94,10 +94,10 @@ export default function EnvironmentPage() {
                   <TableBody>
                     {mockEnvVars.map((envVar) => (
                       <TableRow key={envVar.key}>
-                        <TableCell className="font-medium font-mono">{envVar.key}</TableCell>
+                        <TableCell className="font-medium font-sans">{envVar.key}</TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center gap-2 max-w-md">
-                            <code className="text-sm truncate">
+                            <code className="text-sm truncate font-sans">
                               {envVar.type === 'secret' && !showSecrets[envVar.key]
                                 ? '••••••••••••'
                                 : envVar.value}
@@ -106,13 +106,13 @@ export default function EnvironmentPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-6 w-6 p-0"
+                                className="h-7 w-7 p-0"
                                 onClick={() => toggleSecretVisibility(envVar.key)}
                               >
                                 {showSecrets[envVar.key] ? (
-                                  <EyeOff className="h-3 w-3" />
+                                  <EyeOff className="h-5 w-5" />
                                 ) : (
-                                  <Eye className="h-3 w-3" />
+                                  <Eye className="h-5 w-5" />
                                 )}
                               </Button>
                             )}
@@ -136,18 +136,18 @@ export default function EnvironmentPage() {
                           <div className="flex justify-end gap-1">
                             <Button
                               variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
+                              size="icon"
+                              className="p-0"
                               onClick={() => copyToClipboard(envVar.value)}
                             >
-                              <Copy className="h-3 w-3" />
+                              <Copy className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
+                              size="icon"
+                              className="p-0"
                             >
-                              <Trash2 className="h-3 w-3" />
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>

@@ -299,9 +299,11 @@ export function ConsoleFlagsPage() {
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Flags</CardTitle>
-            <Flag className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="space-y-0 pb-2">
+            <div className="flex items-center gap-2">
+              <Flag className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Flags</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
@@ -310,9 +312,11 @@ export function ConsoleFlagsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enabled</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+          <CardHeader className="space-y-0 pb-2">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <CardTitle className="text-sm font-medium">Enabled</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.enabled}</div>
@@ -321,9 +325,11 @@ export function ConsoleFlagsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Disabled</CardTitle>
-            <XCircle className="h-4 w-4 text-red-600" />
+          <CardHeader className="space-y-0 pb-2">
+            <div className="flex items-center gap-2">
+              <XCircle className="h-4 w-4 text-red-600" />
+              <CardTitle className="text-sm font-medium">Disabled</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold text-red-600">{stats.disabled}</div>
@@ -332,9 +338,11 @@ export function ConsoleFlagsPage() {
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Production</CardTitle>
-            <Activity className="h-4 w-4 text-primary" />
+          <CardHeader className="space-y-0 pb-2">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium">Production</CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">{stats.productionFlags}</div>
@@ -421,7 +429,7 @@ export function ConsoleFlagsPage() {
                   <TableHead>Category</TableHead>
                   <TableHead>Environment</TableHead>
                   <TableHead>Enable</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
+                  <TableHead className="text-center w-[96px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -465,8 +473,8 @@ export function ConsoleFlagsPage() {
                             className="data-[state=checked]:bg-green-500 dark:data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-red-500 dark:data-[state=unchecked]:bg-red-600"
                           />
                         </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
+                        <TableCell className="text-center w-[96px]">
+                          <div className="mx-auto inline-flex items-center justify-center gap-1 w-fit">
                             <Button
                               variant="ghost"
                               size="icon"

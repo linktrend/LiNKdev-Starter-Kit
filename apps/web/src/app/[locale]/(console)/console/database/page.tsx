@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { DateTimeCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
+import { TableHeadAction, TableCellAction } from '@/components/ui/table-columns';
+import { TableHeadText, TableHeadNumeric, TableHeadStatus, TableCellText, TableCellNumeric, TableCellStatus, ActionIconsCell } from '@/components/ui/table-cells';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -30,7 +34,8 @@ import {
   X,
   XCircle,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Copy
 } from 'lucide-react';
 
 // Mock data
@@ -129,6 +134,19 @@ export default function ConsoleDatabasePage() {
     }
     setExpandedQueries(newExpanded);
   };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  // Calculate max badge width for Status column
+  const statusBadgeWidth = useMemo(() => {
+    const statuses = mockQueryHistory.map(q => q.status === 'success' ? 'Success' : 'Error');
+    const maxLength = Math.max(...statuses.map(s => s.length));
+    // Approximate width: ~0.6rem per character + padding (px-2.5 = 10px on each side = 20px total)
+    // Base on text-xs and approximate character width
+    return `${Math.max(maxLength * 8 + 20, 64)}px`; // Minimum 64px, scale with text length
+  }, []);
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
@@ -257,18 +275,18 @@ export default function ConsoleDatabasePage() {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Table Name</TableHead>
-                        <TableHead className="hidden sm:table-cell">Rows</TableHead>
-                        <TableHead className="hidden md:table-cell">Size</TableHead>
-                        <TableHead className="hidden lg:table-cell">Description</TableHead>
-                        <TableHead className="hidden lg:table-cell">RLS</TableHead>
-                        <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="w-[25%]">Table Name</TableHeadText>
+                        <TableHeadText className="hidden sm:table-cell w-24">Rows</TableHeadText>
+                        <TableHeadText className="hidden md:table-cell w-28">Size</TableHeadText>
+                        <TableHeadText className="hidden lg:table-cell w-[50%]">Description</TableHeadText>
+                        <TableHeadStatus className="hidden lg:table-cell w-16">RLS</TableHeadStatus>
+                        <TableHeadAction className="w-20">Actions</TableHeadAction>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredTables.map((table) => (
                         <TableRow key={table.name}>
-                          <TableCell className="font-medium">
+                          <TableCellText className="font-medium w-[25%]">
                             <div className="flex flex-col gap-1">
                               <div>{table.name}</div>
                               <div className="text-xs text-muted-foreground sm:hidden">
@@ -279,11 +297,11 @@ export default function ConsoleDatabasePage() {
                                 {table.description}
                               </div>
                             </div>
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">{table.rows.toLocaleString()}</TableCell>
-                          <TableCell className="hidden md:table-cell">{table.size}</TableCell>
-                          <TableCell className="hidden lg:table-cell text-muted-foreground">{table.description}</TableCell>
-                          <TableCell className="hidden lg:table-cell text-center">
+                          </TableCellText>
+                          <TableCellText className="hidden sm:table-cell w-24">{table.rows.toLocaleString()}</TableCellText>
+                          <TableCellText className="hidden md:table-cell w-28">{table.size}</TableCellText>
+                          <TableCellText className="hidden lg:table-cell text-muted-foreground w-[50%]">{table.description}</TableCellText>
+                          <TableCellStatus className="hidden lg:table-cell w-16">
                             {table.rls ? (
                               <div className="flex items-center justify-center cursor-help">
                                 <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -293,17 +311,17 @@ export default function ConsoleDatabasePage() {
                                 <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
                               </div>
                             )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
+                          </TableCellStatus>
+                          <TableCellAction className="w-20">
+                            <ActionIconsCell>
                               <button
                                 onClick={() => setViewTableDialog(table.name)}
                                 className="p-2 hover:bg-accent rounded-lg transition-colors"
                               >
                                 <Eye className="h-4 w-4" />
                               </button>
-                            </div>
-                          </TableCell>
+                            </ActionIconsCell>
+                          </TableCellAction>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -596,32 +614,32 @@ export default function ConsoleDatabasePage() {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Query</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead className="hidden sm:table-cell">Calls</TableHead>
-                            <TableHead className="text-center w-[96px]">Status</TableHead>
+                      <TableHeadText className="min-w-0">Query</TableHeadText>
+                      <TableHeadNumeric className="w-24">Duration</TableHeadNumeric>
+                      <TableHeadNumeric className="hidden sm:table-cell w-20">Calls</TableHeadNumeric>
+                            <TableHeadStatus className="w-20">Status</TableHeadStatus>
                     </TableRow>
                   </TableHeader>
                     <TableBody>
                       <TableRow>
-                        <TableCell className="font-mono text-xs sm:text-sm break-all">
+                        <TableCellText className="font-mono text-xs sm:text-sm break-all min-w-0">
                           SELECT * FROM audit_logs WHERE created_at &gt; NOW() - INTERVAL '1 day'
-                        </TableCell>
-                        <TableCell>234ms</TableCell>
-                        <TableCell className="hidden sm:table-cell">156</TableCell>
-                        <TableCell>
+                        </TableCellText>
+                        <TableCellNumeric className="w-24">234ms</TableCellNumeric>
+                        <TableCellNumeric className="hidden sm:table-cell w-20">156</TableCellNumeric>
+                        <TableCellStatus className="w-20">
                           <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
-                        </TableCell>
+                        </TableCellStatus>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-mono text-xs sm:text-sm break-all">
+                        <TableCellText className="font-mono text-xs sm:text-sm break-all min-w-0">
                           SELECT COUNT(*) FROM records WHERE org_id = $1
-                        </TableCell>
-                        <TableCell>189ms</TableCell>
-                        <TableCell className="hidden sm:table-cell">89</TableCell>
-                        <TableCell>
+                        </TableCellText>
+                        <TableCellNumeric className="w-24">189ms</TableCellNumeric>
+                        <TableCellNumeric className="hidden sm:table-cell w-20">89</TableCellNumeric>
+                        <TableCellStatus className="w-20">
                           <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
-                        </TableCell>
+                        </TableCellStatus>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -642,91 +660,139 @@ export default function ConsoleDatabasePage() {
                   Refresh
                 </Button>
               </div>
-              <div className="overflow-x-auto">
-                <Table className="w-full">
+              <TableContainer id="database-query-history-table" height="lg">
+                <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="hidden md:table-cell">Executed At</TableHead>
-                      <TableHead>Query</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead className="hidden sm:table-cell">Rows</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHeadText className="hidden md:table-cell w-44">Executed At</TableHeadText>
+                      <TableHeadText className="min-w-0">Query</TableHeadText>
+                      <TableHeadNumeric className="w-24">Duration</TableHeadNumeric>
+                      <TableHeadNumeric className="hidden sm:table-cell w-20">Rows</TableHeadNumeric>
+                      <TableHeadStatus className="w-28">Status</TableHeadStatus>
                     </TableRow>
                   </TableHeader>
                     <TableBody>
-                      {mockQueryHistory.map((query) => (
-                        <Fragment key={query.id}>
-                          <TableRow>
-                            <TableCell className="hidden md:table-cell text-muted-foreground">{query.executedAt}</TableCell>
-                            <TableCell>
-                              <div className="flex flex-col gap-2">
-                                <p className="text-sm font-medium break-words">{query.query}</p>
-                                <button
-                                  onClick={() => toggleQueryExpanded(query.id)}
-                                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start"
-                                >
-                                  {expandedQueries.has(query.id) ? (
-                                    <>
-                                      <ChevronUp className="h-3 w-3" />
-                                      <span>Details</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <ChevronDown className="h-3 w-3" />
-                                      <span>Details</span>
-                                    </>
-                                  )}
-                                </button>
-                              <span className="text-xs text-muted-foreground md:hidden">{query.executedAt}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{query.duration}</TableCell>
-                          <TableCell className="hidden sm:table-cell">{query.rows.toLocaleString()}</TableCell>
-                          <TableCell className="w-[96px]">
-                              <div className="flex justify-center">
-                                {query.status === 'success' ? (
-                                  <Badge className={`${getBadgeClasses('success.soft')} w-16 flex justify-center items-center`}>Success</Badge>
-                                ) : (
-                                  <Badge className={`${getBadgeClasses('danger.soft')} w-16 flex justify-center items-center`}>Error</Badge>
-                                )}
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                          {expandedQueries.has(query.id) && (
+                      {mockQueryHistory.map((query) => {
+                        // Parse executedAt string to Date for formatting
+                        const executedDate = new Date(query.executedAt.replace(' ', 'T'));
+                        const isValidDate = !isNaN(executedDate.getTime());
+                        
+                        return (
+                          <Fragment key={query.id}>
                             <TableRow>
-                              <TableCell colSpan={5} className="bg-muted/50 p-3 sm:p-4">
-                                <div className="space-y-4">
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div>
-                                      <h4 className="font-medium mb-2">Executed At</h4>
-                                      <p className="text-sm text-muted-foreground">{query.executedAt}</p>
-                                    </div>
-                                    <div>
-                                      <h4 className="font-medium mb-2">Duration</h4>
-                                      <p className="text-sm text-muted-foreground">{query.duration}</p>
-                                    </div>
-                                    <div>
-                                      <h4 className="font-medium mb-2">Rows Returned</h4>
-                                      <p className="text-sm text-muted-foreground">{query.rows.toLocaleString()}</p>
-                                    </div>
-                                    <div>
-                                      <h4 className="font-medium mb-2">Status</h4>
-                            {query.status === 'success' ? (
-                              <Badge className={`${getBadgeClasses('success.soft')} w-16 flex justify-center items-center`}>Success</Badge>
-                            ) : (
-                              <Badge className={`${getBadgeClasses('danger.soft')} w-16 flex justify-center items-center`}>Error</Badge>
-                            )}
+                              <TableCellText className="hidden md:table-cell w-44">
+                                {isValidDate ? (
+                                  <DateTimeCell date={executedDate} />
+                                ) : (
+                                  <div className="flex flex-col">
+                                    <span className="text-sm">{query.executedAt.split(' ')[0]}</span>
+                                    <span className="text-xs text-muted-foreground">{query.executedAt.split(' ')[1] || ''}</span>
+                                  </div>
+                                )}
+                              </TableCellText>
+                              <TableCellText className="min-w-0">
+                                <div className="min-w-0">
+                                  <div className="flex flex-col gap-2">
+                                    <p className="text-sm font-medium break-words line-clamp-2">{query.query}</p>
+                                    <DetailsLink
+                                      isExpanded={expandedQueries.has(query.id)}
+                                      onToggle={() => toggleQueryExpanded(query.id)}
+                                    />
+                                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground md:hidden">
+                                      <span>{isValidDate ? executedDate.toLocaleDateString() : query.executedAt.split(' ')[0]}</span>
+                                      <span>•</span>
+                                      <span>{isValidDate ? executedDate.toLocaleTimeString() : query.executedAt.split(' ')[1] || ''}</span>
                                     </div>
                                   </div>
                                 </div>
-                          </TableCell>
-                        </TableRow>
-                          )}
-                        </Fragment>
-                      ))}
+                              </TableCellText>
+                              <TableCellNumeric className="w-24">{query.duration}</TableCellNumeric>
+                              <TableCellNumeric className="hidden sm:table-cell w-20">{query.rows.toLocaleString()}</TableCellNumeric>
+                              <TableCellStatus className="w-28">
+                                {query.status === 'success' ? (
+                                  <Badge 
+                                    className={`${getBadgeClasses('success.soft')} flex justify-center items-center`}
+                                    style={{ width: statusBadgeWidth, minWidth: '64px' }}
+                                  >
+                                    Success
+                                  </Badge>
+                                ) : (
+                                  <Badge 
+                                    className={`${getBadgeClasses('danger.soft')} flex justify-center items-center`}
+                                    style={{ width: statusBadgeWidth, minWidth: '64px' }}
+                                  >
+                                    Error
+                                  </Badge>
+                                )}
+                              </TableCellStatus>
+                            </TableRow>
+                            {expandedQueries.has(query.id) && (
+                              <TableRow>
+                                <ExpandedRowCell colSpan={5}>
+                                  <div className="space-y-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                      <div>
+                                        <h4 className="font-medium mb-2">Executed At</h4>
+                                        <p className="text-sm text-muted-foreground font-mono">{query.executedAt}</p>
+                                      </div>
+                                      <div>
+                                        <h4 className="font-medium mb-2">Duration</h4>
+                                        <p className="text-sm text-muted-foreground font-mono">{query.duration}</p>
+                                      </div>
+                                      <div>
+                                        <h4 className="font-medium mb-2">Rows Returned</h4>
+                                        <p className="text-sm text-muted-foreground font-mono">{query.rows.toLocaleString()}</p>
+                                      </div>
+                                      <div>
+                                        <h4 className="font-medium mb-2">Status</h4>
+                                        {query.status === 'success' ? (
+                                          <Badge 
+                                            className={`${getBadgeClasses('success.soft')} flex justify-center items-center`}
+                                            style={{ width: statusBadgeWidth, minWidth: '64px' }}
+                                          >
+                                            Success
+                                          </Badge>
+                                        ) : (
+                                          <Badge 
+                                            className={`${getBadgeClasses('danger.soft')} flex justify-center items-center`}
+                                            style={{ width: statusBadgeWidth, minWidth: '64px' }}
+                                          >
+                                            Error
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {query.query && query.query.length > 100 && (
+                                      <div>
+                                        <h4 className="font-medium mb-2 flex items-center gap-2">
+                                          <Database className="h-4 w-4" />
+                                          Full Query
+                                        </h4>
+                                        <div className="relative">
+                                          <pre className="text-xs bg-background p-3 rounded border overflow-auto max-h-48 font-mono">
+                                            {query.query}
+                                          </pre>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="absolute top-2 right-2"
+                                            onClick={() => copyToClipboard(query.query)}
+                                          >
+                                            <Copy className="h-3 w-3" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </ExpandedRowCell>
+                              </TableRow>
+                            )}
+                          </Fragment>
+                        );
+                      })}
                     </TableBody>
                   </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
           </Tabs>
         </CardContent>

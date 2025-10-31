@@ -2,25 +2,53 @@ import * as React from 'react';
 
 import { cn } from '@/utils/cn';
 
+export type TableDensity = 'compact' | 'comfortable' | 'expanded';
+
+export interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
+  density?: TableDensity;
+}
+
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  TableProps
+>(({ className, density = 'comfortable', ...props }, ref) => {
+  const densityClasses = {
+    compact: '[&_td]:min-h-[40px] [&_th]:h-10',
+    comfortable: '[&_td]:min-h-[48px] [&_th]:h-12',
+    expanded: '[&_td]:min-h-[56px] [&_th]:h-14',
+  };
+
+  return (
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm', className)}
+      role="table"
+      className={cn(
+        'w-full caption-bottom text-sm',
+        // Fixed layout for header/body alignment
+        'table-fixed',
+        densityClasses[density],
+        className
+      )}
       {...props}
     />
-  </div>
-));
+  );
+});
 Table.displayName = 'Table';
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn('[&_tr]:border-b', className)} {...props} />
+  <thead 
+    ref={ref} 
+    className={cn(
+      '[&_tr]:border-b [&_tr]:border-border/50',
+      // Sticky header for vertical scrolling
+      '[&_tr]:sticky [&_tr]:top-0 [&_tr]:z-10 [&_tr]:bg-background',
+      className
+    )} 
+    {...props} 
+  />
 ));
 TableHeader.displayName = 'TableHeader';
 
@@ -57,8 +85,12 @@ const TableRow = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tr
     ref={ref}
+    role="row"
     className={cn(
-      'border-b transition-colors hover:bg-zinc-100/50 data-[state=selected]:bg-zinc-100 dark:hover:bg-zinc-800/50 dark:data-[state=selected]:bg-zinc-800',
+      'border-b border-border/50 transition-colors',
+      'hover:bg-muted/30',
+      'data-[state=selected]:bg-muted',
+      'min-h-[48px]',
       className
     )}
     {...props}
@@ -72,8 +104,9 @@ const TableHead = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <th
     ref={ref}
+    role="columnheader"
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-zinc-500 [&:has([role=checkbox])]:pr-0 dark:text-zinc-400',
+      'h-12 px-4 text-left align-middle font-medium text-sm text-muted-foreground [&:has([role=checkbox])]:pr-0',
       className
     )}
     {...props}
@@ -87,7 +120,17 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)}
+    role="cell"
+    className={cn(
+      'px-4 py-3 align-middle [&:has([role=checkbox])]:pr-0',
+      // Standard text styling
+      'text-sm text-foreground/90',
+      // Allow wrapping with line clamp for long content
+      'whitespace-normal break-words',
+      // Consistent min height
+      'min-h-[48px]',
+      className
+    )}
     {...props}
   />
 ));

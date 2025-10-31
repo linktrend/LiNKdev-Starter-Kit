@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   Select,
@@ -548,12 +549,12 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Task</TableHead>
-                      <TableHead className="hidden sm:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden md:table-cell">Priority</TableHead>
-                      <TableHead className="hidden md:table-cell">Assignee</TableHead>
-                      <TableHead className="hidden lg:table-cell">Due Date</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHead className="min-w-0">Task</TableHead>
+                      <TableHead className="hidden sm:table-cell text-center w-36">Status</TableHead>
+                      <TableHead className="hidden md:table-cell w-36">Priority</TableHead>
+                      <TableHead className="hidden md:table-cell w-36">Assignee</TableHead>
+                      <TableHead className="hidden lg:table-cell w-40">Due Date</TableHead>
+                      <TableHead className="text-center w-36">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -572,7 +573,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                     ) : (
                       filteredTasks.map((task) => (
                         <TableRow key={task.id}>
-                          <TableCell>
+                          <TableCell className="min-w-0">
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center gap-2">
                                 {getStatusIcon(task.status as TaskStatus)}
@@ -595,16 +596,16 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="hidden sm:table-cell">
+                          <TableCell className="hidden sm:table-cell text-center w-36">
                             {getStatusBadge(task.status as TaskStatus)}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden md:table-cell w-36">
                             {getPriorityBadge(task.priority as TaskPriority)}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden md:table-cell w-36">
                             <span className="text-sm">{formatAssignee(task)}</span>
                           </TableCell>
-                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground w-40">
                             {task.due_date ? (
                               <span className={cn(
                                 new Date(task.due_date) < new Date() && task.status !== 'done' && 'text-red-600 font-medium'
@@ -615,7 +616,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                               '-'
                             )}
                           </TableCell>
-                          <TableCell className="w-[96px] text-right">
+                          <TableCell className="text-center w-36">
                             <div className="flex justify-end gap-2">
                               <TooltipProvider>
                                 <Tooltip>

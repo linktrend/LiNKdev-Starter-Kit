@@ -9,6 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { DateTimeCell, UserOrgCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
+import { TableColgroup, TableHeadAction, TableCellAction, COLUMN_WIDTHS, type ColumnDef } from '@/components/ui/table-columns';
+import { TableHeadText, TableHeadNumeric, TableHeadStatus, TableCellText, TableCellNumeric, TableCellStatus, ActionIconsCell } from '@/components/ui/table-cells';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -44,7 +48,6 @@ import {
   Archive,
   MoreHorizontal,
   Send,
-  Credit,
   Receipt,
   Tag,
   Building2,
@@ -635,7 +638,7 @@ export default function ConsoleBillingPage() {
 
   const getStatusBadge = (status: SubscriptionStatus | InvoiceStatus | PlanStatus | string) => {
     const variants: Record<string, { className: string; label: string }> = {
-      active: { className: 'border border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-900/20 dark:text-green-300', label: 'Active' },
+      active: { className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100', label: 'Active' },
       trial: { className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100', label: 'Trial' },
       past_due: { className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100', label: 'Past Due' },
       cancelled: { className: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200', label: 'Cancelled' },
@@ -955,47 +958,47 @@ export default function ConsoleBillingPage() {
               </div>
 
               {/* Plans Table */}
-              <div className="overflow-x-auto">
+              <TableContainer id="billing-plans-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Plan Name</TableHead>
-                      <TableHead className="hidden sm:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden md:table-cell">Monthly Price</TableHead>
-                      <TableHead className="hidden md:table-cell">Yearly Price</TableHead>
-                      <TableHead className="hidden lg:table-cell">Trial Period</TableHead>
-                      <TableHead className="hidden lg:table-cell">Subscriptions</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="w-[25%]">Plan Name</TableHeadText>
+                      <TableHeadStatus className="hidden sm:table-cell w-36">Status</TableHeadStatus>
+                      <TableHeadNumeric className="hidden md:table-cell w-36">Monthly Price</TableHeadNumeric>
+                      <TableHeadNumeric className="hidden md:table-cell w-36">Yearly Price</TableHeadNumeric>
+                      <TableHeadNumeric className="hidden lg:table-cell w-36">Trial Period</TableHeadNumeric>
+                      <TableHeadNumeric className="hidden lg:table-cell w-36">Subscriptions</TableHeadNumeric>
+                      <TableHeadAction className="w-28">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredPlans.map((plan) => (
                       <TableRow key={plan.id}>
-                        <TableCell>
+                        <TableCellText className="w-[25%]">
                           <div className="flex flex-col gap-1">
                             <div className="font-medium">{plan.name}</div>
                             <div className="text-xs text-muted-foreground sm:hidden">
                               Status: {plan.status} • ${plan.monthlyPrice}/mo
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-center">
+                        </TableCellText>
+                        <TableCellStatus className="hidden sm:table-cell w-36">
                           {getStatusBadge(plan.status)}
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
+                        </TableCellStatus>
+                        <TableCellNumeric className="hidden md:table-cell w-36">
                           ${plan.monthlyPrice}/mo
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
+                        </TableCellNumeric>
+                        <TableCellNumeric className="hidden md:table-cell w-36">
                           ${plan.yearlyPrice}/yr
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        </TableCellNumeric>
+                        <TableCellNumeric className="hidden lg:table-cell w-36">
                           {plan.trialDays} days
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        </TableCellNumeric>
+                        <TableCellNumeric className="hidden lg:table-cell w-36">
                           {plan.subscriptionsCount}
-                        </TableCell>
-                        <TableCell className="text-center w-[96px] px-2">
-                          <div className="flex justify-center gap-1">
+                        </TableCellNumeric>
+                        <TableCellAction className="w-28">
+                          <ActionIconsCell>
                             <Button variant="ghost" size="icon" onClick={() => { setSelectedPlan(plan); setShowPlanDialog(true); }}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -1005,13 +1008,13 @@ export default function ConsoleBillingPage() {
                             <Button variant="ghost" size="icon">
                               <Archive className="h-4 w-4" />
                             </Button>
-                          </div>
-                        </TableCell>
+                          </ActionIconsCell>
+                        </TableCellAction>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
 
               {/* Feature Management Section */}
               <Card>
@@ -1028,13 +1031,17 @@ export default function ConsoleBillingPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
+                  <TableContainer id="billing-features-table" height="md">
                     <Table>
+                      <TableColgroup columns={[
+                        { width: 'lg' },
+                        ...mockPlans.map(() => ({ width: 'md' as const })),
+                      ]} />
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="min-w-[220px] sticky left-0 bg-background z-10">Feature</TableHead>
+                          <TableHead className="sticky left-0 bg-background z-10">Feature</TableHead>
                           {mockPlans.map((plan) => (
-                            <TableHead key={plan.id} className="text-center min-w-[140px]">{plan.name}</TableHead>
+                            <TableHeadAction key={plan.id}>{plan.name}</TableHeadAction>
                           ))}
                         </TableRow>
                       </TableHeader>
@@ -1056,7 +1063,7 @@ export default function ConsoleBillingPage() {
                         ))}
                       </TableBody>
                     </Table>
-                  </div>
+                  </TableContainer>
                   <div className="flex justify-end mt-4">
                     <Button
                       disabled={!hasUnsavedChanges}
@@ -1185,99 +1192,91 @@ export default function ConsoleBillingPage() {
               </div>
 
               {/* Subscriptions Table */}
-              <div className="overflow-x-auto">
+              <TableContainer id="billing-subscriptions-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Organization</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead className="hidden md:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden md:table-cell md:w-[140px] lg:w-[160px] whitespace-nowrap">Billing Cycle</TableHead>
-                      <TableHead className="hidden lg:table-cell lg:w-[224px] whitespace-nowrap">Next Billing</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="w-[200px]">Organization</TableHeadText>
+                      <TableHeadText className="w-[180px]">User</TableHeadText>
+                      <TableHeadStatus className="hidden md:table-cell w-[150px]">Status</TableHeadStatus>
+                      <TableHeadText className="hidden md:table-cell w-[150px]">Billing Cycle</TableHeadText>
+                      <TableHeadText className="hidden lg:table-cell w-[150px]">Next Billing</TableHeadText>
+                      <TableHeadAction className="w-[150px]">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredSubscriptions.map((subscription) => (
                       <>
                         <TableRow key={subscription.id}>
-                          <TableCell>
-                            <div className="flex flex-col gap-1 min-w-[160px] max-w-[220px]">
-                              <div className="font-medium truncate">{subscription.organizationName}</div>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setExpandedRows((prev) => {
-                                    const next = new Set(prev);
-                                    if (next.has(subscription.id)) next.delete(subscription.id); else next.add(subscription.id);
-                                    return next;
-                                  });
-                                }}
-                                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start"
-                              >
-                                {expandedRows.has(subscription.id) ? (
-                                  <>
-                                    <ChevronUp className="h-3 w-3" />
-                                    <span>Details</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <ChevronDown className="h-3 w-3" />
-                                    <span>Details</span>
-                                  </>
-                                )}
-                              </button>
+                          <TableCellText className="w-[200px]">
+                            <div className="min-w-0">
+                              <div className="flex flex-col gap-2">
+                                <p className="text-sm font-medium break-words line-clamp-2">
+                                  {subscription.organizationName}
+                                </p>
+                                <DetailsLink
+                                  isExpanded={expandedRows.has(subscription.id)}
+                                  onToggle={() => {
+                                    setExpandedRows((prev) => {
+                                      const next = new Set(prev);
+                                      if (next.has(subscription.id)) next.delete(subscription.id); else next.add(subscription.id);
+                                      return next;
+                                    });
+                                  }}
+                                />
+                              </div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1 min-w-[160px] max-w-[200px]">
-                              <div className="font-medium truncate">{getUserDisplay(subscription.user).primary}</div>
-                              <div className="text-sm text-muted-foreground truncate">{getUserDisplay(subscription.user).secondary}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell text-center w-[96px]">
-                            <div className="flex justify-center">
-                              {getStatusBadge(subscription.status)}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell md:w-[140px] lg:w-[160px] whitespace-nowrap capitalize">{subscription.billingCycle}</TableCell>
-                          <TableCell className="hidden lg:table-cell lg:w-[224px] whitespace-nowrap">
+                          </TableCellText>
+                          <TableCellText className="w-[180px]">
+                            <UserOrgCell
+                              primary={getUserDisplay(subscription.user).primary}
+                              secondary={getUserDisplay(subscription.user).secondary}
+                              className="min-w-0"
+                            />
+                          </TableCellText>
+                          <TableCellStatus className="hidden md:table-cell w-[150px]">
+                            {getStatusBadge(subscription.status)}
+                          </TableCellStatus>
+                          <TableCellText className="hidden md:table-cell capitalize whitespace-nowrap w-[150px]">{subscription.billingCycle}</TableCellText>
+                          <TableCellText className="hidden lg:table-cell whitespace-nowrap w-[150px]">
                             {format(subscription.nextBillingDate, 'MMM dd, yyyy')}
-                          </TableCell>
-                          <TableCell className="w-[96px] text-right">
-                            <div className="flex justify-end gap-2">
+                          </TableCellText>
+                          <TableCellAction className="w-[150px]">
+                            <ActionIconsCell>
                               <Button variant="ghost" size="icon" onClick={() => { setSelectedSubscription(subscription); setShowSubscriptionDialog(true); }}>
                                 <Eye className="h-4 w-4" />
                               </Button>
                               <Button variant="ghost" size="icon">
                                 <Edit className="h-4 w-4" />
                               </Button>
-                            </div>
-                          </TableCell>
+                            </ActionIconsCell>
+                          </TableCellAction>
                         </TableRow>
-                      {expandedRows?.has?.(subscription.id) && (
-                        <TableRow>
-                          <TableCell colSpan={8} className="bg-muted/50 p-3 sm:p-4 align-middle [&:has([role=checkbox])]:pr-0">
-                            <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-                              <div className="sm:col-start-1 sm:col-span-1">
-                                <h4 className="font-medium mb-1">Plan</h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {(mockPlans.find(p => p.id === subscription.planId)?.name) ?? subscription.planName}
-                                </p>
+                        {expandedRows.has(subscription.id) && (
+                          <TableRow>
+                            <ExpandedRowCell colSpan={6}>
+                              <div className="space-y-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                  <div>
+                                    <h4 className="font-medium mb-2">Plan</h4>
+                                    <p className="text-sm text-muted-foreground font-mono">
+                                      {(mockPlans.find(p => p.id === subscription.planId)?.name) ?? subscription.planName}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium mb-2">Amount</h4>
+                                    <p className="text-sm text-muted-foreground font-mono">${subscription.amount}/mo</p>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="sm:col-start-2 sm:col-span-1">
-                                <h4 className="font-medium mb-1">Amount</h4>
-                                <p className="text-sm text-muted-foreground">${subscription.amount}/mo</p>
-                              </div>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
+                            </ExpandedRowCell>
+                          </TableRow>
+                        )}
                       </>
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
 
             {/* Revenue & Analytics Tab */}
@@ -1458,34 +1457,32 @@ export default function ConsoleBillingPage() {
               </div>
 
               {/* Invoices Table */}
-              <div className="overflow-x-auto">
+              <TableContainer id="billing-invoices-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice Number</TableHead>
-                      <TableHead className="hidden sm:table-cell">Organization</TableHead>
-                      <TableHead className="hidden md:table-cell">Amount</TableHead>
-                      <TableHead className="hidden md:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden lg:table-cell">Due Date</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="w-36">Invoice Number</TableHeadText>
+                      <TableHeadText className="hidden sm:table-cell w-[25%]">Organization</TableHeadText>
+                      <TableHeadNumeric className="hidden md:table-cell w-[105px]">Amount</TableHeadNumeric>
+                      <TableHeadStatus className="hidden md:table-cell w-[105px]">Status</TableHeadStatus>
+                      <TableHeadText className="hidden lg:table-cell w-[105px]">Due Date</TableHeadText>
+                      <TableHeadAction className="w-24">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredInvoices.map((invoice) => (
                       <TableRow key={invoice.id}>
-                        <TableCell className="font-medium">{invoice.number}</TableCell>
-                        <TableCell className="hidden sm:table-cell">{invoice.organizationName}</TableCell>
-                        <TableCell className="hidden md:table-cell">${invoice.amount}</TableCell>
-                        <TableCell className="hidden md:table-cell w-[96px]">
-                          <div className="flex justify-center">
-                            {getStatusBadge(invoice.status)}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        <TableCellText className="font-medium w-36">{invoice.number}</TableCellText>
+                        <TableCellText className="hidden sm:table-cell w-[25%]">{invoice.organizationName}</TableCellText>
+                        <TableCellNumeric className="hidden md:table-cell w-[105px]">${invoice.amount}</TableCellNumeric>
+                        <TableCellStatus className="hidden md:table-cell w-[105px]">
+                          {getStatusBadge(invoice.status)}
+                        </TableCellStatus>
+                        <TableCellText className="hidden lg:table-cell w-[105px]">
                           {format(invoice.dueDate, 'MMM dd, yyyy')}
-                        </TableCell>
-                        <TableCell className="w-[96px] text-right">
-                          <div className="flex justify-end gap-2">
+                        </TableCellText>
+                        <TableCellAction className="w-24">
+                          <ActionIconsCell>
                             <Button variant="ghost" size="icon" onClick={() => { setSelectedInvoice(invoice); setShowInvoiceDialog(true); }}>
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -1495,13 +1492,13 @@ export default function ConsoleBillingPage() {
                             <Button variant="ghost" size="icon">
                               <Mail className="h-4 w-4" />
                             </Button>
-                          </div>
-                        </TableCell>
+                          </ActionIconsCell>
+                        </TableCellAction>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
 
               {/* Payment Issues Section */}
               <Card>
@@ -1565,40 +1562,38 @@ export default function ConsoleBillingPage() {
               </div>
 
               {/* Coupons Table */}
-              <div className="overflow-x-auto">
+              <TableContainer id="billing-coupons-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead className="hidden sm:table-cell">Discount Type</TableHead>
-                      <TableHead className="hidden md:table-cell">Value</TableHead>
-                      <TableHead className="hidden md:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden lg:table-cell">Usage Count</TableHead>
-                      <TableHead className="hidden lg:table-cell">Valid Until</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="w-[20%]">Code</TableHeadText>
+                      <TableHeadText className="hidden sm:table-cell w-36">Discount Type</TableHeadText>
+                      <TableHeadNumeric className="hidden md:table-cell w-36">Value</TableHeadNumeric>
+                      <TableHeadStatus className="hidden md:table-cell w-36">Status</TableHeadStatus>
+                      <TableHeadNumeric className="hidden lg:table-cell w-36">Usage Count</TableHeadNumeric>
+                      <TableHeadText className="hidden lg:table-cell w-36">Valid Until</TableHeadText>
+                      <TableHeadAction className="w-36">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredCoupons.map((coupon) => (
                       <TableRow key={coupon.id}>
-                        <TableCell className="font-mono font-medium">{coupon.code}</TableCell>
-                        <TableCell className="hidden sm:table-cell capitalize">{coupon.discountType}</TableCell>
-                        <TableCell className="hidden md:table-cell">
+                        <TableCellText className="font-mono font-medium w-[20%]">{coupon.code}</TableCellText>
+                        <TableCellText className="hidden sm:table-cell capitalize w-36">{coupon.discountType}</TableCellText>
+                        <TableCellNumeric className="hidden md:table-cell w-36">
                           {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `$${coupon.discountValue}`}
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell w-[96px]">
-                          <div className="flex justify-center">
-                            {getStatusBadge(coupon.status)}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        </TableCellNumeric>
+                        <TableCellStatus className="hidden md:table-cell w-36">
+                          {getStatusBadge(coupon.status)}
+                        </TableCellStatus>
+                        <TableCellNumeric className="hidden lg:table-cell w-36">
                           {coupon.usageCount} / {coupon.usageLimit ?? '∞'}
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        </TableCellNumeric>
+                        <TableCellText className="hidden lg:table-cell w-36">
                           {format(coupon.validUntil, 'MMM dd, yyyy')}
-                        </TableCell>
-                        <TableCell className="w-[96px] text-right">
-                          <div className="flex justify-end gap-2">
+                        </TableCellText>
+                        <TableCellAction className="w-36">
+                          <ActionIconsCell>
                             <Button variant="ghost" size="icon" onClick={() => { setSelectedCoupon(coupon); setShowCouponDialog(true); }}>
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -1608,13 +1603,13 @@ export default function ConsoleBillingPage() {
                             <Button variant="ghost" size="icon">
                               <Trash2 className="h-4 w-4" />
                             </Button>
-                          </div>
-                        </TableCell>
+                          </ActionIconsCell>
+                        </TableCellAction>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
 
             {/* Organization Billing Tab */}
@@ -1638,49 +1633,49 @@ export default function ConsoleBillingPage() {
               </div>
 
               {/* Organizations Table */}
-              <div className="overflow-x-auto">
+              <TableContainer id="billing-organizations-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Organization Name</TableHead>
-                      <TableHead className="hidden sm:table-cell">Current Plan</TableHead>
-                      <TableHead className="hidden md:table-cell text-center w-[96px]">Status</TableHead>
-                      <TableHead className="hidden lg:table-cell">MRR</TableHead>
-                      <TableHead className="hidden md:table-cell">Next Billing</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="min-w-0">Organization Name</TableHeadText>
+                      <TableHeadText className="hidden sm:table-cell w-36">Current Plan</TableHeadText>
+                      <TableHeadStatus className="hidden md:table-cell w-36">Status</TableHeadStatus>
+                      <TableHeadNumeric className="hidden lg:table-cell w-36">MRR</TableHeadNumeric>
+                      <TableHeadText className="hidden md:table-cell w-36">Next Billing</TableHeadText>
+                      <TableHeadAction className="w-36">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredOrganizations.map((org) => (
                       <TableRow key={org.id}>
-                        <TableCell>
+                        <TableCellText className="min-w-0">
                           <div className="flex flex-col gap-1">
                             <div className="font-medium">{org.name}</div>
                             <div className="text-xs text-muted-foreground sm:hidden">
                               {org.currentPlan} • ${org.mrr}/mo
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">{org.currentPlan}</TableCell>
-                        <TableCell className="hidden md:table-cell w-[96px]">
-                          <div className="flex justify-center">
-                            {getStatusBadge(org.planStatus)}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell">${org.mrr}/mo</TableCell>
-                        <TableCell className="hidden md:table-cell">
+                        </TableCellText>
+                        <TableCellText className="hidden sm:table-cell w-36">{org.currentPlan}</TableCellText>
+                        <TableCellStatus className="hidden md:table-cell w-36">
+                          {getStatusBadge(org.planStatus)}
+                        </TableCellStatus>
+                        <TableCellNumeric className="hidden lg:table-cell w-36">${org.mrr}/mo</TableCellNumeric>
+                        <TableCellText className="hidden md:table-cell w-36">
                           {format(org.nextBillingDate, 'MMM dd, yyyy')}
-                        </TableCell>
-                        <TableCell className="w-[96px] text-right">
-                          <Button variant="ghost" size="icon" onClick={() => { setSelectedOrg(org); setShowOrgDialog(true); }}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                        </TableCellText>
+                        <TableCellAction className="w-36">
+                          <ActionIconsCell>
+                            <Button variant="ghost" size="icon" onClick={() => { setSelectedOrg(org); setShowOrgDialog(true); }}>
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </ActionIconsCell>
+                        </TableCellAction>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
           </CardContent>
         </Card>

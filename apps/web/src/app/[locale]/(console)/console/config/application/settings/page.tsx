@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,16 @@ export default function ApplicationSettingsPage() {
     enableAPILogging: true,
     enableAuditLogs: true,
   });
+
+  // Keep a stable snapshot of initial values for dirty-state comparison and reset
+  const initialConfigRef = useRef(appConfig);
+  const isDirty = useMemo(() => {
+    try {
+      return JSON.stringify(appConfig) !== JSON.stringify(initialConfigRef.current);
+    } catch {
+      return false;
+    }
+  }, [appConfig]);
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
@@ -248,11 +258,15 @@ export default function ApplicationSettingsPage() {
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                onClick={() => setAppConfig(initialConfigRef.current)}
+                disabled={!isDirty}
+              >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Reset
               </Button>
-              <Button>
+              <Button disabled={!isDirty}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Changes
               </Button>

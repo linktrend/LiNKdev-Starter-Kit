@@ -184,3 +184,59 @@
     stroke: theme('colors.red.600') !important;
   }
 }
+
+/* Table system styles */
+@layer utilities {
+  /* Column width CSS variables */
+  :root {
+    --col-xs: 56px;
+    --col-sm: 112px;
+    --col-md: 160px;
+    --col-lg: 224px;
+  }
+
+  /* Scrollbar gutter for stable layout */
+  .scrollbar-gutter-stable {
+    scrollbar-gutter: stable both-edges;
+  }
+
+  /* Safari scrollbar spacer */
+  .has-hscroll::after {
+    content: "";
+    display: block;
+    height: 12px;
+  }
+
+  /* Line clamp utilities for table cells */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Fade in animation for scroll indicator */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes fadeIn {
+      from, to {
+        opacity: 1;
+      }
+    }
+  }
+}

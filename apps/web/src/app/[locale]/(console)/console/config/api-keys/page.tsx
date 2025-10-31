@@ -44,7 +44,7 @@ export default function APIKeysPage() {
                       <TableHead className="hidden md:table-cell">Key Prefix</TableHead>
                       <TableHead className="hidden lg:table-cell">Created</TableHead>
                       <TableHead className="hidden lg:table-cell">Last Used</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
                       <TableHead className="text-center w-[96px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>

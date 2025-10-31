@@ -1254,12 +1254,12 @@ export default function ConsoleReportsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Report Name</TableHead>
-                      <TableHead className="hidden md:table-cell">Type</TableHead>
-                      <TableHead className="hidden lg:table-cell">Format</TableHead>
-                      <TableHead className="hidden lg:table-cell">Created</TableHead>
-                      <TableHead className="hidden lg:table-cell">Size</TableHead>
-                      <TableHead className="text-center">Actions</TableHead>
+                      <TableHead className="min-w-0">Report Name</TableHead>
+                      <TableHead className="hidden md:table-cell w-36">Type</TableHead>
+                      <TableHead className="hidden lg:table-cell w-36">Format</TableHead>
+                      <TableHead className="hidden lg:table-cell w-44">Created</TableHead>
+                      <TableHead className="hidden lg:table-cell w-36">Size</TableHead>
+                      <TableHead className="text-center w-36">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1271,36 +1271,29 @@ export default function ConsoleReportsPage() {
                       </TableRow>
                     ) : (
                       filteredReports.map((report) => {
-                        const Icon = getReportTypeIcon(report.type);
                         return (
                           <TableRow key={report.id}>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Icon className="h-4 w-4 text-muted-foreground" />
-                                <div>
-                                  <p className="font-medium">{report.name}</p>
-                                  <p className="text-xs text-muted-foreground sm:hidden capitalize">
-                                    {report.type} • {getFormatName(report.format)}
-                                  </p>
-                                </div>
+                            <TableCell className="min-w-0">
+                              <div>
+                                <p className="font-medium">{report.name}</p>
+                                <p className="text-xs text-muted-foreground sm:hidden capitalize">
+                                  {report.type} • {getFormatName(report.format)}
+                                </p>
                               </div>
                             </TableCell>
-                            <TableCell className="hidden md:table-cell">
+                            <TableCell className="hidden md:table-cell w-36">
                               <span className="capitalize text-sm">{report.type}</span>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell">
-                              <div className="flex items-center gap-2">
-                                {getFormatIcon(report.format)}
-                                <span className="text-sm">{getFormatName(report.format)}</span>
-                              </div>
+                            <TableCell className="hidden lg:table-cell w-36">
+                              <span className="text-sm">{getFormatName(report.format)}</span>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground w-44">
                               {format(report.createdAt, 'dd/MM/yyyy HH:mm:ss')}
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground w-36">
                               {report.size || '-'}
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center w-36">
                               <div className="flex justify-center gap-2">
                                 <TooltipProvider>
                                   <Tooltip>

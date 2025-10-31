@@ -6,16 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { DateTimeCell, ExpandedRowCell } from '@/components/ui/table-utils';
+import { TableHeadText, TableHeadStatus, TableCellText, TableCellStatus } from '@/components/ui/table-cells';
 import { 
   Clock, 
-  User, 
   Activity, 
   ExternalLink,
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
 import { useState } from 'react';
-import { formatDateTimeExact } from '@/utils/formatDateTime';
 
 interface AuditTableProps {
   logs: AuditLog[];
@@ -54,145 +55,112 @@ export function AuditTable({ logs, isLoading, onLoadMore, hasMore }: AuditTableP
     }
   };
 
-  const getEntityTypeIcon = (entityType: string) => {
-    switch (entityType) {
-      case 'org':
-        return '🏢';
-      case 'record':
-        return '📄';
-      case 'reminder':
-        return '⏰';
-      case 'subscription':
-        return '💳';
-      case 'member':
-        return '👤';
-      case 'invite':
-        return '📧';
-      case 'schedule':
-        return '📅';
-      case 'automation':
-        return '🤖';
-      default:
-        return '📝';
-    }
-  };
-
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="p-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="p-8">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
     );
   }
 
   if (logs.length === 0) {
     return (
-      <Card>
-        <CardContent className="p-8">
-          <div className="text-center text-muted-foreground">
-            <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No audit logs found</p>
-            <p className="text-sm">Activity will appear here as it happens.</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="p-8">
+        <div className="text-center text-muted-foreground">
+          <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p>No audit logs found</p>
+          <p className="text-sm">Activity will appear here as it happens.</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5" />
-          Audit Logs
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <>
+      <TableContainer id="audit-logs-table" height="lg">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Actor</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Entity</TableHead>
-              <TableHead>Details</TableHead>
-              <TableHead></TableHead>
+              <TableHeadText className="hidden md:table-cell w-40">Time</TableHeadText>
+              <TableHeadText className="min-w-0">Actor</TableHeadText>
+              <TableHeadText className="w-28">Entity</TableHeadText>
+              <TableHeadStatus className="w-24">Action</TableHeadStatus>
             </TableRow>
           </TableHeader>
           <TableBody>
             {logs.map((log) => (
               <React.Fragment key={log.id}>
                 <TableRow>
-                  <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
-                    {formatDateTimeExact(log.created_at)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                  <TableCellText className="hidden md:table-cell w-40">
+                    <DateTimeCell 
+                      date={log.created_at && typeof log.created_at === 'object' && 'getTime' in log.created_at
+                        ? log.created_at as Date
+                        : new Date(log.created_at as string)}
+                    />
+                  </TableCellText>
+                  <TableCellText className="min-w-0">
+                    <div className="flex flex-col gap-2">
                       <span className="text-sm">
                         {log.actor_id ? `User ${log.actor_id.slice(0, 8)}` : 'System'}
                       </span>
+                      <Button
+                        variant="ghost"
+                        onClick={() => toggleExpanded(log.id)}
+                        aria-expanded={expandedRows.has(log.id)}
+                        aria-label={expandedRows.has(log.id) ? 'Collapse details' : 'Expand details'}
+                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start h-auto p-0"
+                      >
+                        {expandedRows.has(log.id) ? (
+                          <ChevronUp className="h-3 w-3" />
+                        ) : (
+                          <ChevronDown className="h-3 w-3" />
+                        )}
+                        Details
+                      </Button>
                     </div>
-                  </TableCell>
-                  <TableCell>
+                  </TableCellText>
+                  <TableCellText className="w-28">
+                    <span className="text-sm capitalize">{log.entity_type}</span>
+                  </TableCellText>
+                  <TableCellStatus className="w-24">
                     <Badge className={getActionColor(log.action)}>
                       {log.action}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span>{getEntityTypeIcon(log.entity_type)}</span>
-                      <span className="text-sm capitalize">{log.entity_type}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm text-muted-foreground">
-                      {log.entity_id}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleExpanded(log.id)}
-                    >
-                      {expandedRows.has(log.id) ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
+                  </TableCellStatus>
                 </TableRow>
                 {expandedRows.has(log.id) && (
                   <TableRow>
-                    <TableCell colSpan={6} className="bg-muted/50">
-                      <div className="p-4">
-                        <h4 className="font-medium mb-2">Metadata</h4>
-                        <pre className="text-xs bg-background p-2 rounded border overflow-auto">
-                          {JSON.stringify(log.metadata, null, 2)}
-                        </pre>
+                    <ExpandedRowCell colSpan={4}>
+                      <div className="p-4 space-y-3">
+                        <div>
+                          <h4 className="font-medium mb-1 text-sm">Entity ID</h4>
+                          <p className="text-sm text-muted-foreground">{log.entity_id}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2 text-sm">Metadata</h4>
+                          <pre className="text-xs bg-background p-2 rounded border overflow-auto">
+                            {JSON.stringify(log.metadata, null, 2)}
+                          </pre>
+                        </div>
                       </div>
-                    </TableCell>
+                    </ExpandedRowCell>
                   </TableRow>
                 )}
               </React.Fragment>
             ))}
           </TableBody>
         </Table>
-        
-        {hasMore && (
-          <div className="mt-4 text-center">
-            <Button onClick={onLoadMore} variant="outline">
-              Load More
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </TableContainer>
+      
+      {hasMore && (
+        <div className="mt-4 text-center">
+          <Button onClick={onLoadMore} variant="outline">
+            Load More
+          </Button>
+        </div>
+      )}
+    </>
   );
 }

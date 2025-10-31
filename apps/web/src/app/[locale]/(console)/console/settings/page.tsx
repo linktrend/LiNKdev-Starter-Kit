@@ -2,54 +2,38 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { User, Lock, Key, Settings2, Globe, Palette, Bell, Shield, Eye, FileText, Upload, Database, Link2, UserCircle, Key as KeyIcon, CreditCard, BarChart3, ArrowUpCircle } from 'lucide-react';
+import { Lock, Key, Globe, Palette, Bell, Shield, Eye, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { UpgradeModal } from '@/components/settings/UpgradeModal';
-import { ManageBillingModal } from '@/components/settings/ManageBillingModal';
-import { UsageDashboardModal } from '@/components/settings/UsageDashboardModal';
 import { MagicLinkSettingsModal } from '@/components/settings/MagicLinkSettingsModal';
 import { BiometricLoginModal } from '@/components/settings/BiometricLoginModal';
 import { TwoFactorModal } from '@/components/settings/TwoFactorModal';
-import { ManagePermissionsModal } from '@/components/settings/ManagePermissionsModal';
-import { SessionsActivityModal } from '@/components/settings/SessionsActivityModal';
 import { LocaleSettingsModal } from '@/components/settings/LocaleSettingsModal';
 import { AppearanceModal } from '@/components/settings/AppearanceModal';
 import { NotificationPreferencesModal } from '@/components/settings/NotificationPreferencesModal';
 import { PrivacySettingsModal } from '@/components/settings/PrivacySettingsModal';
-import { ImportExportModal } from '@/components/settings/ImportExportModal';
-import { DataSettingsModal } from '@/components/settings/DataSettingsModal';
-import { IntegrationsModal } from '@/components/settings/IntegrationsModal';
-import { APIKeysModal } from '@/components/settings/APIKeysModal';
 
 export default function ConsoleSettingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'account');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'security');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
   // Modal states
-  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
-  const [billingModalOpen, setBillingModalOpen] = useState(false);
-  const [usageModalOpen, setUsageModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [biometricModalOpen, setBiometricModalOpen] = useState(false);
   const [twoFactorModalOpen, setTwoFactorModalOpen] = useState(false);
-  const [permissionsModalOpen, setPermissionsModalOpen] = useState(false);
-  const [sessionsModalOpen, setSessionsModalOpen] = useState(false);
   const [localeModalOpen, setLocaleModalOpen] = useState(false);
   const [appearanceModalOpen, setAppearanceModalOpen] = useState(false);
   const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
-  const [importExportModalOpen, setImportExportModalOpen] = useState(false);
-  const [dataSettingsModalOpen, setDataSettingsModalOpen] = useState(false);
-  const [integrationsModalOpen, setIntegrationsModalOpen] = useState(false);
-  const [apiKeysModalOpen, setAPIKeysModalOpen] = useState(false);
   
   useEffect(() => {
-    const tab = searchParams.get('tab') || 'account';
-    setActiveTab(tab);
+    const incoming = searchParams.get('tab');
+    const allowed = new Set(['security', 'preferences']);
+    const nextTab = incoming && allowed.has(incoming) ? incoming : 'security';
+    setActiveTab(nextTab);
   }, [searchParams]);
   
   const handleTabChange = (tabId: string) => {
@@ -68,10 +52,6 @@ export default function ConsoleSettingsPage() {
               <div className="flex items-center gap-4">
                 <Tabs value={activeTab} onValueChange={(v) => handleTabChange(v)}>
                   <TabsList className="w-full sm:w-auto">
-                    <TabsTrigger value="account" className="flex-1 sm:flex-initial">
-                      <User className="h-4 w-4 mr-1 sm:mr-2" />
-                      Account
-                    </TabsTrigger>
                     <TabsTrigger value="security" className="flex-1 sm:flex-initial">
                       <Shield className="h-4 w-4 mr-1 sm:mr-2" />
                       Security
@@ -80,78 +60,12 @@ export default function ConsoleSettingsPage() {
                       <Palette className="h-4 w-4 mr-1 sm:mr-2" />
                       Preferences
                     </TabsTrigger>
-                    <TabsTrigger value="data" className="flex-1 sm:flex-initial">
-                      <Database className="h-4 w-4 mr-1 sm:mr-2" />
-                      Data & Integrations
-                    </TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
               <Tabs value={activeTab} onValueChange={(v) => handleTabChange(v)}>
-                <TabsContent value="account" className="space-y-4 mt-0">
-            <div className="grid gap-6 md:grid-cols-2">
-              <SettingCard
-                icon={<User />}
-                title="Profile Information"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="font-semibold text-card-foreground">Sarah Johnson</p>
-                  <p className="text-sm text-card-foreground/60 mt-1">sarah.johnson@company.com</p>
-                </div>
-                <Button 
-                  onClick={() => router.push('/en/console/profile')}
-                  className="w-full mt-auto"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<CreditCard />}
-                title="Plan & Billing"
-                titleAction={
-                  <button
-                    onClick={() => setUpgradeModalOpen(true)}
-                    className="px-3 py-1 rounded-full bg-danger/20 text-danger text-xs font-medium inline-flex items-center gap-1 hover:bg-danger/30 transition-all"
-                  >
-                    <ArrowUpCircle className="h-3 w-3" />
-                    Upgrade
-                  </button>
-                }
-                description=""
-              >
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-card-foreground">Current Plan</p>
-                  <p className="text-sm font-medium text-card-foreground">Admin Plan - Full Access</p>
-                </div>
-                <Button onClick={() => setBillingModalOpen(true)} className="w-full mt-auto">
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Manage Plan & Billing
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<BarChart3 />}
-                title="Usage"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground mb-1">Billing Period Usage</p>
-                  <p className="text-sm text-card-foreground/70">Monthly data usage statistics</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setUsageModalOpen(true)} className="w-full mt-auto">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  View Usage
-                </Button>
-              </SettingCard>
-            </div>
-                </TabsContent>
-
                 <TabsContent value="security" className="space-y-4 mt-0">
             <div className="grid gap-6 md:grid-cols-2">
               <SettingCard
@@ -191,38 +105,6 @@ export default function ConsoleSettingsPage() {
                 <Button onClick={() => setTwoFactorModalOpen(true)} className="w-full mt-auto">
                   <Shield className="h-4 w-4 mr-2" />
                   Edit 2FA Settings
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<Settings2 />}
-                title="User Roles & Permissions"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">Add or Remove Users</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">Manage access levels for shared accounts</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setPermissionsModalOpen(true)} className="w-full mt-auto">
-                  <Settings2 className="h-4 w-4 mr-2" />
-                  Manage Permissions
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<FileText />}
-                title="Session & Activity Logs"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">Activity</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">View and manage active sessions and activity history</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setSessionsModalOpen(true)} className="w-full mt-auto">
-                  <FileText className="h-4 w-4 mr-2" />
-                  View Sessions & Activity
                 </Button>
               </SettingCard>
             </div>
@@ -340,74 +222,6 @@ export default function ConsoleSettingsPage() {
               </SettingCard>
             </div>
                 </TabsContent>
-
-                <TabsContent value="data" className="space-y-4 mt-0">
-            <div className="grid gap-6 md:grid-cols-2">
-              <SettingCard
-                icon={<Upload />}
-                title="Data Import/Export"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">Upload & Download</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">Your data in various formats</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setImportExportModalOpen(true)} className="w-full mt-auto">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Import/Export Data
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<Database />}
-                title="Data Settings"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">Data Storage and Settings</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">Data retention policy, backup and restore settings</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setDataSettingsModalOpen(true)} className="w-full mt-auto">
-                  <Database className="h-4 w-4 mr-2" />
-                  Manage Data Settings
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<Link2 />}
-                title="Integrations"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">External Accounts</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">Manage webhooks, integrations and linked accounts</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setIntegrationsModalOpen(true)} className="w-full mt-auto">
-                  <Link2 className="h-4 w-4 mr-2" />
-                  Manage Integrations
-                </Button>
-              </SettingCard>
-
-              <SettingCard
-                icon={<KeyIcon />}
-                title="API Access"
-                description=""
-              >
-                <div className="mb-6">
-                  <p className="text-sm font-bold text-card-foreground">App & Third Party APIs</p>
-                  <p className="text-sm text-card-foreground/70 mt-1">Generate and manage all your API keys</p>
-                </div>
-                <div className="flex-1" />
-                <Button onClick={() => setAPIKeysModalOpen(true)} className="w-full mt-auto">
-                  <KeyIcon className="h-4 w-4 mr-2" />
-                  API Keys
-                </Button>
-              </SettingCard>
-            </div>
-                </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
@@ -415,22 +229,13 @@ export default function ConsoleSettingsPage() {
       </div>
       
       {/* All Modals */}
-      <UpgradeModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
-      <ManageBillingModal isOpen={billingModalOpen} onClose={() => setBillingModalOpen(false)} />
-      <UsageDashboardModal isOpen={usageModalOpen} onClose={() => setUsageModalOpen(false)} />
       <MagicLinkSettingsModal isOpen={passwordModalOpen} onClose={() => setPasswordModalOpen(false)} />
       <BiometricLoginModal isOpen={biometricModalOpen} onClose={() => setBiometricModalOpen(false)} />
       <TwoFactorModal isOpen={twoFactorModalOpen} onClose={() => setTwoFactorModalOpen(false)} />
-      <ManagePermissionsModal isOpen={permissionsModalOpen} onClose={() => setPermissionsModalOpen(false)} />
-      <SessionsActivityModal isOpen={sessionsModalOpen} onClose={() => setSessionsModalOpen(false)} />
       <LocaleSettingsModal isOpen={localeModalOpen} onClose={() => setLocaleModalOpen(false)} />
       <AppearanceModal isOpen={appearanceModalOpen} onClose={() => setAppearanceModalOpen(false)} />
       <NotificationPreferencesModal isOpen={notificationsModalOpen} onClose={() => setNotificationsModalOpen(false)} />
       <PrivacySettingsModal isOpen={privacyModalOpen} onClose={() => setPrivacyModalOpen(false)} />
-      <ImportExportModal isOpen={importExportModalOpen} onClose={() => setImportExportModalOpen(false)} />
-      <DataSettingsModal isOpen={dataSettingsModalOpen} onClose={() => setDataSettingsModalOpen(false)} />
-      <IntegrationsModal isOpen={integrationsModalOpen} onClose={() => setIntegrationsModalOpen(false)} />
-      <APIKeysModal isOpen={apiKeysModalOpen} onClose={() => setAPIKeysModalOpen(false)} />
     </>
   );
 }

@@ -7,6 +7,10 @@ import { getBadgeClasses } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { DateTimeCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
+import { TableColgroup, TableHeadAction, TableCellAction } from '@/components/ui/table-columns';
+import { TableHeadText, TableHeadStatus, TableCellText, TableCellStatus, ActionIconsCell } from '@/components/ui/table-cells';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -39,6 +43,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { formatDateTimeExact } from '@/utils/formatDateTime';
+import { AuditTable } from '@/components/audit/AuditTable';
+import { mockAuditLogs } from '@/data/mock-audit-logs';
+import { mockSystemLogs, SystemLog } from '@/data/mock-system-logs';
 
 // Types
 type ErrorSeverity = 'critical' | 'error' | 'warning';
@@ -169,6 +176,7 @@ export default function ConsoleErrorsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedErrors, setExpandedErrors] = useState<Set<string>>(new Set());
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set());
+  const [expandedSystemLogs, setExpandedSystemLogs] = useState<Set<string>>(new Set());
   const [isLive, setIsLive] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
@@ -317,6 +325,32 @@ export default function ConsoleErrorsPage() {
       newSet.add(id);
     }
     setExpandedLogs(newSet);
+  };
+
+  const toggleSystemLogExpanded = (logId: string) => {
+    const newExpanded = new Set(expandedSystemLogs);
+    if (newExpanded.has(logId)) {
+      newExpanded.delete(logId);
+    } else {
+      newExpanded.add(logId);
+    }
+    setExpandedSystemLogs(newExpanded);
+  };
+
+  // Helper function to get level badge color
+  const getSystemLogLevelColor = (level: SystemLog['level']) => {
+    switch (level) {
+      case 'error':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'warn':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'info':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      case 'debug':
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
   };
 
   const getSeverityColor = (severity: ErrorSeverity) => {
@@ -572,18 +606,24 @@ export default function ConsoleErrorsPage() {
             {/* Error Tracking Tab */}
             <TabsContent value="error-tracking" className="space-y-0">
               <Card className="overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bug className="h-5 w-5" />
+                    Error Tracking
+                  </CardTitle>
+                </CardHeader>
                 <CardContent className="p-0 pr-0">
                   <div className="overflow-x-auto -mr-0">
                     <div className="relative max-h-[600px] overflow-y-auto">
                       <Table className="w-full">
                         <TableHeader className="sticky top-0 bg-background z-10">
                           <TableRow>
-                            <TableHead className="hidden md:table-cell w-[160px]">Date/Time</TableHead>
-                            <TableHead className="min-w-[180px]">Message</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[120px]">Source</TableHead>
-                            <TableHead className="hidden sm:table-cell">Priority</TableHead>
-                            <TableHead className="hidden xl:table-cell">Occurrences</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[100px] text-center">Status</TableHead>
+                            <TableHeadText className="hidden md:table-cell w-40">Date/Time</TableHeadText>
+                            <TableHeadText className="min-w-0">Message</TableHeadText>
+                            <TableHeadText className="hidden lg:table-cell w-28">Source</TableHeadText>
+                            <TableHeadStatus className="hidden sm:table-cell w-20">Priority</TableHeadStatus>
+                            <TableHeadText className="hidden xl:table-cell w-24">Occurrences</TableHeadText>
+                            <TableHeadStatus className="hidden lg:table-cell w-24">Status</TableHeadStatus>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -603,7 +643,7 @@ export default function ConsoleErrorsPage() {
                         filteredErrors.map((error) => (
                           <React.Fragment key={error.id}>
                             <TableRow>
-                              <TableCell className="hidden md:table-cell w-[160px]">
+                              <TableCellText className="hidden md:table-cell w-40">
                                 <div className="flex flex-col">
                                   <span className="text-sm">
                                     {error.timestamp.toLocaleDateString()}
@@ -612,8 +652,8 @@ export default function ConsoleErrorsPage() {
                                     {error.timestamp.toLocaleTimeString()}
                                   </span>
                                 </div>
-                              </TableCell>
-                              <TableCell>
+                              </TableCellText>
+                              <TableCellText className="min-w-0">
                                 <div className="min-w-0">
                                   <div className="flex flex-col gap-2">
                                     <p className="text-sm font-medium break-words">
@@ -646,10 +686,7 @@ export default function ConsoleErrorsPage() {
                                       {error.source && (
                                         <Badge className={getBadgeClasses('outline')}>{error.source}</Badge>
                                       )}
-                                      <div className="flex items-center gap-1">
-                                        <Activity className="h-3 w-3 text-muted-foreground" />
-                                        <span className="text-xs">{error.count}</span>
-                                      </div>
+                                      <span className="text-xs">{error.count}</span>
                                       {getErrorResolved(error) ? (
                                         <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
@@ -658,13 +695,13 @@ export default function ConsoleErrorsPage() {
                                     </div>
                                   </div>
                                 </div>
-                              </TableCell>
-                              <TableCell className="hidden lg:table-cell w-[120px]">
+                              </TableCellText>
+                              <TableCellText className="hidden lg:table-cell w-28">
                                 <div className="text-sm break-words leading-tight">
                                   {error.source}
                                 </div>
-                              </TableCell>
-                              <TableCell className="hidden sm:table-cell">
+                              </TableCellText>
+                              <TableCellStatus className="hidden sm:table-cell w-20">
                                 <span 
                                   className="text-red-600 dark:text-red-400 font-bold text-lg cursor-help"
                                   title={
@@ -677,32 +714,27 @@ export default function ConsoleErrorsPage() {
                                 >
                                   {error.severity === 'critical' ? '!!!' : error.severity === 'error' ? '!!' : '!'}
                                 </span>
-                              </TableCell>
-                              <TableCell className="hidden xl:table-cell">
-                                <div className="flex items-center gap-1">
-                                  <Activity className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-sm">{error.count}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="hidden lg:table-cell w-[100px]">
-                                <div className="w-full flex justify-center">
-                                  {getErrorResolved(error) ? (
-                                    <Badge 
-                                      className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
-                                      onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
-                                    >
-                                      Closed
-                                    </Badge>
-                                  ) : (
-                                    <Badge 
-                                      className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
-                                      onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
-                                    >
-                                      Open
-                                    </Badge>
-                                  )}
-                                </div>
-                              </TableCell>
+                              </TableCellStatus>
+                              <TableCellText className="hidden xl:table-cell w-24">
+                                <span className="text-sm">{error.count}</span>
+                              </TableCellText>
+                              <TableCellStatus className="hidden lg:table-cell w-24">
+                                {getErrorResolved(error) ? (
+                                  <Badge 
+                                    className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
+                                    onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
+                                  >
+                                    Closed
+                                  </Badge>
+                                ) : (
+                                  <Badge 
+                                    className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
+                                    onClick={() => toggleErrorStatus(error.id, getErrorResolved(error))}
+                                  >
+                                    Open
+                                  </Badge>
+                                )}
+                              </TableCellStatus>
                             </TableRow>
                             {expandedErrors.has(error.id) && (
                               <TableRow>
@@ -822,19 +854,25 @@ export default function ConsoleErrorsPage() {
             {/* Application Logs Tab */}
             <TabsContent value="application-logs" className="space-y-0">
               <Card className="overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Application Logs
+                  </CardTitle>
+                </CardHeader>
                 <CardContent className="p-0 pr-0">
                   <div className="overflow-x-auto -mr-0">
                     <div className="relative max-h-[600px] overflow-y-auto">
                       <Table className="w-full">
                         <TableHeader className="sticky top-0 bg-background z-10">
                           <TableRow>
-                            <TableHead className="hidden md:table-cell w-[160px]">Date/Time</TableHead>
-                            <TableHead className="min-w-[180px]">Message</TableHead>
-                            <TableHead className="hidden sm:table-cell">Level</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[150px]">Service</TableHead>
-                            <TableHead className="hidden xl:table-cell w-[120px]">Source</TableHead>
-                            <TableHead className="hidden xl:table-cell">Occurrences</TableHead>
-                            <TableHead className="hidden lg:table-cell w-[100px] text-center">Status</TableHead>
+                            <TableHeadText className="hidden md:table-cell w-40">Date/Time</TableHeadText>
+                            <TableHeadText className="w-[30%]">Message</TableHeadText>
+                            <TableHeadText className="hidden sm:table-cell w-20">Level</TableHeadText>
+                            <TableHeadText className="hidden lg:table-cell w-36">Service</TableHeadText>
+                            <TableHeadText className="hidden xl:table-cell w-36">Source</TableHeadText>
+                            <TableHeadText className="hidden xl:table-cell w-24">Occurrences</TableHeadText>
+                            <TableHeadStatus className="hidden lg:table-cell w-24">Status</TableHeadStatus>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -854,10 +892,10 @@ export default function ConsoleErrorsPage() {
                         filteredLogs.map((log) => (
                           <React.Fragment key={log.id}>
                             <TableRow>
-                              <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
+                              <TableCellText className="hidden md:table-cell w-40">
                                 {formatDateTimeExact(log.timestamp)}
-                              </TableCell>
-                              <TableCell>
+                              </TableCellText>
+                              <TableCellText className="w-[30%]">
                                 <div className="min-w-0">
                                   <div className="flex flex-col gap-2">
                                     <p className="text-sm font-medium break-words">
@@ -891,10 +929,7 @@ export default function ConsoleErrorsPage() {
                                       {log.source && (
                                         <Badge className={getBadgeClasses('source')}>{log.source}</Badge>
                                       )}
-                                      <div className="flex items-center gap-1">
-                                        <Activity className="h-3 w-3 text-muted-foreground" />
-                                        <span className="text-xs">1</span>
-                                      </div>
+                                      <span className="text-xs">1</span>
                                       {getLogResolved(log) ? (
                                         <Badge className={getBadgeClasses('danger.soft')}>Closed</Badge>
                                       ) : (
@@ -903,53 +938,40 @@ export default function ConsoleErrorsPage() {
                                     </div>
                                   </div>
                                 </div>
-                              </TableCell>
-                              <TableCell className="hidden sm:table-cell">
-                                <span className={cn(
-                                  "text-sm",
-                                  log.level === 'error' && "text-red-600 dark:text-red-400",
-                                  log.level === 'warn' && "text-yellow-600 dark:text-yellow-400",
-                                  log.level === 'info' && "text-blue-600 dark:text-blue-400",
-                                  log.level === 'debug' && "text-muted-foreground"
-                                )}>
-                                  {log.level.toUpperCase()}
-                                </span>
-                              </TableCell>
-                              <TableCell className="hidden lg:table-cell w-[150px]">
+                              </TableCellText>
+                              <TableCellText className="hidden sm:table-cell w-20">
+                                <span className="text-sm capitalize">{log.level}</span>
+                              </TableCellText>
+                              <TableCellText className="hidden lg:table-cell w-36">
                                 <div className="text-sm break-words leading-tight">
                                   {log.service}
                                 </div>
-                              </TableCell>
-                              <TableCell className="hidden xl:table-cell w-[120px]">
+                              </TableCellText>
+                              <TableCellText className="hidden xl:table-cell w-36">
                                 <div className="text-sm break-words leading-tight">
                                   {log.source}
                                 </div>
-                              </TableCell>
-                              <TableCell className="hidden xl:table-cell">
-                                <div className="flex items-center gap-1">
-                                  <Activity className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-sm">1</span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="hidden lg:table-cell w-[100px]">
-                                <div className="w-full flex justify-center">
-                                  {getLogResolved(log) ? (
-                                    <Badge 
-                                      className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
-                                      onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
-                                    >
-                                      Closed
-                                    </Badge>
-                                  ) : (
-                                    <Badge 
-                                      className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
-                                      onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
-                                    >
-                                      Open
-                                    </Badge>
-                                  )}
-                                </div>
-                              </TableCell>
+                              </TableCellText>
+                              <TableCellText className="hidden xl:table-cell w-24">
+                                <span className="text-sm">1</span>
+                              </TableCellText>
+                              <TableCellStatus className="hidden lg:table-cell w-24">
+                                {getLogResolved(log) ? (
+                                  <Badge 
+                                    className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
+                                    onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
+                                  >
+                                    Closed
+                                  </Badge>
+                                ) : (
+                                  <Badge 
+                                    className={cn(getBadgeClasses('success.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
+                                    onClick={() => toggleLogStatus(log.id, getLogResolved(log))}
+                                  >
+                                    Open
+                                  </Badge>
+                                )}
+                              </TableCellStatus>
                             </TableRow>
                             {expandedLogs.has(log.id) && (
                               <TableRow>
@@ -1000,33 +1022,14 @@ export default function ConsoleErrorsPage() {
             {/* Audit Logs Tab */}
             <TabsContent value="audit-logs" className="space-y-0">
               <Card className="overflow-hidden">
-                <CardContent className="p-0 pr-0">
-                  <div className="overflow-x-auto -mr-0">
-                    <div className="relative max-h-[600px] overflow-y-auto">
-                      <div className="p-4 sm:p-6">
-                        <div className="text-center py-12">
-                          <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                          <h3 className="text-lg font-semibold mb-2">Audit Logs</h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            Comprehensive audit trail of system actions and user activities
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                            <Button variant="outline">
-                              <Search className="h-4 w-4 mr-2" />
-                              Search Audit Logs
-                            </Button>
-                            <Button variant="outline">
-                              <Filter className="h-4 w-4 mr-2" />
-                              Apply Filters
-                            </Button>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-4">
-                            Audit log functionality coming soon
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    Audit Logs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <AuditTable logs={mockAuditLogs} />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1034,37 +1037,100 @@ export default function ConsoleErrorsPage() {
             {/* System Logs Tab */}
             <TabsContent value="system-logs" className="space-y-0">
               <Card className="overflow-hidden">
-                <CardContent className="p-0 pr-0">
-                  <div className="overflow-x-auto -mr-0">
-                    <div className="relative max-h-[600px] overflow-y-auto">
-                      <div className="p-4 sm:p-6">
-                        <div className="text-center py-12">
-                          <Server className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                          <h3 className="text-lg font-semibold mb-2">System Logs</h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            System-level logs and infrastructure monitoring
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                            <Button variant="outline">
-                              <Database className="h-4 w-4 mr-2" />
-                              Database Logs
-                            </Button>
-                            <Button variant="outline">
-                              <Server className="h-4 w-4 mr-2" />
-                              Server Logs
-                            </Button>
-                            <Button variant="outline">
-                              <Activity className="h-4 w-4 mr-2" />
-                              Performance
-                            </Button>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-4">
-                            System log functionality coming soon
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Server className="h-5 w-5" />
+                    System Logs
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <TableContainer id="errors-system-logs-table" height="lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHeadText className="hidden md:table-cell w-40">Timestamp</TableHeadText>
+                          <TableHeadText className="min-w-0">Source</TableHeadText>
+                          <TableHeadText className="min-w-0">Message</TableHeadText>
+                          <TableHeadStatus className="w-24">Level</TableHeadStatus>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {mockSystemLogs.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={4} className="text-center py-12">
+                              <Server className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                              <p className="text-muted-foreground">No system logs available</p>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          mockSystemLogs.map((log) => (
+                            <React.Fragment key={log.id}>
+                              <TableRow>
+                                <TableCellText className="hidden md:table-cell w-40">
+                                  <DateTimeCell date={new Date(log.timestamp)} />
+                                </TableCellText>
+                                <TableCellText className="min-w-0">
+                                  <div className="flex flex-col gap-2">
+                                    <span className="text-sm capitalize">{log.source.replace('-', ' ')}</span>
+                                    <DetailsLink
+                                      isExpanded={expandedSystemLogs.has(log.id)}
+                                      onToggle={() => toggleSystemLogExpanded(log.id)}
+                                      label="Details"
+                                    />
+                                  </div>
+                                </TableCellText>
+                                <TableCellText className="min-w-0">
+                                  <p className="text-sm font-medium break-words line-clamp-2">
+                                    {log.message}
+                                  </p>
+                                </TableCellText>
+                                <TableCellStatus className="w-24">
+                                  <Badge className={cn('capitalize', getSystemLogLevelColor(log.level))}>
+                                    {log.level}
+                                  </Badge>
+                                </TableCellStatus>
+                              </TableRow>
+                              {expandedSystemLogs.has(log.id) && log.metadata && (
+                                <TableRow>
+                                  <ExpandedRowCell colSpan={4}>
+                                    <div className="p-4 space-y-3">
+                                      {(log.metadata?.duration_ms || log.metadata?.status_code) && (
+                                        <div>
+                                          <h4 className="font-medium mb-2 text-sm">Performance</h4>
+                                          <div className="flex items-center gap-3">
+                                            {log.metadata?.duration_ms && (
+                                              <div>
+                                                <span className="text-xs text-muted-foreground">Duration: </span>
+                                                <span className="text-sm font-medium">{log.metadata.duration_ms}ms</span>
+                                              </div>
+                                            )}
+                                            {log.metadata?.status_code && (
+                                              <div>
+                                                <span className="text-xs text-muted-foreground">Status: </span>
+                                                <Badge variant="outline" className="ml-1">
+                                                  {log.metadata.status_code}
+                                                </Badge>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                      <div>
+                                        <h4 className="font-medium mb-2 text-sm">Metadata</h4>
+                                        <pre className="text-xs bg-background p-2 rounded border overflow-auto font-mono">
+                                          {JSON.stringify(log.metadata, null, 2)}
+                                        </pre>
+                                      </div>
+                                    </div>
+                                  </ExpandedRowCell>
+                                </TableRow>
+                              )}
+                            </React.Fragment>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </CardContent>
               </Card>
             </TabsContent>

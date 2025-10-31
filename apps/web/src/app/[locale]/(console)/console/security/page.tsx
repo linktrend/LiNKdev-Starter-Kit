@@ -8,6 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { DateTimeCell, UserOrgCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
+import { TableColgroup, TableHeadAction, TableCellAction } from '@/components/ui/table-columns';
+import { TableHeadText, TableHeadStatus, TableCellText, TableCellStatus, ActionIconsCell } from '@/components/ui/table-cells';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -570,16 +574,16 @@ export default function ConsoleSecurityPage() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <Table className="w-full">
+              <TableContainer id="security-users-table" height="lg">
+                <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="hidden sm:table-cell">Organisation</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead className="hidden md:table-cell">Role</TableHead>
-                      <TableHead className="hidden md:table-cell text-center">Status</TableHead>
-                      <TableHead className="hidden md:table-cell">Last Login</TableHead>
-                      <TableHead className="text-center">Actions</TableHead>
+                      <TableHeadText className="hidden sm:table-cell w-36">Organisation</TableHeadText>
+                      <TableHeadText className="min-w-0 max-w-[25%]">User</TableHeadText>
+                      <TableHeadText className="hidden md:table-cell w-36">Role</TableHeadText>
+                      <TableHeadStatus className="hidden md:table-cell w-36">Status</TableHeadStatus>
+                      <TableHeadText className="hidden md:table-cell w-40">Last Login</TableHeadText>
+                      <TableHeadAction className="w-36">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -592,55 +596,50 @@ export default function ConsoleSecurityPage() {
                     ) : (
                       filteredUsers.map((user) => (
                         <TableRow key={user.id}>
-                          <TableCell className="hidden sm:table-cell align-top">
-                            <div className="min-w-[108px] md:min-w-[126px] max-w-[144px]">
+                          <TableCellText className="hidden sm:table-cell align-top w-36">
+                            <div>
                               <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate block whitespace-nowrap">
                                 {mockUserOrganisation[user.id] ?? '—'}
                               </span>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1 min-w-[126px] md:min-w-[140px] max-w-[168px] md:max-w-[210px]">
-                              <div className="font-medium truncate whitespace-nowrap">{getUserDisplay({ name: user.name, email: user.email }).primary}</div>
-                              <div className="text-sm text-muted-foreground truncate whitespace-nowrap">{getUserDisplay({ name: user.name, email: user.email }).secondary}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <span className="capitalize text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap max-w-[140px]">
+                          </TableCellText>
+                          <TableCellText className="min-w-0 max-w-[25%]">
+                            <UserOrgCell
+                              primary={getUserDisplay({ name: user.name, email: user.email }).primary}
+                              secondary={getUserDisplay({ name: user.name, email: user.email }).secondary}
+                            />
+                          </TableCellText>
+                          <TableCellText className="hidden md:table-cell w-36">
+                            <span className="capitalize text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap">
                               {user.role}
                             </span>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="flex items-center justify-center">
-                              {getStatusBadge(getUserStatus(user))}
-                            </div>
-                          </TableCell>
-                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell whitespace-nowrap">
+                          </TableCellText>
+                          <TableCellStatus className="hidden md:table-cell w-36">
+                            {getStatusBadge(getUserStatus(user))}
+                          </TableCellStatus>
+                          <TableCellText className="hidden md:table-cell whitespace-nowrap w-40">
                             {user.lastLogin ? (
-                              <div className="flex flex-col leading-tight">
-                                <span className="text-sm">{formatDateDDMMYYYY(user.lastLogin)}</span>
-                                <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(user.lastLogin)}</span>
-                              </div>
+                              <DateTimeCell date={user.lastLogin} />
                             ) : (
                               '—'
                             )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
+                          </TableCellText>
+                          <TableCellAction className="w-36">
+                            <ActionIconsCell>
                               <Button variant="ghost" size="icon">
                                 <Edit className="h-4 w-4" />
                               </Button>
                               <Button variant="ghost" size="icon">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
-                            </div>
-                          </TableCell>
+                            </ActionIconsCell>
+                          </TableCellAction>
                         </TableRow>
                       ))
                     )}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
 
             {/* Access Control Tab */}
@@ -701,14 +700,19 @@ export default function ConsoleSecurityPage() {
                   {/* Header removed per request */}
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
+                  <TableContainer id="security-permissions-matrix-table" height="md">
                     <Table>
+                      <TableColgroup columns={[
+                        { width: 'md' },
+                        { width: 'sm' },
+                        ...(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(() => ({ width: 'md' as const })),
+                      ]} />
                       <TableHeader>
                         <TableRow>
                           <TableHead className="sticky left-0 z-10 bg-background">Resource</TableHead>
                           <TableHead className="sticky left-[140px] z-10 bg-background">Action</TableHead>
                           {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
-                            <TableHead key={role.id} className="text-center whitespace-nowrap">{role.name}</TableHead>
+                            <TableHeadAction key={role.id} className="whitespace-nowrap">{role.name}</TableHeadAction>
                           ))}
                         </TableRow>
                       </TableHeader>
@@ -768,7 +772,7 @@ export default function ConsoleSecurityPage() {
                         })}
                       </TableBody>
                     </Table>
-                  </div>
+                  </TableContainer>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -800,16 +804,16 @@ export default function ConsoleSecurityPage() {
                 </Select>
               </div>
 
-              <div className="overflow-x-auto">
+              <TableContainer id="security-audit-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="hidden md:table-cell">Timestamp</TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead className="hidden lg:table-cell text-center">Action</TableHead>
-                      <TableHead className="hidden lg:table-cell">Resource</TableHead>
-                      <TableHead className="hidden md:table-cell">IP Address</TableHead>
-                      <TableHead className="text-right">Details</TableHead>
+                      <TableHeadText className="hidden md:table-cell w-40">Timestamp</TableHeadText>
+                      <TableHeadText className="min-w-0">User</TableHeadText>
+                      <TableHeadStatus className="hidden lg:table-cell w-36">Action</TableHeadStatus>
+                      <TableHeadText className="hidden lg:table-cell w-36">Resource</TableHeadText>
+                      <TableHeadText className="hidden md:table-cell w-36">IP Address</TableHeadText>
+                      <TableHeadAction className="w-36">Details</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -820,51 +824,43 @@ export default function ConsoleSecurityPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredAuditEntries.map((entry) => (
-                        <TableRow key={entry.id}>
-                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
-                            <div className="leading-tight">
-                              <div>{formatDateDDMMYYYY(entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp))}</div>
-                              <div className="text-xs text-muted-foreground">
-                                {formatTimeHHMMSS(entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp))}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {(() => {
-                              const d = getAuditUserDisplay(entry.userId);
-                              return (
-                                <div className="flex flex-col">
-                                  <span className="font-medium">{d.primary}</span>
-                                  <span className="text-xs text-muted-foreground">@{d.secondary}</span>
-                                </div>
-                              );
-                            })()}
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <div className="flex justify-center">
+                      filteredAuditEntries.map((entry) => {
+                        const d = getAuditUserDisplay(entry.userId);
+                        return (
+                          <TableRow key={entry.id}>
+                            <TableCellText className="hidden md:table-cell w-40">
+                              <DateTimeCell 
+                                date={entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp)}
+                              />
+                            </TableCellText>
+                            <TableCellText className="min-w-0">
+                              <UserOrgCell primary={d.primary} secondary={`@${d.secondary}`} />
+                            </TableCellText>
+                            <TableCellStatus className="hidden lg:table-cell w-36">
                               <Badge className={getBadgeClasses(actionToPreset(entry.action)) + ' capitalize'}>
                                 {entry.action}
                               </Badge>
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <span className="text-sm capitalize">{entry.resource}</span>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                            {entry.ip}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="icon">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
+                            </TableCellStatus>
+                            <TableCellText className="hidden lg:table-cell w-36">
+                              <span className="text-sm capitalize">{entry.resource}</span>
+                            </TableCellText>
+                            <TableCellText className="hidden md:table-cell text-sm text-muted-foreground w-36">
+                              {entry.ip}
+                            </TableCellText>
+                            <TableCellAction className="w-36">
+                              <ActionIconsCell>
+                                <Button variant="ghost" size="icon">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </ActionIconsCell>
+                            </TableCellAction>
+                          </TableRow>
+                        );
+                      })
                     )}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
 
             {/* Sessions Tab */}
@@ -885,17 +881,17 @@ export default function ConsoleSecurityPage() {
                 </Button>
               </div>
 
-              <div className="overflow-x-auto">
+              <TableContainer id="security-sessions-table" height="lg">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[220px]">User</TableHead>
-                      <TableHead className="hidden md:table-cell w-[160px]">IP Address</TableHead>
-                      <TableHead className="hidden lg:table-cell w-[320px]">User Agent</TableHead>
-                      <TableHead className="hidden md:table-cell w-[160px]">Created</TableHead>
-                      <TableHead className="hidden lg:table-cell w-[160px]">Last Activity</TableHead>
-                      <TableHead className="w-[120px]">Status</TableHead>
-                      <TableHead className="text-center w-[96px]">Actions</TableHead>
+                      <TableHeadText className="min-w-0 max-w-[25%]">User</TableHeadText>
+                      <TableHeadText className="hidden md:table-cell w-36">IP Address</TableHeadText>
+                      <TableHeadText className="hidden lg:table-cell w-40">User Agent</TableHeadText>
+                      <TableHeadText className="hidden md:table-cell w-40">Created</TableHeadText>
+                      <TableHeadText className="hidden lg:table-cell w-40">Last Activity</TableHeadText>
+                      <TableHeadStatus className="w-36">Status</TableHeadStatus>
+                      <TableHeadAction className="w-36">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -906,68 +902,56 @@ export default function ConsoleSecurityPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredSessions.map((session) => (
-                        <TableRow key={session.id}>
-                          <TableCell>
-                            <div className="flex flex-col gap-1 min-w-[180px] max-w-[220px]">
-                              <div className="font-medium truncate whitespace-nowrap">{getUserDisplay({ name: session.userName, email: session.email }).primary}</div>
-                              <div className="text-xs text-muted-foreground truncate whitespace-nowrap">@{getUserDisplay({ name: session.userName, email: session.email }).secondary}</div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                            <div className="max-w-[160px] truncate whitespace-nowrap">{session.ipAddress}</div>
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            {(() => {
-                              const match = session.userAgent.match(/^(^[^()]+)|^([^()]+)(?:\(([^)]+)\))?/);
-                              const uaMain = (() => {
-                                const m = session.userAgent.match(/^([^()]+)/);
-                                return (m && m[1] ? m[1].trim() : session.userAgent);
-                              })();
-                              const uaParen = (() => {
-                                const m = session.userAgent.match(/\(([^)]+)\)/);
-                                return m && m[1] ? m[1].trim() : '';
-                              })();
-                              return (
-                                <div className="max-w-[320px] leading-tight">
-                                  <div className="text-sm truncate whitespace-nowrap">{uaMain}</div>
-                                  {uaParen && (
-                                    <div className="text-xs text-muted-foreground truncate whitespace-nowrap">{uaParen}</div>
-                                  )}
-                                </div>
-                              );
-                            })()}
-                          </TableCell>
-                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
-                            <div className="flex flex-col leading-tight">
-                              <span className="text-sm">{formatDateDDMMYYYY(session.createdAt)}</span>
-                              <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(session.createdAt)}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden md:table-cell w-[160px]">
-                            <div className="flex flex-col leading-tight">
-                              <span className="text-sm">{formatDateDDMMYYYY(session.lastActivity)}</span>
-                              <span className="text-xs text-muted-foreground">{formatTimeHHMMSS(session.lastActivity)}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {session.isActive ? (
-                              <Badge className={getBadgeClasses('security.active')}>Active</Badge>
-                            ) : (
-                              <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="icon">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
+                      filteredSessions.map((session) => {
+                        const userDisplay = getUserDisplay({ name: session.userName, email: session.email });
+                        const uaMain = session.userAgent.match(/^([^()]+)/)?.[1]?.trim() || session.userAgent;
+                        const uaParen = session.userAgent.match(/\(([^)]+)\)/)?.[1]?.trim() || '';
+                        return (
+                          <TableRow key={session.id}>
+                            <TableCellText className="min-w-0 max-w-[25%]">
+                              <UserOrgCell 
+                                primary={userDisplay.primary} 
+                                secondary={`@${userDisplay.secondary}`}
+                              />
+                            </TableCellText>
+                            <TableCellText className="hidden md:table-cell text-sm text-muted-foreground w-36">
+                              <div className="truncate whitespace-nowrap">{session.ipAddress}</div>
+                            </TableCellText>
+                            <TableCellText className="hidden lg:table-cell w-40">
+                              <div className="leading-tight line-clamp-2">
+                                <div className="text-sm truncate whitespace-nowrap">{uaMain}</div>
+                                {uaParen && (
+                                  <div className="text-xs text-muted-foreground truncate whitespace-nowrap">{uaParen}</div>
+                                )}
+                              </div>
+                            </TableCellText>
+                            <TableCellText className="hidden md:table-cell w-40">
+                              <DateTimeCell date={session.createdAt} />
+                            </TableCellText>
+                            <TableCellText className="hidden lg:table-cell w-40">
+                              <DateTimeCell date={session.lastActivity} />
+                            </TableCellText>
+                            <TableCellStatus className="w-36">
+                              {session.isActive ? (
+                                <Badge className={getBadgeClasses('security.active')}>Active</Badge>
+                              ) : (
+                                <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>
+                              )}
+                            </TableCellStatus>
+                            <TableCellAction className="w-36">
+                              <ActionIconsCell>
+                                <Button variant="ghost" size="icon">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </ActionIconsCell>
+                            </TableCellAction>
+                          </TableRow>
+                        );
+                      })
                     )}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
           </Tabs>
         </CardContent>

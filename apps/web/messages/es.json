@@ -137,5 +137,66 @@
     "contactSupport": "Contactar Soporte",
     "sendFeedback": "Enviar Comentarios",
     "releaseNotes": "Notas de Versión"
+  },
+  "marketing": {
+    "header": {
+      "platform": "Plataforma",
+      "solutions": "Soluciones",
+      "pricing": "Precios",
+      "resources": "Recursos",
+      "enterprise": "Empresas",
+      "login": "Iniciar Sesión",
+      "signup": "Registrarse"
+    },
+    "footer": {
+      "product": "Producto",
+      "company": "Empresa",
+      "resources": "Recursos",
+      "legal": "Legal",
+      "aboutUs": "Sobre Nosotros",
+      "careers": "Carreras",
+      "contactUs": "Contáctanos",
+      "documentation": "Documentación",
+      "library": "Biblioteca",
+      "helpCenter": "Centro de Ayuda",
+      "terms": "Términos y Condiciones",
+      "privacy": "Política de Privacidad",
+      "manageCookies": "Gestionar Cookies",
+      "copyright": "Copyright 2025. LiNKtrend Media"
+    },
+    "hero": {
+      "title": "Regístrate gratis",
+      "subtitle": "Comienza en segundos. No se requiere tarjeta de crédito.",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "phonePlaceholder": "+34 (555) 000-0000",
+      "termsText": "Al continuar, aceptas nuestros",
+      "getStarted": "Comenzar"
+    },
+    "platform": {
+      "title": "Plataforma Construida para el Éxito",
+      "subtitle": "Todo lo que necesitas para hacer crecer tu negocio, en un solo lugar.",
+      "learnMore": "Saber Más"
+    },
+    "pricing": {
+      "title": "Precios Simples",
+      "subtitle": "Elige el plan que se ajuste a tus necesidades.",
+      "free": "Gratis",
+      "pro": "Pro",
+      "enterprise": "Empresas",
+      "popular": "Popular",
+      "getStarted": "Comenzar",
+      "startTrial": "Iniciar Prueba Gratuita",
+      "contactSales": "Contactar Ventas"
+    },
+    "solutions": {
+      "title": "Soluciones para Cada Necesidad",
+      "subtitle": "Descubre cómo nuestra plataforma se adapta a tus requisitos únicos.",
+      "explore": "Explorar Soluciones"
+    },
+    "cta": {
+      "title": "¿Listo para comenzar?",
+      "subtitle": "Únete a miles de equipos que ya están usando nuestra plataforma para hacer crecer su negocio. Comienza gratis hoy.",
+      "button": "Comenzar Gratis"
+    }
   }
 }

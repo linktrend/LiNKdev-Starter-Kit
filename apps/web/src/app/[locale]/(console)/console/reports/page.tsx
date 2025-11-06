@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -47,6 +48,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { format } from 'date-fns';
+import { DateTimeCell } from '@/components/ui/table-utils';
 
 type ReportType = 
   | 'audit' 
@@ -697,10 +699,6 @@ export default function ConsoleReportsPage() {
               <div className="space-y-6">
                 {/* Controls for analytics */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <span>Product analytics (mock)</span>
-                  </div>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Select value={String(analyticsRange)} onValueChange={(v) => setAnalyticsRange(Number(v) as TimeRange)}>
                       <SelectTrigger className="w-full sm:w-36">
@@ -782,13 +780,13 @@ export default function ConsoleReportsPage() {
                         ))}
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="reports-org-usage-table" height="md">
+                      <Table className="min-w-[640px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Org</TableHead>
-                            <TableHead>Active Users</TableHead>
-                            <TableHead>Sessions</TableHead>
+                            <TableHead className="min-w-[240px] max-w-[280px]">Org</TableHead>
+                            <TableHead className="min-w-[180px] max-w-[200px]">Active Users</TableHead>
+                            <TableHead className="min-w-[180px] max-w-[200px]">Sessions</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -798,14 +796,14 @@ export default function ConsoleReportsPage() {
                             { org: 'Initech', users: 76, sessions: 610 },
                           ].map((r) => (
                             <TableRow key={r.org} className="hover:bg-accent">
-                              <TableCell className="font-medium">{r.org}</TableCell>
-                              <TableCell>{r.users}</TableCell>
-                              <TableCell>{r.sessions}</TableCell>
+                              <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{r.org}</TableCell>
+                              <TableCell className="text-sm">{r.users}</TableCell>
+                              <TableCell className="text-sm">{r.sessions}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </CardContent>
                 </Card>
 
@@ -855,21 +853,21 @@ export default function ConsoleReportsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="reports-cohort-retention-table" height="md">
+                      <Table className="min-w-[680px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Cohort</TableHead>
-                            <TableHead>W1</TableHead>
-                            <TableHead>W2</TableHead>
-                            <TableHead>W3</TableHead>
-                            <TableHead>W4</TableHead>
+                            <TableHead className="min-w-[200px] max-w-[240px]">Cohort</TableHead>
+                            <TableHead className="min-w-[120px] max-w-[140px]">W1</TableHead>
+                            <TableHead className="min-w-[120px] max-w-[140px]">W2</TableHead>
+                            <TableHead className="min-w-[120px] max-w-[140px]">W3</TableHead>
+                            <TableHead className="min-w-[120px] max-w-[140px]">W4</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {['2025-09', '2025-10', '2025-11'].map((cohort) => (
                             <TableRow key={cohort} className="hover:bg-accent">
-                              <TableCell className="font-medium">{cohort}</TableCell>
+                              <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{cohort}</TableCell>
                               {[0,1,2,3].map((w) => (
                                 <TableCell key={w}>
                                   <Badge variant="secondary">{60 - w*5 + Math.round(Math.random()*5)}%</Badge>
@@ -879,7 +877,7 @@ export default function ConsoleReportsPage() {
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </CardContent>
                 </Card>
 
@@ -923,14 +921,14 @@ export default function ConsoleReportsPage() {
                         ))}
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="reports-feature-usage-table" height="md">
+                      <Table className="min-w-[680px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Feature</TableHead>
-                            <TableHead>Adoption</TableHead>
-                            <TableHead>Daily Active</TableHead>
-                            <TableHead>Flag Impact</TableHead>
+                            <TableHead className="min-w-[220px] max-w-[280px]">Feature</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[200px]">Adoption</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[200px]">Daily Active</TableHead>
+                            <TableHead className="min-w-[200px] max-w-[240px]">Flag Impact</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -940,15 +938,15 @@ export default function ConsoleReportsPage() {
                             { feature: 'Automation', adoption: '34%', daily: 150, impact: '+9% (flag flip 10/10)' },
                           ].map((r) => (
                             <TableRow key={r.feature} className="hover:bg-accent">
-                              <TableCell className="font-medium">{r.feature}</TableCell>
-                              <TableCell>{r.adoption}</TableCell>
-                              <TableCell>{r.daily}</TableCell>
-                              <TableCell>{r.impact}</TableCell>
+                              <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{r.feature}</TableCell>
+                              <TableCell className="text-sm">{r.adoption}</TableCell>
+                              <TableCell className="text-sm">{r.daily}</TableCell>
+                              <TableCell className="text-sm">{r.impact}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </CardContent>
                 </Card>
 
@@ -992,14 +990,14 @@ export default function ConsoleReportsPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="reports-funnel-table" height="md">
+                      <Table className="min-w-[640px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Plan</TableHead>
-                            <TableHead>Signup</TableHead>
-                            <TableHead>Activation</TableHead>
-                            <TableHead>Paid</TableHead>
+                            <TableHead className="min-w-[220px] max-w-[260px]">Plan</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">Signup</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">Activation</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">Paid</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1009,15 +1007,15 @@ export default function ConsoleReportsPage() {
                             { plan: 'Enterprise', s: 80, a: 60, p: 30 },
                           ].map((r) => (
                             <TableRow key={r.plan} className="hover:bg-accent">
-                              <TableCell className="font-medium">{r.plan}</TableCell>
-                              <TableCell>{r.s}</TableCell>
-                              <TableCell>{r.a}</TableCell>
-                              <TableCell>{r.p}</TableCell>
+                              <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{r.plan}</TableCell>
+                              <TableCell className="text-sm">{r.s}</TableCell>
+                              <TableCell className="text-sm">{r.a}</TableCell>
+                              <TableCell className="text-sm">{r.p}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </CardContent>
                 </Card>
 
@@ -1067,14 +1065,14 @@ export default function ConsoleReportsPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="reports-api-performance-table" height="md">
+                      <Table className="min-w-[720px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Endpoint</TableHead>
-                            <TableHead>Req/min</TableHead>
-                            <TableHead>Error %</TableHead>
-                            <TableHead>P95 (ms)</TableHead>
+                            <TableHead className="min-w-[260px] max-w-[320px]">Endpoint</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">Req/min</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">Error %</TableHead>
+                            <TableHead className="min-w-[160px] max-w-[180px]">P95 (ms)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1084,15 +1082,15 @@ export default function ConsoleReportsPage() {
                             { path: 'POST /api/checkout', rpm: 60, err: '1.8%', p95: 520 },
                           ].map((r) => (
                             <TableRow key={r.path} className="hover:bg-accent">
-                              <TableCell className="font-medium">{r.path}</TableCell>
-                              <TableCell>{r.rpm}</TableCell>
-                              <TableCell>{r.err}</TableCell>
-                              <TableCell>{r.p95}</TableCell>
+                              <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{r.path}</TableCell>
+                              <TableCell className="text-sm">{r.rpm}</TableCell>
+                              <TableCell className="text-sm">{r.err}</TableCell>
+                              <TableCell className="text-sm">{r.p95}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </CardContent>
                 </Card>
 
@@ -1158,8 +1156,11 @@ export default function ConsoleReportsPage() {
             <TabsContent value="exports" className="space-y-4 mt-0">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold">Export History</h3>
-                  <p className="text-sm text-muted-foreground">View and download previously generated reports</p>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <DownloadCloud className="h-4 w-4 text-primary" />
+                    Exports
+                  </CardTitle>
+                  <CardDescription>View and download previously generated reports</CardDescription>
                 </div>
                 <Button onClick={() => { setSelectedTemplate(null); setShowGenerateDialog(true); }}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -1250,16 +1251,16 @@ export default function ConsoleReportsPage() {
               </div>
 
               {/* Generated Reports Table */}
-              <div className="overflow-x-auto">
-                <Table>
+              <TableContainer id="reports-generated-reports-table" height="lg">
+                <Table className="min-w-[860px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-0">Report Name</TableHead>
-                      <TableHead className="hidden md:table-cell w-36">Type</TableHead>
-                      <TableHead className="hidden lg:table-cell w-36">Format</TableHead>
-                      <TableHead className="hidden lg:table-cell w-44">Created</TableHead>
-                      <TableHead className="hidden lg:table-cell w-36">Size</TableHead>
-                      <TableHead className="text-center w-36">Actions</TableHead>
+                      <TableHead className="min-w-[260px] max-w-[320px]">Report Name</TableHead>
+                      <TableHead className="hidden md:table-cell min-w-[160px] max-w-[180px]">Type</TableHead>
+                      <TableHead className="hidden lg:table-cell min-w-[140px] max-w-[160px]">Format</TableHead>
+                      <TableHead className="hidden lg:table-cell min-w-[200px] max-w-[240px]">Created</TableHead>
+                      <TableHead className="hidden lg:table-cell min-w-[140px] max-w-[160px]">Size</TableHead>
+                      <TableHead className="text-center min-w-[160px] max-w-[180px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1273,27 +1274,27 @@ export default function ConsoleReportsPage() {
                       filteredReports.map((report) => {
                         return (
                           <TableRow key={report.id}>
-                            <TableCell className="min-w-0">
-                              <div>
-                                <p className="font-medium">{report.name}</p>
+                            <TableCell className="min-w-[260px] max-w-[320px]">
+                              <div className="md:whitespace-normal whitespace-nowrap">
+                                <p className="font-medium text-sm">{report.name}</p>
                                 <p className="text-xs text-muted-foreground sm:hidden capitalize">
                                   {report.type} • {getFormatName(report.format)}
                                 </p>
                               </div>
                             </TableCell>
-                            <TableCell className="hidden md:table-cell w-36">
+                            <TableCell className="hidden md:table-cell min-w-[160px] max-w-[180px]">
                               <span className="capitalize text-sm">{report.type}</span>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell w-36">
+                            <TableCell className="hidden lg:table-cell min-w-[140px] max-w-[160px]">
                               <span className="text-sm">{getFormatName(report.format)}</span>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground w-44">
-                              {format(report.createdAt, 'dd/MM/yyyy HH:mm:ss')}
+                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground min-w-[200px] max-w-[240px]">
+                              <DateTimeCell date={report.createdAt} />
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground w-36">
+                            <TableCell className="hidden lg:table-cell text-sm text-muted-foreground min-w-[140px] max-w-[160px]">
                               {report.size || '-'}
                             </TableCell>
-                            <TableCell className="text-center w-36">
+                            <TableCell className="text-center min-w-[160px] max-w-[180px]">
                               <div className="flex justify-center gap-2">
                                 <TooltipProvider>
                                   <Tooltip>
@@ -1333,7 +1334,7 @@ export default function ConsoleReportsPage() {
                     )}
                   </TableBody>
                 </Table>
-              </div>
+              </TableContainer>
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -1502,4 +1503,3 @@ export default function ConsoleReportsPage() {
     </div>
   );
 }
-

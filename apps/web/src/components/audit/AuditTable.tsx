@@ -2,20 +2,13 @@
 
 import React from 'react';
 import { AuditLog } from '@starter/types';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TableContainer } from '@/components/ui/table-container';
-import { DateTimeCell, ExpandedRowCell } from '@/components/ui/table-utils';
+import { DateTimeCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
 import { TableHeadText, TableHeadStatus, TableCellText, TableCellStatus } from '@/components/ui/table-cells';
-import { 
-  Clock, 
-  Activity, 
-  ExternalLink,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { useState } from 'react';
 
 interface AuditTableProps {
@@ -36,23 +29,6 @@ export function AuditTable({ logs, isLoading, onLoadMore, hasMore }: AuditTableP
       newExpanded.add(logId);
     }
     setExpandedRows(newExpanded);
-  };
-
-  const getActionColor = (action: string) => {
-    switch (action) {
-      case 'created':
-        return 'bg-green-100 text-green-800';
-      case 'updated':
-        return 'bg-blue-100 text-blue-800';
-      case 'deleted':
-        return 'bg-red-100 text-red-800';
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'cancelled':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
   };
 
   if (isLoading) {
@@ -80,54 +56,55 @@ export function AuditTable({ logs, isLoading, onLoadMore, hasMore }: AuditTableP
   return (
     <>
       <TableContainer id="audit-logs-table" height="lg">
-        <Table>
+        <Table className="min-w-[720px]">
           <TableHeader>
             <TableRow>
-              <TableHeadText className="hidden md:table-cell w-40">Time</TableHeadText>
-              <TableHeadText className="min-w-0">Actor</TableHeadText>
-              <TableHeadText className="w-28">Entity</TableHeadText>
-              <TableHeadStatus className="w-24">Action</TableHeadStatus>
+              <TableHeadText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
+                Time
+              </TableHeadText>
+              <TableHeadText className="min-w-[240px] max-w-[360px]">
+                Actor
+              </TableHeadText>
+              <TableHeadText className="min-w-[160px] max-w-[200px]">
+                Entity
+              </TableHeadText>
+              <TableHeadStatus className="min-w-[140px] max-w-[160px]">
+                Action
+              </TableHeadStatus>
             </TableRow>
           </TableHeader>
           <TableBody>
             {logs.map((log) => (
               <React.Fragment key={log.id}>
                 <TableRow>
-                  <TableCellText className="hidden md:table-cell w-40">
+                  <TableCellText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
                     <DateTimeCell 
                       date={log.created_at && typeof log.created_at === 'object' && 'getTime' in log.created_at
                         ? log.created_at as Date
                         : new Date(log.created_at as string)}
                     />
                   </TableCellText>
-                  <TableCellText className="min-w-0">
-                    <div className="flex flex-col gap-2">
+                  <TableCellText className="min-w-[240px] max-w-[360px]">
+                    <div className="flex flex-col gap-2 md:whitespace-normal whitespace-nowrap md:pr-2">
                       <span className="text-sm">
                         {log.actor_id ? `User ${log.actor_id.slice(0, 8)}` : 'System'}
                       </span>
-                      <Button
-                        variant="ghost"
-                        onClick={() => toggleExpanded(log.id)}
-                        aria-expanded={expandedRows.has(log.id)}
-                        aria-label={expandedRows.has(log.id) ? 'Collapse details' : 'Expand details'}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start h-auto p-0"
-                      >
-                        {expandedRows.has(log.id) ? (
-                          <ChevronUp className="h-3 w-3" />
-                        ) : (
-                          <ChevronDown className="h-3 w-3" />
-                        )}
-                        Details
-                      </Button>
+                      <DetailsLink
+                        isExpanded={expandedRows.has(log.id)}
+                        onToggle={() => toggleExpanded(log.id)}
+                        label="Details"
+                      />
                     </div>
                   </TableCellText>
-                  <TableCellText className="w-28">
-                    <span className="text-sm capitalize">{log.entity_type}</span>
+                  <TableCellText className="min-w-[160px] max-w-[200px]">
+                    <span className="text-sm capitalize md:whitespace-normal whitespace-nowrap">
+                      {log.entity_type}
+                    </span>
                   </TableCellText>
-                  <TableCellStatus className="w-24">
-                    <Badge className={getActionColor(log.action)}>
+                  <TableCellStatus className="min-w-[140px] max-w-[160px]">
+                    <span className="text-sm capitalize text-muted-foreground">
                       {log.action}
-                    </Badge>
+                    </span>
                   </TableCellStatus>
                 </TableRow>
                 {expandedRows.has(log.id) && (

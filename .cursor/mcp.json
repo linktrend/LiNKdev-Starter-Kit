@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "supabase-mcp": {
+    "SupabaseMCP": {
       "command": "npx",
       "args": [
         "-y",
@@ -12,14 +12,7 @@
         "SUPABASE_ACCESS_TOKEN": "sbp_11a7d003c112735c140ab17ea4a239c1708cc0c8"
       }
     },
-    "shadcnui-mcp": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@jpisnice/shadcn-ui-mcp-server@latest"
-      ]
-    },
-    "stripe": {
+    "StripeMCP": {
       "command": "npx",
       "args": [
         "-y",
@@ -29,6 +22,22 @@
       "env": {
         "STRIPE_SECRET_KEY": "sk_***REDACTED***"
       }
+    },
+    "FigmaMCP": {
+      "command": "node",
+      "args": [
+        "/Users/carlossalas/Projects/LTM-Starter-Kit/node_modules/figma-mcp-server/index.js"
+      ],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "YOUR_FIGMA_TOKEN"
+      }
+    },
+    "ShadcnMCP": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@jpisnice/shadcn-ui-mcp-server"
+      ]
     }
   }
 }

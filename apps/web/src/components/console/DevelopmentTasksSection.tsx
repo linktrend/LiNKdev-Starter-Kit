@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, Fragment } from 'react';
+import { useState, useMemo, Fragment, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -66,6 +66,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
   const [isNotionConfigOpen, setIsNotionConfigOpen] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -242,6 +243,16 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
     };
   }, [tasks, taskTotal]);
 
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      refetch();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refetch]);
+
   // Filtered tasks for display
   const filteredTasks = useMemo(() => {
     if (tasksTab === 'active') {
@@ -312,29 +323,29 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span>Live</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isLoading}
+      <div className="flex flex-col items-end gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <span>Live monitoring</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setAutoRefresh((prev) => !prev)}
+            className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-accent transition-colors"
           >
-            <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
-            Refresh
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => setIsCreateDialogOpen(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Task
-          </Button>
+            <RefreshCw className={cn("h-4 w-4", autoRefresh && "animate-spin")} />
+            {autoRefresh ? 'Auto-refresh' : 'Manual'}
+          </button>
         </div>
+        <Button
+          size="sm"
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="self-end"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          New Task
+        </Button>
       </div>
 
       {/* Overview Metrics */}
@@ -994,4 +1005,3 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
     </div>
   );
 }
-

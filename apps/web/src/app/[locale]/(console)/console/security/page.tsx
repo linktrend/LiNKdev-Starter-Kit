@@ -575,7 +575,7 @@ export default function ConsoleSecurityPage() {
               </div>
 
               <TableContainer id="security-users-table" height="lg">
-                <Table>
+                <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
                       <TableHeadText className="hidden sm:table-cell w-36">Organisation</TableHeadText>
@@ -701,7 +701,7 @@ export default function ConsoleSecurityPage() {
                 </CardHeader>
                 <CardContent>
                   <TableContainer id="security-permissions-matrix-table" height="md">
-                    <Table>
+                    <Table className="min-w-[1020px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                       <TableColgroup columns={[
                         { width: 'md' },
                         { width: 'sm' },
@@ -805,7 +805,7 @@ export default function ConsoleSecurityPage() {
               </div>
 
               <TableContainer id="security-audit-table" height="lg">
-                <Table>
+                <Table className="min-w-[940px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
                       <TableHeadText className="hidden md:table-cell w-40">Timestamp</TableHeadText>
@@ -882,7 +882,7 @@ export default function ConsoleSecurityPage() {
               </div>
 
               <TableContainer id="security-sessions-table" height="lg">
-                <Table>
+                <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
                       <TableHeadText className="min-w-0 max-w-[25%]">User</TableHeadText>

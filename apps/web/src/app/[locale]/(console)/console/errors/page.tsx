@@ -31,8 +31,6 @@ import {
   Database,
   Shield,
   Globe,
-  ChevronDown,
-  ChevronUp,
   ChevronRight,
   ExternalLink,
   Copy,
@@ -42,7 +40,6 @@ import {
   Circle
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { formatDateTimeExact } from '@/utils/formatDateTime';
 import { AuditTable } from '@/components/audit/AuditTable';
 import { mockAuditLogs } from '@/data/mock-audit-logs';
 import { mockSystemLogs, SystemLog } from '@/data/mock-system-logs';
@@ -337,22 +334,6 @@ export default function ConsoleErrorsPage() {
     setExpandedSystemLogs(newExpanded);
   };
 
-  // Helper function to get level badge color
-  const getSystemLogLevelColor = (level: SystemLog['level']) => {
-    switch (level) {
-      case 'error':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-      case 'warn':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
-      case 'info':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-      case 'debug':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
-    }
-  };
-
   const getSeverityColor = (severity: ErrorSeverity) => {
     switch (severity) {
       case 'critical':
@@ -589,7 +570,7 @@ export default function ConsoleErrorsPage() {
             )}
             <Select value={sourceFilter} onValueChange={setSourceFilter}>
               <SelectTrigger className="w-full sm:w-[200px]">
-                <Server className="h-4 w-4 mr-2" />
+                <Server className="h-4 w-4 mr-2 text-primary" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -608,25 +589,40 @@ export default function ConsoleErrorsPage() {
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Bug className="h-5 w-5" />
+                    <Bug className="h-5 w-5 text-rose-500" />
                     Error Tracking
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 pr-0">
-                  <div className="overflow-x-auto -mr-0">
-                    <div className="relative max-h-[600px] overflow-y-auto">
-                      <Table className="w-full">
-                        <TableHeader className="sticky top-0 bg-background z-10">
-                          <TableRow>
-                            <TableHeadText className="hidden md:table-cell w-40">Date/Time</TableHeadText>
-                            <TableHeadText className="min-w-0">Message</TableHeadText>
-                            <TableHeadText className="hidden lg:table-cell w-28">Source</TableHeadText>
-                            <TableHeadStatus className="hidden sm:table-cell w-20">Priority</TableHeadStatus>
-                            <TableHeadText className="hidden xl:table-cell w-24">Occurrences</TableHeadText>
-                            <TableHeadStatus className="hidden lg:table-cell w-24">Status</TableHeadStatus>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                <CardContent className="p-0">
+                  <TableContainer
+                    id="errors-error-tracking-table"
+                    height="lg"
+                    className="-mr-0"
+                  >
+                    <Table className="min-w-[960px]">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHeadText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
+                            Date/Time
+                          </TableHeadText>
+                          <TableHeadText className="min-w-[280px] max-w-[420px]">
+                            Message
+                          </TableHeadText>
+                          <TableHeadText className="hidden lg:table-cell min-w-[200px] max-w-[260px]">
+                            Source
+                          </TableHeadText>
+                          <TableHeadStatus className="hidden sm:table-cell min-w-[120px] max-w-[140px]">
+                            Priority
+                          </TableHeadStatus>
+                          <TableHeadText className="hidden xl:table-cell min-w-[120px] max-w-[140px]">
+                            Occurrences
+                          </TableHeadText>
+                          <TableHeadStatus className="hidden lg:table-cell min-w-[140px] max-w-[160px]">
+                            Status
+                          </TableHeadStatus>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                       {filteredErrors.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={6} className="text-center py-8">
@@ -643,7 +639,7 @@ export default function ConsoleErrorsPage() {
                         filteredErrors.map((error) => (
                           <React.Fragment key={error.id}>
                             <TableRow>
-                              <TableCellText className="hidden md:table-cell w-40">
+                              <TableCellText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
                                 <div className="flex flex-col">
                                   <span className="text-sm">
                                     {error.timestamp.toLocaleDateString()}
@@ -653,28 +649,17 @@ export default function ConsoleErrorsPage() {
                                   </span>
                                 </div>
                               </TableCellText>
-                              <TableCellText className="min-w-0">
+                              <TableCellText className="min-w-[280px] max-w-[420px]">
                                 <div className="min-w-0">
-                                  <div className="flex flex-col gap-2">
+                                  <div className="flex flex-col gap-2 md:whitespace-normal whitespace-nowrap md:pr-2">
                                     <p className="text-sm font-medium break-words">
                                       {error.message}
                                     </p>
-                                    <button
-                                      onClick={() => toggleErrorExpanded(error.id)}
-                                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start"
-                                    >
-                                      {expandedErrors.has(error.id) ? (
-                                        <>
-                                      <ChevronUp className="h-3 w-3" />
-                                          <span>Details</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                      <ChevronDown className="h-3 w-3" />
-                                          <span>Details</span>
-                                        </>
-                                      )}
-                                    </button>
+                                    <DetailsLink
+                                      isExpanded={expandedErrors.has(error.id)}
+                                      onToggle={() => toggleErrorExpanded(error.id)}
+                                      label="Details"
+                                    />
                                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground lg:hidden">
                                       <span className="truncate">{error.id}</span>
                                       <span className="hidden sm:inline md:hidden">•</span>
@@ -696,12 +681,12 @@ export default function ConsoleErrorsPage() {
                                   </div>
                                 </div>
                               </TableCellText>
-                              <TableCellText className="hidden lg:table-cell w-28">
-                                <div className="text-sm break-words leading-tight">
+                              <TableCellText className="hidden lg:table-cell min-w-[200px] max-w-[260px]">
+                                <div className="text-sm break-words leading-tight md:whitespace-normal whitespace-nowrap">
                                   {error.source}
                                 </div>
                               </TableCellText>
-                              <TableCellStatus className="hidden sm:table-cell w-20">
+                              <TableCellStatus className="hidden sm:table-cell min-w-[120px] max-w-[140px]">
                                 <span 
                                   className="text-red-600 dark:text-red-400 font-bold text-lg cursor-help"
                                   title={
@@ -715,10 +700,10 @@ export default function ConsoleErrorsPage() {
                                   {error.severity === 'critical' ? '!!!' : error.severity === 'error' ? '!!' : '!'}
                                 </span>
                               </TableCellStatus>
-                              <TableCellText className="hidden xl:table-cell w-24">
+                              <TableCellText className="hidden xl:table-cell min-w-[120px] max-w-[140px]">
                                 <span className="text-sm">{error.count}</span>
                               </TableCellText>
-                              <TableCellStatus className="hidden lg:table-cell w-24">
+                              <TableCellStatus className="hidden lg:table-cell min-w-[140px] max-w-[160px]">
                                 {getErrorResolved(error) ? (
                                   <Badge 
                                     className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
@@ -843,10 +828,9 @@ export default function ConsoleErrorsPage() {
                           </React.Fragment>
                         ))
                       )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -856,26 +840,43 @@ export default function ConsoleErrorsPage() {
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
+                    <FileText className="h-5 w-5 text-blue-500" />
                     Application Logs
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 pr-0">
-                  <div className="overflow-x-auto -mr-0">
-                    <div className="relative max-h-[600px] overflow-y-auto">
-                      <Table className="w-full">
-                        <TableHeader className="sticky top-0 bg-background z-10">
-                          <TableRow>
-                            <TableHeadText className="hidden md:table-cell w-40">Date/Time</TableHeadText>
-                            <TableHeadText className="w-[30%]">Message</TableHeadText>
-                            <TableHeadText className="hidden sm:table-cell w-20">Level</TableHeadText>
-                            <TableHeadText className="hidden lg:table-cell w-36">Service</TableHeadText>
-                            <TableHeadText className="hidden xl:table-cell w-36">Source</TableHeadText>
-                            <TableHeadText className="hidden xl:table-cell w-24">Occurrences</TableHeadText>
-                            <TableHeadStatus className="hidden lg:table-cell w-24">Status</TableHeadStatus>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
+                <CardContent className="p-0">
+                  <TableContainer
+                    id="errors-application-logs-table"
+                    height="lg"
+                    className="-mr-0"
+                  >
+                    <Table className="min-w-[960px]">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHeadText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
+                            Date/Time
+                          </TableHeadText>
+                          <TableHeadText className="min-w-[280px] max-w-[420px]">
+                            Message
+                          </TableHeadText>
+                          <TableHeadText className="hidden sm:table-cell min-w-[120px] max-w-[140px]">
+                            Level
+                          </TableHeadText>
+                          <TableHeadText className="hidden lg:table-cell min-w-[200px] max-w-[240px]">
+                            Service
+                          </TableHeadText>
+                          <TableHeadText className="hidden xl:table-cell min-w-[200px] max-w-[240px]">
+                            Source
+                          </TableHeadText>
+                          <TableHeadText className="hidden xl:table-cell min-w-[120px] max-w-[140px]">
+                            Occurrences
+                          </TableHeadText>
+                          <TableHeadStatus className="hidden lg:table-cell min-w-[140px] max-w-[160px]">
+                            Status
+                          </TableHeadStatus>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                       {filteredLogs.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={7} className="text-center py-8">
@@ -892,31 +893,20 @@ export default function ConsoleErrorsPage() {
                         filteredLogs.map((log) => (
                           <React.Fragment key={log.id}>
                             <TableRow>
-                              <TableCellText className="hidden md:table-cell w-40">
-                                {formatDateTimeExact(log.timestamp)}
+                              <TableCellText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
+                                <DateTimeCell date={log.timestamp} />
                               </TableCellText>
-                              <TableCellText className="w-[30%]">
+                              <TableCellText className="min-w-[280px] max-w-[420px]">
                                 <div className="min-w-0">
-                                  <div className="flex flex-col gap-2">
+                                  <div className="flex flex-col gap-2 md:whitespace-normal whitespace-nowrap md:pr-2">
                                     <p className="text-sm font-medium break-words">
                                       {log.message}
                                     </p>
-                                    <button
-                                      onClick={() => toggleLogExpanded(log.id)}
-                                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors self-start"
-                                    >
-                                      {expandedLogs.has(log.id) ? (
-                                        <>
-                                          <ChevronUp className="h-3 w-3" />
-                                          <span>Details</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <ChevronDown className="h-3 w-3" />
-                                          <span>Details</span>
-                                        </>
-                                      )}
-                                    </button>
+                                    <DetailsLink
+                                      isExpanded={expandedLogs.has(log.id)}
+                                      onToggle={() => toggleLogExpanded(log.id)}
+                                      label="Details"
+                                    />
                                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground lg:hidden">
                                       <span className="md:hidden">
                                         {log.timestamp.toLocaleTimeString()}
@@ -939,23 +929,25 @@ export default function ConsoleErrorsPage() {
                                   </div>
                                 </div>
                               </TableCellText>
-                              <TableCellText className="hidden sm:table-cell w-20">
-                                <span className="text-sm capitalize">{log.level}</span>
+                              <TableCellText className="hidden sm:table-cell min-w-[120px] max-w-[140px]">
+                                <span className="text-sm capitalize md:whitespace-normal whitespace-nowrap">
+                                  {log.level}
+                                </span>
                               </TableCellText>
-                              <TableCellText className="hidden lg:table-cell w-36">
-                                <div className="text-sm break-words leading-tight">
+                              <TableCellText className="hidden lg:table-cell min-w-[200px] max-w-[240px]">
+                                <div className="text-sm break-words leading-tight md:whitespace-normal whitespace-nowrap">
                                   {log.service}
                                 </div>
                               </TableCellText>
-                              <TableCellText className="hidden xl:table-cell w-36">
-                                <div className="text-sm break-words leading-tight">
+                              <TableCellText className="hidden xl:table-cell min-w-[200px] max-w-[240px]">
+                                <div className="text-sm break-words leading-tight md:whitespace-normal whitespace-nowrap">
                                   {log.source}
                                 </div>
                               </TableCellText>
-                              <TableCellText className="hidden xl:table-cell w-24">
+                              <TableCellText className="hidden xl:table-cell min-w-[120px] max-w-[140px]">
                                 <span className="text-sm">1</span>
                               </TableCellText>
-                              <TableCellStatus className="hidden lg:table-cell w-24">
+                              <TableCellStatus className="hidden lg:table-cell min-w-[140px] max-w-[160px]">
                                 {getLogResolved(log) ? (
                                   <Badge 
                                     className={cn(getBadgeClasses('danger.soft'), 'w-16 flex justify-center items-center cursor-pointer hover:opacity-80 transition-opacity')}
@@ -1011,10 +1003,9 @@ export default function ConsoleErrorsPage() {
                           </React.Fragment>
                         ))
                       )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1024,7 +1015,7 @@ export default function ConsoleErrorsPage() {
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5" />
+                    <Activity className="h-5 w-5 text-purple-500" />
                     Audit Logs
                   </CardTitle>
                 </CardHeader>
@@ -1039,19 +1030,27 @@ export default function ConsoleErrorsPage() {
               <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Server className="h-5 w-5" />
+                    <Server className="h-5 w-5 text-emerald-500" />
                     System Logs
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                  <TableContainer id="errors-system-logs-table" height="lg">
-                    <Table>
+          <TableContainer id="errors-system-logs-table" height="lg">
+                    <Table className="min-w-[760px]">
                       <TableHeader>
                         <TableRow>
-                          <TableHeadText className="hidden md:table-cell w-40">Timestamp</TableHeadText>
-                          <TableHeadText className="min-w-0">Source</TableHeadText>
-                          <TableHeadText className="min-w-0">Message</TableHeadText>
-                          <TableHeadStatus className="w-24">Level</TableHeadStatus>
+                          <TableHeadText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
+                            Timestamp
+                          </TableHeadText>
+                          <TableHeadText className="min-w-[200px] max-w-[260px]">
+                            Source
+                          </TableHeadText>
+                          <TableHeadText className="min-w-[280px] max-w-[420px]">
+                            Message
+                          </TableHeadText>
+                          <TableHeadStatus className="min-w-[140px] max-w-[160px]">
+                            Level
+                          </TableHeadStatus>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1066,11 +1065,11 @@ export default function ConsoleErrorsPage() {
                           mockSystemLogs.map((log) => (
                             <React.Fragment key={log.id}>
                               <TableRow>
-                                <TableCellText className="hidden md:table-cell w-40">
+                              <TableCellText className="hidden md:table-cell min-w-[160px] max-w-[200px]">
                                   <DateTimeCell date={new Date(log.timestamp)} />
                                 </TableCellText>
-                                <TableCellText className="min-w-0">
-                                  <div className="flex flex-col gap-2">
+                                <TableCellText className="min-w-[200px] max-w-[260px]">
+                                  <div className="flex flex-col gap-2 md:whitespace-normal whitespace-nowrap md:pr-2">
                                     <span className="text-sm capitalize">{log.source.replace('-', ' ')}</span>
                                     <DetailsLink
                                       isExpanded={expandedSystemLogs.has(log.id)}
@@ -1079,15 +1078,15 @@ export default function ConsoleErrorsPage() {
                                     />
                                   </div>
                                 </TableCellText>
-                                <TableCellText className="min-w-0">
-                                  <p className="text-sm font-medium break-words line-clamp-2">
+                                <TableCellText className="min-w-[280px] max-w-[420px]">
+                                  <p className="text-sm font-medium break-words md:whitespace-normal whitespace-nowrap">
                                     {log.message}
                                   </p>
                                 </TableCellText>
-                                <TableCellStatus className="w-24">
-                                  <Badge className={cn('capitalize', getSystemLogLevelColor(log.level))}>
+                                <TableCellStatus className="min-w-[140px] max-w-[160px]">
+                                  <span className="text-sm capitalize text-muted-foreground">
                                     {log.level}
-                                  </Badge>
+                                  </span>
                                 </TableCellStatus>
                               </TableRow>
                               {expandedSystemLogs.has(log.id) && log.metadata && (

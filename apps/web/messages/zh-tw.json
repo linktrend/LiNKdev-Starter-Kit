@@ -1,0 +1,203 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "error": "發生錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "save": "儲存",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "建立",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "close": "關閉",
+    "confirm": "確認"
+  },
+  "navigation": {
+    "home": "首頁",
+    "dashboard": "控制台",
+    "settings": "設定",
+    "profile": "個人資料",
+    "signIn": "登入",
+    "signUp": "註冊",
+    "signOut": "登出"
+  },
+  "auth": {
+    "signIn": "登入",
+    "signUp": "註冊",
+    "signOut": "登出",
+    "email": "電子郵件",
+    "password": "密碼",
+    "confirmPassword": "確認密碼",
+    "forgotPassword": "忘記密碼？",
+    "resetPassword": "重設密碼",
+    "magicLink": "魔法連結"
+  },
+  "dashboard": {
+    "title": "控制台",
+    "welcome": "歡迎來到您的控制台",
+    "overview": "概覽",
+    "recentActivity": "最近活動"
+  },
+  "settings": {
+    "title": "設定",
+    "account": "帳戶",
+    "billing": "帳單",
+    "notifications": "通知",
+    "privacy": "隱私",
+    "security": "安全",
+    "preferences": "偏好設定",
+    "data": "資料與整合"
+  },
+  "sidebar": {
+    "home": "首頁",
+    "screen1": "專案",
+    "screen2": "分析",
+    "screen3": "團隊",
+    "screen4": "文件",
+    "settings": "設定",
+    "switchAccount": "切換帳戶",
+    "logout": "登出"
+  },
+  "topbar": {
+    "notifications": "通知",
+    "help": "幫助",
+    "theme": "主題",
+    "screens": {
+      "dashboard": "控制台",
+      "projects": "專案",
+      "analytics": "分析",
+      "profile": "個人資料",
+      "settings": "設定",
+      "billing": "帳單",
+      "help": "幫助"
+    }
+  },
+  "console": {
+    "overview": "概覽",
+    "healthChecks": "健康檢查",
+    "errorsLogs": "錯誤與日誌",
+    "database": "資料庫",
+    "apiKeys": "API 與金鑰",
+    "config": "配置",
+    "jobs": "作業/佇列",
+    "automations": "自動化",
+    "security": "安全與存取",
+    "flags": "標記"
+  },
+  "onboarding": {
+    "welcome": "歡迎！",
+    "title": "讓我們開始吧",
+    "step1": {
+      "title": "驗證",
+      "subtitle": "使用您偏好的方式登入",
+      "or": "或",
+      "emailLabel": "電子郵件",
+      "emailPlaceholder": "輸入您的電子郵件",
+      "phoneLabel": "電話號碼",
+      "phonePlaceholder": "輸入您的電話號碼",
+      "continue": "繼續"
+    },
+    "step2": {
+      "title": "姓名",
+      "nameLabel": "姓名"
+    },
+    "step3": {
+      "Developer": "開發者",
+      "Designer": "設計師",
+      "Analyst": "分析師"
+    },
+    "step4": {
+      "notifications": "通知偏好",
+      "email": "電子郵件",
+      "push": "推送",
+      "inapp": "應用內",
+      "theme": "主題",
+      "light": "淺色",
+      "dark": "深色",
+      "system": "系統"
+    },
+    "step5": {
+      "description": "歡迎使用 LTM Starter Kit！您已準備好開始建立出色的應用程式。",
+      "cta": "開始使用"
+    },
+    "skip": "跳過",
+    "back": "返回"
+  },
+  "billing": {
+    "currentPlan": "目前方案",
+    "upgrade": "升級",
+    "paymentMethods": "付款方式",
+    "addPaymentMethod": "新增付款方式"
+  },
+  "help": {
+    "helpCenter": "幫助中心",
+    "contactSupport": "聯絡支援",
+    "sendFeedback": "發送回饋",
+    "releaseNotes": "版本說明"
+  },
+  "marketing": {
+    "header": {
+      "platform": "平台",
+      "solutions": "解決方案",
+      "pricing": "定價",
+      "resources": "資源",
+      "enterprise": "企業",
+      "login": "登入",
+      "signup": "註冊"
+    },
+    "footer": {
+      "product": "產品",
+      "company": "公司",
+      "resources": "資源",
+      "legal": "法律",
+      "aboutUs": "關於我們",
+      "careers": "職涯",
+      "contactUs": "聯絡我們",
+      "documentation": "文件",
+      "library": "資料庫",
+      "helpCenter": "幫助中心",
+      "terms": "條款與條件",
+      "privacy": "隱私政策",
+      "manageCookies": "管理 Cookie",
+      "copyright": "版權所有 2025. LiNKtrend Media"
+    },
+    "hero": {
+      "title": "免費註冊",
+      "subtitle": "幾秒鐘即可開始。無需信用卡。",
+      "emailPlaceholder": "你的電子郵件@example.com",
+      "phonePlaceholder": "+886 (555) 000-0000",
+      "termsText": "繼續即表示您接受我們的",
+      "getStarted": "開始使用"
+    },
+    "platform": {
+      "title": "專為成功而建的平台",
+      "subtitle": "發展業務所需的一切，盡在一處。",
+      "learnMore": "了解更多"
+    },
+    "pricing": {
+      "title": "簡單定價",
+      "subtitle": "選擇適合您需求的方案。",
+      "free": "免費",
+      "pro": "專業版",
+      "enterprise": "企業版",
+      "popular": "熱門",
+      "getStarted": "開始使用",
+      "startTrial": "開始免費試用",
+      "contactSales": "聯絡銷售"
+    },
+    "solutions": {
+      "title": "滿足各種需求的解決方案",
+      "subtitle": "探索我們的平台如何適應您的獨特需求。",
+      "explore": "探索解決方案"
+    },
+    "cta": {
+      "title": "準備好開始了嗎？",
+      "subtitle": "加入已經在使用我們平台發展業務的數千個團隊。今天就免費開始。",
+      "button": "免費開始"
+    }
+  }
+}
+

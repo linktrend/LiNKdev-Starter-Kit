@@ -137,5 +137,66 @@
     "contactSupport": "Contact Support",
     "sendFeedback": "Send Feedback",
     "releaseNotes": "Release Notes"
+  },
+  "marketing": {
+    "header": {
+      "platform": "Platform",
+      "solutions": "Solutions",
+      "pricing": "Pricing",
+      "resources": "Resources",
+      "enterprise": "Enterprise",
+      "login": "Log In",
+      "signup": "Sign Up"
+    },
+    "footer": {
+      "product": "Product",
+      "company": "Company",
+      "resources": "Resources",
+      "legal": "Legal",
+      "aboutUs": "About Us",
+      "careers": "Careers",
+      "contactUs": "Contact Us",
+      "documentation": "Documentation",
+      "library": "Library",
+      "helpCenter": "Help Center",
+      "terms": "Terms and Conditions",
+      "privacy": "Privacy Policy",
+      "manageCookies": "Manage Cookies",
+      "copyright": "Copyright 2025. LiNKtrend Media"
+    },
+    "hero": {
+      "title": "Sign up for free",
+      "subtitle": "Get started in seconds. No credit card required.",
+      "emailPlaceholder": "you@example.com",
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "termsText": "By continuing, you accept our",
+      "getStarted": "Get Started"
+    },
+    "platform": {
+      "title": "Platform Built for Success",
+      "subtitle": "Everything you need to grow your business, all in one place.",
+      "learnMore": "Learn More"
+    },
+    "pricing": {
+      "title": "Simple Pricing",
+      "subtitle": "Choose the plan that fits your needs.",
+      "free": "Free",
+      "pro": "Pro",
+      "enterprise": "Enterprise",
+      "popular": "Popular",
+      "getStarted": "Get Started",
+      "startTrial": "Start Free Trial",
+      "contactSales": "Contact Sales"
+    },
+    "solutions": {
+      "title": "Solutions for Every Need",
+      "subtitle": "Discover how our platform adapts to your unique requirements.",
+      "explore": "Explore Solutions"
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "subtitle": "Join thousands of teams already using our platform to grow their business. Start for free today.",
+      "button": "Get Started Free"
+    }
   }
 }

@@ -16,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { TableContainer } from '@/components/ui/table-container';
+import { TableHeadAction, TableCellAction, ActionIconsCell } from '@/components/ui/table-cells';
 import {
   Dialog,
   DialogContent,
@@ -356,7 +358,10 @@ export function ConsoleFlagsPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-xl sm:text-2xl">Feature Flags</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
+                <Flag className="h-5 w-5 text-blue-500" />
+                Feature Flags
+              </CardTitle>
               <CardDescription className="text-sm">
                 Manage feature flags and control feature rollouts across environments
               </CardDescription>
@@ -421,18 +426,25 @@ export function ConsoleFlagsPage() {
           </div>
 
           {/* Table - Desktop View */}
-          <div className="hidden lg:block rounded-md border overflow-x-auto">
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Flag</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Environment</TableHead>
-                  <TableHead>Enable</TableHead>
-                  <TableHead className="text-center w-[96px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+          <div className="hidden lg:block">
+            <TableContainer
+              id="config-feature-flags-table"
+              height="lg"
+              className="rounded-md border"
+            >
+              <Table className="min-w-[960px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[280px] max-w-[340px]">Flag</TableHead>
+                    <TableHead className="min-w-[160px] max-w-[200px]">Category</TableHead>
+                    <TableHead className="min-w-[160px] max-w-[200px]">Environment</TableHead>
+                    <TableHead className="min-w-[160px] max-w-[200px]">Enable</TableHead>
+                    <TableHeadAction className="min-w-[160px] max-w-[200px]">
+                      Actions
+                    </TableHeadAction>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                 {filteredFlags.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
@@ -466,15 +478,15 @@ export function ConsoleFlagsPage() {
                         <TableCell>
                           <span className="capitalize">{flag.environment}</span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="min-w-[160px] max-w-[200px]">
                           <Switch
                             checked={flag.isEnabled}
                             onCheckedChange={(checked) => handleToggle(flag.id, checked)}
                             className="data-[state=checked]:bg-green-500 dark:data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-red-500 dark:data-[state=unchecked]:bg-red-600"
                           />
                         </TableCell>
-                        <TableCell className="text-center w-[96px]">
-                          <div className="mx-auto inline-flex items-center justify-center gap-1 w-fit">
+                        <TableCellAction className="min-w-[160px] max-w-[200px]">
+                          <ActionIconsCell>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -489,8 +501,8 @@ export function ConsoleFlagsPage() {
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
-                          </div>
-                        </TableCell>
+                          </ActionIconsCell>
+                        </TableCellAction>
                       </TableRow>,
                       isExpanded && (
                         <TableRow key={`${flag.id}-details`}>
@@ -532,7 +544,8 @@ export function ConsoleFlagsPage() {
                   })
                 )}
               </TableBody>
-            </Table>
+              </Table>
+            </TableContainer>
           </div>
 
           {/* Card View - Mobile/Tablet */}
@@ -935,12 +948,16 @@ function DeleteConfirmModal({
   onConfirm: () => void;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    if (typeof document !== 'undefined') {
+      setPortalTarget(document.body);
+    }
   }, []);
 
-  if (!flagName || !mounted) return null;
+  if (!flagName || !mounted || !portalTarget) return null;
 
   const modalContent = (
     <div 
@@ -994,6 +1011,5 @@ function DeleteConfirmModal({
     </div>
   );
 
-  return createPortal(modalContent, document.body);
+  return createPortal(modalContent, portalTarget);
 }
-

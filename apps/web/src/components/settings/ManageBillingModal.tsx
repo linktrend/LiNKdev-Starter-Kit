@@ -117,7 +117,7 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
   const [mounted, setMounted] = useState(false);
   const [orgId, setOrgId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'plans' | 'billing'>('plans');
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
   const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   
@@ -483,11 +483,11 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
                     onClick={() => setBillingCycle('yearly')}
                     className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
                       billingCycle === 'yearly'
-                        ? 'bg-background text-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-background text-red-600 shadow-sm'
+                        : 'text-red-500 hover:text-red-600'
                     }`}
                   >
-                    Annual <span className="text-xs text-green-600 ml-1">Save 40%</span>
+                    Annual <span className="text-xs font-semibold ml-1 text-red-500">Save 40%</span>
                   </button>
                 </div>
               </div>
@@ -495,23 +495,47 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
               {/* Next Upgrade Plan */}
               {currentPlan === 'free' && (() => {
                 const proPlan = plans.find((p: any) => p.id === 'pro');
+                const currentPlanDetails = plans.find((p: any) => p.id === currentPlan);
                 if (!proPlan) return null;
                 
                 return (
                   <div className="mb-8 p-6 rounded-lg border-2 border-primary bg-primary/5">
-                    <h3 className="text-lg font-bold mb-3">Next Upgrade Plan</h3>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-2xl font-bold">Pro ${getPrice(proPlan)} <span className="text-base font-normal text-muted-foreground">/{getPricePeriod(proPlan)}</span></p>
-                        <p className="text-sm text-muted-foreground mt-1">{billingCycle === 'monthly' ? 'Billed monthly' : 'Billed annually'}</p>
+                    <h3 className="text-lg font-bold mb-4">Next Upgrade Plan</h3>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="rounded-lg border border-primary/20 bg-background/40 p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Current Plan</p>
+                        <h4 className="mt-2 text-xl font-bold">{currentPlanDetails?.name ?? 'Current'}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ${currentPlanDetails ? getPrice(currentPlanDetails) : 0}{' '}
+                          <span className="text-xs font-medium text-muted-foreground/80">
+                            /{currentPlanDetails ? getPricePeriod(currentPlanDetails) : 'month'}
+                          </span>
+                        </p>
+                        <p className="mt-3 text-xs text-muted-foreground">
+                          Enjoy core features while you evaluate the platform.
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground mb-2">View other plans</p>
-                        <Button
-                          onClick={() => handlePlanSwitch('pro')}
-                        >
-                          Upgrade to Pro
-                        </Button>
+
+                      <div className="rounded-lg border border-primary bg-background p-4 shadow-sm">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">Next Plan</p>
+                        <h4 className="mt-2 text-xl font-bold">Pro</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ${getPrice(proPlan)}{' '}
+                          <span className="text-xs font-medium text-muted-foreground/80">
+                            /{getPricePeriod(proPlan)}
+                          </span>
+                        </p>
+                        <p className="mt-3 text-xs text-muted-foreground">
+                          Unlock unlimited projects, analytics, and premium support.
+                        </p>
+                        <div className="mt-4">
+                          <Button
+                            onClick={() => handlePlanSwitch('pro')}
+                            className="w-full"
+                          >
+                            Upgrade to Pro
+                          </Button>
+                        </div>
                       </div>
                     </div>
                     <div className="mt-4 pt-4 border-t">

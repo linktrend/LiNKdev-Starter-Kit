@@ -47,22 +47,22 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div className="p-5 max-h-[70vh] overflow-y-auto">
           {/* Current Period */}
-          <div className="flex items-center gap-2 mb-6 text-sm">
+          <div className="flex items-center gap-2 mb-4 text-sm">
             <Calendar className="h-4 w-4" />
             <span className="font-medium">Current Period: October 2025</span>
           </div>
 
           {/* Usage Metrics */}
-          <div className="space-y-6 mb-8">
+          <div className="space-y-4 mb-6">
             {/* Credits */}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium">Credits</span>
                 <span className="text-sm font-semibold">7,500 / 10,000</span>
               </div>
-              <div className="w-full h-3 bg-accent rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
                 <div className="h-full bg-warning" style={{ width: '75%' }}></div>
               </div>
             </div>
@@ -73,7 +73,7 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
                 <span className="text-sm font-medium">Tokens</span>
                 <span className="text-sm font-semibold">450,000 / 500,000</span>
               </div>
-              <div className="w-full h-3 bg-accent rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
                 <div className="h-full bg-danger" style={{ width: '90%' }}></div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
                 <span className="text-sm font-medium">API Calls</span>
                 <span className="text-sm font-semibold">12,450 / 15,000</span>
               </div>
-              <div className="w-full h-3 bg-accent rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
                 <div className="h-full bg-warning" style={{ width: '83%' }}></div>
               </div>
             </div>
@@ -95,7 +95,7 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
                 <span className="text-sm font-medium">Storage</span>
                 <span className="text-sm font-semibold">6.2 GB / 10 GB</span>
               </div>
-              <div className="w-full h-3 bg-accent rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
                 <div className="h-full bg-success" style={{ width: '62%' }}></div>
               </div>
             </div>
@@ -103,14 +103,14 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
 
           {/* Historical Usage */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <Activity className="h-4 w-4" />
               <h3 className="font-semibold">Historical Usage</h3>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* November */}
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-3 bg-muted rounded-lg">
                 <h4 className="font-medium mb-2">November</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -125,7 +125,7 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
               </div>
 
               {/* October */}
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-3 bg-muted rounded-lg">
                 <h4 className="font-medium mb-2">October</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -140,7 +140,7 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
               </div>
 
               {/* September */}
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-3 bg-muted rounded-lg">
                 <h4 className="font-medium mb-2">September</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -162,4 +162,3 @@ export function UsageDashboardModal({ isOpen, onClose }: UsageDashboardModalProp
 
   return createPortal(modalContent, document.body);
 }
-

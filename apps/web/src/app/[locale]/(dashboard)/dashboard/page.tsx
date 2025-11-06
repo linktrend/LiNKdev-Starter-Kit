@@ -79,7 +79,7 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Welcome, {displayUser?.email || 'User'}!</CardTitle>
+          <CardTitle>Welcome to LTM Starter Kit</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">

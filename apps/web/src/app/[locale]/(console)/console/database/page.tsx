@@ -35,7 +35,9 @@ import {
   XCircle,
   ChevronUp,
   ChevronDown,
-  Copy
+  Copy,
+  History,
+  BookOpen
 } from 'lucide-react';
 
 // Mock data
@@ -271,62 +273,80 @@ export default function ConsoleDatabasePage() {
                   </Button>
                 </div>
               </div>
-              <div className="overflow-x-auto">
-                <Table className="w-full">
+              <TableContainer id="database-tables-table" height="lg">
+                <Table className="min-w-[960px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
-                      <TableHeadText className="w-[25%]">Table Name</TableHeadText>
-                        <TableHeadText className="hidden sm:table-cell w-24">Rows</TableHeadText>
-                        <TableHeadText className="hidden md:table-cell w-28">Size</TableHeadText>
-                        <TableHeadText className="hidden lg:table-cell w-[50%]">Description</TableHeadText>
-                        <TableHeadStatus className="hidden lg:table-cell w-16">RLS</TableHeadStatus>
-                        <TableHeadAction className="w-20">Actions</TableHeadAction>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredTables.map((table) => (
-                        <TableRow key={table.name}>
-                          <TableCellText className="font-medium w-[25%]">
-                            <div className="flex flex-col gap-1">
-                              <div>{table.name}</div>
-                              <div className="text-xs text-muted-foreground sm:hidden">
-                                <span className="mr-4">Rows: {table.rows.toLocaleString()}</span>
-                                <span>Size: {table.size}</span>
-                              </div>
-                              <div className="text-xs text-muted-foreground lg:hidden">
-                                {table.description}
-                              </div>
+                      <TableHeadText className="min-w-[240px] max-w-[280px]">
+                        Table Name
+                      </TableHeadText>
+                      <TableHeadText className="hidden sm:table-cell min-w-[120px] max-w-[140px] text-right sm:text-left">
+                        Rows
+                      </TableHeadText>
+                      <TableHeadText className="hidden md:table-cell min-w-[120px] max-w-[140px]">
+                        Size
+                      </TableHeadText>
+                      <TableHeadText className="hidden lg:table-cell min-w-[320px] max-w-[420px]">
+                        Description
+                      </TableHeadText>
+                      <TableHeadStatus className="hidden lg:table-cell min-w-[120px] max-w-[140px]">
+                        RLS
+                      </TableHeadStatus>
+                      <TableHeadAction className="min-w-[140px] max-w-[160px]">
+                        Actions
+                      </TableHeadAction>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredTables.map((table) => (
+                      <TableRow key={table.name}>
+                        <TableCellText className="min-w-[240px] max-w-[280px]">
+                          <div className="flex flex-col gap-1 md:whitespace-normal whitespace-nowrap md:pr-2">
+                            <div className="font-medium">{table.name}</div>
+                            <div className="text-xs text-muted-foreground sm:hidden">
+                              <span className="mr-4">Rows: {table.rows.toLocaleString()}</span>
+                              <span>Size: {table.size}</span>
                             </div>
-                          </TableCellText>
-                          <TableCellText className="hidden sm:table-cell w-24">{table.rows.toLocaleString()}</TableCellText>
-                          <TableCellText className="hidden md:table-cell w-28">{table.size}</TableCellText>
-                          <TableCellText className="hidden lg:table-cell text-muted-foreground w-[50%]">{table.description}</TableCellText>
-                          <TableCellStatus className="hidden lg:table-cell w-16">
-                            {table.rls ? (
-                              <div className="flex items-center justify-center cursor-help">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                              </div>
-                            ) : (
-                              <div className="flex items-center justify-center">
-                                <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-                              </div>
-                            )}
-                          </TableCellStatus>
-                          <TableCellAction className="w-20">
-                            <ActionIconsCell>
-                              <button
-                                onClick={() => setViewTableDialog(table.name)}
-                                className="p-2 hover:bg-accent rounded-lg transition-colors"
-                              >
-                                <Eye className="h-4 w-4" />
-                              </button>
-                            </ActionIconsCell>
-                          </TableCellAction>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-              </div>
+                            <div className="text-xs text-muted-foreground lg:hidden">
+                              {table.description}
+                            </div>
+                          </div>
+                        </TableCellText>
+                        <TableCellText className="hidden sm:table-cell min-w-[120px] max-w-[140px]">
+                          <span className="text-sm">{table.rows.toLocaleString()}</span>
+                        </TableCellText>
+                        <TableCellText className="hidden md:table-cell min-w-[120px] max-w-[140px]">
+                          <span className="text-sm">{table.size}</span>
+                        </TableCellText>
+                        <TableCellText className="hidden lg:table-cell min-w-[320px] max-w-[420px] text-muted-foreground">
+                          <span className="text-sm">{table.description}</span>
+                        </TableCellText>
+                        <TableCellStatus className="hidden lg:table-cell min-w-[120px] max-w-[140px]">
+                          {table.rls ? (
+                            <div className="flex items-center justify-center cursor-help">
+                              <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center">
+                              <XCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
+                            </div>
+                          )}
+                        </TableCellStatus>
+                        <TableCellAction className="min-w-[140px] max-w-[160px]">
+                          <ActionIconsCell>
+                            <button
+                              onClick={() => setViewTableDialog(table.name)}
+                              className="p-2 hover:bg-accent rounded-lg transition-colors"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                          </ActionIconsCell>
+                        </TableCellAction>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
               {filteredTables.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   No tables found matching "{searchTerm}"
@@ -385,12 +405,14 @@ export default function ConsoleDatabasePage() {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <p className="text-sm font-medium">Results ({queryResults.length} rows)</p>
                   </div>
-                  <div className="border rounded-md overflow-x-auto">
-                    <Table>
+                  <TableContainer id="database-query-results-table" height="md" className="border rounded-md">
+                    <Table className="min-w-[600px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                       <TableHeader>
                         <TableRow>
                           {queryResults.length > 0 && Object.keys(queryResults[0]).map((key) => (
-                            <TableHead key={key}>{key}</TableHead>
+                            <TableHead key={key} className="min-w-[160px] max-w-[220px]">
+                              {key}
+                            </TableHead>
                           ))}
                         </TableRow>
                       </TableHeader>
@@ -398,7 +420,7 @@ export default function ConsoleDatabasePage() {
                         {queryResults.map((row, idx) => (
                           <TableRow key={idx}>
                             {Object.values(row).map((value: any, cellIdx) => (
-                              <TableCell key={cellIdx} className="font-mono text-sm">
+                              <TableCell key={cellIdx} className="min-w-[160px] max-w-[220px] font-mono text-sm md:whitespace-normal whitespace-nowrap">
                                 {String(value)}
                               </TableCell>
                             ))}
@@ -406,7 +428,7 @@ export default function ConsoleDatabasePage() {
                         ))}
                       </TableBody>
                     </Table>
-                  </div>
+                  </TableContainer>
                 </div>
               )}
 
@@ -425,7 +447,10 @@ export default function ConsoleDatabasePage() {
             <TabsContent value="schema" className="space-y-4 mt-0">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <CardTitle>Schema Browser</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <TableIcon className="h-4 w-4 text-primary" />
+                    Schema Browser
+                  </CardTitle>
                   <CardDescription>Explore table structures and column definitions</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
@@ -441,38 +466,54 @@ export default function ConsoleDatabasePage() {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-lg font-semibold mb-2">{selectedTable}</h3>
-                    <div className="overflow-x-auto">
-                      <Table className="w-full">
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Column Name</TableHead>
-                              <TableHead>Type</TableHead>
-                              <TableHead className="hidden md:table-cell">Nullable</TableHead>
-                              <TableHead className="hidden lg:table-cell">Default</TableHead>
-                              <TableHead className="hidden lg:table-cell">Description</TableHead>
+                    <TableContainer id="database-schema-table" height="md">
+                      <Table className="min-w-[960px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="min-w-[220px] max-w-[260px]">
+                              Column Name
+                            </TableHead>
+                            <TableHead className="min-w-[200px] max-w-[240px]">
+                              Type
+                            </TableHead>
+                            <TableHead className="hidden md:table-cell min-w-[140px] max-w-[160px]">
+                              Nullable
+                            </TableHead>
+                            <TableHead className="hidden lg:table-cell min-w-[200px] max-w-[260px]">
+                              Default
+                            </TableHead>
+                            <TableHead className="hidden lg:table-cell min-w-[280px] max-w-[360px]">
+                              Description
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {mockSchema[selectedTable as keyof typeof mockSchema].map((column) => (
+                            <TableRow key={column.name}>
+                              <TableCell className="min-w-[220px] max-w-[260px] font-medium font-mono md:whitespace-normal whitespace-nowrap md:pr-2">
+                                {column.name}
+                              </TableCell>
+                              <TableCell className="min-w-[200px] max-w-[240px] font-mono text-sm break-all">
+                                {column.type}
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell min-w-[140px] max-w-[160px]">
+                                {column.nullable ? (
+                                  <Badge className={getBadgeClasses('boolean.yes')}>Yes</Badge>
+                                ) : (
+                                  <Badge className={getBadgeClasses('boolean.no')}>No</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="hidden lg:table-cell min-w-[200px] max-w-[260px] font-mono text-sm text-muted-foreground break-all">
+                                {column.default || '-'}
+                              </TableCell>
+                              <TableCell className="hidden lg:table-cell min-w-[280px] max-w-[360px] text-sm text-muted-foreground">
+                                {column.description}
+                              </TableCell>
                             </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {mockSchema[selectedTable as keyof typeof mockSchema].map((column) => (
-                              <TableRow key={column.name}>
-                                <TableCell className="font-medium font-mono">{column.name}</TableCell>
-                                <TableCell className="font-mono text-sm break-all">{column.type}</TableCell>
-                                <TableCell className="hidden md:table-cell">
-                                  {column.nullable ? (
-                                    <Badge className={getBadgeClasses('boolean.yes')}>Yes</Badge>
-                                  ) : (
-                                    <Badge className={getBadgeClasses('boolean.no')}>No</Badge>
-                                  )}
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell font-mono text-sm text-muted-foreground break-all">
-                                  {column.default || '-'}
-                                </TableCell>
-                                <TableCell className="hidden lg:table-cell text-muted-foreground">{column.description}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
                     </div>
                   </div>
               ) : (
@@ -610,40 +651,56 @@ export default function ConsoleDatabasePage() {
               <CardDescription>Queries taking longer than 100ms</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table className="w-full">
+              <TableContainer id="database-slow-queries-table" height="md">
+                <Table className="min-w-[760px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
-                      <TableHeadText className="min-w-0">Query</TableHeadText>
-                      <TableHeadNumeric className="w-24">Duration</TableHeadNumeric>
-                      <TableHeadNumeric className="hidden sm:table-cell w-20">Calls</TableHeadNumeric>
-                            <TableHeadStatus className="w-20">Status</TableHeadStatus>
+                      <TableHeadText className="min-w-[320px] max-w-[420px]">
+                        Query
+                      </TableHeadText>
+                      <TableHeadNumeric className="min-w-[140px] max-w-[160px]">
+                        Duration
+                      </TableHeadNumeric>
+                      <TableHeadNumeric className="hidden sm:table-cell min-w-[140px] max-w-[160px]">
+                        Calls
+                      </TableHeadNumeric>
+                      <TableHeadStatus className="min-w-[140px] max-w-[160px]">
+                        Status
+                      </TableHeadStatus>
                     </TableRow>
                   </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCellText className="font-mono text-xs sm:text-sm break-all min-w-0">
-                          SELECT * FROM audit_logs WHERE created_at &gt; NOW() - INTERVAL '1 day'
-                        </TableCellText>
-                        <TableCellNumeric className="w-24">234ms</TableCellNumeric>
-                        <TableCellNumeric className="hidden sm:table-cell w-20">156</TableCellNumeric>
-                        <TableCellStatus className="w-20">
-                          <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
-                        </TableCellStatus>
-                      </TableRow>
-                      <TableRow>
-                        <TableCellText className="font-mono text-xs sm:text-sm break-all min-w-0">
-                          SELECT COUNT(*) FROM records WHERE org_id = $1
-                        </TableCellText>
-                        <TableCellNumeric className="w-24">189ms</TableCellNumeric>
-                        <TableCellNumeric className="hidden sm:table-cell w-20">89</TableCellNumeric>
-                        <TableCellStatus className="w-20">
-                          <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
-                        </TableCellStatus>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-              </div>
+                  <TableBody>
+                    <TableRow>
+                      <TableCellText className="min-w-[320px] max-w-[420px] font-mono text-xs sm:text-sm md:whitespace-normal whitespace-nowrap md:pr-2 break-all">
+                        SELECT * FROM audit_logs WHERE created_at &gt; NOW() - INTERVAL '1 day'
+                      </TableCellText>
+                      <TableCellNumeric className="min-w-[140px] max-w-[160px]">
+                        234ms
+                      </TableCellNumeric>
+                      <TableCellNumeric className="hidden sm:table-cell min-w-[140px] max-w-[160px]">
+                        156
+                      </TableCellNumeric>
+                      <TableCellStatus className="min-w-[140px] max-w-[160px]">
+                        <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
+                      </TableCellStatus>
+                    </TableRow>
+                    <TableRow>
+                      <TableCellText className="min-w-[320px] max-w-[420px] font-mono text-xs sm:text-sm md:whitespace-normal whitespace-nowrap md:pr-2 break-all">
+                        SELECT COUNT(*) FROM records WHERE org_id = $1
+                      </TableCellText>
+                      <TableCellNumeric className="min-w-[140px] max-w-[160px]">
+                        189ms
+                      </TableCellNumeric>
+                      <TableCellNumeric className="hidden sm:table-cell min-w-[140px] max-w-[160px]">
+                        89
+                      </TableCellNumeric>
+                      <TableCellStatus className="min-w-[140px] max-w-[160px]">
+                        <Badge className={getBadgeClasses('warning.soft')}>Slow</Badge>
+                      </TableCellStatus>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </TabsContent>
@@ -652,8 +709,11 @@ export default function ConsoleDatabasePage() {
             <TabsContent value="history" className="space-y-4 mt-0">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                 <div>
-                  <h3 className="text-lg font-semibold">Query History</h3>
-                  <p className="text-sm text-muted-foreground">Recently executed SQL queries</p>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <History className="h-4 w-4 text-primary" />
+                    Query History
+                  </CardTitle>
+                  <CardDescription>Recently executed SQL queries</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   <RefreshCw className="h-4 w-4 mr-2" />
@@ -661,14 +721,24 @@ export default function ConsoleDatabasePage() {
                 </Button>
               </div>
               <TableContainer id="database-query-history-table" height="lg">
-                <Table>
+                <Table className="min-w-[960px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
-                      <TableHeadText className="hidden md:table-cell w-44">Executed At</TableHeadText>
-                      <TableHeadText className="min-w-0">Query</TableHeadText>
-                      <TableHeadNumeric className="w-24">Duration</TableHeadNumeric>
-                      <TableHeadNumeric className="hidden sm:table-cell w-20">Rows</TableHeadNumeric>
-                      <TableHeadStatus className="w-28">Status</TableHeadStatus>
+                      <TableHeadText className="hidden md:table-cell min-w-[180px] max-w-[220px]">
+                        Executed At
+                      </TableHeadText>
+                      <TableHeadText className="min-w-[320px] max-w-[420px]">
+                        Query
+                      </TableHeadText>
+                      <TableHeadNumeric className="min-w-[140px] max-w-[160px]">
+                        Duration
+                      </TableHeadNumeric>
+                      <TableHeadNumeric className="hidden sm:table-cell min-w-[140px] max-w-[160px]">
+                        Rows
+                      </TableHeadNumeric>
+                      <TableHeadStatus className="min-w-[160px] max-w-[180px]">
+                        Status
+                      </TableHeadStatus>
                     </TableRow>
                   </TableHeader>
                     <TableBody>
@@ -680,7 +750,7 @@ export default function ConsoleDatabasePage() {
                         return (
                           <Fragment key={query.id}>
                             <TableRow>
-                              <TableCellText className="hidden md:table-cell w-44">
+                              <TableCellText className="hidden md:table-cell min-w-[180px] max-w-[220px]">
                                 {isValidDate ? (
                                   <DateTimeCell date={executedDate} />
                                 ) : (
@@ -690,10 +760,12 @@ export default function ConsoleDatabasePage() {
                                   </div>
                                 )}
                               </TableCellText>
-                              <TableCellText className="min-w-0">
+                              <TableCellText className="min-w-[320px] max-w-[420px]">
                                 <div className="min-w-0">
-                                  <div className="flex flex-col gap-2">
-                                    <p className="text-sm font-medium break-words line-clamp-2">{query.query}</p>
+                                  <div className="flex flex-col gap-2 md:whitespace-normal whitespace-nowrap md:pr-2">
+                                    <p className="text-sm font-medium break-words line-clamp-2">
+                                      {query.query}
+                                    </p>
                                     <DetailsLink
                                       isExpanded={expandedQueries.has(query.id)}
                                       onToggle={() => toggleQueryExpanded(query.id)}
@@ -706,9 +778,13 @@ export default function ConsoleDatabasePage() {
                                   </div>
                                 </div>
                               </TableCellText>
-                              <TableCellNumeric className="w-24">{query.duration}</TableCellNumeric>
-                              <TableCellNumeric className="hidden sm:table-cell w-20">{query.rows.toLocaleString()}</TableCellNumeric>
-                              <TableCellStatus className="w-28">
+                              <TableCellNumeric className="min-w-[140px] max-w-[160px]">
+                                {query.duration}
+                              </TableCellNumeric>
+                              <TableCellNumeric className="hidden sm:table-cell min-w-[140px] max-w-[160px]">
+                                {query.rows.toLocaleString()}
+                              </TableCellNumeric>
+                              <TableCellStatus className="min-w-[160px] max-w-[180px]">
                                 {query.status === 'success' ? (
                                   <Badge 
                                     className={`${getBadgeClasses('success.soft')} flex justify-center items-center`}
@@ -837,36 +913,54 @@ export default function ConsoleDatabasePage() {
                 {mockSchema[viewTableDialog as keyof typeof mockSchema] && (
                   <div className="space-y-2">
                     <h3 className="text-sm font-medium">Schema</h3>
-                    <div className="overflow-x-auto">
-                      <Table>
+                    <TableContainer id="database-table-schema-dialog" height="md">
+                      <Table className="min-w-[720px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Column Name</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Nullable</TableHead>
-                            <TableHead>Default</TableHead>
-                            <TableHead>Description</TableHead>
+                            <TableHead className="min-w-[200px] max-w-[240px]">
+                              Column Name
+                            </TableHead>
+                            <TableHead className="min-w-[180px] max-w-[220px]">
+                              Type
+                            </TableHead>
+                            <TableHead className="min-w-[140px] max-w-[160px]">
+                              Nullable
+                            </TableHead>
+                            <TableHead className="min-w-[200px] max-w-[260px]">
+                              Default
+                            </TableHead>
+                            <TableHead className="min-w-[260px] max-w-[320px]">
+                              Description
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {mockSchema[viewTableDialog as keyof typeof mockSchema].map((column) => (
                             <TableRow key={column.name}>
-                              <TableCell className="font-medium font-mono">{column.name}</TableCell>
-                              <TableCell className="font-mono text-sm">{column.type}</TableCell>
-                              <TableCell>
+                              <TableCell className="min-w-[200px] max-w-[240px] font-medium font-mono md:whitespace-normal whitespace-nowrap md:pr-2">
+                                {column.name}
+                              </TableCell>
+                              <TableCell className="min-w-[180px] max-w-[220px] font-mono text-sm">
+                                {column.type}
+                              </TableCell>
+                              <TableCell className="min-w-[140px] max-w-[160px]">
                                 {column.nullable ? (
                                   <Badge className={getBadgeClasses('boolean.yes')}>Yes</Badge>
                                 ) : (
                                   <Badge className={getBadgeClasses('boolean.no')}>No</Badge>
                                 )}
                               </TableCell>
-                              <TableCell className="font-mono text-sm text-muted-foreground">{column.default || '-'}</TableCell>
-                              <TableCell className="text-muted-foreground">{column.description}</TableCell>
+                              <TableCell className="min-w-[200px] max-w-[260px] font-mono text-sm text-muted-foreground">
+                                {column.default || '-'}
+                              </TableCell>
+                              <TableCell className="min-w-[260px] max-w-[320px] text-sm text-muted-foreground">
+                                {column.description}
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableContainer>
                   </div>
                 )}
               </>

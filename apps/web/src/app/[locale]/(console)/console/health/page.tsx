@@ -4,7 +4,6 @@ import { useState } from 'react';
 import './health-scrollbar.css';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -22,7 +21,9 @@ import {
   Shield,
   Mail,
   HardDrive,
-  RefreshCw
+  RefreshCw,
+  ListChecks,
+  Info,
 } from 'lucide-react';
 
 interface ServiceHealth {
@@ -499,7 +500,10 @@ export default function ConsoleHealthPage() {
       {/* Service Health Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Service Status</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <ListChecks className="h-4 w-4 text-primary" />
+            Service Status
+          </CardTitle>
           <CardDescription>
             Real-time health status of all system services and dependencies
           </CardDescription>
@@ -670,7 +674,10 @@ export default function ConsoleHealthPage() {
       {/* Detailed Service Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Service Details</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Info className="h-4 w-4 text-primary" />
+            Service Details
+          </CardTitle>
           <CardDescription>
             Detailed health information and monitoring for individual services
           </CardDescription>

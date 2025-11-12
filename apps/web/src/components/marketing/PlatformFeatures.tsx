@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, TrendingUp, Sparkles, HeadphonesIcon, ArrowRight } from 'lucide-react';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 const features = [
   {
@@ -41,6 +42,7 @@ const features = [
  * - Responsive grid layout
  */
 export function PlatformFeatures() {
+  const { buildPath } = useLocalePath();
   return (
     <div className="space-y-8 flex flex-col h-full justify-between">
       <div className="space-y-3">
@@ -73,7 +75,7 @@ export function PlatformFeatures() {
                   {feature.description}
                 </CardDescription>
                 <Link
-                  href={`/en${feature.href}`}
+                  href={buildPath(feature.href)}
                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
                 >
                   Learn More
@@ -88,4 +90,3 @@ export function PlatformFeatures() {
     </div>
   );
 }
-

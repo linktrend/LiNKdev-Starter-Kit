@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getBadgeClasses } from '@/components/ui/badge.presets';
+import { getBadgeClasses, type PresetKey } from '@/components/ui/badge.presets';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -140,7 +140,7 @@ function getAuditUserDisplay(userId: string) {
 }
 
 // Map audit actions to standardized badge presets for consistent color/size
-function actionToPreset(action: string): string {
+function actionToPreset(action: string): PresetKey {
   switch (action) {
     case 'created':
     case 'accepted':
@@ -169,30 +169,48 @@ function actionToPreset(action: string): string {
 const mockUsers: User[] = [
   {
     id: '1',
+    email: 'owner@example.com',
+    name: 'Owner User',
+    role: 'owner',
+    status: 'active',
+    lastLogin: new Date('2025-01-27T10:30:00Z'),
+    createdAt: new Date('2024-01-01T09:00:00Z'),
+  },
+  {
+    id: '2',
     email: 'admin@example.com',
     name: 'Admin User',
     role: 'admin',
     status: 'active',
-    lastLogin: new Date('2025-01-27T10:30:00Z'),
-    createdAt: new Date('2024-01-15T09:00:00Z'),
-  },
-  {
-    id: '2',
-    email: 'user@example.com',
-    name: 'Regular User',
-    role: 'user',
-    status: 'active',
-    lastLogin: new Date('2025-01-27T08:15:00Z'),
-    createdAt: new Date('2024-03-20T11:00:00Z'),
+    lastLogin: new Date('2025-01-27T09:15:00Z'),
+    createdAt: new Date('2024-01-15T11:00:00Z'),
   },
   {
     id: '3',
-    email: 'manager@example.com',
-    name: 'Manager User',
-    role: 'manager',
+    email: 'admin2@example.com',
+    name: 'Admin User 2',
+    role: 'admin',
     status: 'active',
     lastLogin: new Date('2025-01-26T16:45:00Z'),
     createdAt: new Date('2024-02-10T14:30:00Z'),
+  },
+  {
+    id: '4',
+    email: 'user.pro@example.com',
+    name: 'Pro User',
+    role: 'std-pro',
+    status: 'active',
+    lastLogin: new Date('2025-01-27T08:00:00Z'),
+    createdAt: new Date('2024-03-20T10:00:00Z'),
+  },
+  {
+    id: '5',
+    email: 'user.basic@example.com',
+    name: 'Basic User',
+    role: 'std-basic',
+    status: 'active',
+    lastLogin: new Date('2025-01-26T14:20:00Z'),
+    createdAt: new Date('2024-04-15T09:30:00Z'),
   },
 ];
 
@@ -253,6 +271,55 @@ const mockAuditEntries: AuditEntry[] = [
   },
 ];
 
+// Admin/Owner Email Whitelist Mock Data
+interface AdminWhitelist {
+  id: string;
+  email: string;
+  role: 'admin' | 'owner';
+  requires2FA: boolean;
+  twoFactorEnabled: boolean;
+  verified: boolean;
+  addedBy: string;
+  addedAt: string;
+  lastLogin: Date | null;
+}
+
+const mockAdminWhitelist: AdminWhitelist[] = [
+  {
+    id: '1',
+    email: 'owner@example.com',
+    role: 'owner',
+    requires2FA: true,
+    twoFactorEnabled: true,
+    verified: true,
+    addedBy: 'system',
+    addedAt: '2024-01-01',
+    lastLogin: new Date('2025-01-27T09:00:00Z'),
+  },
+  {
+    id: '2',
+    email: 'admin@example.com',
+    role: 'admin',
+    requires2FA: true,
+    twoFactorEnabled: true,
+    verified: true,
+    addedBy: 'owner@example.com',
+    addedAt: '2024-01-15',
+    lastLogin: new Date('2025-01-27T10:30:00Z'),
+  },
+  {
+    id: '3',
+    email: 'admin2@example.com',
+    role: 'admin',
+    requires2FA: true,
+    twoFactorEnabled: false,
+    verified: true,
+    addedBy: 'owner@example.com',
+    addedAt: '2024-02-10',
+    lastLogin: new Date('2025-01-26T16:45:00Z'),
+  },
+];
+
 const mockSessions: Session[] = [
   {
     id: '1',
@@ -285,57 +352,62 @@ export default function ConsoleSecurityPage() {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
   const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
+  const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showGrantedOnly, setShowGrantedOnly] = useState(false);
   const [matrixScope, setMatrixScope] = useState<'application' | 'console'>('application');
   const [selectedResource, setSelectedResource] = useState<'' | 'Users' | 'Records' | 'Roles' | 'Audit Logs'>('');
   const [selectedAction, setSelectedAction] = useState<'' | 'read' | 'write' | 'delete' | 'manage'>('');
   const [selectedUserRole, setSelectedUserRole] = useState<string>('');
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminRole, setNewAdminRole] = useState<'admin' | 'owner'>('admin');
 
-  // Fixed role taxonomy across User and Console applications (ordered from most restricted to full access)
+  // Fixed role taxonomy: 3-tier structure (Standard, Admin, Owner)
   const ROLE_GROUPS = useMemo(() => ({
-    userStandard: {
-      label: 'User Application — Standard Users',
+    standard: {
+      label: 'Standard Users',
+      description: 'Application access only',
       roles: [
-        { id: 'std-free', name: 'Standard User Free', description: 'Limited access', permissions: ['read'], userCount: 0 },
-        { id: 'std-basic', name: 'Standard User Basic', description: 'Basic access', permissions: ['read'], userCount: 0 },
-        { id: 'std-pro', name: 'Standard User Pro', description: 'Pro access', permissions: ['read', 'write'], userCount: 0 },
-        { id: 'std-enterprise', name: 'Standard User Enterprise', description: 'Enterprise access', permissions: ['read', 'write'], userCount: 0 },
+        { id: 'std-free', name: 'Standard User Free', description: 'Limited access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read'], userCount: 15 },
+        { id: 'std-basic', name: 'Standard User Basic', description: 'Basic access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read'], userCount: 25 },
+        { id: 'std-pro', name: 'Standard User Pro', description: 'Pro access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 8 },
+        { id: 'std-enterprise', name: 'Standard User Enterprise', description: 'Enterprise access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 2 },
       ],
     },
-    userManager: {
-      label: 'User Application — Manager Users',
+    admin: {
+      label: 'Admin Users',
+      description: 'Can manage Standard Users (App + Console access, Email-only auth, 2FA required)',
       roles: [
-        { id: 'mgr', name: 'Manager User Manager', description: 'Team management', permissions: ['read', 'write', 'manage_team'], userCount: 0 },
-        { id: 'mgr-sr', name: 'Manager User Senior Manager', description: 'Advanced team management', permissions: ['read', 'write', 'manage_team'], userCount: 0 },
+        { id: 'admin', name: 'Admin User', description: 'Can manage Standard Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 3 },
       ],
     },
-    consoleManager: {
-      label: 'Console Application — Manager Users',
+    owner: {
+      label: 'Owner Users (Super Admins)',
+      description: 'Can manage all users (App + Console access, Email-only auth, 2FA required)',
       roles: [
-        { id: 'c-mgr', name: 'Administrator User Admin', description: 'Administrative access', permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 0 },
-        { id: 'c-mgr-sr', name: 'Administrator User Senior Admin', description: 'Full administrative access', permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles'], userCount: 0 },
+        { id: 'owner', name: 'Owner User', description: 'Can manage all users including Admin Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles', 'manage_admins'], userCount: 1 },
       ],
     },
   }), []);
 
   const ALL_ROLES_ORDERED = useMemo(() => (
     [
-      ...ROLE_GROUPS.userStandard.roles,
-      ...ROLE_GROUPS.userManager.roles,
-      ...ROLE_GROUPS.consoleManager.roles,
+      ...ROLE_GROUPS.standard.roles,
+      ...ROLE_GROUPS.admin.roles,
+      ...ROLE_GROUPS.owner.roles,
     ]
   ), [ROLE_GROUPS]);
 
-  const APPLICATION_ROLES = useMemo(() => ([
-    ...ROLE_GROUPS.userStandard.roles,
-    ...ROLE_GROUPS.userManager.roles,
-  ]), [ROLE_GROUPS]);
+  // All user types for Access Control table - show all three main user types
+  const ALL_USER_TYPES = useMemo(() => ([
+    { id: 'standard', name: 'Standard User', description: 'Application access only', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 0 },
+    { id: 'admin', name: 'Admin User', description: 'Can manage Standard Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 0 },
+    { id: 'owner', name: 'Owner User', description: 'Can manage all users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles', 'manage_admins'], userCount: 0 },
+  ]), []);
 
-  const CONSOLE_ROLES = useMemo(() => ([
-    ...ROLE_GROUPS.userManager.roles,
-    ...ROLE_GROUPS.consoleManager.roles,
-  ]), [ROLE_GROUPS]);
+  // Both scopes show all user types
+  const APPLICATION_ROLES = ALL_USER_TYPES;
+  const CONSOLE_ROLES = ALL_USER_TYPES;
 
   const RESOURCES = useMemo(() => (
     ['Users', 'Records', 'Roles', 'Audit Logs'] as const
@@ -575,67 +647,80 @@ export default function ConsoleSecurityPage() {
               </div>
 
               <TableContainer id="security-users-table" height="lg">
-                <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
+                <Table className="min-w-[1400px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
                   <TableHeader>
                     <TableRow>
-                      <TableHeadText className="hidden sm:table-cell w-36">Organisation</TableHeadText>
-                      <TableHeadText className="min-w-0 max-w-[25%]">User</TableHeadText>
-                      <TableHeadText className="hidden md:table-cell w-36">Role</TableHeadText>
-                      <TableHeadStatus className="hidden md:table-cell w-36">Status</TableHeadStatus>
-                      <TableHeadText className="hidden md:table-cell w-40">Last Login</TableHeadText>
-                      <TableHeadAction className="w-36">Actions</TableHeadAction>
+                      <TableHeadText className="min-w-0 max-w-[20%]">User</TableHeadText>
+                      <TableHeadText className="w-48">Role</TableHeadText>
+                      <TableHeadText className="w-40">Access</TableHeadText>
+                      <TableHeadText className="w-32">Auth Method</TableHeadText>
+                      <TableHeadText className="w-24">2FA</TableHeadText>
+                      <TableHeadStatus className="w-28">Status</TableHeadStatus>
+                      <TableHeadText className="w-40">Last Login</TableHeadText>
+                      <TableHeadAction className="w-32">Actions</TableHeadAction>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                           No users found
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredUsers.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCellText className="hidden sm:table-cell align-top w-36">
-                            <div>
-                              <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate block whitespace-nowrap">
-                                {mockUserOrganisation[user.id] ?? '—'}
+                      filteredUsers.map((user) => {
+                        const roleInfo = ALL_ROLES_ORDERED.find(r => r.id === user.role);
+                        return (
+                          <TableRow key={user.id}>
+                            <TableCellText className="min-w-0 max-w-[20%]">
+                              <UserOrgCell
+                                primary={getUserDisplay({ name: user.name, email: user.email }).primary}
+                                secondary={getUserDisplay({ name: user.name, email: user.email }).secondary}
+                              />
+                            </TableCellText>
+                            <TableCellText className="w-48">
+                              <span className="text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap">
+                                {roleInfo?.name || user.role}
                               </span>
-                            </div>
-                          </TableCellText>
-                          <TableCellText className="min-w-0 max-w-[25%]">
-                            <UserOrgCell
-                              primary={getUserDisplay({ name: user.name, email: user.email }).primary}
-                              secondary={getUserDisplay({ name: user.name, email: user.email }).secondary}
-                            />
-                          </TableCellText>
-                          <TableCellText className="hidden md:table-cell w-36">
-                            <span className="capitalize text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap">
-                              {user.role}
-                            </span>
-                          </TableCellText>
-                          <TableCellStatus className="hidden md:table-cell w-36">
-                            {getStatusBadge(getUserStatus(user))}
-                          </TableCellStatus>
-                          <TableCellText className="hidden md:table-cell whitespace-nowrap w-40">
-                            {user.lastLogin ? (
-                              <DateTimeCell date={user.lastLogin} />
-                            ) : (
-                              '—'
-                            )}
-                          </TableCellText>
-                          <TableCellAction className="w-36">
-                            <ActionIconsCell>
-                              <Button variant="ghost" size="icon">
-                                <Edit className="h-4 w-4" />
-                              </Button>
+                            </TableCellText>
+                            <TableCellText className="w-40">
+                              <span className="text-sm text-zinc-700 dark:text-zinc-300">
+                                {roleInfo?.access === 'app+console' ? 'App + Console' : 'App Only'}
+                              </span>
+                            </TableCellText>
+                            <TableCellText className="w-32">
+                              <span className="text-sm text-zinc-700 dark:text-zinc-300 capitalize">
+                                {roleInfo?.authMethod === 'email' ? 'Email Only' : 'Any'}
+                              </span>
+                            </TableCellText>
+                            <TableCellText className="w-24">
+                              <Badge variant={roleInfo?.requires2FA ? 'destructive' : 'outline'} className="text-xs">
+                                {roleInfo?.requires2FA ? 'Required' : 'Optional'}
+                              </Badge>
+                            </TableCellText>
+                            <TableCellStatus className="w-28">
+                              {getStatusBadge(getUserStatus(user))}
+                            </TableCellStatus>
+                            <TableCellText className="whitespace-nowrap w-40">
+                              {user.lastLogin ? (
+                                <DateTimeCell date={user.lastLogin} />
+                              ) : (
+                                '—'
+                              )}
+                            </TableCellText>
+                            <TableCellAction className="w-32">
+                              <ActionIconsCell>
+                                <Button variant="ghost" size="icon">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
                               <Button variant="ghost" size="icon">
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </ActionIconsCell>
                           </TableCellAction>
                         </TableRow>
-                      ))
+                        );
+                      })
                     )}
                   </TableBody>
                 </Table>
@@ -701,18 +786,18 @@ export default function ConsoleSecurityPage() {
                 </CardHeader>
                 <CardContent>
                   <TableContainer id="security-permissions-matrix-table" height="md">
-                    <Table className="min-w-[1020px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
+                    <Table className="min-w-[800px] [&_th]:px-3 [&_td]:px-3 [&_th]:py-3 [&_td]:py-4">
                       <TableColgroup columns={[
-                        { width: 'md' },
                         { width: 'sm' },
-                        ...(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(() => ({ width: 'md' as const })),
+                        { width: 'sm' },
+                        ...(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(() => ({ width: 'sm' as const })),
                       ]} />
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="sticky left-0 z-10 bg-background">Resource</TableHead>
-                          <TableHead className="sticky left-[140px] z-10 bg-background">Action</TableHead>
+                          <TableHead className="sticky left-0 z-20 bg-background w-28">Resource</TableHead>
+                          <TableHead className="sticky left-[112px] z-20 bg-background w-20">Action</TableHead>
                           {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
-                            <TableHeadAction key={role.id} className="whitespace-nowrap">{role.name}</TableHeadAction>
+                            <TableHeadAction key={role.id} className="whitespace-nowrap w-28">{role.name}</TableHeadAction>
                           ))}
                         </TableRow>
                       </TableHeader>
@@ -739,13 +824,11 @@ export default function ConsoleSecurityPage() {
                               return (
                                 <TableRow key={`${item.resource}-${action}`} className={actionIdx % 2 === 1 ? 'bg-muted/30' : ''}>
                                   {actionIdx === 0 && (
-                                    <TableCell rowSpan={arr.length} className="font-medium align-middle sticky left-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                                      <div className="min-w-[140px]">
-                                        {item.resource}
-                                      </div>
+                                    <TableCell rowSpan={arr.length} className="font-medium align-middle sticky left-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-28">
+                                      {item.resource}
                                     </TableCell>
                                   )}
-                                  <TableCell className="text-xs sm:text-sm text-muted-foreground">
+                                  <TableCell className="text-xs sm:text-sm text-muted-foreground sticky left-[112px] z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-20">
                                     <Badge variant="outline" className="px-1.5 py-0 text-[10px] sm:text-[11px]">{action}</Badge>
                                   </TableCell>
                                   {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES)
@@ -756,7 +839,7 @@ export default function ConsoleSecurityPage() {
                                       (role.name.includes('Senior Admin') && action !== 'manage_users');
                                     // optional: show-only-granted could hide denied cells; keeping all visible for clarity
                                     return (
-                                      <TableCell key={role.id} className="text-center">
+                                      <TableCell key={role.id} className="text-center w-28">
                                         {hasPermission ? (
                                           <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mx-auto" />
                                         ) : (
@@ -770,6 +853,91 @@ export default function ConsoleSecurityPage() {
                             });
                           return actionRows;
                         })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+              </Card>
+
+              {/* Admin/Owner Email Whitelist Section */}
+              <Card className="mt-6">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Admin & Owner Email Whitelist
+                      </CardTitle>
+                      <CardDescription>
+                        Manage authorized emails for Admin and Owner access. Only Owner Users can add/remove entries.
+                      </CardDescription>
+                    </div>
+                    <Button onClick={() => setIsAddAdminOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Email
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <TableContainer id="admin-whitelist-table" height="md">
+                    <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHeadText className="min-w-0 max-w-[30%]">Email</TableHeadText>
+                          <TableHeadText className="hidden md:table-cell w-32">Role</TableHeadText>
+                          <TableHeadStatus className="hidden lg:table-cell w-28">2FA Status</TableHeadStatus>
+                          <TableHeadText className="hidden lg:table-cell w-48">Added By</TableHeadText>
+                          <TableHeadText className="hidden md:table-cell w-40">Last Login</TableHeadText>
+                          <TableHeadAction className="w-32">Actions</TableHeadAction>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {mockAdminWhitelist.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                              No whitelisted emails
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          mockAdminWhitelist.map((admin) => (
+                            <TableRow key={admin.id}>
+                              <TableCellText className="min-w-0 max-w-[30%]">
+                                <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate">
+                                  {admin.email}
+                                </span>
+                              </TableCellText>
+                              <TableCellText className="hidden md:table-cell w-32">
+                                <span className="text-sm capitalize text-zinc-700 dark:text-zinc-300">
+                                  {admin.role}
+                                </span>
+                              </TableCellText>
+                              <TableCellStatus className="hidden lg:table-cell w-28">
+                                <Badge className={getBadgeClasses(admin.twoFactorEnabled ? 'success.soft' : 'danger.soft')}>
+                                  {admin.twoFactorEnabled ? 'Enabled' : 'Required'}
+                                </Badge>
+                              </TableCellStatus>
+                              <TableCellText className="hidden lg:table-cell w-48">
+                                <span className="text-sm text-muted-foreground">
+                                  {admin.addedBy}
+                                </span>
+                              </TableCellText>
+                              <TableCellText className="hidden md:table-cell whitespace-nowrap w-40">
+                                {admin.lastLogin ? (
+                                  <DateTimeCell date={admin.lastLogin} />
+                                ) : (
+                                  <span className="text-muted-foreground">Never</span>
+                                )}
+                              </TableCellText>
+                              <TableCellAction className="w-32">
+                                <ActionIconsCell>
+                                  <Button variant="ghost" size="icon" disabled={admin.role === 'owner'}>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </ActionIconsCell>
+                              </TableCellAction>
+                            </TableRow>
+                          ))
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>
@@ -1025,6 +1193,81 @@ export default function ConsoleSecurityPage() {
             </Button>
             <Button onClick={() => setIsCreateRoleOpen(false)}>
               Create Role
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Admin/Owner Email Dialog */}
+      <Dialog open={isAddAdminOpen} onOpenChange={setIsAddAdminOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Admin/Owner Email</DialogTitle>
+            <DialogDescription>
+              Add an authorized email for Admin or Owner access. 2FA will be required for this user.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="admin-email">Email Address</Label>
+              <Input 
+                id="admin-email" 
+                type="email" 
+                placeholder="admin@example.com" 
+                value={newAdminEmail}
+                onChange={(e) => setNewAdminEmail(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                This email will be whitelisted for console access
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-role">Role</Label>
+              <Select value={newAdminRole} onValueChange={(v) => setNewAdminRole(v as 'admin' | 'owner')}>
+                <SelectTrigger id="admin-role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin User</SelectItem>
+                  <SelectItem value="owner">Owner User (Super Admin)</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {newAdminRole === 'admin' 
+                  ? 'Can manage Standard Users' 
+                  : 'Can manage all users including Admin Users'}
+              </p>
+            </div>
+            <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 p-3 border border-amber-200 dark:border-amber-800">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5" />
+                <div className="text-xs text-amber-800 dark:text-amber-200">
+                  <p className="font-medium mb-1">Important:</p>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>Email-only authentication (magic link)</li>
+                    <li>Two-factor authentication (2FA) required</li>
+                    <li>Access to both App and Console</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => {
+              setIsAddAdminOpen(false);
+              setNewAdminEmail('');
+              setNewAdminRole('admin');
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              // Mock: Add admin to whitelist
+              console.log('Adding admin:', { email: newAdminEmail, role: newAdminRole });
+              setIsAddAdminOpen(false);
+              setNewAdminEmail('');
+              setNewAdminRole('admin');
+            }}>
+              Add to Whitelist
             </Button>
           </div>
         </DialogContent>

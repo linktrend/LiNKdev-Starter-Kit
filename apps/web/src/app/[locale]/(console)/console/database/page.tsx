@@ -349,7 +349,7 @@ export default function ConsoleDatabasePage() {
               </TableContainer>
               {filteredTables.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  No tables found matching "{searchTerm}"
+                  No tables found matching &quot;{searchTerm}&quot;
                 </div>
               )}
             </TabsContent>

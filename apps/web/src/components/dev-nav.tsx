@@ -47,7 +47,7 @@ export function DevNav() {
       title: 'Support Pages',
       description: 'Help and support pages',
       pages: [
-        { href: '/help', label: 'Help Center', icon: HelpCircle, description: 'Help center and documentation' },
+        { href: '/dashboard/help', label: 'Help Center', icon: HelpCircle, description: 'In-app support hub' },
       ]
     }
   ];

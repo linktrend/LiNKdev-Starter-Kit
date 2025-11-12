@@ -1,26 +1,32 @@
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
 import Link from 'next/link';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function SolutionsPage() {
+interface PageProps {
+  params: { locale: string };
+}
+
+export default function SolutionsPage({ params }: PageProps) {
+  const localized = (path: string) => buildLocalePath(params?.locale, path);
   return (
     <PlatformPageLayout
       title="Solutions Overview"
       subtitle="Tailored solutions for every business, industry, and role"
       featureSection1b={
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Link href="/en/solutions/customers" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/solutions/customers')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">👥 For Customers</h3>
             <p className="text-sm text-muted-foreground">Customer-focused solutions</p>
           </Link>
-          <Link href="/en/solutions/industry" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/solutions/industry')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">🏢 By Industry</h3>
             <p className="text-sm text-muted-foreground">Industry-specific features</p>
           </Link>
-          <Link href="/en/solutions/company-size" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/solutions/company-size')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">📊 By Company Size</h3>
             <p className="text-sm text-muted-foreground">Right-sized for you</p>
           </Link>
-          <Link href="/en/solutions/role" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/solutions/role')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">🎯 By Role</h3>
             <p className="text-sm text-muted-foreground">Tools for your role</p>
           </Link>
@@ -40,7 +46,7 @@ export default function SolutionsPage() {
               <p className="text-muted-foreground mb-4">
                 Build exceptional customer experiences with personalization, omnichannel support, and analytics.
               </p>
-              <Link href="/en/solutions/customers" className="text-primary hover:underline text-sm">
+              <Link href={localized('/solutions/customers')} className="text-primary hover:underline text-sm">
                 Learn More →
               </Link>
             </div>
@@ -50,7 +56,7 @@ export default function SolutionsPage() {
               <p className="text-muted-foreground mb-4">
                 Specialized solutions for healthcare, finance, retail, education, and more industries.
               </p>
-              <Link href="/en/solutions/industry" className="text-primary hover:underline text-sm">
+              <Link href={localized('/solutions/industry')} className="text-primary hover:underline text-sm">
                 Explore Industries →
               </Link>
             </div>
@@ -60,7 +66,7 @@ export default function SolutionsPage() {
               <p className="text-muted-foreground mb-4">
                 From startups to enterprises, we have the right solution for your company size.
               </p>
-              <Link href="/en/solutions/company-size" className="text-primary hover:underline text-sm">
+              <Link href={localized('/solutions/company-size')} className="text-primary hover:underline text-sm">
                 Find Your Fit →
               </Link>
             </div>
@@ -70,7 +76,7 @@ export default function SolutionsPage() {
               <p className="text-muted-foreground mb-4">
                 Purpose-built tools for developers, product managers, designers, and more roles.
               </p>
-              <Link href="/en/solutions/role" className="text-primary hover:underline text-sm">
+              <Link href={localized('/solutions/role')} className="text-primary hover:underline text-sm">
                 View by Role →
               </Link>
             </div>
@@ -91,7 +97,7 @@ export default function SolutionsPage() {
             Discover how our solutions can help you achieve your business goals. Schedule a demo 
             or contact our team to learn more.
           </p>
-          <Link href="/en/contact" className="text-primary hover:underline font-medium">
+          <Link href={localized('/contact')} className="text-primary hover:underline font-medium">
             Contact Sales →
           </Link>
         </div>

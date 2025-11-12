@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Shield, Smartphone, Mail, MessageSquare, Loader2, Copy, QrCode } from 'lucide-react';
+import { X, Shield, Smartphone, Mail, MessageSquare, Loader2, Copy, QrCode, Fingerprint } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface TwoFactorModalProps {
@@ -13,7 +13,7 @@ interface TwoFactorModalProps {
 export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
   const [mounted, setMounted] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<'authenticator' | 'sms' | 'email'>('authenticator');
+  const [selectedMethod, setSelectedMethod] = useState<'authenticator' | 'sms' | 'email' | 'biometric' | null>(null);
   const [processing, setProcessing] = useState(false);
   const [codes, setCodes] = useState<string[]>([]);
   const [showCodes, setShowCodes] = useState(false);
@@ -30,12 +30,28 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
   const [authenticatorEnabled, setAuthenticatorEnabled] = useState(false);
   const [smsEnabled, setSmsEnabled] = useState(false);
   const [emailEnabled, setEmailEnabled] = useState(false);
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [showBiometricForm, setShowBiometricForm] = useState(false);
+
+  const resetMethodViews = () => {
+    setShowQRCode(false);
+    setShowSMSForm(false);
+    setShowVerificationForm(false);
+    setShowEmailForm(false);
+    setShowEmailVerificationForm(false);
+    setShowBiometricForm(false);
+  };
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!isOpen || !mounted) return null;
+  useEffect(() => {
+    if (!isEnabled) {
+      setSelectedMethod(null);
+      resetMethodViews();
+    }
+  }, [isEnabled]);
 
   const handleGenerate = async () => {
     setProcessing(true);
@@ -49,7 +65,10 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
     setProcessing(false);
   };
 
+  if (!isOpen || !mounted) return null;
+
   const handleAuthenticator = async () => {
+    resetMethodViews();
     setSelectedMethod('authenticator');
     setProcessing(true);
     // Simulate API call to generate QR code and setup key
@@ -67,6 +86,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
   };
 
   const handleSMS = async () => {
+    resetMethodViews();
     setSelectedMethod('sms');
     setProcessing(true);
     // Simulate loading user's verified phone number
@@ -83,10 +103,12 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
     }
     
     setShowSMSForm(true);
+    setShowVerificationForm(false);
     setProcessing(false);
   };
 
   const handleEmail = async () => {
+    resetMethodViews();
     setSelectedMethod('email');
     setProcessing(true);
     // Simulate loading user's verified email
@@ -97,6 +119,28 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
     setEmailAddress(verifiedEmail);
     
     setShowEmailForm(true);
+    setShowEmailVerificationForm(false);
+    setProcessing(false);
+  };
+
+  const handleBiometric = async () => {
+    resetMethodViews();
+    setSelectedMethod('biometric');
+    setProcessing(true);
+    setShowBiometricForm(true);
+    
+    // Simulate checking device biometric support
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Mock biometric setup
+    try {
+      // In a real app, this would use WebAuthn API
+      setBiometricEnabled(true);
+      setShowBiometricForm(false);
+    } catch (error) {
+      alert('Biometric authentication not supported on this device');
+    }
+    
     setProcessing(false);
   };
 
@@ -154,6 +198,56 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
     // Email method is now verified
   };
 
+  const handleDisableAuthenticator = async () => {
+    if (!confirm('Are you sure you want to disable Authenticator App 2FA? This will reduce your account security.')) {
+      return;
+    }
+    setProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setAuthenticatorEnabled(false);
+    setShowQRCode(false);
+    setSelectedMethod(null);
+    setProcessing(false);
+  };
+
+  const handleDisableSMS = async () => {
+    if (!confirm('Are you sure you want to disable SMS 2FA? This will reduce your account security.')) {
+      return;
+    }
+    setProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setSmsEnabled(false);
+    setShowSMSForm(false);
+    setShowVerificationForm(false);
+    setSelectedMethod(null);
+    setProcessing(false);
+  };
+
+  const handleDisableEmail = async () => {
+    if (!confirm('Are you sure you want to disable Email 2FA? This will reduce your account security.')) {
+      return;
+    }
+    setProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setEmailEnabled(false);
+    setShowEmailForm(false);
+    setShowEmailVerificationForm(false);
+    setSelectedMethod(null);
+    setProcessing(false);
+  };
+
+  const handleDisableBiometric = async () => {
+    if (!confirm('Are you sure you want to disable Biometric 2FA? This will reduce your account security.')) {
+      return;
+    }
+    setProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setBiometricEnabled(false);
+    setShowBiometricForm(false);
+    setSelectedMethod(null);
+    setProcessing(false);
+  };
+
   const showExtendedView = isEnabled;
 
   const modalContent = (
@@ -168,7 +262,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
       
       {/* Modal */}
       <div
-        className="relative w-full max-w-md max-h-[90vh] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
+        className="relative w-full max-w-2xl max-h-[90vh] rounded-lg border shadow-2xl overflow-hidden modal-bg flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -206,7 +300,121 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
             </button>
           </div>
 
-          {showQRCode && setupKey && (
+          {showExtendedView && (
+            <>
+              {/* Authentication Method */}
+              <div className="mb-6">
+                <p className="font-medium mb-3">Authentication Method</p>
+                <div className="grid gap-3 sm:grid-cols-2 max-w-2xl mx-auto">
+                  {/* Authenticator App */}
+                  <div className="p-4 border-2 rounded-xl flex flex-col items-center text-center gap-2 border-border">
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
+                      <Smartphone className="h-6 w-6" />
+                    </div>
+                    <p className="font-medium">Authenticator App</p>
+                    <div
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                        authenticatorEnabled
+                          ? 'bg-success/20 text-success border border-success/30'
+                          : 'bg-danger/20 text-danger border border-danger/30'
+                      }`}
+                    >
+                      {authenticatorEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                    <Button
+                      onClick={authenticatorEnabled ? handleDisableAuthenticator : handleAuthenticator}
+                      variant={authenticatorEnabled ? 'outline' : 'default'}
+                      size="sm"
+                      className={`w-full mt-2 ${authenticatorEnabled ? 'border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950' : ''}`}
+                      disabled={processing}
+                    >
+                      {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : authenticatorEnabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </div>
+
+                  {/* SMS */}
+                  <div className="p-4 border-2 rounded-xl flex flex-col items-center text-center gap-2 border-border">
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
+                      <MessageSquare className="h-6 w-6" />
+                    </div>
+                    <p className="font-medium">SMS</p>
+                    <div
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                        smsEnabled
+                          ? 'bg-success/20 text-success border border-success/30'
+                          : 'bg-danger/20 text-danger border border-danger/30'
+                      }`}
+                    >
+                      {smsEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                    <Button
+                      onClick={smsEnabled ? handleDisableSMS : handleSMS}
+                      variant={smsEnabled ? 'outline' : 'default'}
+                      size="sm"
+                      className={`w-full mt-2 ${smsEnabled ? 'border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950' : ''}`}
+                      disabled={processing}
+                    >
+                      {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : smsEnabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </div>
+
+                  {/* Email */}
+                  <div className="p-4 border-2 rounded-xl flex flex-col items-center text-center gap-2 border-border">
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                    <p className="font-medium">Email</p>
+                    <div
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                        emailEnabled
+                          ? 'bg-success/20 text-success border border-success/30'
+                          : 'bg-danger/20 text-danger border border-danger/30'
+                      }`}
+                    >
+                      {emailEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                    <Button
+                      onClick={emailEnabled ? handleDisableEmail : handleEmail}
+                      variant={emailEnabled ? 'outline' : 'default'}
+                      size="sm"
+                      className={`w-full mt-2 ${emailEnabled ? 'border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950' : ''}`}
+                      disabled={processing}
+                    >
+                      {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : emailEnabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </div>
+
+                  {/* Biometric */}
+                  <div className="p-4 border-2 rounded-xl flex flex-col items-center text-center gap-2 border-border">
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center">
+                      <Fingerprint className="h-6 w-6" />
+                    </div>
+                    <p className="font-medium">Biometric</p>
+                    <div
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                        biometricEnabled
+                          ? 'bg-success/20 text-success border border-success/30'
+                          : 'bg-danger/20 text-danger border border-danger/30'
+                      }`}
+                    >
+                      {biometricEnabled ? 'Enabled' : 'Disabled'}
+                    </div>
+                    <Button
+                      onClick={biometricEnabled ? handleDisableBiometric : handleBiometric}
+                      variant={biometricEnabled ? 'outline' : 'default'}
+                      size="sm"
+                      className={`w-full mt-2 ${biometricEnabled ? 'border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-950' : ''}`}
+                      disabled={processing}
+                    >
+                      {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : biometricEnabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {selectedMethod === 'authenticator' && showQRCode && setupKey && (
             <div className="mb-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
                 <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Scan QR Code</p>
@@ -240,13 +448,13 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
                   {setupKey}
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  If you can't scan the QR code, manually enter this key into your authenticator app
+                  If you can&apos;t scan the QR code, manually enter this key into your authenticator app
                 </p>
               </div>
             </div>
           )}
 
-          {showSMSForm && (
+          {selectedMethod === 'sms' && showSMSForm && (
             <div className="mb-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
                 <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">SMS Verification</p>
@@ -326,7 +534,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
             </div>
           )}
 
-          {showEmailForm && (
+          {selectedMethod === 'email' && showEmailForm && (
             <div className="mb-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
                 <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Email Verification</p>
@@ -388,6 +596,34 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
             </div>
           )}
 
+          {selectedMethod === 'biometric' && (
+            <div className="mb-6">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">Biometric Authentication</p>
+                <p className="text-xs text-blue-900 dark:text-blue-300">
+                  Use your device&apos;s fingerprint or face unlock to complete sign-in.
+                </p>
+              </div>
+              <div className="space-y-4">
+                {showBiometricForm ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Checking device capabilities…</span>
+                  </div>
+                ) : biometricEnabled ? (
+                  <div className="flex items-center gap-2 text-sm text-success">
+                    <Shield className="h-4 w-4" />
+                    <span>Biometric login is active for this device.</span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Select the Biometric option above to enroll your device. We&apos;ll guide you through the hardware prompt.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {showCodes && codes.length > 0 && (
             <div className="mb-6">
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
@@ -410,82 +646,6 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
                 <Copy className="h-4 w-4" />
               </button>
             </div>
-          )}
-
-          {showExtendedView && (
-            <>
-              {/* Authentication Method */}
-              <div className="mb-6">
-                <p className="font-medium mb-3">Authentication Method</p>
-                <div className="space-y-2">
-                  <button
-                    onClick={handleAuthenticator}
-                    className="w-full p-4 border-2 rounded-lg flex items-start gap-3 transition-all border-border hover:border-input"
-                  >
-                    <Smartphone className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                    <div className="text-left flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Authenticator App</p>
-                          <p className="text-sm text-muted-foreground">Google Authenticator, Authy, etc.</p>
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          authenticatorEnabled 
-                            ? 'bg-success/20 text-success border border-success/30' 
-                            : 'bg-danger/20 text-danger border border-danger/30'
-                        }`}>
-                          {authenticatorEnabled ? 'Enabled' : 'Disabled'}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={handleSMS}
-                    className="w-full p-4 border-2 rounded-lg flex items-start gap-3 transition-all border-border hover:border-input"
-                  >
-                    <MessageSquare className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                    <div className="text-left flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">SMS</p>
-                          <p className="text-sm text-muted-foreground">Receive codes via text message</p>
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          smsEnabled 
-                            ? 'bg-success/20 text-success border border-success/30' 
-                            : 'bg-danger/20 text-danger border border-danger/30'
-                        }`}>
-                          {smsEnabled ? 'Enabled' : 'Disabled'}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={handleEmail}
-                    className="w-full p-4 border-2 rounded-lg flex items-start gap-3 transition-all border-border hover:border-input"
-                  >
-                    <Mail className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                    <div className="text-left flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Email</p>
-                          <p className="text-sm text-muted-foreground">Receive codes via email</p>
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          emailEnabled 
-                            ? 'bg-success/20 text-success border border-success/30' 
-                            : 'bg-danger/20 text-danger border border-danger/30'
-                        }`}>
-                          {emailEnabled ? 'Enabled' : 'Disabled'}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </>
           )}
         </div>
 
@@ -521,4 +681,3 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
 
   return createPortal(modalContent, document.body);
 }
-

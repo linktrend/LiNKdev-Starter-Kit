@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { countryCodes } from '@/data/countryCodes';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, CheckCircle, AlertCircle, Clock, Mail, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LoginPageProps {
@@ -22,42 +23,133 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpMethod, setOtpMethod] = useState<'whatsapp' | 'sms'>('whatsapp');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [countdown, setCountdown] = useState(0);
+  const [canResend, setCanResend] = useState(false);
   
   // Extract country code from selected country string
   const countryCode = selectedCountry ? selectedCountry.split(' ').pop() || '+1' : '+1';
 
-  const handleLogin = () => {
-    if ((authMethod === 'email' && email) || (authMethod === 'phone' && countryCode && phoneNumber)) {
-      router.push(`/${locale}/dashboard`);
+  // Countdown timer for magic link expiration
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [countdown]);
+
+  // Resend timer (30 seconds)
+  useEffect(() => {
+    if (!canResend && (showSuccess && authMethod === 'phone')) {
+      const timer = setTimeout(() => setCanResend(true), 30000);
+      return () => clearTimeout(timer);
+    }
+  }, [canResend, showSuccess, authMethod]);
 
   const handleSocialLogin = (provider: string) => {
     console.log(`Logging in with ${provider}`);
+    // Mock: Social login always succeeds
     router.push(`/${locale}/dashboard`);
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      console.log('Sending magic link to', email);
-      router.push(`/${locale}/dashboard`);
-    }
+    if (!email) return;
+
+    // Mock: Send magic link
+    console.log('Sending magic link to', email);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setShowSuccess(true);
+      setCountdown(300); // 5 minutes = 300 seconds
+      setCanResend(false);
+    }, 500);
   };
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCountry || !phoneNumber) {
-      alert('Please select a country code and enter your phone number');
+      setShowError(true);
+      setErrorMessage('Please select a country code and enter your phone number');
       return;
     }
-    console.log('Sending code to', countryCode + phoneNumber);
-    router.push(`/${locale}/dashboard`);
+
+    // Mock: Send OTP
+    console.log(`Sending ${otpMethod} OTP to ${countryCode}${phoneNumber}`);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setShowSuccess(true);
+      setCanResend(false);
+      // Redirect to OTP verification page after showing success
+      setTimeout(() => {
+        router.push(`/${locale}/verify_otp?phone=${encodeURIComponent(countryCode + phoneNumber)}&method=${otpMethod}`);
+      }, 2000);
+    }, 500);
+  };
+
+  const handleResendCode = () => {
+    if (!canResend) return;
+    
+    if (authMethod === 'email') {
+      console.log('Resending magic link to', email);
+      setCountdown(300);
+      setCanResend(false);
+    } else if (authMethod === 'phone') {
+      console.log(`Resending ${otpMethod} OTP to ${countryCode}${phoneNumber}`);
+      setCanResend(false);
+      setTimeout(() => setCanResend(true), 30000);
+    }
   };
 
   const renderAuthMethod = () => {
     switch (authMethod) {
       case 'email':
+        if (showSuccess) {
+          return (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/20 p-4 border border-green-200 dark:border-green-800">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-green-900 dark:text-green-100 mb-1">
+                      Magic link sent!
+                    </h3>
+                    <p className="text-sm text-green-800 dark:text-green-200 mb-2">
+                      Check your email at <strong>{email}</strong> for the magic link.
+                    </p>
+                    {countdown > 0 ? (
+                      <div className="flex items-center gap-2 text-xs text-green-700 dark:text-green-300">
+                        <Clock className="h-3 w-3" />
+                        <span>Link expires in {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span>
+                      </div>
+                    ) : (
+                      <Badge variant="destructive" className="text-xs">
+                        Link expired
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {countdown === 0 && (
+                <Button onClick={handleResendCode} className="w-full">
+                  Request New Link
+                </Button>
+              )}
+              <Button variant="ghost" className="w-full" onClick={() => {
+                setShowSuccess(false);
+                setAuthMethod('social');
+              }}>
+                Back to Login
+              </Button>
+            </div>
+          );
+        }
+
         return (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -70,8 +162,12 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                We&apos;ll send you a magic link (valid for 5 minutes)
+              </p>
             </div>
             <Button type="submit" className="w-full">
+              <Mail className="mr-2 h-4 w-4" />
               Send Magic Link
             </Button>
             <Button type="button" variant="ghost" className="w-full" onClick={() => setAuthMethod('social')}>
@@ -81,13 +177,62 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
         );
       
       case 'phone':
+        if (showSuccess) {
+          return (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-green-50 dark:bg-green-950/20 p-4 border border-green-200 dark:border-green-800">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-green-900 dark:text-green-100 mb-1">
+                      Code sent via {otpMethod === 'whatsapp' ? 'WhatsApp' : 'SMS'}!
+                    </h3>
+                    <p className="text-sm text-green-800 dark:text-green-200">
+                      Check your {otpMethod === 'whatsapp' ? 'WhatsApp' : 'messages'} at <strong>{countryCode} {phoneNumber}</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-center text-muted-foreground">
+                Redirecting to verification page...
+              </p>
+            </div>
+          );
+        }
+
+        if (showError) {
+          return (
+            <div className="space-y-4">
+              <div className="rounded-lg bg-red-50 dark:bg-red-950/20 p-4 border border-red-200 dark:border-red-800">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-500 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-red-900 dark:text-red-100 mb-1">
+                      Error
+                    </h3>
+                    <p className="text-sm text-red-800 dark:text-red-200">
+                      {errorMessage}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Button onClick={() => setShowError(false)} className="w-full">
+                Try Again
+              </Button>
+            </div>
+          );
+        }
+
         return (
           <form onSubmit={handlePhoneSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="phone">Phone number</Label>
               <div className="flex gap-2">
-                <Select value={selectedCountry || undefined} onValueChange={setSelectedCountry}>
-                  <SelectTrigger className="w-[100px]">
+                <Select
+                  onValueChange={(value) => setSelectedCountry(value)}
+                  value={selectedCountry}
+                >
+                  <SelectTrigger className="w-1/3">
                     <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent className="max-h-[300px]">
@@ -104,13 +249,41 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
                   placeholder="Enter your phone number"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="flex-1"
+                  className="flex-2"
                   required
                 />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label>Send code via</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant={otpMethod === 'whatsapp' ? 'default' : 'outline'}
+                  onClick={() => setOtpMethod('whatsapp')}
+                  className="w-full"
+                >
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  WhatsApp
+                </Button>
+                <Button
+                  type="button"
+                  variant={otpMethod === 'sms' ? 'default' : 'outline'}
+                  onClick={() => setOtpMethod('sms')}
+                  className="w-full"
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  SMS
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                You&apos;ll receive a 6-digit verification code
+              </p>
+            </div>
+
             <Button type="submit" className="w-full">
-              Send Verification Code
+              Send Code via {otpMethod === 'whatsapp' ? 'WhatsApp' : 'SMS'}
             </Button>
             <Button type="button" variant="ghost" className="w-full" onClick={() => setAuthMethod('social')}>
               Back
@@ -158,13 +331,10 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
               </button>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">OR</span>
-              </div>
+            <div className="flex items-center gap-4">
+              <div className="flex-grow border-t border-border"></div>
+              <span className="relative z-10 bg-background px-2 text-xs uppercase text-muted-foreground rounded">OR</span>
+              <div className="flex-grow border-t border-border"></div>
             </div>
 
             <Button variant="outline" className="w-full" onClick={() => setAuthMethod('email')}>
@@ -172,6 +342,9 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
             </Button>
             <Button variant="outline" className="w-full" onClick={() => setAuthMethod('phone')}>
               Continue with Phone
+            </Button>
+            <Button type="button" variant="ghost" className="w-full" onClick={() => window.history.back()}>
+              Back
             </Button>
           </>
         );
@@ -191,13 +364,8 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
           <p className="text-muted-foreground">Log in to your account</p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardDescription className="text-2xl font-semibold leading-none tracking-tight">
-              Welcome back! Please log in to continue
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <Card className="border bg-card text-card-foreground shadow-xl transition-colors">
+          <CardContent className="space-y-6 pt-6">
             {renderAuthMethod()}
           </CardContent>
         </Card>

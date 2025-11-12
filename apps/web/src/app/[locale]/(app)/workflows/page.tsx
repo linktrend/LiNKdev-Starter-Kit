@@ -54,7 +54,7 @@ export default function WorkflowsPage() {
             Streamline your processes with automated workflows
           </p>
         </div>
-        <Button variant="glass">
+         <Button variant="outline">
           <Zap className="mr-2 h-4 w-4" />
           Create New Workflow
         </Button>

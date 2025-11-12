@@ -1,26 +1,32 @@
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
 import Link from 'next/link';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function PlatformPage() {
+interface PageProps {
+  params: { locale: string };
+}
+
+export default function PlatformPage({ params }: PageProps) {
+  const localized = (path: string) => buildLocalePath(params?.locale, path);
   return (
     <PlatformPageLayout
       title="Platform Overview"
       subtitle="A comprehensive platform built for modern applications with everything you need to succeed"
       featureSection1b={
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Link href="/en/platform/advantage-1" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/platform/advantage-1')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">⚡ Lightning Fast</h3>
             <p className="text-sm text-muted-foreground">Unmatched performance</p>
           </Link>
-          <Link href="/en/platform/advantage-2" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/platform/advantage-2')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">📈 Scale with Confidence</h3>
             <p className="text-sm text-muted-foreground">Grow without limits</p>
           </Link>
-          <Link href="/en/platform/ai" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/platform/ai')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">🤖 AI-Powered</h3>
             <p className="text-sm text-muted-foreground">Intelligent features</p>
           </Link>
-          <Link href="/en/platform/innovation-support" className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
+          <Link href={localized('/platform/innovation-support')} className="p-6 bg-background rounded-lg border hover:border-primary transition-colors">
             <h3 className="font-semibold mb-2">🚀 Innovation & Support</h3>
             <p className="text-sm text-muted-foreground">Always evolving</p>
           </Link>
@@ -72,7 +78,7 @@ export default function PlatformPage() {
             Thousands of companies rely on our platform to power their most critical applications. 
             Join the community and experience the difference.
           </p>
-          <Link href="/en/contact" className="text-primary hover:underline font-medium">
+          <Link href={localized('/contact')} className="text-primary hover:underline font-medium">
             Get Started Today →
           </Link>
         </div>

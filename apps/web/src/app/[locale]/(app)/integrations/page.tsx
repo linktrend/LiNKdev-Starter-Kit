@@ -87,7 +87,7 @@ export default function IntegrationsPage() {
                         {integration.status}
                       </Badge>
                       <Button 
-                        variant="glass" 
+                        variant="outline" 
                         size="sm"
                         disabled={integration.status === 'Connected'}
                       >

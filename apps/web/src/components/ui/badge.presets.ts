@@ -1,6 +1,6 @@
 // Centralized badge class presets and domain mappings
 
-type PresetKey =
+export type PresetKey =
   | 'success.soft'
   | 'success.solid'
   | 'warning.soft'

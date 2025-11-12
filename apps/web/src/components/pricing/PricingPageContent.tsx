@@ -9,9 +9,10 @@ import { User } from '@supabase/supabase-js';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useParams } from 'next/navigation';
 import { dummyPricing } from '@/config/pricing';
 import { cn } from '@/lib/utils';
+import { buildLocalePath } from '@/lib/locale';
 
 interface Props {
   user: User | null | undefined;
@@ -24,6 +25,8 @@ type BillingInterval = 'year' | 'month';
 export function PricingPageContent({ user, products, subscription }: Props) {
   const router = useRouter();
   const currentPath = usePathname();
+  const params = useParams();
+  const locale = (params?.locale as string) ?? 'en';
   const [billingInterval, setBillingInterval] = useState<BillingInterval>('year');
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
 
@@ -121,8 +124,10 @@ export function PricingPageContent({ user, products, subscription }: Props) {
       title="The best work solution, for the best price"
       subtitle="Trusted by leading businesses worldwide"
       featureSection1b={
-        <div className="flex items-center justify-center gap-2 py-8">
-          <span className="text-sm text-muted-foreground">💯 100% Money-Back Guarantee</span>
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Interactive performance visualization coming soon
+          </p>
         </div>
       }
       mainContent={
@@ -254,14 +259,14 @@ export function PricingPageContent({ user, products, subscription }: Props) {
                 No pricing plans available. Configure them in your admin dashboard.
               </p>
               <Button asChild variant="outline">
-                <a href="/en/console/billing">Go to Admin Console</a>
+                <a href={buildLocalePath(locale, '/console/billing')}>Go to Admin Console</a>
               </Button>
             </div>
           )}
         </div>
       }
       featureSection3a={
-        <div className="bg-muted/50 rounded-lg p-8 h-full flex flex-col justify-center">
+        <div className="bg-muted/50 rounded-lg p-8 h-full">
           <h3 className="text-2xl font-semibold mb-6">Why Choose Us?</h3>
           <ul className="space-y-3 text-muted-foreground">
             <li className="flex items-start">
@@ -288,7 +293,7 @@ export function PricingPageContent({ user, products, subscription }: Props) {
         </div>
       }
       textSection3b={
-        <div>
+        <div className="h-full">
           <h3 className="text-2xl font-semibold mb-4">Frequently Asked Questions</h3>
           <div className="space-y-4">
             <div>
@@ -316,8 +321,8 @@ export function PricingPageContent({ user, products, subscription }: Props) {
               <p className="text-sm text-muted-foreground mb-3">
                 Have more questions?
               </p>
-              <a href="/en/contact" className="text-primary hover:underline font-medium">
-                Contact our sales team →
+              <a href={buildLocalePath(locale, '/contact')} className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                Contact us →
               </a>
             </div>
           </div>
@@ -326,4 +331,3 @@ export function PricingPageContent({ user, products, subscription }: Props) {
     />
   );
 }
-

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { HelpCircle, FileText, Video, Book, Send, MessageCircle, Phone, Clock, Lightbulb, Bug, Star, Eye, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SubmitTicketModal from '@/components/help/SubmitTicketModal';
@@ -23,6 +24,30 @@ export default function HelpPage() {
   const [isReleaseNotesModalOpen, setIsReleaseNotesModalOpen] = useState(false);
   const [isUserDocumentationModalOpen, setIsUserDocumentationModalOpen] = useState(false);
   const [isFAQModalOpen, setIsFAQModalOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (!action) return;
+
+    switch (action) {
+      case 'ticket':
+        setIsTicketModalOpen(true);
+        break;
+      case 'live-chat':
+        setIsLiveChatModalOpen(true);
+        break;
+      case 'schedule-call':
+        setIsScheduleCallModalOpen(true);
+        break;
+      default:
+        break;
+    }
+
+    router.replace(pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   return (
     <>
@@ -186,4 +211,3 @@ export default function HelpPage() {
     </>
   );
 }
-

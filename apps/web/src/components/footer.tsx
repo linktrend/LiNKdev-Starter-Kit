@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocalePath } from '@/hooks/useLocalePath';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 import { CookiePreferencesModal } from '@/components/modals/CookiePreferencesModal';
@@ -140,10 +141,14 @@ const sitemapColumns = {
 
 export default function Footer() {
   const [isCookieModalOpen, setIsCookieModalOpen] = useState(false);
+  const { buildPath } = useLocalePath();
 
   return (
     <>
-      <footer className="mt-auto border-t bg-gradient-to-t from-blue-950/90 to-blue-700/90 backdrop-blur-lg">
+      <footer
+        className="mt-auto border-t text-white"
+        style={{ backgroundImage: 'var(--gradient-surface-footer)' }}
+      >
         <div className="container mx-auto px-8 py-12">
           {/* Top Section: Logo + Sitemap */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
@@ -165,7 +170,7 @@ export default function Footer() {
                 {sitemapColumns.platform.links.map((link) => (
                   <li key={link.href}>
                     <Link
-                      href={`/en${link.href}`}
+                      href={buildPath(link.href)}
                       className="text-sm text-white/70 hover:text-white transition-colors"
                     >
                       {link.label}
@@ -182,7 +187,7 @@ export default function Footer() {
                 {sitemapColumns.solutions.links.map((link) => (
                   <li key={link.href}>
                     <Link
-                      href={`/en${link.href}`}
+                      href={buildPath(link.href)}
                       className="text-sm text-white/70 hover:text-white transition-colors"
                     >
                       {link.label}
@@ -199,7 +204,7 @@ export default function Footer() {
                 {sitemapColumns.resources.links.map((link) => (
                   <li key={link.href}>
                     <Link
-                      href={`/en${link.href}`}
+                      href={buildPath(link.href)}
                       className="text-sm text-white/70 hover:text-white transition-colors"
                     >
                       {link.label}
@@ -236,10 +241,10 @@ export default function Footer() {
               <p>&copy; Copyright 2025. LiNKtrend Media</p>
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/en/terms" className="hover:text-white transition-colors">
-                Terms and Conditions
+              <Link href={buildPath('/terms')} className="hover:text-white transition-colors">
+                Terms of Use
               </Link>
-              <Link href="/en/privacy" className="hover:text-white transition-colors">
+              <Link href={buildPath('/privacy')} className="hover:text-white transition-colors">
                 Privacy Policy
               </Link>
               <button
@@ -248,7 +253,7 @@ export default function Footer() {
               >
                 Manage Cookies
               </button>
-              <Link href="/en/console/login" className="hover:text-white transition-colors font-semibold">
+              <Link href={buildPath('/console/login')} className="hover:text-white transition-colors font-semibold">
                 Admin Login
               </Link>
             </div>

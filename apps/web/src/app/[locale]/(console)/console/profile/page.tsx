@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Award, Activity, Camera, Building2, Briefcase, Shield, Users, Settings, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ProfileEditModal } from '@/components/profile/ProfileEditModal';
+import { AdminProfileEditModal } from '@/components/profile/AdminProfileEditModal';
 
 export default function ConsoleProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -90,7 +90,7 @@ export default function ConsoleProfilePage() {
 
   return (
     <>
-      <ProfileEditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
+      <AdminProfileEditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
       
       <div>
         <div className="max-w-7xl mx-auto space-y-8">

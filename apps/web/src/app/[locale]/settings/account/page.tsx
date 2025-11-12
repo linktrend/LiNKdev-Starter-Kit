@@ -249,15 +249,13 @@ export default function AccountSettingsPage() {
 
       {/* Modals */}
       <ProfileEditModal
-        open={modals.profileEdit}
-        onOpenChange={(open) => closeModal('profileEdit')}
-        user={user}
+        isOpen={modals.profileEdit}
+        onClose={() => closeModal('profileEdit')}
       />
       
       <LocaleSettingsModal
-        open={modals.localeSettings}
-        onOpenChange={(open) => closeModal('localeSettings')}
-        currentLocale="en"
+        isOpen={modals.localeSettings}
+        onClose={() => closeModal('localeSettings')}
       />
       
       <ManageNotificationsModal
@@ -266,13 +264,13 @@ export default function AccountSettingsPage() {
       />
       
       <PrivacySettingsModal
-        open={modals.privacySettings}
-        onOpenChange={(open) => closeModal('privacySettings')}
+        isOpen={modals.privacySettings}
+        onClose={() => closeModal('privacySettings')}
       />
       
       <EditPasswordModal
-        open={modals.editPassword}
-        onOpenChange={(open) => closeModal('editPassword')}
+        isOpen={modals.editPassword}
+        onClose={() => closeModal('editPassword')}
       />
       
       <Edit2FAModal
@@ -282,8 +280,8 @@ export default function AccountSettingsPage() {
       />
       
       <SessionsActivityModal
-        open={modals.sessionsActivity}
-        onOpenChange={(open) => closeModal('sessionsActivity')}
+        isOpen={modals.sessionsActivity}
+        onClose={() => closeModal('sessionsActivity')}
       />
     </div>
   );

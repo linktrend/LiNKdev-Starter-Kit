@@ -548,7 +548,7 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
                         <li>• Custom domain</li>
                       </ul>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-3">Note: You'll be charged immediately. Your current plan will be canceled.</p>
+                    <p className="text-xs text-muted-foreground mt-3">Note: You&apos;ll be charged immediately. Your current plan will be canceled.</p>
                   </div>
                 );
               })()}

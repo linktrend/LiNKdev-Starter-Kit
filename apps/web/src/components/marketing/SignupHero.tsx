@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import Link from 'next/link';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 /**
  * SignupHero - Compressed signup form for the home page
@@ -21,19 +22,34 @@ export function SignupHero() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [acceptedTerms, setAcceptedTerms] = useState(true);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const { buildPath } = useLocalePath();
 
   const handleSocialLogin = (provider: string) => {
-    // TODO: Implement actual social login
-    console.log(`Logging in with ${provider}`);
-    router.push('/en/onboarding');
+    // Dev-mode: skip real auth and jump to onboarding step 2
+    const params = new URLSearchParams({
+      step: '2',
+      method: 'social',
+      provider,
+    });
+    router.push(buildPath(`/signup/step-2?${params.toString()}`));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if ((email || phone) && acceptedTerms) {
-      // TODO: Implement actual signup logic
-      router.push('/en/onboarding');
+      // Dev-mode: simulate email magic link or SMS verification and jump to step 2
+      const usingEmail = !!email;
+      const params = new URLSearchParams({
+        step: '2',
+        method: usingEmail ? 'email' : 'phone',
+      });
+      if (usingEmail) {
+        params.set('email', email);
+      } else if (phone) {
+        params.set('phone', phone);
+      }
+      router.push(buildPath(`/signup/step-2?${params.toString()}`));
     }
   };
 
@@ -53,6 +69,7 @@ export function SignupHero() {
         <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
+            onClick={() => handleSocialLogin('Gmail')}
             className="flex items-center justify-center p-3 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition-all"
             aria-label="Sign up with Gmail"
           >
@@ -65,6 +82,7 @@ export function SignupHero() {
           </button>
           <button
             type="button"
+            onClick={() => handleSocialLogin('Apple')}
             className="flex items-center justify-center p-3 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition-all"
             aria-label="Sign up with Apple"
           >
@@ -89,9 +107,9 @@ export function SignupHero() {
 
         {/* Divider */}
         <div className="flex items-center gap-4">
-          <div className="flex-grow border-t border-white/30"></div>
-          <span className="text-xs uppercase text-white/70">OR</span>
-          <div className="flex-grow border-t border-white/30"></div>
+          <div className="flex-grow border-t border-border"></div>
+          <span className="relative z-10 bg-background px-2 text-xs uppercase text-muted-foreground rounded">OR</span>
+          <div className="flex-grow border-t border-border"></div>
         </div>
 
         {/* Email and Phone Fields */}
@@ -130,11 +148,11 @@ export function SignupHero() {
           />
           <label htmlFor="terms" className="text-sm text-white/70 leading-tight font-bold">
             By continuing, you accept our{' '}
-            <Link href="/en/privacy" className="text-primary hover:underline">
+            <Link href={buildPath('/privacy')} className="text-primary hover:underline">
               Privacy Policy
             </Link>{' '}
             and{' '}
-            <Link href="/en/terms" className="text-primary hover:underline">
+            <Link href={buildPath('/terms')} className="text-primary hover:underline">
               Terms of Use
             </Link>
           </label>
@@ -154,4 +172,3 @@ export function SignupHero() {
     </div>
   );
 }
-

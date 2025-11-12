@@ -112,7 +112,7 @@ export function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
 
           <div className="bg-primary/10 rounded-lg p-4 mb-6">
             <p className="text-sm text-muted-foreground">
-              <span className="font-semibold">Note:</span> You'll be charged immediately. Your current plan will be prorated.
+              <span className="font-semibold">Note:</span> You&apos;ll be charged immediately. Your current plan will be prorated.
             </p>
           </div>
         </div>

@@ -173,8 +173,6 @@ export default function ProfilePage() {
       <ProfileEditModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        profileData={profileData}
-        onSave={handleSaveProfile}
       />
     </div>
   );

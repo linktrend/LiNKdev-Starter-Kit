@@ -1,6 +1,14 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function Advantage1Page() {
+interface Advantage1PageProps {
+  params: { locale: string };
+}
+
+export default function Advantage1Page({ params }: Advantage1PageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Lightning Fast Performance"
@@ -89,9 +97,11 @@ export default function Advantage1Page() {
             Join thousands of satisfied customers who have seen dramatic improvements in 
             their application performance and user satisfaction.
       </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />
   );
 }
-

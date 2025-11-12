@@ -1,7 +1,5 @@
-'use client';
-
-import { DeploymentDashboard } from '@/components/console/DeploymentDashboard';
+import { ConfigScreen } from '../../ConfigScreen';
 
 export default function ApplicationDeploymentPage() {
-  return <DeploymentDashboard />;
+  return <ConfigScreen initialTab="application" initialApplicationSubTab="deployment" />;
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { CookiePreferencesModal } from '@/components/modals/CookiePreferencesModal';
 import Link from 'next/link';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 // Helper function to set a cookie
 const setCookie = (name: string, value: string, days: number) => {
@@ -31,6 +32,7 @@ const getCookie = (name: string): string | null => {
 export function CookieConsentBanner() {
   const [showBanner, setShowBanner] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { buildPath } = useLocalePath();
 
   useEffect(() => {
     // Check if the user has already consented
@@ -73,7 +75,7 @@ export function CookieConsentBanner() {
             <p>
               We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept All", 
               you consent to our use of cookies. Read our{' '}
-              <Link href="/en/privacy" className="underline hover:text-primary">
+              <Link href={buildPath('/privacy')} className="underline hover:text-primary">
                 Privacy Policy
               </Link>.
             </p>

@@ -1,197 +1,189 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { countryCodes } from '@/data/countryCodes';
-import { Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Shield, CheckCircle, AlertCircle, Clock, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 interface ConsoleLoginPageProps {
   params: { locale: string };
 }
 
+// Mock admin whitelist
+const mockAdminWhitelist = [
+  'owner@example.com',
+  'admin@example.com',
+  'admin2@example.com',
+];
+
 export default function ConsoleLoginPage({ params: { locale } }: ConsoleLoginPageProps) {
   const router = useRouter();
-  const [authMethod, setAuthMethod] = useState<'social' | 'email' | 'phone'>('social');
   const [email, setEmail] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [countdown, setCountdown] = useState(0);
   
-  // Extract country code from selected country string
-  const countryCode = selectedCountry ? selectedCountry.split(' ').pop() || '+1' : '+1';
-
-  const handleSocialLogin = (provider: string) => {
-    console.log(`Logging in with ${provider}`);
-    router.push(`/${locale}/console`);
-  };
+  // Countdown timer for magic link expiration
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      console.log('Sending magic link to', email);
-      router.push(`/${locale}/console`);
-    }
-  };
+    if (!email) return;
 
-  const handlePhoneSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedCountry || !phoneNumber) {
-      alert('Please select a country code and enter your phone number');
+    // Mock: Validate email against whitelist
+    const isAuthorized = mockAdminWhitelist.includes(email.toLowerCase());
+
+    if (!isAuthorized) {
+      setShowError(true);
+      setErrorMessage('This email is not authorized for admin access. Please contact your administrator.');
       return;
     }
-    console.log('Sending code to', countryCode + phoneNumber);
-    router.push(`/${locale}/console`);
+
+    // Mock: Send magic link
+    console.log('Sending magic link to authorized admin:', email);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setShowSuccess(true);
+      setCountdown(300); // 5 minutes = 300 seconds
+    }, 500);
   };
 
-  const renderAuthMethod = () => {
-    switch (authMethod) {
-      case 'email':
-        return (
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Send Magic Link
-            </Button>
-            <Button type="button" variant="ghost" className="w-full" onClick={() => setAuthMethod('social')}>
-              Back
-            </Button>
-          </form>
-        );
-      
-      case 'phone':
-        return (
-          <form onSubmit={handlePhoneSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone number</Label>
-              <div className="flex gap-2">
-                <Select value={selectedCountry || undefined} onValueChange={setSelectedCountry}>
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Country" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {countryCodes.sort((a, b) => a.country.localeCompare(b.country)).map((country, index) => (
-                      <SelectItem key={`${country.code}-${country.country}-${index}`} value={`${country.country} ${country.code}`}>
-                        {country.country} {country.code}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="flex-1"
-                  required
-                />
-              </div>
-            </div>
-            <Button type="submit" className="w-full">
-              Send Verification Code
-            </Button>
-            <Button type="button" variant="ghost" className="w-full" onClick={() => setAuthMethod('social')}>
-              Back
-            </Button>
-          </form>
-        );
-
-      case 'social':
-      default:
-        return (
-          <>
-            <div className="grid grid-cols-3 gap-3">
-              <button
-                onClick={() => handleSocialLogin('Gmail')}
-                className="flex items-center justify-center p-4 rounded-lg border bg-background hover:bg-accent transition-all"
-                aria-label="Log in with Gmail"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-              </button>
-              <button
-                onClick={() => handleSocialLogin('Apple')}
-                className="flex items-center justify-center p-4 rounded-lg border bg-background hover:bg-accent transition-all"
-                aria-label="Log in with Apple"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-              </button>
-              <button
-                onClick={() => handleSocialLogin('Microsoft')}
-                className="flex items-center justify-center p-4 rounded-lg border bg-background hover:bg-accent transition-all"
-                aria-label="Log in with Microsoft"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 24 24">
-                  <path fill="#f25022" d="M0 0h11.377v11.372H0z"/>
-                  <path fill="#00a4ef" d="M12.623 0H24v11.372H12.623z"/>
-                  <path fill="#7fba00" d="M0 12.628h11.377V24H0z"/>
-                  <path fill="#ffb900" d="M12.623 12.628H24V24H12.623z"/>
-                </svg>
-              </button>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">OR</span>
-              </div>
-            </div>
-
-            <Button variant="outline" className="w-full" onClick={() => setAuthMethod('email')}>
-              Continue with Email
-            </Button>
-            <Button variant="outline" className="w-full" onClick={() => setAuthMethod('phone')}>
-              Continue with Phone
-            </Button>
-          </>
-        );
-    }
+  const handleResendLink = () => {
+    console.log('Resending magic link to', email);
+    setCountdown(300);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-primary" />
+            <Shield className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">
-              Welcome to LTM Starter Kit Console
+              Admin & Owner Access
             </h1>
           </div>
-          <p className="text-muted-foreground">Log in to your Console account</p>
+          <p className="text-muted-foreground">Authorized personnel only</p>
+          <Badge variant="outline" className="mt-2">
+            Email-only authentication
+          </Badge>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardDescription className="text-2xl font-semibold leading-none tracking-tight">
-              Welcome back! Please log in to continue
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {renderAuthMethod()}
+        <Card className="bg-gradient-to-br from-[hsl(var(--gradient-brand-from))]/12 to-[hsl(var(--gradient-brand-to))]/25">
+          <CardContent className="space-y-6 pt-6">
+            {showSuccess ? (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-green-50 dark:bg-green-950/20 p-4 border border-green-200 dark:border-green-800">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" />
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-green-900 dark:text-green-100 mb-1">
+                        Magic link sent!
+                      </h3>
+                      <p className="text-sm text-green-800 dark:text-green-200 mb-2">
+                        Check your email at <strong>{email}</strong> for the magic link.
+                      </p>
+                      {countdown > 0 ? (
+                        <div className="flex items-center gap-2 text-xs text-green-700 dark:text-green-300">
+                          <Clock className="h-3 w-3" />
+                          <span>Link expires in {Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, '0')}</span>
+                        </div>
+                      ) : (
+                        <Badge variant="destructive" className="text-xs">
+                          Link expired
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 p-3 border border-blue-200 dark:border-blue-800">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    <strong>Note:</strong> 2FA will be required after login
+                  </p>
+                </div>
+                {countdown === 0 && (
+                  <Button onClick={handleResendLink} className="w-full">
+                    Request New Link
+                  </Button>
+                )}
+                <Button variant="ghost" className="w-full" onClick={() => {
+                  setShowSuccess(false);
+                  setEmail('');
+                }}>
+                  Back
+                </Button>
+              </div>
+            ) : showError ? (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-red-50 dark:bg-red-950/20 p-4 border border-red-200 dark:border-red-800">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-500 mt-0.5" />
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-red-900 dark:text-red-100 mb-1">
+                        Access denied
+                      </h3>
+                      <p className="text-sm text-red-800 dark:text-red-200">
+                        {errorMessage}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <Button onClick={() => {
+                  setShowError(false);
+                  setEmail('');
+                }} className="w-full">
+                  Try Again
+                </Button>
+                <div className="text-center">
+                  <Link href="/contact" className="text-sm text-primary hover:underline">
+                    Request access
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Authorized Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="admin@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Only whitelisted emails can access the console
+                  </p>
+                </div>
+                <Button type="submit" className="w-full">
+                  <Mail className="mr-2 h-4 w-4" />
+                  Send Magic Link
+                </Button>
+                <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 p-3 border border-amber-200 dark:border-amber-800">
+                  <div className="text-xs text-amber-800 dark:text-amber-200">
+                    <p className="font-medium mb-1">Admin & Owner Requirements:</p>
+                    <ul className="list-disc list-inside space-y-0.5">
+                      <li>Email-only authentication (magic link)</li>
+                      <li>Two-factor authentication (2FA) required</li>
+                      <li>Access to both App and Console</li>
+                    </ul>
+                  </div>
+                </div>
+              </form>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -9,36 +9,38 @@ import { join } from 'path';
  */
 
 const REQUIRED_ROUTES = [
-  // Marketing routes
-  'src/app/(marketing)/page.tsx',
-  
-  // Authentication routes
-  'src/app/(auth_forms)/signup/page.tsx',
-  'src/app/(auth_forms)/signin/page.tsx',
-  
-  // Dashboard routes
-  'src/app/(dashboard)/dashboard/page.tsx',
-  'src/app/(dashboard)/dashboard/notifications/page.tsx',
-  
-  // Application routes
-  'src/app/(app)/settings/billing/page.tsx', // Known error remains, but must exist
-  
-  // Admin routes
-  'src/app/(admin)/admin/page.tsx',
-  
-  // Developer Console routes
-  'src/app/(console)/console/page.tsx',
-  'src/app/(console)/console/login/page.tsx',
-  'src/app/(console)/console/health/page.tsx',
-  'src/app/(console)/console/db/page.tsx',
-  'src/app/(console)/console/env/page.tsx',
-  'src/app/(console)/console/integrations/page.tsx',
-  'src/app/(console)/console/automations/page.tsx',
-  'src/app/(console)/console/api/page.tsx',
-  'src/app/(console)/console/errors/page.tsx',
-  'src/app/(console)/console/analytics/page.tsx',
-  'src/app/(console)/console/audit/page.tsx',
-  'src/app/(console)/console/security/page.tsx',
+  // Marketing
+  'apps/web/src/app/[locale]/(marketing)/page.tsx',
+  'apps/web/src/app/[locale]/(marketing)/pricing/page.tsx',
+  'apps/web/src/app/[locale]/(marketing)/pricing/success/page.tsx',
+  'apps/web/src/app/[locale]/(marketing)/pricing/cancel/page.tsx',
+
+  // Auth
+  'apps/web/src/app/[locale]/(auth_forms)/login/page.tsx',
+  'apps/web/src/app/[locale]/(auth_forms)/signup/page.tsx',
+  'apps/web/src/app/[locale]/(auth_forms)/magic_link/page.tsx',
+  'apps/web/src/app/[locale]/(auth_forms)/verify_otp/page.tsx',
+  'apps/web/src/app/[locale]/(auth_forms)/onboarding/page.tsx',
+
+  // Dashboard
+  'apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx',
+  'apps/web/src/app/[locale]/(dashboard)/dashboard/settings/page.tsx',
+  'apps/web/src/app/[locale]/(dashboard)/dashboard/help/page.tsx',
+
+  // Console
+  'apps/web/src/app/[locale]/(console)/console/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/login/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/health/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/database/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/errors/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/billing/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/reports/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/security/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/config/page.tsx',
+  'apps/web/src/app/[locale]/(console)/console/config/application/page.tsx',
+
+  // Shared
+  'apps/web/src/app/[locale]/not-found.tsx',
 ];
 
 function verifyRoutes(): void {

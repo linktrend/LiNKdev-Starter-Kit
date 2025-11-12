@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import {
   Activity,
   AlertCircle,
@@ -25,6 +26,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/utils/cn';
+import { buildLocalePath } from '@/lib/locale';
 import {
   overviewMockData,
   type ApiStatus,
@@ -58,6 +60,12 @@ const currencyFormatter = (currency: string) =>
 export default function ConsoleOverviewPage() {
   const [data, setData] = useState<OverviewMockData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const params = useParams();
+  const locale = (params?.locale as string) ?? 'en';
+  const buildPath = useCallback(
+    (path: string = '/') => buildLocalePath(locale, path),
+    [locale]
+  );
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -84,7 +92,7 @@ export default function ConsoleOverviewPage() {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/en/console/profile">
+            <Link href={buildPath('/console/profile')}>
               Manage Profile
               <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
@@ -121,7 +129,7 @@ export default function ConsoleOverviewPage() {
             </p>
           </div>
           <Button asChild size="sm">
-            <Link href="/en/console/health">
+            <Link href={buildPath('/console/health')}>
               View Full Health Report
               <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
@@ -175,7 +183,7 @@ export default function ConsoleOverviewPage() {
             </CardContent>
             <CardContent className="pt-0">
               <Button asChild variant="ghost" size="sm" className="h-8 w-full justify-center text-xs">
-                <Link href="/en/console/database">
+                <Link href={buildPath('/console/database')}>
                   Go to Database
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
@@ -196,7 +204,7 @@ export default function ConsoleOverviewPage() {
             </CardContent>
             <CardContent className="pt-0">
               <Button asChild variant="ghost" size="sm" className="h-8 w-full justify-center text-xs">
-                <Link href="/en/console/errors?service=api">
+                <Link href={buildPath('/console/errors?service=api')}>
                   Inspect API Logs
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
@@ -268,7 +276,7 @@ export default function ConsoleOverviewPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">
-                        <Link href={error.link} className="line-clamp-1 hover:underline">
+                        <Link href={buildPath(error.link)} className="line-clamp-1 hover:underline">
                           {error.message}
                         </Link>
                       </TableCell>
@@ -317,7 +325,7 @@ export default function ConsoleOverviewPage() {
                 size="sm"
                 className="h-8 w-full justify-center text-xs"
               >
-                <Link href="/en/console/errors">
+                <Link href={buildPath('/console/errors')}>
                   Open Logs
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
@@ -342,13 +350,13 @@ export default function ConsoleOverviewPage() {
           <CardContent className="pt-0">
             <div className="flex gap-2">
               <Button asChild variant="ghost" size="sm" className="h-8 flex-1 justify-center">
-                <Link href="/en/console/security">
+                <Link href={buildPath('/console/security')}>
                   Open Audit Trail
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
               </Button>
               <Button asChild variant="ghost" size="sm" className="h-8 flex-1 justify-center">
-                <Link href="/en/console/profile">Manage Sessions</Link>
+                <Link href={buildPath('/console/profile')}>Manage Sessions</Link>
               </Button>
             </div>
           </CardContent>
@@ -363,18 +371,18 @@ export default function ConsoleOverviewPage() {
             <CardDescription>Revenue and conversion performance</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 space-y-4 text-sm">
-            <BillingContent billing={data?.billing ?? overviewMockData.billing} />
+            <BillingContent billing={data?.billing ?? overviewMockData.billing} buildPath={buildPath} />
           </CardContent>
           <CardContent className="pt-0">
             <div className="flex gap-2">
               <Button asChild variant="ghost" size="sm" className="h-8 flex-1 justify-center">
-                <Link href="/en/console/billing">
+                <Link href={buildPath('/console/billing')}>
                   Billing &amp; Subscriptions
                   <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
               </Button>
               <Button asChild variant="ghost" size="sm" className="h-8 flex-1 justify-center">
-                <Link href="/en/console/config">Configuration</Link>
+                <Link href={buildPath('/console/config')}>Configuration</Link>
               </Button>
             </div>
           </CardContent>
@@ -526,7 +534,7 @@ function UserSecurityContent({ snapshot }: { snapshot: SecuritySnapshot }) {
   );
 }
 
-function BillingContent({ billing }: { billing: BillingSnapshot }) {
+function BillingContent({ billing, buildPath }: { billing: BillingSnapshot; buildPath: (path?: string) => string }) {
   const fmt = currencyFormatter(billing.currency);
 
   return (
@@ -557,7 +565,7 @@ function BillingContent({ billing }: { billing: BillingSnapshot }) {
           <p className="text-xl font-semibold">{billing.failedPayments}</p>
         </div>
         <Button asChild size="sm" variant="destructive" className="h-8 px-3">
-          <Link href="/en/console/billing?filter=failed">View</Link>
+          <Link href={buildPath('/console/billing?filter=failed')}>View</Link>
         </Button>
       </div>
     </div>

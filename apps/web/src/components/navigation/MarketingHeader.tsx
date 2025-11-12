@@ -187,7 +187,7 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
                 <Link href={`/${locale}/login`}>Log In</Link>
               </Button>
               <Button asChild variant="ghost" className="!bg-[hsl(var(--accent-red))] !text-[hsl(var(--accent-red-foreground))] !hover:bg-[hsl(var(--accent-red))]/90">
-                <Link href={`/${locale}/signup`}>Sign Up</Link>
+                <Link href={`/${locale}/onboarding`}>Sign Up</Link>
               </Button>
             </>
           )}

@@ -60,9 +60,9 @@ export function FeaturePageLayout({
       {(featureSection3a || textSection3b) && (
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
               {/* Section 3a: Special feature (60%) */}
-              <div className="lg:col-span-3">
+              <div className="lg:col-span-3 h-full">
                 {featureSection3a || (
                   <div className="bg-muted/50 rounded-lg p-8 h-full flex items-center justify-center">
                     <p className="text-muted-foreground text-center">
@@ -74,7 +74,7 @@ export function FeaturePageLayout({
               </div>
 
               {/* Section 3b: Text content (40%) */}
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 h-full">
                 {textSection3b || (
                   <div className="prose prose-lg">
                     <p className="text-muted-foreground">

@@ -88,13 +88,8 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="/documentation" className="text-primary">
+                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit/tree/main/docs" className="text-primary">
                   Documentation
-                </AnimatedUnderline>
-              </li>
-              <li>
-                <AnimatedUnderline href="/blog" className="text-primary">
-                  Blog
                 </AnimatedUnderline>
               </li>
               <li>

@@ -278,7 +278,7 @@ export function APIKeysModal({ isOpen, onClose }: APIKeysModalProps) {
             <div className="p-6 space-y-4">
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
                 <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-300 mb-2">Important!</p>
-                <p className="text-xs text-yellow-900 dark:text-yellow-300">Save this API key securely. You won't be able to see it again.</p>
+                <p className="text-xs text-yellow-900 dark:text-yellow-300">Save this API key securely. You won&apos;t be able to see it again.</p>
               </div>
               
               <div>

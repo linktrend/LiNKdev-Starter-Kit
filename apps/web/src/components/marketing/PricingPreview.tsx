@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react'; // Import useState
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 const pricingTiers = [
   {
@@ -15,7 +16,7 @@ const pricingTiers = [
     period: '/month',
     description: 'Perfect for getting started',
     features: [],
-    href: '/pricing',
+    href: '/signup',
     cta: 'Sign Up',
     highlighted: false,
   },
@@ -33,7 +34,7 @@ const pricingTiers = [
       'Enhanced Security',
       'Advanced analytics',
     ],
-    href: '/pricing',
+    href: '/signup',
     cta: 'Sign Up',
     highlighted: true,
   },
@@ -44,7 +45,7 @@ const pricingTiers = [
     period: '',
     description: 'For large organizations',
     features: [],
-    href: '/contact',
+    href: '/signup',
     cta: 'Sign Up',
     highlighted: false,
   },
@@ -61,6 +62,7 @@ const pricingTiers = [
  */
 export function PricingPreview() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly'); // Default to yearly
+  const { buildPath } = useLocalePath();
 
   return (
     <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 h-full p-8 md:p-12 space-y-6 rounded-lg">
@@ -117,7 +119,7 @@ export function PricingPreview() {
                 size="sm"
                 className="w-auto"
               >
-                <Link href={`/en${pricingTiers[0].href}`}>{pricingTiers[0].cta}</Link>
+                <Link href={buildPath(pricingTiers[0].href)}>{pricingTiers[0].cta}</Link>
               </Button>
             </div>
             <div className="flex items-baseline gap-1 mt-2">
@@ -146,7 +148,7 @@ export function PricingPreview() {
                 size="sm"
                 className="w-auto !bg-[hsl(var(--accent-red))] !text-[hsl(var(--accent-red-foreground))] !hover:bg-[hsl(var(--accent-red))]/90"
               >
-                <Link href={`/en${pricingTiers[1].href}`}>{pricingTiers[1].cta}</Link>
+                <Link href={buildPath(pricingTiers[1].href)}>{pricingTiers[1].cta}</Link>
               </Button>
             </div>
             <div className="flex items-baseline gap-1 mt-2">
@@ -183,7 +185,7 @@ export function PricingPreview() {
                 size="sm"
                 className="w-auto"
               >
-                <Link href={`/en${pricingTiers[2].href}`}>{pricingTiers[2].cta}</Link>
+                <Link href={buildPath(pricingTiers[2].href)}>{pricingTiers[2].cta}</Link>
               </Button>
             </div>
             <div className="flex items-baseline gap-1 mt-2">
@@ -201,7 +203,7 @@ export function PricingPreview() {
 
       <div className="text-center pt-4">
         <Link
-          href="/en/pricing"
+          href={buildPath('/pricing')}
           className="text-sm font-medium text-primary hover:underline"
         >
           View detailed pricing →
@@ -210,4 +212,3 @@ export function PricingPreview() {
     </div>
   );
 }
-

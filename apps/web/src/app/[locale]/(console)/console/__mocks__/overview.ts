@@ -149,7 +149,7 @@ export const overviewMockData: OverviewMockData = {
       service: 'Billing API',
       severity: 'critical',
       message: 'Stripe charge request failed for customer cus_9f8df',
-      link: '/en/console/errors?service=billing',
+      link: '/console/errors?service=billing',
     },
     {
       id: 'err-002',
@@ -157,7 +157,7 @@ export const overviewMockData: OverviewMockData = {
       service: 'Webhook Processor',
       severity: 'warning',
       message: 'Delivery to https://hook.example.com timed out',
-      link: '/en/console/errors?service=webhooks',
+      link: '/console/errors?service=webhooks',
     },
     {
       id: 'err-003',
@@ -165,7 +165,7 @@ export const overviewMockData: OverviewMockData = {
       service: 'Notification Worker',
       severity: 'warning',
       message: 'Retry limit reached for message queue job 89213',
-      link: '/en/console/errors?service=notifications',
+      link: '/console/errors?service=notifications',
     },
     {
       id: 'err-004',
@@ -173,7 +173,7 @@ export const overviewMockData: OverviewMockData = {
       service: 'Realtime API',
       severity: 'critical',
       message: 'Websocket shard #7 degraded (latency > 1s)',
-      link: '/en/console/errors?service=realtime',
+      link: '/console/errors?service=realtime',
     },
     {
       id: 'err-005',
@@ -181,7 +181,7 @@ export const overviewMockData: OverviewMockData = {
       service: 'Feature Flags',
       severity: 'info',
       message: 'Feature rollout paused for experiment exp-a12',
-      link: '/en/console/errors?service=flags',
+      link: '/console/errors?service=flags',
     },
   ],
   security: {

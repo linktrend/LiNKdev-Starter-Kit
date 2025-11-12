@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ProfileEditModalProps {
@@ -9,8 +9,33 @@ interface ProfileEditModalProps {
   onClose: () => void;
 }
 
+interface EducationEntry {
+  id: string;
+  institution: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface WorkExperienceEntry {
+  id: string;
+  company: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
 export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
   const [showApprovalPopup, setShowApprovalPopup] = useState(false);
+  
+  // Section collapse states
+  const [sectionsCollapsed, setSectionsCollapsed] = useState({
+    personalInfo: false,
+    about: false,
+    businessInfo: false,
+  });
+  
   const [formData, setFormData] = useState({
     username: 'johndoe167',
     displayName: 'John Doe',
@@ -19,7 +44,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
     middleName: 'Michael',
     lastName: 'Doe',
     email: 'john.doe@example.com',
-    phoneCountryCode: '',
+    phoneCountryCode: '+1',
     phoneNumber: '5551234567',
     personalAptSuite: 'Apt 4B',
     personalStreetAddress1: '123 Market Street',
@@ -28,29 +53,53 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
     personalState: 'California',
     personalPostalCode: '94102',
     personalCountry: 'United States',
-    professionalTitle: 'Senior Product Designer',
-    company: 'Tech Innovations Inc.',
-    professionalAptSuite: 'Suite 200',
-    professionalStreetAddress1: '456 Tech Boulevard',
-    professionalStreetAddress2: 'Building A',
-    professionalCity: 'San Francisco',
-    professionalState: 'California',
-    professionalPostalCode: '94103',
-    professionalCountry: 'United States',
-    bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces. I love working with modern design systems and bringing creative ideas to life through thoughtful design and collaboration.',
+    // About section
+    bio: 'Passionate product designer with over 5 years of experience creating beautiful and functional user interfaces.',
+    // Business Information
+    businessPosition: 'Senior Product Designer',
+    businessCompany: 'Tech Innovations Inc.',
+    businessAptSuite: 'Suite 200',
+    businessStreetAddress1: '456 Tech Boulevard',
+    businessStreetAddress2: 'Building A',
+    businessCity: 'San Francisco',
+    businessState: 'California',
+    businessPostalCode: '94103',
+    businessCountry: 'United States',
   });
 
-  const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | 'invalid' | null>(null);
+  const [education, setEducation] = useState<EducationEntry[]>([
+    {
+      id: '1',
+      institution: 'Stanford University',
+      degree: 'Bachelor of Science in Computer Science',
+      startDate: '2015',
+      endDate: '2019',
+    },
+  ]);
+
+  const [workExperience, setWorkExperience] = useState<WorkExperienceEntry[]>([
+    {
+      id: '1',
+      company: 'Previous Company Inc.',
+      position: 'Junior Designer',
+      startDate: '2019',
+      endDate: '2021',
+      description: 'Worked on various design projects and collaborated with cross-functional teams.',
+    },
+  ]);
+
+  const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | null>(null);
+
+  const toggleSection = (section: keyof typeof sectionsCollapsed) => {
+    setSectionsCollapsed(prev => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   const checkUsernameAvailability = (username: string) => {
     if (!username || username.length < 3) {
       setUsernameStatus(null);
-      return;
-    }
-    
-    // Admin usernames must end with '.admin'
-    if (!username.toLowerCase().endsWith('.admin')) {
-      setUsernameStatus('invalid');
       return;
     }
     
@@ -73,6 +122,51 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
     checkUsernameAvailability(newValue);
   };
 
+  // Education handlers
+  const addEducation = () => {
+    const newEntry: EducationEntry = {
+      id: Date.now().toString(),
+      institution: '',
+      degree: '',
+      startDate: '',
+      endDate: '',
+    };
+    setEducation([...education, newEntry]);
+  };
+
+  const removeEducation = (id: string) => {
+    setEducation(education.filter(entry => entry.id !== id));
+  };
+
+  const updateEducation = (id: string, field: keyof EducationEntry, value: string) => {
+    setEducation(education.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
+  // Work Experience handlers
+  const addWorkExperience = () => {
+    const newEntry: WorkExperienceEntry = {
+      id: Date.now().toString(),
+      company: '',
+      position: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    };
+    setWorkExperience([...workExperience, newEntry]);
+  };
+
+  const removeWorkExperience = (id: string) => {
+    setWorkExperience(workExperience.filter(entry => entry.id !== id));
+  };
+
+  const updateWorkExperience = (id: string, field: keyof WorkExperienceEntry, value: string) => {
+    setWorkExperience(workExperience.map(entry => 
+      entry.id === id ? { ...entry, [field]: value } : entry
+    ));
+  };
+
   const personalTitles = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.', 'Rev.', 'Other'];
 
   if (!isOpen) return null;
@@ -80,13 +174,11 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Prevent submission if username doesn't end with '.admin'
-    if (!formData.username.toLowerCase().endsWith('.admin')) {
-      setUsernameStatus('invalid');
-      return;
-    }
-    
-    console.log('Profile updated:', formData);
+    console.log('Profile updated:', {
+      ...formData,
+      education,
+      workExperience,
+    });
     setShowApprovalPopup(true);
   };
 
@@ -333,7 +425,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
       <div 
         className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg border shadow-2xl modal-bg text-card-foreground"
       >
-        <div className="flex items-center justify-between p-6 border-b border-border">
+        <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 modal-bg z-10">
           <h2 className="text-2xl font-bold text-card-foreground">Edit Profile</h2>
           <button
             onClick={onClose}
@@ -343,11 +435,24 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
           </button>
             </div>
             
-        <form onSubmit={handleSubmit} className="p-6 space-y-8">
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-card-foreground">Personal Information</h3>
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Personal Information Section */}
+          <div className="space-y-4 border-b border-border pb-6">
+            <button
+              type="button"
+              className="flex items-center gap-2 text-lg font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              onClick={() => toggleSection('personalInfo')}
+            >
+              <span>Personal Information</span>
+              {sectionsCollapsed.personalInfo ? (
+                <ChevronDown className="h-5 w-5" />
+              ) : (
+                <ChevronUp className="h-5 w-5" />
+              )}
+            </button>
             
+            {!sectionsCollapsed.personalInfo && (
+              <div className="space-y-4">
             {/* Display Name and Username Fields */}
             <div className="flex items-end gap-4">
               <div className="flex-1" style={{ maxWidth: '33.333%' }}>
@@ -373,7 +478,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                   onChange={handleUsernameChange}
                   required
                   className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
-                  placeholder="username.admin"
+                      placeholder="Enter username"
                 />
               </div>
               <div className="flex-1 flex items-center h-[42px]">
@@ -383,7 +488,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Checking availability...
+                        Checking...
                   </span>
                 )}
                 {usernameStatus === 'available' && (
@@ -391,7 +496,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    Username available
+                        Available
                   </span>
                 )}
                 {usernameStatus === 'taken' && (
@@ -399,15 +504,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                    Username not available
-                  </span>
-                )}
-                {usernameStatus === 'invalid' && (
-                  <span className="text-sm text-danger flex items-center gap-2">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                    Username must end with '.admin'
+                        Not available
                   </span>
                 )}
               </div>
@@ -468,7 +565,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
               </div>
             </div>
             
-            {/* Second Line: Email and Phone Number */}
+                {/* Second Line: Email and Phone Number - NOW EDITABLE */}
             <div className="grid gap-4 grid-cols-5">
               <div className="col-span-2">
                 <label className="block text-sm font-medium text-card-foreground mb-2">
@@ -479,8 +576,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  readOnly
-                  className="w-full px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
                 />
               </div>
               <div className="col-span-3">
@@ -491,8 +587,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                   <select
                     value={formData.phoneCountryCode}
                     onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
-                    disabled
-                    className="w-48 px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
+                        className="w-48 px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
                   >
                     <option value="">Country</option>
                     {phoneCountryCodes.map((item) => (
@@ -505,8 +600,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                     type="tel"
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    readOnly
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-input bg-muted text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm cursor-not-allowed"
+                        className="flex-1 px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
                   />
                 </div>
               </div>
@@ -604,7 +698,338 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
               </div>
             </div>
             </div>
-          <div className="flex gap-4 justify-end pt-4">
+            )}
+          </div>
+
+          {/* About Section */}
+          <div className="space-y-4 border-b border-border pb-6">
+            <button
+              type="button"
+              className="flex items-center gap-2 text-lg font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              onClick={() => toggleSection('about')}
+            >
+              <span>About</span>
+              {sectionsCollapsed.about ? (
+                <ChevronDown className="h-5 w-5" />
+              ) : (
+                <ChevronUp className="h-5 w-5" />
+              )}
+            </button>
+            
+            {!sectionsCollapsed.about && (
+              <div className="space-y-6">
+                {/* Bio */}
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm resize-none"
+                    placeholder="Tell us about yourself..."
+                  />
+                </div>
+
+                {/* Education */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-card-foreground">
+                      Education
+                    </label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addEducation}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Education
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {education.map((entry, index) => (
+                      <div key={entry.id} className="p-4 border border-border rounded-lg space-y-3 bg-muted/30">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-card-foreground">Education {index + 1}</span>
+                          {education.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeEducation(entry.id)}
+                              className="text-danger hover:text-danger/80"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <div className="grid gap-3">
+                          <input
+                            type="text"
+                            value={entry.institution}
+                            onChange={(e) => updateEducation(entry.id, 'institution', e.target.value)}
+                            placeholder="Institution name"
+                            className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                          />
+                          <input
+                            type="text"
+                            value={entry.degree}
+                            onChange={(e) => updateEducation(entry.id, 'degree', e.target.value)}
+                            placeholder="Degree / Field of study"
+                            className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              value={entry.startDate}
+                              onChange={(e) => updateEducation(entry.id, 'startDate', e.target.value)}
+                              placeholder="Start year (e.g., 2015)"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                            <input
+                              type="text"
+                              value={entry.endDate}
+                              onChange={(e) => updateEducation(entry.id, 'endDate', e.target.value)}
+                              placeholder="End year (e.g., 2019)"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Work Experience */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="block text-sm font-medium text-card-foreground">
+                      Work Experience
+                    </label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={addWorkExperience}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Experience
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {workExperience.map((entry, index) => (
+                      <div key={entry.id} className="p-4 border border-border rounded-lg space-y-3 bg-muted/30">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-card-foreground">Experience {index + 1}</span>
+                          {workExperience.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeWorkExperience(entry.id)}
+                              className="text-danger hover:text-danger/80"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <div className="grid gap-3">
+                          <div className="grid grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              value={entry.position}
+                              onChange={(e) => updateWorkExperience(entry.id, 'position', e.target.value)}
+                              placeholder="Position / Title"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                            <input
+                              type="text"
+                              value={entry.company}
+                              onChange={(e) => updateWorkExperience(entry.id, 'company', e.target.value)}
+                              placeholder="Company name"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              value={entry.startDate}
+                              onChange={(e) => updateWorkExperience(entry.id, 'startDate', e.target.value)}
+                              placeholder="Start year (e.g., 2019)"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                            <input
+                              type="text"
+                              value={entry.endDate}
+                              onChange={(e) => updateWorkExperience(entry.id, 'endDate', e.target.value)}
+                              placeholder="End year (e.g., 2021)"
+                              className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                            />
+                          </div>
+                          <textarea
+                            value={entry.description}
+                            onChange={(e) => updateWorkExperience(entry.id, 'description', e.target.value)}
+                            rows={3}
+                            placeholder="Description (optional)"
+                            className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm resize-none"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Business Information Section */}
+          <div className="space-y-4">
+            <button
+              type="button"
+              className="flex items-center gap-2 text-lg font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              onClick={() => toggleSection('businessInfo')}
+            >
+              <span>Business Information</span>
+              {sectionsCollapsed.businessInfo ? (
+                <ChevronDown className="h-5 w-5" />
+              ) : (
+                <ChevronUp className="h-5 w-5" />
+              )}
+            </button>
+            
+            {!sectionsCollapsed.businessInfo && (
+              <div className="space-y-4">
+                {/* Position and Company Name */}
+                <div className="grid gap-4 grid-cols-2">
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Position
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessPosition}
+                      onChange={(e) => setFormData({ ...formData, businessPosition: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                      placeholder="Your position"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessCompany}
+                      onChange={(e) => setFormData({ ...formData, businessCompany: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                      placeholder="Company name"
+                    />
+                  </div>
+                </div>
+
+                {/* Business Address - Same as Personal */}
+                <div className="grid gap-4 grid-cols-5">
+                  <div className="col-span-1">
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Apartment/Suite
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessAptSuite}
+                      onChange={(e) => setFormData({ ...formData, businessAptSuite: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    />
+                  </div>
+                  <div className="col-span-4">
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Street Address
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessStreetAddress1}
+                      onChange={(e) => setFormData({ ...formData, businessStreetAddress1: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Street Address 2
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.businessStreetAddress2}
+                    onChange={(e) => setFormData({ ...formData, businessStreetAddress2: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                  />
+                </div>
+                
+                <div className="grid gap-4" style={{ gridTemplateColumns: '1.5fr 1.5fr 1fr 2fr' }}>
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessCity}
+                      onChange={(e) => setFormData({ ...formData, businessCity: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      State/Region
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessState}
+                      onChange={(e) => setFormData({ ...formData, businessState: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Postal Code
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.businessPostalCode}
+                      onChange={(e) => setFormData({ ...formData, businessPostalCode: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                      Country
+                    </label>
+                    <select
+                      value={formData.businessCountry}
+                      onChange={(e) => setFormData({ ...formData, businessCountry: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm"
+                    >
+                      {countries.map((country) => (
+                        <option key={country} value={country}>
+                          {country}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex gap-4 justify-end pt-4 border-t border-border sticky bottom-0 modal-bg pb-2">
             <Button
               type="button"
               onClick={onClose}
@@ -619,7 +1044,7 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
         </form>
       </div>
       
-      {/* Approval Popup */}
+      {/* Success Popup */}
       {showApprovalPopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
           <div className="w-full max-w-md rounded-lg border shadow-2xl modal-bg text-card-foreground p-6">
@@ -629,10 +1054,10 @@ export function ProfileEditModal({ isOpen, onClose }: ProfileEditModalProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-card-foreground">Changes Submitted</h3>
+              <h3 className="text-lg font-semibold text-card-foreground">Changes Saved</h3>
             </div>
             <p className="text-sm text-card-foreground/70 mb-6">
-              Your profile changes have been submitted successfully. They are subject to approval by a super admin and will be reviewed soon. You will be notified once the changes are approved.
+              Your profile changes have been saved successfully.
             </p>
             <div className="flex justify-end">
               <Button onClick={handleApprovalClose}>

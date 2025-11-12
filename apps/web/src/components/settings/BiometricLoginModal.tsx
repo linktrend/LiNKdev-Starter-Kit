@@ -79,7 +79,7 @@ export function BiometricLoginModal({ isOpen, onClose }: BiometricLoginModalProp
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="font-semibold">Enable Biometric Login</p>
-              <p className="text-sm text-muted-foreground">Use your device's biometric authentication</p>
+              <p className="text-sm text-muted-foreground">Use your device&apos;s biometric authentication</p>
             </div>
             <button
               onClick={() => setIsEnabled(!isEnabled)}

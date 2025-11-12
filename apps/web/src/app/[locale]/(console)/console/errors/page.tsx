@@ -221,12 +221,13 @@ export default function ConsoleErrorsPage() {
 
     // Filter by time range
     const now = new Date();
-    const timeRanges = {
+    const timeRanges: Record<string, number> = {
       '1h': 1,
       '6h': 6,
       '24h': 24,
       '7d': 7 * 24,
       '30d': 30 * 24,
+      'all': Infinity,
     };
     const hours = timeRanges[timeRange] || Infinity;
     if (hours < Infinity) {
@@ -262,12 +263,13 @@ export default function ConsoleErrorsPage() {
 
     // Filter by time range
     const now = new Date();
-    const timeRanges = {
+    const timeRanges: Record<string, number> = {
       '1h': 1,
       '6h': 6,
       '24h': 24,
       '7d': 7 * 24,
       '30d': 30 * 24,
+      'all': Infinity,
     };
     const hours = timeRanges[timeRange] || Infinity;
     if (hours < Infinity) {

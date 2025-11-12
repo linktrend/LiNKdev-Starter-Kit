@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function CustomerSolutionsPage() {
+interface CustomerSolutionsPageProps {
+  params: { locale: string };
+}
+
+export default function CustomerSolutionsPage({ params }: CustomerSolutionsPageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Solutions for Customers"
       subtitle="Build exceptional customer experiences that drive satisfaction and loyalty"
       featureSection1b={
-        <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-lg p-8">
+        <div className="bg-gradient-to-r from-[hsl(var(--accent))]/10 to-[hsl(var(--primary))]/10 rounded-lg p-8">
           <p className="text-center text-muted-foreground">
             {/* Placeholder for customer success stories */}
             Customer testimonials carousel coming soon
@@ -84,7 +92,10 @@ export default function CustomerSolutionsPage() {
           </p>
       <p className="text-muted-foreground">
             Join leading brands that trust our platform to deliver exceptional customer experiences.
-      </p>
+     </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />

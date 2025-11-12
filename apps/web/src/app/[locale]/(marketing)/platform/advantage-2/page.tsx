@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function Advantage2Page() {
+interface Advantage2PageProps {
+  params: { locale: string };
+}
+
+export default function Advantage2Page({ params }: Advantage2PageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Scale with Confidence"
       subtitle="Grow your business without worrying about infrastructure limitations"
       featureSection1b={
-        <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg p-8">
+        <div className="bg-gradient-to-r from-[hsl(var(--gradient-brand-from))]/15 to-[hsl(var(--gradient-accent-to))]/15 rounded-lg p-8">
           <p className="text-center text-muted-foreground">
             {/* Placeholder for scaling visualization or growth chart */}
             Interactive scaling visualization coming soon
@@ -86,10 +94,12 @@ export default function Advantage2Page() {
           </p>
       <p className="text-muted-foreground">
             Trust in an infrastructure that's proven to scale with companies like yours.
-      </p>
+     </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />
   );
 }
-

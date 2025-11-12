@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import { Cookie, Save } from 'lucide-react';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 export default function ManageCookiesPage() {
   const [preferences, setPreferences] = useState({
@@ -60,6 +61,8 @@ export default function ManageCookiesPage() {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+
+  const { buildPath } = useLocalePath();
 
   return (
     <LegalPageLayout
@@ -203,10 +206,10 @@ export default function ManageCookiesPage() {
             For more information about how we use cookies and process your personal data, please read our:
           </p>
           <div className="flex flex-wrap gap-4">
-            <a href="/en/privacy" className="text-primary hover:underline">
+            <a href={buildPath('/privacy')} className="text-primary hover:underline">
               Privacy Policy
             </a>
-            <a href="/en/terms" className="text-primary hover:underline">
+            <a href={buildPath('/terms')} className="text-primary hover:underline">
               Terms and Conditions
             </a>
           </div>
@@ -215,4 +218,3 @@ export default function ManageCookiesPage() {
     </LegalPageLayout>
   );
 }
-

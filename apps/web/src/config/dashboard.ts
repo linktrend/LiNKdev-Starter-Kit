@@ -33,7 +33,7 @@ export const navConfig: NavItem[] = [
   },
   {
     title: "Admin",
-    href: "/admin",
+    href: "/labs/admin",
     icon: "CircleUser",
     label: "Admin"
   }

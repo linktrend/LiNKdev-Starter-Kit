@@ -3,6 +3,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Check } from 'lucide-react';
+import Link from 'next/link';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 /**
  * CTASection - Call-to-action section encouraging users to get started
@@ -11,13 +13,10 @@ import { Check } from 'lucide-react';
  * - Compelling headline and supporting text
  * - Large CTA button
  * - Trust indicators
- * - Scrolls to signup section on click
+ * - Navigates to localized signup page on click
  */
 export function CTASection() {
-  const handleGetStarted = () => {
-    // Scroll to the signup section at the top of the page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const { buildPath } = useLocalePath();
 
   const trustIndicators = [
     'No credit card required',
@@ -39,10 +38,10 @@ export function CTASection() {
 
         <Button
           size="lg"
-          onClick={handleGetStarted}
+          asChild
           className="w-full text-lg py-6 !bg-[hsl(var(--accent-red))] !text-[hsl(var(--accent-red-foreground))] !hover:bg-[hsl(var(--accent-red))]/90"
         >
-          Get Started Free
+          <Link href={buildPath('/signup')}>Get Started Free</Link>
         </Button>
 
         <div className="space-y-3 pt-4">

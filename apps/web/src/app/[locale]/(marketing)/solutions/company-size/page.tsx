@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function CompanySizeSolutionsPage() {
+interface CompanySizeSolutionsPageProps {
+  params: { locale: string };
+}
+
+export default function CompanySizeSolutionsPage({ params }: CompanySizeSolutionsPageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Solutions by Company Size"
       subtitle="Right-sized solutions that grow with your business from startup to enterprise"
       featureSection1b={
-        <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-lg p-8">
+        <div className="bg-gradient-to-r from-[hsl(var(--gradient-success-from))]/15 to-[hsl(var(--accent))]/15 rounded-lg p-8">
           <p className="text-center text-muted-foreground">
             {/* Placeholder for company size comparison */}
             Company size comparison chart coming soon
@@ -129,7 +137,10 @@ export default function CompanySizeSolutionsPage() {
           </p>
       <p className="text-muted-foreground">
             Join companies at every stage who trust us to support their journey.
-      </p>
+     </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />

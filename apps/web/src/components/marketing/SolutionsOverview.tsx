@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Building2, TrendingUp, UserCheck, ArrowRight } from 'lucide-react';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 const solutions = [
   {
@@ -41,6 +42,7 @@ const solutions = [
  * - Responsive grid layout
  */
 export function SolutionsOverview() {
+  const { buildPath } = useLocalePath();
   return (
     <div className="space-y-8">
       <div className="space-y-3">
@@ -73,7 +75,7 @@ export function SolutionsOverview() {
                   {solution.description}
                 </CardDescription>
                 <Link
-                  href={`/en${solution.href}`}
+                  href={buildPath(solution.href)}
                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
                 >
                   Explore Solutions
@@ -87,4 +89,3 @@ export function SolutionsOverview() {
     </div>
   );
 }
-

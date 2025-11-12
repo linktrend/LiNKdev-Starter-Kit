@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { ChevronDown } from 'lucide-react';
 
 interface CookiePreferencesModalProps {
   isOpen: boolean;
@@ -34,6 +35,13 @@ export function CookiePreferencesModal({ isOpen, onClose }: CookiePreferencesMod
     analytics: false,
     marketing: false,
   });
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsPolicyOpen(false);
+    }
+  }, [isOpen]);
 
   const handleSave = () => {
     // TODO: Save cookie preferences to localStorage or cookie
@@ -150,6 +158,34 @@ export function CookiePreferencesModal({ isOpen, onClose }: CookiePreferencesMod
           </div>
         </div>
 
+        <div className="border-t border-border pt-4 mt-2">
+          <button
+            type="button"
+            onClick={() => setIsPolicyOpen((open) => !open)}
+            className="w-full flex items-center justify-between text-sm font-semibold text-foreground hover:text-primary transition-colors"
+          >
+            Cookie Policy
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${isPolicyOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+          {isPolicyOpen && (
+            <div className="mt-3 max-h-48 overflow-y-auto pr-1 space-y-3 text-sm text-muted-foreground leading-relaxed">
+              <p>
+                Placeholder copy for the cookie policy. Explain in plain language what types of cookies are
+                stored, how long they persist, and whether any third parties receive anonymized analytics data.
+                Mention that users can revisit this panel at any time to change their preferences.
+              </p>
+              <p>
+                Outline how consent is captured (for example, by storing a hashed record in localStorage) and
+                provide an email address or in-app link for privacy-related questions. Reassure visitors that
+                essential cookies never collect personal content and are used strictly to ensure that the site
+                loads securely and remembers locale or accessibility settings.
+              </p>
+            </div>
+          )}
+        </div>
+
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={handleRejectAll} className="w-full sm:w-auto">
             Reject All
@@ -165,4 +201,3 @@ export function CookiePreferencesModal({ isOpen, onClose }: CookiePreferencesMod
     </Dialog>
   );
 }
-

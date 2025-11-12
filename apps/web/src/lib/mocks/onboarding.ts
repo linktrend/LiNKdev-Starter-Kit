@@ -1,33 +1,18 @@
-import { OnboardingData, ONBOARDING_STEPS } from '@/hooks/useOnboarding';
+import { OnboardingData } from '@/hooks/useOnboarding';
 
-// Mock data for onboarding steps
+// Mock data for onboarding
 export const mockOnboardingData: Partial<OnboardingData> = {
-  account: {
-    name: '',
-    email: '',
-    password: '',
-  },
-  profile: {
-    bio: '',
-    avatar: '',
-    company: '',
-    website: '',
-  },
-  preferences: {
-    locale: 'en',
-    notifications: {
-      email: true,
-      push: true,
-      marketing: false,
-    },
-    privacy: {
-      profileVisibility: 'private' as const,
-      activityTracking: true,
-    },
-  },
-  welcome: {
-    completed: false,
-  },
+  authMethod: 'email',
+  email: 'user@example.com',
+  acceptedTerms: true,
+  username: 'johndoe',
+  displayName: 'John Doe',
+  firstName: 'John',
+  lastName: 'Doe',
+  personalCountry: 'United States',
+  language: 'en',
+  timezone: 'America/New_York',
+  theme: 'system',
 };
 
 // Available locales for preferences
@@ -50,9 +35,10 @@ export const NOTIFICATION_OPTIONS = [
     label: 'Email Notifications',
     description: 'Receive updates via email',
     categories: [
-      { id: 'updates', label: 'Product Updates', default: true },
-      { id: 'security', label: 'Security Alerts', default: true },
+      { id: 'productUpdates', label: 'Product Updates', default: true },
+      { id: 'securityAlerts', label: 'Security Alerts', default: true },
       { id: 'marketing', label: 'Marketing Emails', default: false },
+      { id: 'weeklyDigest', label: 'Weekly Digest', default: false },
     ],
   },
   {
@@ -60,8 +46,19 @@ export const NOTIFICATION_OPTIONS = [
     label: 'Push Notifications',
     description: 'Receive browser notifications',
     categories: [
-      { id: 'browser', label: 'Browser Notifications', default: true },
-      { id: 'mobile', label: 'Mobile Push', default: false },
+      { id: 'importantUpdates', label: 'Important Updates', default: true },
+      { id: 'newFeatures', label: 'New Features', default: false },
+      { id: 'recommendations', label: 'Recommendations', default: false },
+    ],
+  },
+  {
+    id: 'inApp',
+    label: 'In-App Notifications',
+    description: 'Receive notifications within the app',
+    categories: [
+      { id: 'systemAlerts', label: 'System Alerts', default: true },
+      { id: 'activityUpdates', label: 'Activity Updates', default: true },
+      { id: 'suggestions', label: 'Suggestions', default: false },
     ],
   },
 ];
@@ -86,20 +83,40 @@ export const PRIVACY_VISIBILITY_OPTIONS = [
 ];
 
 // Step labels for the step indicator
-export const STEP_LABELS = (ONBOARDING_STEPS || []).map(step => step.title);
+export const STEP_LABELS = [
+  'Create Account',
+  'Complete Profile',
+  'Set Preferences',
+  'Welcome',
+];
 
 // Default preferences based on locale
 export const getDefaultPreferences = (locale: string) => ({
-  locale,
-  notifications: {
-    email: true,
-    push: true,
+  language: locale,
+  timezone: 'America/New_York',
+  dateFormat: 'MM/DD/YYYY',
+  timeFormat: '12h' as const,
+  emailNotifications: {
+    productUpdates: true,
+    securityAlerts: true,
     marketing: false,
+    weeklyDigest: false,
   },
-  privacy: {
-    profileVisibility: 'private' as const,
-    activityTracking: true,
+  pushNotifications: {
+    importantUpdates: true,
+    newFeatures: false,
+    recommendations: false,
   },
+  inAppNotifications: {
+    systemAlerts: true,
+    activityUpdates: true,
+    suggestions: false,
+  },
+  theme: 'system' as const,
+  displayDensity: 'comfortable' as const,
+  allowAnalytics: true,
+  showProfile: false,
+  enableTwoFactor: false,
 });
 
 // Mock avatar options (placeholder URLs)

@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function RoleSolutionsPage() {
+interface RoleSolutionsPageProps {
+  params: { locale: string };
+}
+
+export default function RoleSolutionsPage({ params }: RoleSolutionsPageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Solutions by Role"
       subtitle="Purpose-built tools for every role in your organization to maximize productivity"
       featureSection1b={
-        <div className="bg-gradient-to-r from-rose-500/10 to-orange-500/10 rounded-lg p-8">
+        <div className="bg-gradient-to-r from-[hsl(var(--gradient-danger-from))]/15 to-[hsl(var(--gradient-warning-from))]/15 rounded-lg p-8">
           <p className="text-center text-muted-foreground">
             {/* Placeholder for role-based features showcase */}
             Role-based interface preview coming soon
@@ -120,7 +128,10 @@ export default function RoleSolutionsPage() {
           </p>
       <p className="text-muted-foreground">
             Empower every role in your organization with purpose-built tools that drive results.
-      </p>
+     </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />

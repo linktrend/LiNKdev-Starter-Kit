@@ -1,12 +1,20 @@
+import Link from 'next/link';
 import { PlatformPageLayout } from '@/components/layouts/PlatformPageLayout';
+import { Button } from '@/components/ui/button';
+import { buildLocalePath } from '@/lib/locale';
 
-export default function IndustrySolutionsPage() {
+interface IndustrySolutionsPageProps {
+  params: { locale: string };
+}
+
+export default function IndustrySolutionsPage({ params }: IndustrySolutionsPageProps) {
+  const signupPath = buildLocalePath(params?.locale, '/signup');
   return (
     <PlatformPageLayout
       title="Solutions by Industry"
       subtitle="Tailored solutions designed for your industry's unique challenges and opportunities"
       featureSection1b={
-        <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg p-8">
+        <div className="bg-gradient-to-r from-[hsl(var(--gradient-accent-from))]/15 to-[hsl(var(--gradient-accent-to))]/15 rounded-lg p-8">
           <p className="text-center text-muted-foreground">
             {/* Placeholder for industry showcase */}
             Industry verticals showcase coming soon
@@ -84,7 +92,10 @@ export default function IndustrySolutionsPage() {
           </p>
       <p className="text-muted-foreground">
             Choose a platform that understands your industry and speaks your language.
-      </p>
+     </p>
+      <Button asChild size="lg" className="mt-6">
+        <Link href={signupPath}>Get Started</Link>
+      </Button>
     </div>
       }
     />

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { User, Lock, Key, Settings2, Globe, Palette, Bell, Shield, Eye, FileText, Upload, Database, Link2, UserCircle, Key as KeyIcon, CreditCard, BarChart3, ArrowUpCircle } from 'lucide-react';
+import { User, Lock, Key, Settings2, Globe, Palette, Bell, Shield, Eye, FileText, Upload, Database, Link2, UserCircle, Key as KeyIcon, CreditCard, BarChart3, ArrowUpCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UpgradeModal } from '@/components/settings/UpgradeModal';
 import { ManageBillingModal } from '@/components/settings/ManageBillingModal';
@@ -18,12 +18,14 @@ import { NotificationPreferencesModal } from '@/components/settings/Notification
 import { PrivacySettingsModal } from '@/components/settings/PrivacySettingsModal';
 import { ImportExportModal } from '@/components/settings/ImportExportModal';
 import { DataSettingsModal } from '@/components/settings/DataSettingsModal';
+import { useLocalePath } from '@/hooks/useLocalePath';
 import { IntegrationsModal } from '@/components/settings/IntegrationsModal';
 import { APIKeysModal } from '@/components/settings/APIKeysModal';
 
 export default function SettingsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { buildPath } = useLocalePath();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'account');
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
@@ -96,7 +98,7 @@ export default function SettingsPage() {
                   <p className="text-sm text-card-foreground/60 mt-1">john.doe@example.com</p>
                 </div>
                 <Button 
-                  onClick={() => router.push('/en/dashboard/profile')}
+                  onClick={() => router.push(buildPath('/dashboard/profile'))}
                   className="w-full mt-auto"
                 >
                   <User className="h-4 w-4 mr-2" />
@@ -185,6 +187,35 @@ export default function SettingsPage() {
                 <Button onClick={() => setTwoFactorModalOpen(true)} className="w-full mt-auto">
                   <Shield className="h-4 w-4 mr-2" />
                   Edit 2FA Settings
+                </Button>
+              </SettingCard>
+
+              <SettingCard
+                icon={<Clock />}
+                title="Session Duration"
+                description=""
+              >
+                <div className="mb-6">
+                  <p className="text-sm font-bold text-card-foreground mb-3">Control Session Timeout</p>
+                  <p className="text-sm text-card-foreground/70 mb-4">Choose how long you stay logged in</p>
+                  <div className="space-y-2">
+                    <label className="text-xs text-card-foreground/70">Session Timeout</label>
+                    <select 
+                      className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm"
+                      defaultValue="60"
+                    >
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">1 hour</option>
+                      <option value="240">4 hours</option>
+                      <option value="480">8 hours</option>
+                      <option value="1440">24 hours</option>
+                    </select>
+                  </div>
+                </div>
+                <Button className="w-full mt-auto">
+                  <Clock className="h-4 w-4 mr-2" />
+                  Save Session Settings
                 </Button>
               </SettingCard>
 

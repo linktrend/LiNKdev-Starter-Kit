@@ -1,123 +1,208 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { signInWithEmail } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, CheckCircle, AlertCircle, XCircle, Loader2, Clock } from 'lucide-react';
 
-export default function EmailSignIn() {
-  const allowPassword = true;
-  const redirectMethod = 'client';
-  const disableButton = false;
-  
+interface MagicLinkPageProps {
+  params: { locale: string };
+}
+
+export default function MagicLinkPage({ params: { locale } }: MagicLinkPageProps) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+  const expires = searchParams.get('expires');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, signInWithEmail, router);
-    setIsSubmitting(false);
+  const [status, setStatus] = useState<'verifying' | 'success' | 'expired' | 'invalid' | 'used'>('verifying');
+  const [countdown, setCountdown] = useState(2);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+
+  // Calculate time remaining
+  useEffect(() => {
+    if (expires) {
+      const expiryTime = parseInt(expires);
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((expiryTime - now) / 1000));
+      setTimeRemaining(remaining);
+    }
+  }, [expires]);
+
+  // Countdown for time remaining
+  useEffect(() => {
+    if (timeRemaining > 0) {
+      const timer = setTimeout(() => setTimeRemaining(timeRemaining - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeRemaining]);
+
+  // Verify magic link
+  useEffect(() => {
+    if (!token || !expires) {
+      setStatus('invalid');
+      return;
+    }
+
+    const expiryTime = parseInt(expires);
+    const now = Date.now();
+
+    // Mock verification logic
+    setTimeout(() => {
+      if (now > expiryTime) {
+        setStatus('expired');
+      } else if (token === 'used') {
+        setStatus('used');
+      } else {
+        setStatus('success');
+      }
+    }, 1500);
+  }, [token, expires]);
+
+  // Countdown for redirect
+  useEffect(() => {
+    if (status === 'success' && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (status === 'success' && countdown === 0) {
+      router.push(`/${locale}/dashboard`);
+    }
+  }, [status, countdown, router, locale]);
+
+  const renderContent = () => {
+    switch (status) {
+      case 'verifying':
+        return (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center pt-4">
+              <Loader2 className="h-12 w-12 text-primary animate-spin" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Verifying your link...</h2>
+              <p className="text-muted-foreground">
+                Please wait while we verify your magic link
+              </p>
+            </div>
+            {timeRemaining > 0 && (
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>
+                  Link valid for {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60).toString().padStart(2, '0')}
+                </span>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'success':
+        return (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center pt-4">
+              <div className="rounded-full bg-green-100 dark:bg-green-900/20 p-4">
+                <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-500" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">You&apos;re logged in!</h2>
+              <p className="text-muted-foreground mb-4">
+                Redirecting you to your dashboard...
+              </p>
+              <Badge variant="outline" className="text-sm">
+                Redirecting in {countdown}s
+              </Badge>
+            </div>
+          </div>
+        );
+
+      case 'expired':
+        return (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center pt-4">
+              <div className="rounded-full bg-amber-100 dark:bg-amber-900/20 p-4">
+                <AlertCircle className="h-12 w-12 text-amber-600 dark:text-amber-500" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Link expired</h2>
+              <p className="text-muted-foreground mb-6">
+                This magic link has expired. Magic links are valid for 5 minutes.
+              </p>
+              <Button asChild className="w-full">
+                <Link href={`/${locale}/login`}>
+                  Request new link
+                </Link>
+              </Button>
+            </div>
+          </div>
+        );
+
+      case 'used':
+        return (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center pt-4">
+              <div className="rounded-full bg-blue-100 dark:bg-blue-900/20 p-4">
+                <CheckCircle className="h-12 w-12 text-blue-600 dark:text-blue-500" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Link already used</h2>
+              <p className="text-muted-foreground mb-6">
+                This magic link has already been used. Each link can only be used once.
+              </p>
+              <Button asChild className="w-full">
+                <Link href={`/${locale}/login`}>
+                  Return to login
+                </Link>
+              </Button>
+            </div>
+          </div>
+        );
+
+      case 'invalid':
+        return (
+          <div className="text-center space-y-4">
+            <div className="flex justify-center pt-4">
+              <div className="rounded-full bg-red-100 dark:bg-red-900/20 p-4">
+                <XCircle className="h-12 w-12 text-red-600 dark:text-red-500" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Invalid link</h2>
+              <p className="text-muted-foreground mb-6">
+                This magic link is invalid or malformed. Please request a new one.
+              </p>
+              <Button asChild className="w-full">
+                <Link href={`/${locale}/login`}>
+                  Return to login
+                </Link>
+              </Button>
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background px-4 py-12 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between mb-8">
-        <Link
-          href="/"
-          className="rounded-md p-2 transition-colors hover:bg-muted"
-          prefetch={false}
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-          <span className="sr-only">Back</span>
-        </Link>
-        <div />
-      </div>
-      <div className="flex items-center justify-center flex-1">
-        <Card className="w-full max-w-md">
-          <CardContent className="grid gap-4 px-4 pb-4 my-10">
-            <div className="space-y-1 text-center">
-              <h2 className="text-2xl font-bold">Sign In</h2>
-              <p className="text-muted-foreground my-2">
-                Enter your email below to sign in to your account
-              </p>
-            </div>
-            <form
-              noValidate={true}
-              className="grid gap-4"
-              onSubmit={handleSubmit}
-            >
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="name@example.com"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                  autoCorrect="off"
-                  required
-                />
-              </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={disableButton}
-              >
-                Sign in
-              </Button>
-            </form>
-            {allowPassword && (
-              <>
-                <div className="flex justify-center">
-                  <Link
-                    href="/signin"
-                    className="text-sm font-medium hover:underline underline-offset-4"
-                    prefetch={false}
-                  >
-                    Sign in with email and password
-                  </Link>
-                </div>
-                <div className="flex justify-center">
-                  <Link
-                    href="/signup"
-                    className="text-sm font-bold hover:underline underline-offset-4"
-                    prefetch={false}
-                  >
-                    Don&apos;t have an account? Sign up
-                  </Link>
-                </div>
-              </>
-            )}
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <Sparkles className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold">
+              LTM Starter Kit
+            </h1>
+          </div>
+        </div>
+
+        <Card className="bg-gradient-to-br from-[hsl(var(--gradient-brand-from))]/12 to-[hsl(var(--gradient-brand-to))]/25">
+          <CardContent className="p-8">
+            {renderContent()}
           </CardContent>
         </Card>
       </div>
     </div>
-  );
-}
-
-function ArrowLeftIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m12 19-7-7 7-7" />
-      <path d="M19 12H5" />
-    </svg>
   );
 }

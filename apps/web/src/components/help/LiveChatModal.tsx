@@ -38,6 +38,22 @@ export default function LiveChatModal({ isOpen, onClose }: LiveChatModalProps) {
 
   if (!isOpen) return null;
 
+  const logAiUsage = async (tokens: number) => {
+    try {
+      await fetch('/api/usage/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          tokensUsed: tokens,
+          metadata: { source: 'live_chat' },
+        }),
+      });
+    } catch {
+      // best-effort logging
+    }
+  };
+
   const handleSend = () => {
     if (!inputValue.trim()) return;
 
@@ -50,6 +66,7 @@ export default function LiveChatModal({ isOpen, onClose }: LiveChatModalProps) {
 
     setMessages([...messages, newMessage]);
     setInputValue('');
+    void logAiUsage(250);
 
     // Simulate AI response
     setTimeout(() => {

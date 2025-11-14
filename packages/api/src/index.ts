@@ -2,7 +2,7 @@
 export { appRouter, createCaller } from './root';
 export type { AppRouter } from './root';
 export { createTRPCRouter, publicProcedure, protectedProcedure } from './trpc';
-export type { TRPCContext } from './trpc';
+export type { TRPCContext, UsageLogger } from './trpc';
 
 // RBAC exports
 export * from './rbac';

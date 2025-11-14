@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { logUsageEvent } from '../utils/usage';
 
 // Note: These utility functions will need to be provided by the consuming application
 declare const enqueueEvent: (orgId: string, event: string, payload: any) => Promise<string>;
@@ -46,11 +47,25 @@ export const automationRouter = createTRPCRouter({
    * Run a delivery tick to process pending events
    */
   runDeliveryTick: protectedProcedure
-    .mutation(async () => {
+    .mutation(async ({ ctx }) => {
       try {
         const startTime = Date.now();
         const result = await processPendingEvents();
         const duration = Date.now() - startTime;
+
+        if (ctx.user && result.successful > 0) {
+          logUsageEvent(ctx, {
+            userId: ctx.user.id,
+            orgId: ctx.orgId,
+            eventType: 'automation_run',
+            quantity: result.successful,
+            metadata: {
+              processed: result.processed,
+              failed: result.failed,
+              duration_ms: duration,
+            },
+          });
+        }
         
         // Emit analytics event (commented out for template)
         // await emitAnalyticsEvent(ctx.user.id, 'automation.delivery_tick', {

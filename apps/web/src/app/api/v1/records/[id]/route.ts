@@ -13,6 +13,7 @@ import {
 } from '@/server/rest/validators';
 import { z } from 'zod';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // GET /api/v1/records/[id] - Get single record
 export const GET = withErrorHandling(
@@ -37,6 +38,8 @@ export const GET = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {
@@ -99,6 +102,8 @@ export const PATCH = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {
@@ -151,6 +156,8 @@ export const DELETE = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

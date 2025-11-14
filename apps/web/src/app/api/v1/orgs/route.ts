@@ -12,6 +12,7 @@ import {
 } from '@/server/rest/validators';
 import { createPaginatedResponse } from '@/server/rest/pagination';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // GET /api/v1/orgs - List organizations for authenticated user
 export const GET = withErrorHandling(
@@ -27,6 +28,8 @@ export const GET = withErrorHandling(
       supabase: auth.supabase,
       posthog: null, // Not needed for REST API
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {
@@ -72,6 +75,8 @@ export const POST = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

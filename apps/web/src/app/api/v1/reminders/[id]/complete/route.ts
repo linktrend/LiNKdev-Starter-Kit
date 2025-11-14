@@ -10,6 +10,7 @@ import {
 } from '@/server/rest/validators';
 import { z } from 'zod';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // POST /api/v1/reminders/[id]/complete - Mark reminder as complete
 export const POST = withErrorHandling(
@@ -34,6 +35,8 @@ export const POST = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

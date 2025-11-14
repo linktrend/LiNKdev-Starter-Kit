@@ -6,6 +6,7 @@ import {
   SubscriptionResponse
 } from '@/server/rest/validators';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // GET /api/v1/billing/subscription - Get organization subscription
 export const GET = withErrorHandling(
@@ -21,6 +22,8 @@ export const GET = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

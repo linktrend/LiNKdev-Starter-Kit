@@ -10,6 +10,7 @@ export * from './feature-flags';
 export * from './email';
 export * from './supabase';
 export * from './main';
+export * from './usage';
 
 // Database types (these may conflict with other exports, so import selectively)
 export type { Database } from './db';

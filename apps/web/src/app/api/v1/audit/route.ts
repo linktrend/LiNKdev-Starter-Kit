@@ -11,6 +11,7 @@ import {
 } from '@/server/rest/validators';
 import { createPaginatedResponse, extractPaginationParams } from '@/server/rest/pagination';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // GET /api/v1/audit - List audit logs with filters
 export const GET = withErrorHandling(
@@ -40,6 +41,8 @@ export const GET = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

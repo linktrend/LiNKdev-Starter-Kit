@@ -10,6 +10,7 @@ import {
   CheckoutResponse
 } from '@/server/rest/validators';
 import { appRouter } from '@starter/api';
+import { logUsage } from '@/lib/usage/server';
 
 // POST /api/v1/billing/checkout - Create checkout session
 export const POST = withErrorHandling(
@@ -34,6 +35,8 @@ export const POST = withErrorHandling(
       supabase: auth.supabase,
       posthog: null,
       headers: request.headers,
+      usageLogger: logUsage,
+      orgId: auth.orgId,
     });
 
     try {

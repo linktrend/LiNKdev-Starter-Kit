@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { logUsageEvent } from '../utils/usage';
 import { 
   UpdateReminderInput,
   UpdateScheduleInput
@@ -597,6 +598,18 @@ export const schedulingRouter = createTRPCRouter({
         
         // Emit event for due reminders
         await emitDueRemindersEvent(ctx, input.org_id, dueReminders.length);
+
+         if (ctx.user && dueReminders.length > 0) {
+           logUsageEvent(ctx, {
+             userId: ctx.user.id,
+             orgId: input.org_id,
+             eventType: 'schedule_executed',
+             quantity: dueReminders.length,
+             metadata: {
+               reminder_ids: dueReminders.map((reminder: any) => reminder.id),
+             },
+           });
+         }
         
         return { count: dueReminders.length };
       }
@@ -619,6 +632,18 @@ export const schedulingRouter = createTRPCRouter({
 
       // Emit event for due reminders
       await emitDueRemindersEvent(ctx, input.org_id, dueReminders.length);
+
+      if (ctx.user && dueReminders.length > 0) {
+        logUsageEvent(ctx, {
+          userId: ctx.user.id,
+          orgId: input.org_id,
+          eventType: 'schedule_executed',
+          quantity: dueReminders.length,
+          metadata: {
+            reminder_ids: dueReminders.map((reminder: any) => reminder.id),
+          },
+        });
+      }
 
       return { count: dueReminders.length };
     }),

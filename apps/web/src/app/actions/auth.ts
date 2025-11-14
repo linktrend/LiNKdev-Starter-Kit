@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { createClient } from '@/lib/auth/server'
+import { logUsage } from '@/lib/usage/server'
 import { routing } from '@/i18n/routing'
 
 type FormErrors = Record<string, string[]>
@@ -119,7 +120,7 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
   }
 
   const { email, password } = validated.data
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
@@ -128,6 +129,16 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
     return {
       error: { form: [error.message] },
     } satisfies AuthFormState
+  }
+
+  if (data?.user) {
+    logUsage({
+      userId: data.user.id,
+      eventType: 'user_active',
+      metadata: { method: 'password' },
+    }).catch(() => {
+      // best effort
+    })
   }
 
   revalidatePath('/', 'layout')

@@ -57,7 +57,12 @@ export function ImageUpload({ user }: { user: any }) {
         await fetch('/api/update-avatar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: user.id, avatarUrl: uploadedImageUrl }),
+          body: JSON.stringify({
+            userId: user.id,
+            avatarUrl: uploadedImageUrl,
+            fileSize: imageFile.size,
+            orgId: user.org_id,
+          }),
         });
         toast({
           title: "Successfully uploaded image",

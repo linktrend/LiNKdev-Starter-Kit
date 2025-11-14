@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
+import { logUsage } from '@/lib/usage/server';
 // Define TRPCContext locally since it's not being exported properly
 type TRPCContext = {
   user: {
@@ -12,6 +13,7 @@ type TRPCContext = {
     capture: (event: string, properties?: Record<string, unknown>) => void;
   } | null;
   headers?: Headers;
+  usageLogger?: typeof logUsage;
 };
 import { 
   sendProfileUpdateEmail, 
@@ -34,5 +36,6 @@ export const createTRPCContext = async (opts?: { headers?: Headers }): Promise<T
     user,
     posthog,
     headers: opts?.headers,
+    usageLogger: logUsage,
   };
 };

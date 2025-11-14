@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { logUsageEvent } from '../utils/usage';
 // Note: Type imports removed as they're not used in this file
 
 // Note: These utility functions and stores will need to be provided by the consuming application
@@ -292,6 +293,17 @@ export const recordsRouter = createTRPCRouter({
             user_id: record.user_id,
           },
         });
+
+        logUsageEvent(ctx, {
+          userId: ctx.user.id,
+          orgId: record.org_id || input.org_id || ctx.orgId,
+          eventType: 'record_created',
+          quantity: 1,
+          metadata: {
+            record_id: record.id,
+            record_type_id: record.type_id,
+          },
+        });
         
         return record;
       }
@@ -325,6 +337,17 @@ export const recordsRouter = createTRPCRouter({
           record_type_id: record.type_id,
           org_id: record.org_id,
           user_id: record.user_id,
+        },
+      });
+
+      logUsageEvent(ctx, {
+        userId: ctx.user.id,
+        orgId: record.org_id || input.org_id || ctx.orgId,
+        eventType: 'record_created',
+        quantity: 1,
+        metadata: {
+          record_id: record.id,
+          record_type_id: record.type_id,
         },
       });
 

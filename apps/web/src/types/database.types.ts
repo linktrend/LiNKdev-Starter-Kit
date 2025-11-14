@@ -870,6 +870,108 @@ export type Database = {
           },
         ]
       }
+      usage_aggregations: {
+        Row: {
+          id: string
+          user_id: string | null
+          org_id: string | null
+          period_type: 'daily' | 'monthly'
+          period_start: string
+          period_end: string
+          metric_type: string
+          total_quantity: number
+          metadata: Json | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          org_id?: string | null
+          period_type: 'daily' | 'monthly'
+          period_start: string
+          period_end: string
+          metric_type: string
+          total_quantity?: number
+          metadata?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          org_id?: string | null
+          period_type?: 'daily' | 'monthly'
+          period_start?: string
+          period_end?: string
+          metric_type?: string
+          total_quantity?: number
+          metadata?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_aggregations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_aggregations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_events: {
+        Row: {
+          id: string
+          user_id: string
+          org_id: string | null
+          event_type: 'record_created' | 'api_call' | 'automation_run' | 'storage_used' | 'schedule_executed' | 'ai_tokens_used' | 'user_active'
+          event_data: Json | null
+          quantity: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          org_id?: string | null
+          event_type: 'record_created' | 'api_call' | 'automation_run' | 'storage_used' | 'schedule_executed' | 'ai_tokens_used' | 'user_active'
+          event_data?: Json | null
+          quantity?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          org_id?: string | null
+          event_type?: 'record_created' | 'api_call' | 'automation_run' | 'storage_used' | 'schedule_executed' | 'ai_tokens_used' | 'user_active'
+          event_data?: Json | null
+          quantity?: number | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           id: string
@@ -1047,6 +1149,14 @@ export type Database = {
       }
     }
     Functions: {
+      aggregate_usage: {
+        Args: {
+          p_period_type: string
+          p_period_start: string
+          p_period_end: string
+        }
+        Returns: undefined
+      }
       check_rate_limit_bucket: {
         Args: { p_bucket: string; p_limit: number; p_window_start: string }
         Returns: {

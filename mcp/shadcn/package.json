@@ -1,0 +1,25 @@
+{
+  "name": "shadcn-mcp-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Shadcn/UI MCP Server for LTM Starter Kit",
+  "main": "server.js",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.3",
+    "dotenv": "^16.4.5"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

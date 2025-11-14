@@ -83,7 +83,7 @@ export default function CustomerSolutionsPage({ params }: CustomerSolutionsPageP
         <div>
           <h3 className="text-2xl font-semibold mb-4">Customer-Centric Success</h3>
           <p className="text-muted-foreground mb-4">
-            In today's competitive market, customer experience is the ultimate differentiator. Companies that prioritize 
+            In today&apos;s competitive market, customer experience is the ultimate differentiator. Companies that prioritize 
             customer satisfaction see 60% higher profits than their competitors.
           </p>
           <p className="text-muted-foreground mb-4">

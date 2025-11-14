@@ -29,13 +29,13 @@ const mockMembers = [
   {
     org_id: 'org-1',
     user_id: 'user-2',
-    role: 'admin' as OrgRole,
+    role: 'member' as OrgRole,
     created_at: new Date().toISOString(),
     user: {
       id: 'user-2',
-      email: 'admin@example.com',
+      email: 'member@example.com',
         user_metadata: {
-          full_name: 'Jane Admin',
+          full_name: 'Jane Member',
           avatar_url: undefined,
         },
     },
@@ -43,13 +43,13 @@ const mockMembers = [
   {
     org_id: 'org-1',
     user_id: 'user-3',
-    role: 'editor' as OrgRole,
+    role: 'viewer' as OrgRole,
     created_at: new Date().toISOString(),
     user: {
       id: 'user-3',
-      email: 'editor@example.com',
+      email: 'viewer@example.com',
         user_metadata: {
-          full_name: 'Bob Editor',
+          full_name: 'Bob Viewer',
           avatar_url: undefined,
         },
     },
@@ -75,7 +75,7 @@ const mockInvites = [
     id: 'invite-1',
     org_id: 'org-1',
     email: 'pending@example.com',
-    role: 'editor' as OrgRole,
+    role: 'member' as OrgRole,
     status: 'pending' as const,
     created_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),

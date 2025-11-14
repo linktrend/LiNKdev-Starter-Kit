@@ -8,7 +8,7 @@ const OrgSummarySchema = z.object({
   members: z.number(),
 });
 
-const UserOrgRoleSchema = z.enum(['owner', 'admin', 'editor', 'viewer']).nullable();
+const UserOrgRoleSchema = z.enum(['owner', 'member', 'viewer']).nullable();
 
 export type OrgSummary = z.infer<typeof OrgSummarySchema>;
 export type UserOrgRole = z.infer<typeof UserOrgRoleSchema>;

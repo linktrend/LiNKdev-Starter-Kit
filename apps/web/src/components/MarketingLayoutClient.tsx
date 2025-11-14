@@ -5,8 +5,14 @@ import { MarketingHeader } from '@/components/navigation/MarketingHeader';
 import { usePathname, useParams } from 'next/navigation';
 import React from 'react';
 
+interface LayoutUser {
+  id: string;
+  email?: string | null;
+  account_type: 'super_admin' | 'admin' | 'user';
+}
+
 interface MarketingLayoutClientProps {
-  user: boolean;
+  user: LayoutUser | null;
   children: React.ReactNode;
 }
 

@@ -15,7 +15,9 @@ import {
 import { cn } from '@/lib/utils';
 
 interface MarketingHeaderProps {
-  user: boolean;
+  user: {
+    account_type: 'super_admin' | 'admin' | 'user';
+  } | null;
   showNavigation?: boolean;
 }
 
@@ -59,6 +61,8 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
   const params = useParams();
   const pathname = usePathname();
   const locale = params.locale as string || 'en';
+  const isAuthenticated = Boolean(user);
+  const isAdmin = Boolean(user && (user.account_type === 'super_admin' || user.account_type === 'admin'));
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
 
@@ -177,7 +181,12 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
           </DropdownMenu>
 
           {/* Auth Buttons */}
-          {user ? (
+          {isAdmin && (
+            <Button asChild variant="secondary">
+              <Link href={`/${locale}/console`}>Admin Console</Link>
+            </Button>
+          )}
+          {isAuthenticated ? (
             <Button asChild variant="outline">
               <Link href={`/${locale}/logout-confirmation`}>Log Out</Link>
             </Button>
@@ -187,7 +196,7 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
                 <Link href={`/${locale}/login`}>Log In</Link>
               </Button>
               <Button asChild variant="ghost" className="!bg-[hsl(var(--accent-red))] !text-[hsl(var(--accent-red-foreground))] !hover:bg-[hsl(var(--accent-red))]/90">
-                <Link href={`/${locale}/onboarding`}>Sign Up</Link>
+                <Link href={`/${locale}/signup`}>Sign Up</Link>
               </Button>
             </>
           )}
@@ -336,6 +345,44 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
                     >
                       Contact Us
                     </Link>
+
+                    <div className="mt-4 border-t pt-4 space-y-2">
+                      {isAdmin && (
+                        <Link
+                          href={`/${locale}/console`}
+                          onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                          className="block rounded-md border border-dashed border-primary/40 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/5"
+                        >
+                          Admin Console
+                        </Link>
+                      )}
+                      {isAuthenticated ? (
+                        <Link
+                          href={`/${locale}/logout-confirmation`}
+                          onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                          className="block rounded-md px-4 py-3 text-sm font-medium hover:bg-accent"
+                        >
+                          Log Out
+                        </Link>
+                      ) : (
+                        <>
+                          <Link
+                            href={`/${locale}/login`}
+                            onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                            className="block rounded-md px-4 py-3 text-sm font-medium hover:bg-accent"
+                          >
+                            Log In
+                          </Link>
+                          <Link
+                            href={`/${locale}/signup`}
+                            onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                            className="block rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                          >
+                            Sign Up
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </nav>
                 </div>
               </div>
@@ -511,6 +558,44 @@ export function MarketingHeader({ user, showNavigation = false }: MarketingHeade
                     >
                       Contact Us
                     </Link>
+
+                    <div className="mt-4 border-t pt-4 space-y-2">
+                      {isAdmin && (
+                        <Link
+                          href={`/${locale}/console`}
+                          onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                          className="block rounded-md border border-dashed border-primary/40 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/5"
+                        >
+                          Admin Console
+                        </Link>
+                      )}
+                      {isAuthenticated ? (
+                        <Link
+                          href={`/${locale}/logout-confirmation`}
+                          onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                          className="block rounded-md px-4 py-3 text-sm font-medium hover:bg-accent"
+                        >
+                          Log Out
+                        </Link>
+                      ) : (
+                        <>
+                          <Link
+                            href={`/${locale}/login`}
+                            onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                            className="block rounded-md px-4 py-3 text-sm font-medium hover:bg-accent"
+                          >
+                            Log In
+                          </Link>
+                          <Link
+                            href={`/${locale}/signup`}
+                            onClick={() => { setIsMobileMenuOpen(false); setExpandedMobileSection(null); }}
+                            className="block rounded-md bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                          >
+                            Sign Up
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </nav>
                 </div>
               </div>

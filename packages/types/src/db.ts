@@ -157,39 +157,60 @@ export interface Database {
         Row: {
           id: string
           name: string
+          slug: string | null
+          org_type: 'personal' | 'business' | 'family' | 'education' | 'other'
+          description: string | null
+          avatar_url: string | null
+          is_personal: boolean
           owner_id: string
+          settings: Json | null
           created_at: string
+          updated_at: string | null
         }
         Insert: {
           id?: string
           name: string
+          slug?: string | null
+          org_type: 'personal' | 'business' | 'family' | 'education' | 'other'
+          description?: string | null
+          avatar_url?: string | null
+          is_personal?: boolean
           owner_id: string
+          settings?: Json | null
           created_at?: string
+          updated_at?: string | null
         }
         Update: {
           id?: string
           name?: string
+          slug?: string | null
+          org_type?: 'personal' | 'business' | 'family' | 'education' | 'other'
+          description?: string | null
+          avatar_url?: string | null
+          is_personal?: boolean
           owner_id?: string
+          settings?: Json | null
           created_at?: string
+          updated_at?: string | null
         }
       }
       organization_members: {
         Row: {
           org_id: string
           user_id: string
-          role: 'owner' | 'admin' | 'editor' | 'viewer'
+          role: 'owner' | 'member' | 'viewer'
           created_at: string
         }
         Insert: {
           org_id: string
           user_id: string
-          role: 'owner' | 'admin' | 'editor' | 'viewer'
+          role: 'owner' | 'member' | 'viewer'
           created_at?: string
         }
         Update: {
           org_id?: string
           user_id?: string
-          role?: 'owner' | 'admin' | 'editor' | 'viewer'
+          role?: 'owner' | 'member' | 'viewer'
           created_at?: string
         }
       }
@@ -198,7 +219,7 @@ export interface Database {
           id: string
           org_id: string
           email: string
-          role: 'admin' | 'editor' | 'viewer'
+          role: 'member' | 'viewer'
           token: string
           status: 'pending' | 'accepted' | 'expired'
           created_by: string
@@ -209,7 +230,7 @@ export interface Database {
           id?: string
           org_id: string
           email: string
-          role: 'admin' | 'editor' | 'viewer'
+          role: 'member' | 'viewer'
           token: string
           status?: 'pending' | 'accepted' | 'expired'
           created_by: string
@@ -220,7 +241,7 @@ export interface Database {
           id?: string
           org_id?: string
           email?: string
-          role?: 'admin' | 'editor' | 'viewer'
+          role?: 'member' | 'viewer'
           token?: string
           status?: 'pending' | 'accepted' | 'expired'
           created_by?: string

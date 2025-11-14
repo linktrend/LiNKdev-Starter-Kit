@@ -349,7 +349,7 @@ If you can't resolve the issue:
   };
 
   // Prevent text selection and copying
-  const handleSelectStart = (e: React.MouseEvent) => {
+  const handleSelectStart = (e: React.SyntheticEvent) => {
     e.preventDefault();
   };
 
@@ -366,8 +366,7 @@ If you can't resolve the issue:
       tabIndex={-1}
     >
       <div 
-        className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-lg border shadow-2xl modal-bg"
-        onSelectStart={handleSelectStart}
+        className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-lg border shadow-2xl modal-bg select-none"
         onContextMenu={handleContextMenu}
       >
         <div className="flex items-center justify-between p-6 border-b border-border">

@@ -11,7 +11,7 @@ export default function TermsPage() {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">1. Agreement to Terms</h2>
         <p className="text-muted-foreground mb-4">
-          By accessing or using this service, you agree to be bound by these Terms and Conditions ("Terms").
+          By accessing or using this service, you agree to be bound by these Terms and Conditions (&quot;Terms&quot;).
           If you disagree with any part of these Terms, you may not access or use the service.
         </p>
       </section>
@@ -27,14 +27,14 @@ export default function TermsPage() {
           <li>use the materials for any commercial purpose, or for any public display (commercial or non-commercial);</li>
           <li>attempt to reverse engineer any software contained in the service;</li>
           <li>remove any copyright or other proprietary notations from the materials; or</li>
-          <li>transfer the materials to another person or "mirror" the materials on any other server.</li>
+          <li>transfer the materials to another person or &quot;mirror&quot; the materials on any other server.</li>
         </ul>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">3. Disclaimer</h2>
         <p className="text-muted-foreground mb-4">
-          The materials on the service are provided on an 'as is' basis. LTM Starter Kit makes no warranties, 
+          The materials on the service are provided on an &apos;as is&apos; basis. LTM Starter Kit makes no warranties, 
           expressed or implied, and hereby disclaims and negates all other warranties including without limitation, 
           implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement 
           of intellectual property or other violation of rights.
@@ -65,7 +65,7 @@ export default function TermsPage() {
         <p className="text-muted-foreground mb-4">
           LTM Starter Kit has not reviewed all of the sites linked to its service and is not responsible for the contents 
           of any such linked site. The inclusion of any link does not imply endorsement by LTM Starter Kit of the site. 
-          Use of any such linked website is at the user's own risk.
+          Use of any such linked website is at the user&apos;s own risk.
         </p>
       </section>
 

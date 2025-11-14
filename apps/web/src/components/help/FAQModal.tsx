@@ -264,7 +264,7 @@ export default function FAQModal({
           {/* Help Links */}
           <div className="border-t border-border pt-6">
             <p className="text-sm text-muted-foreground mb-4">
-              Didn't find an answer to your question? Check our{' '}
+              Didn&apos;t find an answer to your question? Check our{' '}
               <button 
                 onClick={() => {
                   onClose();

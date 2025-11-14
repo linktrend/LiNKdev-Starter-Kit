@@ -2,18 +2,19 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { MoreHorizontal, Trash2, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import {  } from '@/components/ui/';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {  } from '@/components/ui/';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import {  } from '@/components/ui/';
 import { OrganizationMember, OrgRole } from '@starter/types';
-import { api } from '@/trpc/react';
 import { canManageMembers, canChangeRole } from '@/utils/org';
 import { getUserDisplay } from '@/utils/userDisplay';
+import { useToast } from '@/components/ui/use-toast';
+import { removeMember as removeMemberAction, updateMemberRole as updateMemberRoleAction } from '@/app/actions/organization';
+
+type FieldErrors = Record<string, string[]>;
 
 interface MemberRowProps {
   member: OrganizationMember;
@@ -24,36 +25,20 @@ interface MemberRowProps {
 
 const ROLE_LABELS: Record<OrgRole, string> = {
   owner: 'Owner',
-  admin: 'Admin',
-  editor: 'Editor',
+  member: 'Member',
   viewer: 'Viewer',
 };
 
-export function MemberRow({ 
-  member, 
+export function MemberRow({
+  member,
   currentUserRole = 'viewer',
   onRoleChange,
-  onMemberRemove 
+  onMemberRemove,
 }: MemberRowProps) {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const updateRoleMutation = api.org.updateMemberRole.useMutation({
-    onSuccess: () => {
-      setIsUpdating(false);
-      onRoleChange?.();
-    },
-    onError: () => {
-      setIsUpdating(false);
-    },
-  });
-
-  const removeMemberMutation = api.org.removeMember.useMutation({
-    onSuccess: () => {
-      setShowRemoveDialog(false);
-      onMemberRemove?.();
-    },
-  });
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleRoleChange = async (newRole: string) => {
     if (!member.org_id || !canChangeRole(member.role, newRole as OrgRole, currentUserRole)) {
@@ -62,13 +47,32 @@ export function MemberRow({
 
     setIsUpdating(true);
     try {
-      await updateRoleMutation.mutateAsync({
-        orgId: member.org_id,
-        userId: member.user_id,
-        role: newRole as OrgRole,
-      });
+      const result = await updateMemberRoleAction(member.org_id, member.user_id, newRole as OrgRole);
+      if (result?.error) {
+        const errorMessage =
+          typeof result.error === 'string'
+            ? result.error
+            : (result.error as FieldErrors).new_role?.[0] ||
+              (result.error as FieldErrors).form?.[0] ||
+              'Failed to update member role';
+        toast({
+          title: 'Unable to update role',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } else {
+        router.refresh();
+        onRoleChange?.();
+      }
     } catch (error) {
       console.error('Failed to update role:', error);
+      toast({
+        title: 'Unable to update role',
+        description: 'Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -76,12 +80,25 @@ export function MemberRow({
     if (!member.org_id) return;
 
     try {
-      await removeMemberMutation.mutateAsync({
-        orgId: member.org_id,
-        userId: member.user_id,
-      });
+      const result = await removeMemberAction(member.org_id, member.user_id);
+      if (result?.error) {
+        toast({
+          title: 'Unable to remove member',
+          description: result.error,
+          variant: 'destructive',
+        });
+        return;
+      }
+      setShowRemoveDialog(false);
+      router.refresh();
+      onMemberRemove?.();
     } catch (error) {
       console.error('Failed to remove member:', error);
+      toast({
+        title: 'Unable to remove member',
+        description: 'Please try again later.',
+        variant: 'destructive',
+      });
     }
   };
 

@@ -1,23 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, UserPlus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import {  } from '@/components/ui/';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {  } from '@/components/ui/';
 import { useToast } from '@/components/ui/use-toast';
-import { api } from '@/trpc/react';
 import { OrgRole } from '@starter/types';
+import { inviteMember } from '@/app/actions/organization';
+import { useLocalePath } from '@/hooks/useLocalePath';
 
 const inviteSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  role: z.enum(['admin', 'editor', 'viewer'], {
+  role: z.enum(['member', 'viewer'], {
     required_error: 'Please select a role',
   }),
 });
@@ -31,21 +31,22 @@ interface InviteFormProps {
 
 const ROLE_LABELS: Record<OrgRole, string> = {
   owner: 'Owner',
-  admin: 'Admin',
-  editor: 'Editor',
+  member: 'Member',
   viewer: 'Viewer',
 };
 
 const ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
   owner: 'Full access to organization and all features',
-  admin: 'Can manage members and invites, view all content',
-  editor: 'Can view and edit content, cannot manage members',
+  member: 'Can manage content and invite teammates',
   viewer: 'Can only view content, cannot make changes',
 };
 
 export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const { locale } = useLocalePath();
+  const router = useRouter();
 
   const form = useForm<InviteFormData>({
     resolver: zodResolver(inviteSchema),
@@ -55,38 +56,47 @@ export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
     },
   });
 
-  const inviteMutation = api.org.invite.useMutation({
-    onSuccess: (invite) => {
-      toast({
-        title: 'Invitation sent',
-        description: `Invitation sent to ${invite.email}`,
-      });
-      form.reset();
-      onInviteSent?.();
-    },
-    onError: (error) => {
-      toast({
-        title: 'Failed to send invitation',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-    onSettled: () => {
-      setIsSubmitting(false);
-    },
-  });
-
   const onSubmit = async (data: InviteFormData) => {
     setIsSubmitting(true);
-    try {
-      await inviteMutation.mutateAsync({
-        orgId,
-        email: data.email,
-        role: data.role,
+    form.clearErrors();
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append('org_id', orgId);
+      formData.append('email', data.email);
+      formData.append('role', data.role);
+      formData.append('locale', locale);
+
+      const result = await inviteMember(formData);
+
+      if (result?.error) {
+        const errors = result.error as Record<string, string[]>;
+        if (errors.email?.[0]) {
+          form.setError('email', { message: errors.email[0] });
+        }
+        if (errors.role?.[0]) {
+          form.setError('role', { message: errors.role[0] });
+        }
+        if (errors.form?.[0]) {
+          toast({
+            title: 'Failed to send invitation',
+            description: errors.form[0],
+            variant: 'destructive',
+          });
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast({
+        title: 'Invitation sent',
+        description: `Invitation sent to ${data.email}`,
       });
-    } catch (error) {
-      // Error handling is done in the mutation
-    }
+      form.reset();
+      router.refresh();
+      setIsSubmitting(false);
+      onInviteSent?.();
+    });
   };
 
   return (
@@ -154,8 +164,8 @@ export function InviteForm({ orgId, onInviteSent }: InviteFormProps) {
             )}
           />
 
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? (
+          <Button type="submit" disabled={isSubmitting || isPending} className="w-full">
+            {isSubmitting || isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Sending invitation...

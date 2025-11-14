@@ -33,8 +33,15 @@ export const orgRouter = createTRPCRouter({
         const org: Organization = {
           id: `org-${Date.now()}`,
           name: input.name,
+          slug: `${input.name}-${Date.now()}`.toLowerCase(),
+          org_type: 'business',
+          description: null,
+          avatar_url: null,
+          is_personal: false,
           owner_id: ctx.user.id,
+          settings: {},
           created_at: new Date().toISOString(),
+          updated_at: null,
         };
         
         const createdOrg = orgStore.createOrg(org, ctx.user.id);
@@ -63,11 +70,16 @@ export const orgRouter = createTRPCRouter({
       }
 
       // Supabase implementation
+      const slug = `${input.name}-${Date.now()}`.toLowerCase().replace(/\s+/g, '-')
       const { data: org, error } = await ctx.supabase
         .from('organizations')
         .insert({
           name: input.name,
+          slug,
+          org_type: 'business',
+          is_personal: false,
           owner_id: ctx.user.id,
+          settings: {},
         })
         .select()
         .single();
@@ -325,11 +337,11 @@ export const orgRouter = createTRPCRouter({
     }),
 
   updateMemberRole: protectedProcedure
-    .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
+    .use(requireOwner({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(z.object({
       orgId: z.string(),
       userId: z.string(),
-      role: z.enum(['owner', 'admin', 'editor', 'viewer']),
+      role: z.enum(['owner', 'member', 'viewer']),
     }))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
@@ -506,7 +518,7 @@ export const orgRouter = createTRPCRouter({
     .input(z.object({
       orgId: z.string(),
       email: z.string().email('Invalid email address'),
-      role: z.enum(['admin', 'editor', 'viewer']),
+      role: z.enum(['member', 'viewer']),
     }))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {

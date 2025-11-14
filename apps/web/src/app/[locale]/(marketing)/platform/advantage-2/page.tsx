@@ -84,16 +84,16 @@ export default function Advantage2Page({ params }: Advantage2PageProps) {
         <div>
           <h3 className="text-2xl font-semibold mb-4">Built for Growth</h3>
           <p className="text-muted-foreground mb-4">
-            Whether you're a startup expecting rapid growth or an enterprise handling 
+            Whether you&apos;re a startup expecting rapid growth or an enterprise handling 
             millions of users, our platform adapts to your needs seamlessly.
           </p>
           <p className="text-muted-foreground mb-4">
-            We've helped companies scale from 100 to 10 million users without changing 
+            We&apos;ve helped companies scale from 100 to 10 million users without changing 
             a single line of infrastructure code. Our battle-tested architecture handles 
             the complexity so you can focus on building great products.
           </p>
       <p className="text-muted-foreground">
-            Trust in an infrastructure that's proven to scale with companies like yours.
+            Trust in an infrastructure that&apos;s proven to scale with companies like yours.
      </p>
       <Button asChild size="lg" className="mt-6">
         <Link href={signupPath}>Get Started</Link>

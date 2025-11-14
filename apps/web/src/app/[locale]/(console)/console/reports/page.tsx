@@ -305,7 +305,7 @@ export default function ConsoleReportsPage() {
     ];
 
     return { dau, wau, mau, activeOrgs, sessions, signups, churnRate, retention, featureAdoption, funnel, latencyP95, errorRate, apiVolume, mrr, planMix };
-  }, [analyticsRange, analyticsPlan, analyticsSegment]);
+  }, [analyticsRange, analyticsPlan, analyticsSegment, generateSeries]);
 
   function sumSeries(series: SeriesPoint[]) {
     return series.reduce((s, p) => s + p.value, 0);

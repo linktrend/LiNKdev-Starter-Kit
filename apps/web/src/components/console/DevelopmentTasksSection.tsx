@@ -42,9 +42,8 @@ import {
   X,
   Save,
 } from 'lucide-react';
-import { api } from '@/trpc/react';
+import { api, type RouterOutputs } from '@/trpc/react';
 import { toast } from 'sonner';
-import type { RouterOutputs } from '@/trpc/types';
 
 type TaskStatus = 'todo' | 'in-progress' | 'review' | 'done' | 'blocked';
 type TaskPriority = 'low' | 'normal' | 'high' | 'urgent';
@@ -220,13 +219,13 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
   // Calculate metrics
   const metrics = useMemo(() => {
     const total = taskTotal;
-    const todo = tasks.filter(t => t.status === 'todo').length;
-    const inProgress = tasks.filter(t => t.status === 'in-progress').length;
-    const review = tasks.filter(t => t.status === 'review').length;
-    const done = tasks.filter(t => t.status === 'done').length;
-    const blocked = tasks.filter(t => t.status === 'blocked').length;
-    const urgent = tasks.filter(t => t.priority === 'urgent').length;
-    const overdue = tasks.filter(t => {
+    const todo = tasks.filter((t: Task) => t.status === 'todo').length;
+    const inProgress = tasks.filter((t: Task) => t.status === 'in-progress').length;
+    const review = tasks.filter((t: Task) => t.status === 'review').length;
+    const done = tasks.filter((t: Task) => t.status === 'done').length;
+    const blocked = tasks.filter((t: Task) => t.status === 'blocked').length;
+    const urgent = tasks.filter((t: Task) => t.priority === 'urgent').length;
+    const overdue = tasks.filter((t: Task) => {
       if (!t.due_date) return false;
       return new Date(t.due_date) < new Date() && t.status !== 'done';
     }).length;
@@ -256,7 +255,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
   // Filtered tasks for display
   const filteredTasks = useMemo(() => {
     if (tasksTab === 'active') {
-      return tasks.filter(t => ['todo', 'in-progress', 'review'].includes(t.status));
+      return tasks.filter((t: Task) => ['todo', 'in-progress', 'review'].includes(t.status));
     }
     return tasks;
   }, [tasks, tasksTab]);
@@ -264,7 +263,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
   // Get unique assignees for filter
   const assignees = useMemo(() => {
     const uniqueAssignees = new Map<string, { id: string; name: string; email?: string }>();
-    tasks.forEach(task => {
+    tasks.forEach((task: Task) => {
       if (task.assignee_id && task.assignee) {
         uniqueAssignees.set(task.assignee_id, {
           id: task.assignee_id,
@@ -470,7 +469,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {tasks.slice(0, 5).map((task) => (
+                      {tasks.slice(0, 5).map((task: Task) => (
                         <div
                           key={task.id}
                           className="flex items-center justify-between p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
@@ -582,7 +581,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredTasks.map((task) => (
+                      filteredTasks.map((task: Task) => (
                         <TableRow key={task.id}>
                           <TableCell className="min-w-0">
                             <div className="flex flex-col gap-1">

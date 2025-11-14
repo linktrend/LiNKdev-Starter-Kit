@@ -37,7 +37,7 @@ export default function PlatformPage({ params }: PageProps) {
           <h2 className="text-3xl font-bold mb-6">Everything You Need in One Platform</h2>
           <p className="text-muted-foreground text-lg mb-8">
             Our platform provides a complete suite of tools and services designed to help you build, deploy, 
-            and scale modern applications. From development to production, we've got you covered.
+            and scale modern applications. From development to production, we&apos;ve got you covered.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 not-prose">

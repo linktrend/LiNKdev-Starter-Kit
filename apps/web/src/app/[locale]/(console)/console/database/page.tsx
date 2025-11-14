@@ -436,7 +436,7 @@ export default function ConsoleDatabasePage() {
                 <div className="rounded-md bg-muted p-8 text-center">
                   <Database className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Enter a SQL query and click "Execute Query" to see results
+                    Enter a SQL query and click &quot;Execute Query&quot; to see results
                   </p>
                 </div>
               )}
@@ -672,7 +672,7 @@ export default function ConsoleDatabasePage() {
                   <TableBody>
                     <TableRow>
                       <TableCellText className="min-w-[320px] max-w-[420px] font-mono text-xs sm:text-sm md:whitespace-normal whitespace-nowrap md:pr-2 break-all">
-                        SELECT * FROM audit_logs WHERE created_at &gt; NOW() - INTERVAL '1 day'
+                        SELECT * FROM audit_logs WHERE created_at &gt; NOW() - INTERVAL &apos;1 day&apos;
                       </TableCellText>
                       <TableCellNumeric className="min-w-[140px] max-w-[160px]">
                         234ms

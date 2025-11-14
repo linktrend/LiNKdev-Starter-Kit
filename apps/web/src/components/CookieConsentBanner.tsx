@@ -73,7 +73,7 @@ export function CookieConsentBanner() {
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-foreground">
             <p>
-              We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept All", 
+              We use cookies to enhance your browsing experience and analyze our traffic. By clicking &quot;Accept All&quot;, 
               you consent to our use of cookies. Read our{' '}
               <Link href={buildPath('/privacy')} className="underline hover:text-primary">
                 Privacy Policy

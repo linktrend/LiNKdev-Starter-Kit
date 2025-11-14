@@ -29,9 +29,9 @@ export function DevNav() {
       title: 'Organization Pages',
       description: 'Organization management pages',
       pages: [
-        { href: '/org/org-1', label: 'Org Dashboard', icon: Building2, description: 'Organization dashboard' },
-        { href: '/org/org-1/settings', label: 'Org Settings', icon: Settings, description: 'Organization settings' },
-        { href: '/org/org-1/team', label: 'Team Management', icon: Users, description: 'Team members and invitations' },
+        { href: '/en/organizations/demo-org', label: 'Org Dashboard', icon: Building2, description: 'Organization dashboard' },
+        { href: '/en/organizations/demo-org/settings', label: 'Org Settings', icon: Settings, description: 'Organization settings' },
+        { href: '/en/organizations/demo-org/members', label: 'Team Management', icon: Users, description: 'Team members and invitations' },
         { href: '/org/org-1/billing', label: 'Billing & Plans', icon: CreditCard, description: 'Billing and subscription management' },
       ]
     },

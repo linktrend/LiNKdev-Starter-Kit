@@ -39,7 +39,7 @@ export async function getUserDetails(): Promise<UserDetails | null> {
     return {
       id: 'test-user-123',
       full_name: 'Test User',
-      avatar_url: null,
+      avatar_url: undefined,
     };
   }
 

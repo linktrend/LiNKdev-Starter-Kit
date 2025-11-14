@@ -83,11 +83,11 @@ export default function IndustrySolutionsPage({ params }: IndustrySolutionsPageP
         <div>
           <h3 className="text-2xl font-semibold mb-4">Deep Industry Knowledge</h3>
           <p className="text-muted-foreground mb-4">
-            Every industry has unique requirements, regulations, and workflows. Generic solutions don't cut it when 
+            Every industry has unique requirements, regulations, and workflows. Generic solutions don&apos;t cut it when 
             you need to comply with industry-specific standards and deliver specialized features.
           </p>
           <p className="text-muted-foreground mb-4">
-            We've spent years working with leaders in each industry to build solutions that address real challenges. 
+            We&apos;ve spent years working with leaders in each industry to build solutions that address real challenges. 
             Our platform comes pre-configured with industry best practices, compliance features, and specialized tools.
           </p>
       <p className="text-muted-foreground">

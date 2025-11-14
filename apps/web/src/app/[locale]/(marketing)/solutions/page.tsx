@@ -36,7 +36,7 @@ export default function SolutionsPage({ params }: PageProps) {
         <div className="prose prose-lg max-w-none">
           <h2 className="text-3xl font-bold mb-6">Solutions Built for Your Success</h2>
           <p className="text-muted-foreground text-lg mb-8">
-            We understand that every business has unique needs. That's why we've created specialized solutions 
+            We understand that every business has unique needs. That&apos;s why we&apos;ve created specialized solutions 
             designed to address the specific challenges faced by different industries, company sizes, and roles.
           </p>
           

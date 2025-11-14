@@ -1,0 +1,26 @@
+{
+  "name": "stripe-mcp-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Stripe MCP Server for LTM Starter Kit",
+  "main": "server.js",
+  "dependencies": {
+    "stripe": "^14.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.3",
+    "dotenv": "^16.4.5"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

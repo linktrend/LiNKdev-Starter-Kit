@@ -140,7 +140,7 @@ class InMemoryOrgStore {
 
   canManageMembers(orgId: string, userId: string): boolean {
     const role = this.getUserRole(orgId, userId);
-    return role === 'owner' || role === 'admin';
+    return role === 'owner' || role === 'member';
   }
 
   // Seed with sample data for development
@@ -151,16 +151,23 @@ class InMemoryOrgStore {
     const sampleOrg: Organization = {
       id: 'sample-org-1',
       name: 'Sample Organization',
+      slug: 'sample-organization',
+      org_type: 'business',
+      description: 'Sample data for offline mode',
+      avatar_url: null,
+      is_personal: false,
       owner_id: userId,
+      settings: {},
       created_at: new Date().toISOString(),
+      updated_at: null,
     };
     
     this.createOrg(sampleOrg, userId);
     this.setCurrentOrg(sampleOrg.id);
     
     // Add sample members
-    this.addMember(sampleOrg.id, 'sample-user-2', 'admin');
-    this.addMember(sampleOrg.id, 'sample-user-3', 'editor');
+    this.addMember(sampleOrg.id, 'sample-user-2', 'member');
+    this.addMember(sampleOrg.id, 'sample-user-3', 'viewer');
     this.addMember(sampleOrg.id, 'sample-user-4', 'viewer');
     
     // Add sample invite
@@ -168,7 +175,7 @@ class InMemoryOrgStore {
       id: 'sample-invite-1',
       org_id: sampleOrg.id,
       email: 'invite@example.com',
-      role: 'editor',
+      role: 'member',
       token: 'sample-token-123',
       status: 'pending',
       created_by: userId,

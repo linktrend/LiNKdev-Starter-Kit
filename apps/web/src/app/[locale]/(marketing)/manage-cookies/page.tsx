@@ -132,7 +132,7 @@ export default function ManageCookiesPage() {
                 <h3 className="text-lg font-semibold mb-2">Analytics Cookies</h3>
                 <p className="text-sm text-muted-foreground">
                   These cookies help us understand how visitors interact with our website by collecting and 
-                  reporting information anonymously. This helps us improve our website's performance and user experience.
+                  reporting information anonymously. This helps us improve our website&apos;s performance and user experience.
                 </p>
               </div>
               <Switch

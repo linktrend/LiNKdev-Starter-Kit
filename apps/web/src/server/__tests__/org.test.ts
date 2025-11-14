@@ -9,7 +9,22 @@ import {
   isInviteExpired,
   getInviteExpiryDate
 } from '@/utils/org';
-import { OrgRole } from '@starter/types';
+import { Organization, OrgRole } from '@starter/types';
+
+const buildOrg = (overrides: Partial<Organization> = {}): Organization => ({
+  id: 'org-1',
+  name: 'Test Org',
+  slug: 'test-org',
+  org_type: 'business',
+  description: null,
+  avatar_url: null,
+  is_personal: false,
+  owner_id: 'user-1',
+  settings: {},
+  created_at: new Date().toISOString(),
+  updated_at: null,
+  ...overrides,
+});
 
 describe('Organization Store (Offline Mode)', () => {
   beforeEach(() => {
@@ -24,13 +39,7 @@ describe('Organization Store (Offline Mode)', () => {
 
   describe('Organization Management', () => {
     it('should create organization and add owner as member', () => {
-      const org = {
-        id: 'org-1',
-        name: 'Test Org',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
-
+      const org = buildOrg();
       const createdOrg = orgStore.createOrg(org, 'user-1');
       
       expect(createdOrg).toEqual(org);
@@ -40,22 +49,12 @@ describe('Organization Store (Offline Mode)', () => {
     });
 
     it('should list user organizations', () => {
-      const org1 = {
-        id: 'org-1',
-        name: 'Test Org 1',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
-      const org2 = {
-        id: 'org-2',
-        name: 'Test Org 2',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
+      const org1 = buildOrg({ id: 'org-1', name: 'Test Org 1', slug: 'test-org-1' });
+      const org2 = buildOrg({ id: 'org-2', name: 'Test Org 2', slug: 'test-org-2' });
 
       orgStore.createOrg(org1, 'user-1');
       orgStore.createOrg(org2, 'user-1');
-      orgStore.addMember('org-1', 'user-2', 'editor');
+      orgStore.addMember('org-1', 'user-2', 'viewer');
 
       const user1Orgs = orgStore.listUserOrgs('user-1');
       const user2Orgs = orgStore.listUserOrgs('user-2');
@@ -66,12 +65,7 @@ describe('Organization Store (Offline Mode)', () => {
     });
 
     it('should set and get current organization', () => {
-      const org = {
-        id: 'org-1',
-        name: 'Test Org',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
+      const org = buildOrg();
 
       orgStore.createOrg(org, 'user-1');
       orgStore.setCurrentOrg('org-1');
@@ -82,34 +76,29 @@ describe('Organization Store (Offline Mode)', () => {
 
   describe('Member Management', () => {
     beforeEach(() => {
-      const org = {
-        id: 'org-1',
-        name: 'Test Org',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
+      const org = buildOrg();
       orgStore.createOrg(org, 'user-1');
     });
 
     it('should add and list members', () => {
-      orgStore.addMember('org-1', 'user-2', 'admin');
-      orgStore.addMember('org-1', 'user-3', 'editor');
+      orgStore.addMember('org-1', 'user-2', 'member');
+      orgStore.addMember('org-1', 'user-3', 'viewer');
 
       const members = orgStore.listOrgMembers('org-1');
       expect(members).toHaveLength(3); // owner + 2 added members
-      expect(members.some(m => m.user_id === 'user-2' && m.role === 'admin')).toBe(true);
+      expect(members.some(m => m.user_id === 'user-2' && m.role === 'member')).toBe(true);
     });
 
     it('should update member role', () => {
-      orgStore.addMember('org-1', 'user-2', 'editor');
+      orgStore.addMember('org-1', 'user-2', 'viewer');
       
-      const updated = orgStore.updateMemberRole('org-1', 'user-2', 'admin');
-      expect(updated?.role).toBe('admin');
-      expect(orgStore.getUserRole('org-1', 'user-2')).toBe('admin');
+      const updated = orgStore.updateMemberRole('org-1', 'user-2', 'member');
+      expect(updated?.role).toBe('member');
+      expect(orgStore.getUserRole('org-1', 'user-2')).toBe('member');
     });
 
     it('should remove member', () => {
-      orgStore.addMember('org-1', 'user-2', 'editor');
+      orgStore.addMember('org-1', 'user-2', 'viewer');
       expect(orgStore.isUserMember('org-1', 'user-2')).toBe(true);
       
       const removed = orgStore.removeMember('org-1', 'user-2');
@@ -120,12 +109,7 @@ describe('Organization Store (Offline Mode)', () => {
 
   describe('Invitation System', () => {
     beforeEach(() => {
-      const org = {
-        id: 'org-1',
-        name: 'Test Org',
-        owner_id: 'user-1',
-        created_at: new Date().toISOString(),
-      };
+      const org = buildOrg();
       orgStore.createOrg(org, 'user-1');
     });
 
@@ -134,7 +118,7 @@ describe('Organization Store (Offline Mode)', () => {
         id: 'invite-1',
         org_id: 'org-1',
         email: 'test@example.com',
-        role: 'editor' as OrgRole,
+        role: 'viewer' as OrgRole,
         token: 'test-token',
         status: 'pending' as const,
         created_by: 'user-1',
@@ -154,7 +138,7 @@ describe('Organization Store (Offline Mode)', () => {
         id: 'invite-1',
         org_id: 'org-1',
         email: 'test@example.com',
-        role: 'editor' as OrgRole,
+        role: 'viewer' as OrgRole,
         token: 'test-token',
         status: 'pending' as const,
         created_by: 'user-1',
@@ -167,7 +151,7 @@ describe('Organization Store (Offline Mode)', () => {
       const result = orgStore.acceptInvite('test-token', 'user-2');
       expect(result.success).toBe(true);
       expect(result.orgId).toBe('org-1');
-      expect(result.role).toBe('editor');
+      expect(result.role).toBe('viewer');
       expect(orgStore.isUserMember('org-1', 'user-2')).toBe(true);
     });
 
@@ -176,7 +160,7 @@ describe('Organization Store (Offline Mode)', () => {
         id: 'invite-1',
         org_id: 'org-1',
         email: 'test@example.com',
-        role: 'editor' as OrgRole,
+        role: 'viewer' as OrgRole,
         token: 'test-token',
         status: 'pending' as const,
         created_by: 'user-1',
@@ -198,39 +182,32 @@ describe('Organization Utilities', () => {
   describe('Role Permissions', () => {
     it('should check member management permissions', () => {
       expect(canManageMembers('owner')).toBe(true);
-      expect(canManageMembers('admin')).toBe(true);
-      expect(canManageMembers('editor')).toBe(false);
+      expect(canManageMembers('member')).toBe(true);
       expect(canManageMembers('viewer')).toBe(false);
     });
 
     it('should check invite management permissions', () => {
       expect(canManageInvites('owner')).toBe(true);
-      expect(canManageInvites('admin')).toBe(true);
-      expect(canManageInvites('editor')).toBe(false);
+      expect(canManageInvites('member')).toBe(true);
       expect(canManageInvites('viewer')).toBe(false);
     });
 
     it('should check role hierarchy', () => {
-      expect(isRoleHigher('owner', 'admin')).toBe(true);
-      expect(isRoleHigher('admin', 'editor')).toBe(true);
-      expect(isRoleHigher('editor', 'viewer')).toBe(true);
+      expect(isRoleHigher('owner', 'member')).toBe(true);
+      expect(isRoleHigher('member', 'viewer')).toBe(true);
       expect(isRoleHigher('viewer', 'owner')).toBe(false);
-      expect(isRoleHigher('admin', 'admin')).toBe(false);
+      expect(isRoleHigher('member', 'member')).toBe(false);
     });
 
     it('should check role change permissions', () => {
-      // Owner can change any role except owner
-      expect(canChangeRole('admin', 'editor', 'owner')).toBe(true);
-      expect(canChangeRole('editor', 'admin', 'owner')).toBe(true);
-      expect(canChangeRole('owner', 'admin', 'owner')).toBe(false);
+      // Owner can change any non-owner role
+      expect(canChangeRole('member', 'viewer', 'owner')).toBe(true);
+      expect(canChangeRole('viewer', 'member', 'owner')).toBe(true);
+      expect(canChangeRole('owner', 'member', 'owner')).toBe(false);
       
-      // Admin can change editor/viewer roles
-      expect(canChangeRole('editor', 'viewer', 'admin')).toBe(true);
-      expect(canChangeRole('viewer', 'editor', 'admin')).toBe(true);
-      expect(canChangeRole('admin', 'editor', 'admin')).toBe(false);
-      
-      // Editor cannot change roles
-      expect(canChangeRole('viewer', 'editor', 'editor')).toBe(false);
+      // Non-owners cannot manage roles
+      expect(canChangeRole('viewer', 'member', 'member')).toBe(false);
+      expect(canChangeRole('viewer', 'member', 'viewer')).toBe(false);
     });
   });
 

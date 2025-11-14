@@ -294,7 +294,7 @@ export default function ConsoleErrorsPage() {
       : 0;
 
     return { critical, errors, warnings, total, resolved, unresolved, avgCount };
-  }, [filteredErrors]);
+  }, [filteredErrors, getErrorResolved]);
 
   const logStats = useMemo(() => {
     const errors = filteredLogs.filter(l => l.level === 'error').length;

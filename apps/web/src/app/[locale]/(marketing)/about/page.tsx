@@ -61,7 +61,7 @@ export default function AboutPage({ params }: PageProps) {
             <h2 className="text-3xl font-bold mb-6">Our Story</h2>
             <div className="prose prose-lg max-w-none">
               <p className="text-muted-foreground text-lg mb-8">
-                Our journey began in 2018 when a group of visionaries came together with a shared belief in the power of technology to transform industries. From our humble beginnings as a small team of developers, we have grown into a diverse and innovative company that is committed to pushing the boundaries of what's possible.
+                Our journey began in 2018 when a group of visionaries came together with a shared belief in the power of technology to transform industries. From our humble beginnings as a small team of developers, we have grown into a diverse and innovative company that is committed to pushing the boundaries of what&apos;s possible.
               </p>
               <p className="text-muted-foreground text-lg mb-8">
                 We started by focusing on building scalable, AI-powered platforms that could handle complex data processing and deliver real-time insights. Over time, we expanded our capabilities to include full-stack development, mobile app development, and content creation.

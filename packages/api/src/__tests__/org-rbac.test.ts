@@ -118,9 +118,9 @@ describe('Organization Router RBAC Integration', () => {
       expect(mockOrgStore.updateOrg).toHaveBeenCalledWith(mockOrgId, { name: 'Updated Org Name' });
     });
 
-    it('should deny admin access to update organization settings', async () => {
+    it('should deny member access to update organization settings', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('admin');
+      mockGetUserOrgRole.mockResolvedValue('member');
 
       const caller = orgRouter.createCaller({
         user: mockUser,
@@ -136,9 +136,9 @@ describe('Organization Router RBAC Integration', () => {
       ).rejects.toThrow(TRPCError);
     });
 
-    it('should deny member access to update organization settings', async () => {
+    it('should deny viewer access to update organization settings', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('editor');
+      mockGetUserOrgRole.mockResolvedValue('viewer');
 
       const caller = orgRouter.createCaller({
         user: mockUser,
@@ -156,16 +156,16 @@ describe('Organization Router RBAC Integration', () => {
   });
 
   describe('updateMemberRole', () => {
-    it('should allow admin to update member roles', async () => {
+    it('should allow owner to update member roles', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('admin');
+      mockGetUserOrgRole.mockResolvedValue('owner');
 
-      mockOrgStore.getUserRole.mockReturnValue('admin');
+      mockOrgStore.getUserRole.mockReturnValue('owner');
       mockCanManageMembers.mockReturnValue(true);
       mockCanChangeRole.mockReturnValue(true);
       mockOrgStore.updateMemberRole.mockReturnValue({
         user_id: 'target-user',
-        role: 'editor',
+        role: 'viewer',
         org_id: mockOrgId,
       });
 
@@ -178,7 +178,7 @@ describe('Organization Router RBAC Integration', () => {
       const result = await caller.updateMemberRole({
         orgId: mockOrgId,
         userId: 'target-user',
-        role: 'editor',
+        role: 'viewer',
       });
 
       expect(result).toBeDefined();
@@ -186,7 +186,7 @@ describe('Organization Router RBAC Integration', () => {
 
     it('should deny member access to update member roles', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('editor');
+      mockGetUserOrgRole.mockResolvedValue('member');
 
       const caller = orgRouter.createCaller({
         user: mockUser,
@@ -198,18 +198,18 @@ describe('Organization Router RBAC Integration', () => {
         caller.updateMemberRole({
           orgId: mockOrgId,
           userId: 'target-user',
-          role: 'editor',
+          role: 'viewer',
         })
       ).rejects.toThrow(TRPCError);
     });
   });
 
   describe('removeMember', () => {
-    it('should allow admin to remove members', async () => {
+    it('should allow member to remove members', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('admin');
+      mockGetUserOrgRole.mockResolvedValue('member');
 
-      mockOrgStore.getUserRole.mockReturnValue('admin');
+      mockOrgStore.getUserRole.mockReturnValue('member');
       mockCanManageMembers.mockReturnValue(true);
       mockOrgStore.removeMember.mockReturnValue(true);
 
@@ -227,9 +227,9 @@ describe('Organization Router RBAC Integration', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should deny member access to remove members', async () => {
+    it('should deny viewer access to remove members', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('editor');
+      mockGetUserOrgRole.mockResolvedValue('viewer');
 
       const caller = orgRouter.createCaller({
         user: mockUser,
@@ -247,17 +247,17 @@ describe('Organization Router RBAC Integration', () => {
   });
 
   describe('invite', () => {
-    it('should allow admin to create invites', async () => {
+    it('should allow member to create invites', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('admin');
+      mockGetUserOrgRole.mockResolvedValue('member');
 
-      mockOrgStore.getUserRole.mockReturnValue('admin');
+      mockOrgStore.getUserRole.mockReturnValue('member');
       mockCanManageInvites.mockReturnValue(true);
       mockOrgStore.createInvite.mockReturnValue({
         id: 'invite-123',
         org_id: mockOrgId,
         email: 'test@example.com',
-        role: 'editor',
+        role: 'viewer',
         token: 'mock-token',
         status: 'pending',
         created_by: mockUser.id,
@@ -274,15 +274,15 @@ describe('Organization Router RBAC Integration', () => {
       const result = await caller.invite({
         orgId: mockOrgId,
         email: 'test@example.com',
-        role: 'editor',
+        role: 'viewer',
       });
 
       expect(result).toBeDefined();
     });
 
-    it('should deny member access to create invites', async () => {
+    it('should deny viewer access to create invites', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('editor');
+      mockGetUserOrgRole.mockResolvedValue('viewer');
 
       const caller = orgRouter.createCaller({
         user: mockUser,
@@ -294,7 +294,7 @@ describe('Organization Router RBAC Integration', () => {
         caller.invite({
           orgId: mockOrgId,
           email: 'test@example.com',
-          role: 'editor',
+          role: 'viewer',
         })
       ).rejects.toThrow(TRPCError);
     });

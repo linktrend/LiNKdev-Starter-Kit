@@ -167,11 +167,14 @@ export function PricingPageContent({ user, products, subscription }: Props) {
               const isPopular = index === 1; // Middle plan is popular
               
               // Try to get features from metadata, fallback to mock data
-              let features = [];
+              let features: string[] = [];
               try {
-                features = product.metadata?.features 
-                  ? JSON.parse(product.metadata.features)
-                  : mockFeatures[index as keyof typeof mockFeatures] || [];
+                const metadata = product.metadata as Record<string, unknown> | null;
+                if (metadata && typeof metadata.features === 'string') {
+                  features = JSON.parse(metadata.features);
+                } else {
+                  features = mockFeatures[index as keyof typeof mockFeatures] || [];
+                }
               } catch {
                 features = mockFeatures[index as keyof typeof mockFeatures] || [];
               }
@@ -225,7 +228,7 @@ export function PricingPageContent({ user, products, subscription }: Props) {
                     )}
                     size="lg"
                   >
-                    {subscription?.prices?.product_id === product.id
+                    {subscription?.prices?.some((p) => p.product_id === product.id)
                       ? 'Current Plan'
                       : priceIdLoading === price?.id
                       ? 'Loading...'
@@ -236,7 +239,7 @@ export function PricingPageContent({ user, products, subscription }: Props) {
 
                   <div className="space-y-4">
                     <p className="font-semibold text-sm">
-                      {product.metadata?.featuresTitle || 'Key Features:'}
+                      {(product.metadata as Record<string, unknown> | null)?.featuresTitle as string || 'Key Features:'}
                     </p>
                     <ul className="space-y-3">
                       {features.map((feature: string, idx: number) => (

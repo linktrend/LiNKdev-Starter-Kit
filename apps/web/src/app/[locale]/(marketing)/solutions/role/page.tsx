@@ -124,7 +124,7 @@ export default function RoleSolutionsPage({ params }: RoleSolutionsPageProps) {
           </p>
           <p className="text-muted-foreground mb-4">
             From technical teams who need APIs and integrations to business teams who need intuitive dashboards, 
-            we've built role-specific experiences that make work effortless.
+            we&apos;ve built role-specific experiences that make work effortless.
           </p>
       <p className="text-muted-foreground">
             Empower every role in your organization with purpose-built tools that drive results.

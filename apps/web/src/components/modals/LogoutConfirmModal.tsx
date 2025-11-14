@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
+import { createPortal, useFormStatus } from 'react-dom';
+
+import { logout } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
@@ -12,8 +13,20 @@ interface LogoutConfirmModalProps {
   locale?: string;
 }
 
+function LogoutButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="submit"
+      className="flex-1"
+      disabled={pending}
+    >
+      {pending ? 'Logging out...' : 'Logout'}
+    </Button>
+  );
+}
+
 export function LogoutConfirmModal({ isOpen, onClose, locale = 'en' }: LogoutConfirmModalProps) {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,13 +34,6 @@ export function LogoutConfirmModal({ isOpen, onClose, locale = 'en' }: LogoutCon
   }, []);
 
   if (!isOpen || !mounted) return null;
-
-  const handleLogout = () => {
-    // TODO: Implement actual logout logic (clear session, tokens, etc.)
-    console.log('Logging out...');
-    onClose();
-    router.push(`/${locale}/login`);
-  };
 
   const modalContent = (
     <div 
@@ -62,15 +68,14 @@ export function LogoutConfirmModal({ isOpen, onClose, locale = 'en' }: LogoutCon
               onClick={onClose}
               variant="outline"
               className="flex-1"
+              type="button"
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleLogout}
-              className="flex-1"
-            >
-              Logout
-            </Button>
+            <form action={logout} className="flex-1">
+              <input type="hidden" name="locale" value={locale} />
+              <LogoutButton />
+            </form>
           </div>
         </div>
       </div>
@@ -79,4 +84,3 @@ export function LogoutConfirmModal({ isOpen, onClose, locale = 'en' }: LogoutCon
 
   return createPortal(modalContent, document.body);
 }
-

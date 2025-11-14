@@ -107,7 +107,7 @@ export default function FormConfirmationPage() {
         </div>
 
         <div className="mt-12 pt-8 border-t">
-          <h3 className="text-lg font-semibold mb-4">What's Next?</h3>
+          <h3 className="text-lg font-semibold mb-4">What&apos;s Next?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             <div className="p-4 rounded-lg bg-muted/30">
               <h4 className="font-semibold mb-2">Explore Platform</h4>

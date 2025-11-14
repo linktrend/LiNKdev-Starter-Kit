@@ -113,7 +113,7 @@ export default function ResourcesPage({ params }: PageProps) {
             directly to your inbox.
           </p>
           <p className="text-muted-foreground mb-6">
-            Have a suggestion for new content or can't find what you're looking for? We'd love to hear from you!
+            Have a suggestion for new content or can&apos;t find what you&apos;re looking for? We&apos;d love to hear from you!
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="#newsletter" className="text-primary hover:underline font-medium">

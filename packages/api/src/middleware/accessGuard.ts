@@ -89,14 +89,14 @@ export function createAccessGuard(
 }
 
 /**
- * Convenience function for admin-level access
+ * Convenience function for manager-level access (owner or member)
  */
 export function requireAdmin(options?: Parameters<typeof createAccessGuard>[1]) {
-  return createAccessGuard('admin', options);
+  return createAccessGuard('member', options);
 }
 
 /**
- * Convenience function for member-level access (admin, editor, viewer)
+ * Convenience function for basic membership access (any role)
  */
 export function requireMember(options?: Parameters<typeof createAccessGuard>[1]) {
   return createAccessGuard('viewer', options);
@@ -107,11 +107,4 @@ export function requireMember(options?: Parameters<typeof createAccessGuard>[1])
  */
 export function requireOwner(options?: Parameters<typeof createAccessGuard>[1]) {
   return createAccessGuard('owner', options);
-}
-
-/**
- * Convenience function for editor-level access (admin, editor)
- */
-export function requireEditor(options?: Parameters<typeof createAccessGuard>[1]) {
-  return createAccessGuard('editor', options);
 }

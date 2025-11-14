@@ -23,6 +23,11 @@ LTM-Starter-Kit/
 │   ├── ui/                     # Shared UI components and primitives
 │   ├── config/                 # Shared configuration (Tailwind preset, etc.)
 │   └── utils/                  # Shared utility functions
+├── mcp/                        # MCP servers for Cursor integration
+│   ├── supabase/               # Supabase MCP server
+│   ├── stripe/                 # Stripe MCP server
+│   ├── figma/                  # Figma MCP server
+│   └── shadcn/                 # Shadcn/UI MCP server
 ├── design/
 │   └── DESIGN_TOKENS.json      # Design system tokens
 └── docs/                       # Project documentation
@@ -64,6 +69,40 @@ pnpm test:web
 # Run E2E tests
 pnpm e2e:web
 ```
+
+## 🔌 MCP Integration (Cursor IDE)
+
+This project includes Model Context Protocol (MCP) servers for enhanced Cursor IDE integration:
+
+- **Supabase MCP**: Database operations, migrations, and queries
+- **Stripe MCP**: Payment and subscription management
+- **Figma MCP**: Design file access and component inspection
+- **Shadcn MCP**: Component discovery and source code retrieval
+
+### Quick Setup
+
+1. **Install dependencies**:
+   ```bash
+   for dir in mcp/*/; do (cd "$dir" && npm install); done
+   ```
+
+2. **Set environment variables** (add to `~/.zshrc` or `~/.bashrc`):
+   ```bash
+   export SUPABASE_URL="https://your-project.supabase.co"
+   export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+   export STRIPE_SECRET_KEY="sk_test_..."
+   export FIGMA_ACCESS_TOKEN="figd_..."
+   ```
+
+3. **Restart Cursor** completely (Cmd+Q, then relaunch)
+
+4. **Test the setup**:
+   ```
+   mcp servers
+   call SupabaseMCP.ping
+   ```
+
+📚 **Full documentation**: See [`mcp/SETUP_GUIDE.md`](mcp/SETUP_GUIDE.md) for detailed setup and usage instructions.
 
 ## 🚀 Deployment
 

@@ -35,7 +35,7 @@ export default function Advantage1Page({ params }: Advantage1PageProps) {
             <h3 className="text-xl font-semibold mb-3">Global CDN Network</h3>
             <p className="text-muted-foreground">
               Content delivered from over 200 edge locations worldwide ensures minimal 
-              latency regardless of your users' geographic location.
+              latency regardless of your users&apos; geographic location.
             </p>
           </div>
           
@@ -84,7 +84,7 @@ export default function Advantage1Page({ params }: Advantage1PageProps) {
         <div>
           <h3 className="text-2xl font-semibold mb-4">Why Speed Matters</h3>
           <p className="text-muted-foreground mb-4">
-            In today's digital landscape, speed is not just a feature—it's a necessity. 
+            In today&apos;s digital landscape, speed is not just a feature—it&apos;s a necessity. 
             Studies show that even a one-second delay in page load time can result in a 
             7% reduction in conversions.
           </p>

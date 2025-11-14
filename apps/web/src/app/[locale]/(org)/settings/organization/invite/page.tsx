@@ -10,7 +10,7 @@ const mockInvites = [
   {
     id: 'invite-1',
     email: 'john@example.com',
-    role: 'editor',
+    role: 'member',
     status: 'pending',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -18,7 +18,7 @@ const mockInvites = [
   {
     id: 'invite-2',
     email: 'jane@example.com',
-    role: 'admin',
+    role: 'member',
     status: 'pending',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     expires_at: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),

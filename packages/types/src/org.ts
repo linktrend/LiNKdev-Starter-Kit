@@ -1,11 +1,17 @@
-export type OrgRole = 'owner' | 'admin' | 'editor' | 'viewer';
+export type OrgRole = 'owner' | 'member' | 'viewer';
 
 export interface Organization {
   id: string;
   name: string;
+  slug: string | null;
+  org_type: 'personal' | 'business' | 'family' | 'education' | 'other';
+  description: string | null;
+  avatar_url: string | null;
+  is_personal: boolean;
   owner_id: string;
+  settings: Record<string, unknown> | null;
   created_at: string;
-  updated_at?: string;
+  updated_at?: string | null;
 }
 
 export interface OrganizationMember {
@@ -38,6 +44,9 @@ export interface Invite {
 
 export interface CreateOrgInput {
   name: string;
+  org_type: Organization['org_type'];
+  slug: string;
+  description?: string | null;
 }
 
 export interface InviteUserInput {

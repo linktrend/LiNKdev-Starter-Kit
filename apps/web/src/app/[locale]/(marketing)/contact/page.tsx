@@ -158,7 +158,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Email Us</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Send us an email and we'll respond within 24 hours.
+                Send us an email and we&apos;ll respond within 24 hours.
               </p>
               <a href="mailto:hello@example.com" className="text-primary hover:underline text-sm">
                 hello@example.com
@@ -171,7 +171,7 @@ export default function ContactPage() {
               </div>
               <h3 className="text-lg font-semibold mb-2">Fill Out a Form</h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Send us your details and we'll follow up shortly.
+                Send us your details and we&apos;ll follow up shortly.
               </p>
               <button
                 onClick={() => setIsContactFormOpen(true)}
@@ -230,7 +230,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <p className="text-muted-foreground mb-6">
-                  Pick a time that works for you and we'll connect you with a specialist. Perfect for onboarding, architecture reviews, or billing questions.
+                  Pick a time that works for you and we&apos;ll connect you with a specialist. Perfect for onboarding, architecture reviews, or billing questions.
                 </p>
                 <Button variant="outline" onClick={() => openHelpAction('schedule-call')}>
                   <Calendar className="h-4 w-4 mr-2" />
@@ -284,9 +284,9 @@ export default function ContactPage() {
         }
         textSection3b={
           <div>
-            <h3 className="text-2xl font-semibold mb-4">We're Here to Help</h3>
+            <h3 className="text-2xl font-semibold mb-4">We&apos;re Here to Help</h3>
             <p className="text-muted-foreground mb-4">
-              Whether you're a prospective customer, current user, or just curious about what we do, we'd love to 
+              Whether you&apos;re a prospective customer, current user, or just curious about what we do, we&apos;d love to 
               hear from you. Our team is dedicated to providing excellent support and answering all your questions.
             </p>
             <p className="text-muted-foreground mb-4">

@@ -1,26 +1,30 @@
 {
   "mcpServers": {
     "SupabaseMCP": {
-      "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/carlossalas/Projects/LTM-Starter-Kit/mcp/supabase/server.js"]
+      "command": "node",
+      "args": ["mcp/supabase/server.js"],
+      "env": {
+        "SUPABASE_URL": "https://YOUR_PROJECT_REF.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "JWT_***REDACTED***"
+      }
     },
     "StripeMCP": {
-      "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/carlossalas/Projects/LTM-Starter-Kit/mcp/stripe/server.js"],
+      "command": "node",
+      "args": ["mcp/stripe/server.js"],
       "env": {
         "STRIPE_SECRET_KEY": "${STRIPE_SECRET_KEY}"
       }
     },
     "FigmaMCP": {
-      "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/carlossalas/Projects/LTM-Starter-Kit/mcp/figma/server.js"],
+      "command": "node",
+      "args": ["mcp/figma/server.js"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
       }
     },
     "ShadcnMCP": {
-      "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/carlossalas/Projects/LTM-Starter-Kit/mcp/shadcn/server.js"]
+      "command": "node",
+      "args": ["mcp/shadcn/server.js"]
     }
   }
 }

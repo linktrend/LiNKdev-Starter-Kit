@@ -11,6 +11,9 @@ export * from './email';
 export * from './supabase';
 export * from './main';
 export * from './usage';
+export * from './notifications';
+export * from './settings';
+export * from './team';
 
 // Database types (these may conflict with other exports, so import selectively)
 export type { Database } from './db';

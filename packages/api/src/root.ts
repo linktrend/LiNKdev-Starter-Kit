@@ -1,45 +1,39 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, protectedProcedure } from './trpc';
-import { orgRouter } from './routers/org';
+import { organizationRouter } from './routers/organization';
+import { userRouter } from './routers/user';
+import { profileRouter } from './routers/profile';
 import { recordsRouter } from './routers/records';
 import { schedulingRouter } from './routers/scheduling';
 import { automationRouter } from './routers/automation';
 import { billingRouter } from './routers/billing';
 import { auditRouter } from './routers/audit';
+import { usageRouter } from './routers/usage';
 import { flagsRouter } from './routers/flags';
 import { developmentTasksRouter } from './routers/developmentTasks';
+import { notificationsRouter } from './routers/notifications';
+import { settingsRouter } from './routers/settings';
+import { teamRouter } from './routers/team';
 
 // Note: Email dispatcher will be imported by the consuming application
 declare const sendTestEmail: (to: string, data: any) => Promise<void>;
 
 export const appRouter = createTRPCRouter({
   status: publicProcedure.query(() => ({ ok: true })),
-  posts: createTRPCRouter({
-    getAll: publicProcedure.query(() => [
-      { id: '1', title: 'Sample Post', content: 'This is a sample post', created_at: new Date().toISOString() }
-    ]),
-    create: publicProcedure.input(z.object({ title: z.string(), content: z.string() })).mutation(({ input }) => ({ 
-      id: Math.random().toString(36).substr(2, 9), 
-      title: input.title, 
-      content: input.content,
-      created_at: new Date().toISOString()
-    })),
-    update: publicProcedure.input(z.object({ id: z.string(), title: z.string(), content: z.string() })).mutation(({ input }) => ({ 
-      id: input.id, 
-      title: input.title, 
-      content: input.content,
-      created_at: new Date().toISOString()
-    })),
-    delete: publicProcedure.input(z.object({ id: z.string() })).mutation(() => ({ success: true }))
-  }),
-  org: orgRouter,
+  organization: organizationRouter,
+  user: userRouter,
+  profile: profileRouter,
   records: recordsRouter,
   scheduling: schedulingRouter,
   automation: automationRouter,
   billing: billingRouter,
   audit: auditRouter,
+  usage: usageRouter,
   flags: flagsRouter,
   developmentTasks: developmentTasksRouter,
+  notifications: notificationsRouter,
+  settings: settingsRouter,
+  team: teamRouter,
   
   // Email testing endpoint
   email: createTRPCRouter({

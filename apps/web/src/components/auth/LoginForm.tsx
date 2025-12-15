@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom'
 
 import { login, type AuthFormState } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -63,6 +64,16 @@ export function LoginForm({ locale }: LoginFormProps) {
             {message}
           </p>
         ))}
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox id="rememberMe" name="rememberMe" defaultChecked />
+        <label
+          htmlFor="rememberMe"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Remember me for 30 days
+        </label>
       </div>
 
       {errors.form?.map((message) => (

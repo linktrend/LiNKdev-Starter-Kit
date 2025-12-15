@@ -1,3 +1,12 @@
+/**
+ * @deprecated This file uses the deprecated @supabase/auth-helpers-nextjs package.
+ * Please use @/lib/supabase/server or @/lib/auth/server instead.
+ * 
+ * Migration guide:
+ * - Replace `import { createClient } from '@/utils/supabase/server'`
+ * - With `import { createClient } from '@/lib/supabase/server'`
+ */
+
 import { createRouteHandlerClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from 'next/headers';
 import type { Database } from "@starter/types";

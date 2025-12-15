@@ -7,6 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, CheckCircle, AlertCircle, Clock, MessageSquare, Mail } from 'lucide-react';
+import { getClient } from '@/lib/auth/client';
+import { parseAuthError } from '@/lib/auth/errors';
+import { formatPhoneForDisplay } from '@/lib/auth/validation';
+import { useResendCountdown } from '@/lib/auth/rate-limit';
 
 interface VerifyOTPPageProps {
   params: { locale: string };
@@ -16,30 +20,23 @@ export default function VerifyOTPPage({ params: { locale } }: VerifyOTPPageProps
   const router = useRouter();
   const searchParams = useSearchParams();
   const phone = searchParams.get('phone') || '';
-  const method = (searchParams.get('method') || 'whatsapp') as 'whatsapp' | 'sms';
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(600); // 10 minutes = 600 seconds
-  const [canResend, setCanResend] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [otpMethod, setOtpMethod] = useState<'whatsapp' | 'sms'>(method);
+  const [isVerifying, setIsVerifying] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const { secondsRemaining: resendSeconds, canResend, reset: resetResend } = useResendCountdown(30);
 
-  // Countdown timer
+  // Countdown timer for OTP expiry
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     }
   }, [countdown]);
-
-  // Resend timer (30 seconds)
-  useEffect(() => {
-    const timer = setTimeout(() => setCanResend(true), 30000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Auto-focus first input
   useEffect(() => {
@@ -95,51 +92,80 @@ export default function VerifyOTPPage({ params: { locale } }: VerifyOTPPageProps
   };
 
   // Verify OTP
-  const handleVerify = (code: string) => {
-    console.log('Verifying OTP:', code);
-
-    // Mock verification
-    if (code === '123456') {
+  const handleVerify = async (code: string) => {
+    if (isVerifying) return;
+    
+    setIsVerifying(true);
+    setShowError(false);
+    
+    try {
+      const supabase = getClient();
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token: code,
+        type: 'sms',
+      });
+      
+      if (error) {
+        if (error.message.includes('expired') || error.message.includes('Expired')) {
+          setErrorMessage('Code expired. Please request a new one.');
+        } else if (error.message.includes('invalid') || error.message.includes('Invalid')) {
+          setErrorMessage('Incorrect code. Please try again.');
+        } else {
+          const errorInfo = parseAuthError(error);
+          setErrorMessage(errorInfo.message);
+        }
+        setShowError(true);
+        setOtp(['', '', '', '', '', '']);
+        inputRefs.current[0]?.focus();
+        return;
+      }
+      
+      // Success - redirect to dashboard
       setShowSuccess(true);
       setTimeout(() => {
         router.push(`/${locale}/dashboard`);
       }, 2000);
-    } else {
+    } catch (err: any) {
+      setErrorMessage('Verification failed. Please try again.');
       setShowError(true);
-      setErrorMessage('Incorrect code. Please try again.');
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   // Resend code
-  const handleResend = () => {
+  const handleResend = async () => {
     if (!canResend) return;
 
-    console.log(`Resending ${otpMethod} OTP to ${phone}`);
-    setCanResend(false);
-    setCountdown(600);
-    setOtp(['', '', '', '', '', '']);
-    inputRefs.current[0]?.focus();
-    
-    setTimeout(() => setCanResend(true), 30000);
-  };
-
-  // Toggle method
-  const handleToggleMethod = () => {
-    const newMethod = otpMethod === 'whatsapp' ? 'sms' : 'whatsapp';
-    setOtpMethod(newMethod);
-    console.log(`Switching to ${newMethod} and resending OTP`);
-    setCanResend(false);
-    setCountdown(600);
-    setOtp(['', '', '', '', '', '']);
-    inputRefs.current[0]?.focus();
-    
-    setTimeout(() => setCanResend(true), 30000);
+    try {
+      const supabase = getClient();
+      const { error } = await supabase.auth.signInWithOtp({
+        phone,
+      });
+      
+      if (error) {
+        const errorInfo = parseAuthError(error);
+        setErrorMessage(errorInfo.message);
+        setShowError(true);
+        return;
+      }
+      
+      resetResend();
+      setCountdown(600);
+      setOtp(['', '', '', '', '', '']);
+      setShowError(false);
+      inputRefs.current[0]?.focus();
+    } catch (err: any) {
+      setErrorMessage('Failed to resend code. Please try again.');
+      setShowError(true);
+    }
   };
 
   // Mask phone number
-  const maskedPhone = phone.replace(/(\d{2})(\d+)(\d{4})/, '$1 ••• ••• $3');
+  const maskedPhone = formatPhoneForDisplay(phone);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -156,17 +182,8 @@ export default function VerifyOTPPage({ params: { locale } }: VerifyOTPPageProps
           </p>
           <p className="text-sm font-medium mt-1">{maskedPhone}</p>
           <Badge variant="outline" className="mt-2">
-            {otpMethod === 'whatsapp' ? (
-              <>
-                <MessageSquare className="h-3 w-3 mr-1" />
-                WhatsApp
-              </>
-            ) : (
-              <>
-                <Mail className="h-3 w-3 mr-1" />
-                SMS
-              </>
-            )}
+            <MessageSquare className="h-3 w-3 mr-1" />
+            SMS
           </Badge>
         </div>
 
@@ -250,15 +267,7 @@ export default function VerifyOTPPage({ params: { locale } }: VerifyOTPPageProps
                     onClick={handleResend}
                     disabled={!canResend || countdown === 0}
                   >
-                    {canResend ? "Resend code" : `Resend in ${30 - Math.floor((600 - countdown) % 30)}s`}
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    className="w-full text-xs"
-                    onClick={handleToggleMethod}
-                  >
-                    Send via {otpMethod === 'whatsapp' ? 'SMS' : 'WhatsApp'} instead
+                    {canResend ? "Resend code" : `Resend in ${resendSeconds}s`}
                   </Button>
                 </div>
 
@@ -277,7 +286,7 @@ export default function VerifyOTPPage({ params: { locale } }: VerifyOTPPageProps
 
         {!showSuccess && !showError && (
           <p className="text-xs text-center text-muted-foreground mt-4">
-            Didn&apos;t receive the code? Check your {otpMethod === 'whatsapp' ? 'WhatsApp' : 'messages'} or try resending.
+            Didn&apos;t receive the code? Check your messages or try resending.
           </p>
         )}
       </div>

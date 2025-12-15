@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { ChevronDown, ChevronUp, Plus, Trash2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { OnboardingData, EducationEntry, WorkExperienceEntry } from '@/hooks/useOnboarding';
 import { generateUsername, checkUsernameAvailability } from '@/utils/onboarding';
+import { completeOnboardingStep2 } from '@/app/actions/profile';
 
 interface Step2Props {
   data: OnboardingData;
@@ -19,6 +21,10 @@ interface Step2Props {
 }
 
 export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip }: Step2Props) {
+  const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string || 'en';
+  
   const [sectionsCollapsed, setSectionsCollapsed] = useState({
     personalInfo: false,
     about: true,
@@ -26,6 +32,8 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
   });
 
   const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [education, setEducation] = useState<EducationEntry[]>(
     data.education && data.education.length > 0 ? data.education : [
       { id: '1', institution: '', degree: '', startDate: '', endDate: '' }
@@ -64,10 +72,29 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
     }
   };
 
-  const handleContinue = () => {
-    // Update education and work experience in data
-    updateData({ education, workExperience });
-    onNext();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+    
+    const formData = new FormData();
+    formData.append('username', data.username || '');
+    formData.append('first_name', data.firstName || '');
+    formData.append('last_name', data.lastName || '');
+    formData.append('display_name', data.displayName || '');
+    formData.append('locale', locale);
+    
+    const result = await completeOnboardingStep2(formData);
+    
+    if (result.error) {
+      setErrors(result.error);
+      setIsSubmitting(false);
+      return;
+    }
+    
+    if (result.success && result.redirectTo) {
+      router.push(result.redirectTo);
+    }
   };
 
   const personalTitles = ['Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.', 'Rev.', 'Other'];
@@ -77,7 +104,16 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
   const isPhoneLocked = data.authMethod === 'phone';
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Error Display */}
+      {errors.form && (
+        <div className="bg-destructive/15 text-destructive px-4 py-3 rounded-md">
+          {errors.form.map((error, i) => (
+            <p key={i}>{error}</p>
+          ))}
+        </div>
+      )}
+      
       {/* Personal Information Section */}
       <div className="space-y-4 border-b border-border pb-6">
         <button
@@ -127,6 +163,9 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
                     <span className="text-sm text-red-600 self-center">✗</span>
                   )}
                 </div>
+                {errors.username && (
+                  <p className="text-sm text-destructive mt-1">{errors.username[0]}</p>
+                )}
               </div>
             </div>
 
@@ -352,8 +391,10 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
       {/* Navigation Buttons */}
       <div className="flex items-center justify-between pt-6 border-t">
         <Button
+          type="button"
           variant="ghost"
           onClick={onBack}
+          disabled={isSubmitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
@@ -361,21 +402,23 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
 
         <div className="flex gap-3">
           <Button
+            type="button"
             variant="outline"
             onClick={onSkip}
+            disabled={isSubmitting}
           >
             Skip
           </Button>
           <Button
-            onClick={handleContinue}
-            disabled={!data.username || !data.displayName || !data.firstName || !data.lastName || (!data.email && !data.phoneNumber)}
+            type="submit"
+            disabled={isSubmitting || !data.username || !data.displayName || !data.firstName || !data.lastName || (!data.email && !data.phoneNumber)}
           >
-            Continue
+            {isSubmitting ? 'Completing...' : 'Complete Setup'}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 

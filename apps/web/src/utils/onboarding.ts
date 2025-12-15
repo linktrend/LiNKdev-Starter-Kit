@@ -1,3 +1,5 @@
+import { createClient } from '@/lib/auth/server'
+
 /**
  * Generate a suggested username from email, phone, or name
  */
@@ -48,5 +50,36 @@ export async function checkUsernameAvailability(
       resolve(!isTaken);
     }, 500);
   });
+}
+
+/**
+ * Generate organization slug from username
+ */
+export function generateOrgSlug(username: string): string {
+  return `${username}-workspace`.toLowerCase().replace(/[^a-z0-9-]/g, '-')
+}
+
+/**
+ * Generate unique organization slug
+ */
+export async function generateUniqueSlug(baseUsername: string): Promise<string> {
+  const supabase = createClient()
+  let slug = generateOrgSlug(baseUsername)
+  let counter = 1
+  
+  while (true) {
+    const { data } = await supabase
+      .from('organizations')
+      .select('id')
+      .eq('slug', slug)
+      .maybeSingle()
+    
+    if (!data) {
+      return slug
+    }
+    
+    slug = `${generateOrgSlug(baseUsername)}-${counter}`
+    counter++
+  }
 }
 

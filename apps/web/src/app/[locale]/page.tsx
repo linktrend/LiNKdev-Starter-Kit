@@ -1,5 +1,7 @@
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 
 export default function RootPage() {
+  // Redirect to login page (next-intl will handle locale automatically)
   redirect('/login');
 }
+

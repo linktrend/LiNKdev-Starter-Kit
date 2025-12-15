@@ -155,7 +155,7 @@ export function useOnboarding(): UseOnboardingReturn {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const totalSteps = 4; // Changed from 5 to 4
+  const totalSteps = 2; // Simplified to 2 steps: Auth and Profile
 
   const updateData = useCallback((newData: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...newData }));
@@ -187,12 +187,6 @@ export function useOnboarding(): UseOnboardingReturn {
           data.lastName && 
           (data.email || data.phoneNumber)
         );
-      case 3:
-        // Preferences are optional, always allow next
-        return true;
-      case 4:
-        // Final step, always allow
-        return true;
       default:
         return false;
     }

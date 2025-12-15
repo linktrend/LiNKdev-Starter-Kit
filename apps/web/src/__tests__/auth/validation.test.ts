@@ -41,6 +41,7 @@ describe('Phone Validation', () => {
   it('should format phone numbers for display', () => {
     expect(formatPhoneForDisplay('+12345678901')).toBe('+1 234 *** *** 8901');
     expect(formatPhoneForDisplay('+447911123456')).toBe('+44 791 *** *** 3456');
+    expect(formatPhoneForDisplay('+861234567890')).toBe('+86 123 *** *** 7890');
   });
 
   it('should sanitize phone numbers', () => {

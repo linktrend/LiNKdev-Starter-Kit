@@ -14,7 +14,6 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { SupportWidgetWrapper } from '@/components/support-widget-wrapper';
-import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -110,7 +109,6 @@ export default async function LocaleLayout({
               <TRPCReactProvider>
                 {children}
                 <SupportWidgetWrapper />
-                <CookieConsentBanner />
                 {/* <TailwindIndicator /> */}
               </TRPCReactProvider>
             </NextIntlClientProvider>

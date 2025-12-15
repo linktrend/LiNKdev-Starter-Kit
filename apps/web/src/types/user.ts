@@ -19,7 +19,7 @@ export interface UserDetails {
 
 export type Price = import('@/types/db').Tables<'prices'>;
 export type Product = import('@/types/db').Tables<'products'>;
-export type Subscription = import('@/types/db').Tables<'subscriptions'>;
+export type Subscription = import('@/types/db').Tables<'org_subscriptions'>;
 
 export interface SubscriptionWithProduct extends Subscription {
   product: Product;

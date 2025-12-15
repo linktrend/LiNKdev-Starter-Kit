@@ -1,7 +1,8 @@
-/**
- * Shared usage tracking types
- */
+import type { Tables } from './db'
 
+/**
+ * Enumerated usage events enforced by `public.usage_events.event_type`.
+ */
 export type UsageEventType =
   | 'record_created'
   | 'api_call'
@@ -9,26 +10,25 @@ export type UsageEventType =
   | 'storage_used'
   | 'schedule_executed'
   | 'ai_tokens_used'
-  | 'user_active';
+  | 'user_active'
 
+/**
+ * Raw event row from `public.usage_events`.
+ */
+export type UsageEvent = Tables<'usage_events'>
+
+/**
+ * Payload for logging usage activity through the service layer.
+ */
 export interface UsageLogPayload {
-  userId: string;
-  orgId?: string | null;
-  eventType: UsageEventType;
-  quantity?: number;
-  metadata?: Record<string, any>;
+  userId: string
+  orgId?: string | null
+  eventType: UsageEventType
+  quantity?: number
+  metadata?: Record<string, any>
 }
 
-export interface UsageAggregationRecord {
-  id: string;
-  user_id: string | null;
-  org_id: string | null;
-  period_type: 'daily' | 'monthly';
-  period_start: string;
-  period_end: string;
-  metric_type: UsageEventType | string;
-  total_quantity: number;
-  metadata?: Record<string, any> | null;
-  created_at?: string;
-  updated_at?: string;
-}
+/**
+ * Aggregated usage rollup from `public.usage_aggregations`.
+ */
+export type UsageAggregationRecord = Tables<'usage_aggregations'>

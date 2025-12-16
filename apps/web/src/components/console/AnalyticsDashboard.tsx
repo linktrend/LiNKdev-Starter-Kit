@@ -1,0 +1,114 @@
+'use client';
+
+import { DownloadIcon, RefreshCwIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { DateRangeSelector } from './DateRangeSelector';
+import { AnalyticsMetricCard } from './AnalyticsMetricCard';
+import { AnalyticsChart } from './AnalyticsChart';
+import { formatBytes, formatDuration } from '@/lib/analytics/formatters';
+
+export function AnalyticsDashboard() {
+  const {
+    dateRange,
+    setDateRange,
+    loading,
+    summary,
+    apiMetrics,
+    userMetrics,
+    featureMetrics,
+    refresh,
+    exportData,
+  } = useAnalytics(); // No orgId passed means Platform Analytics
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <DateRangeSelector dateRange={dateRange} onChange={setDateRange} />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>
+            <RefreshCwIcon className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => exportData('json')}>
+            <DownloadIcon className="mr-2 h-4 w-4" />
+            Export JSON
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <AnalyticsMetricCard
+          title="Total API Calls"
+          value={summary?.totalApiCalls || 0}
+          loading={loading}
+          description="Total API requests in period"
+        />
+        <AnalyticsMetricCard
+          title="Active Users"
+          value={summary?.activeUsers || 0}
+          loading={loading}
+          description="Unique active users"
+        />
+        <AnalyticsMetricCard
+          title="Total Events"
+          value={summary?.totalEvents || 0}
+          loading={loading}
+          description="Usage events tracked"
+        />
+        <AnalyticsMetricCard
+          title="Storage Used"
+          value={formatBytes(summary?.storageUsed || 0)}
+          loading={loading}
+          description="Total storage across system"
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <AnalyticsChart
+          title="User Growth"
+          description="Active vs New Users over time"
+          data={userMetrics}
+          type="area"
+          loading={loading}
+          xAxisKey="date"
+          config={[
+            { dataKey: 'activeUsers', label: 'Active Users', color: '#8884d8' },
+            { dataKey: 'newUsers', label: 'New Users', color: '#82ca9d' },
+          ]}
+        />
+        <AnalyticsChart
+          title="Top Features"
+          description="Most used features by event count"
+          data={featureMetrics.slice(0, 10)}
+          type="bar"
+          loading={loading}
+          xAxisKey="feature"
+          config={[
+            { dataKey: 'usageCount', label: 'Usage Count', color: '#0088FE' },
+          ]}
+        />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-1">
+        <AnalyticsChart
+          title="API Performance"
+          description="Calls and Errors by Endpoint"
+          data={apiMetrics.slice(0, 15)}
+          type="bar"
+          loading={loading}
+          xAxisKey="endpoint"
+          height={400}
+          config={[
+            { dataKey: 'calls', label: 'Calls', color: '#00C49F' },
+            { dataKey: 'errors', label: 'Errors', color: '#FF8042' },
+          ]}
+          tooltipFormatter={(value, name) => [
+             value.toLocaleString(),
+             name
+          ]}
+        />
+      </div>
+    </div>
+  );
+}

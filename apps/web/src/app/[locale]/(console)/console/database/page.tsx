@@ -22,8 +22,11 @@ import {
   type QueryResult,
 } from '@/app/actions/database';
 import type { DatabaseStats, TableInfo } from '@/lib/database/stats';
+import { useOrg } from '@/contexts/OrgContext';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function ConsoleDatabasePage() {
+  const { currentOrgId, isLoading: orgLoading } = useOrg();
   const [activeTab, setActiveTab] = useState<'query' | 'tables'>('query');
   const [queryText, setQueryText] = useState('');
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
@@ -118,6 +121,23 @@ export default function ConsoleDatabasePage() {
   };
 
   const totalRows = tables.reduce((sum, table) => sum + table.rows, 0);
+
+  if (orgLoading) {
+    return (
+      <div className="flex h-full items-center justify-center py-12 text-muted-foreground">
+        <Spinner />
+        <span className="ml-3">Loading organization context…</span>
+      </div>
+    );
+  }
+
+  if (!currentOrgId) {
+    return (
+      <div className="rounded-lg border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
+        Select an organization to use the database console.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">

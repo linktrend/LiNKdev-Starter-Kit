@@ -1,523 +1,244 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { getBadgeClasses, type PresetKey } from '@/components/ui/badge.presets';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TableContainer } from '@/components/ui/table-container';
-import { DateTimeCell, UserOrgCell, DetailsLink, ExpandedRowCell } from '@/components/ui/table-utils';
-import { TableColgroup, TableHeadAction, TableCellAction } from '@/components/ui/table-columns';
-import { TableHeadText, TableHeadStatus, TableCellText, TableCellStatus, ActionIconsCell } from '@/components/ui/table-cells';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, Shield, History, LogIn, AlertCircle } from 'lucide-react';
+import { useSecurityData } from '@/hooks/useSecurityData';
+import { UserManagementTable, type OrgMember } from '@/components/console/UserManagementTable';
+import { RoleAssignmentDialog } from '@/components/console/RoleAssignmentDialog';
+import { ActiveSessionsList } from '@/components/console/ActiveSessionsList';
+import { SecurityEventsList } from '@/components/console/SecurityEventsList';
+import { PermissionsMatrix } from '@/components/console/PermissionsMatrix';
+import { PasswordPolicyEditor, type SecuritySettings } from '@/components/console/PasswordPolicyEditor';
+import { updateMemberRole, removeMember, inviteMember, revokeSession, enforce2FA, updatePasswordPolicy } from '@/app/actions/security';
+import type { OrgRole } from '@starter/types';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-  Users,
-  Shield,
-  History,
-  LogIn,
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  RefreshCw,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Globe,
-  User,
-  Key,
-  Lock,
-  Eye,
-  EyeOff,
-  AlertCircle,
-  Activity,
-  AlertTriangle,
-  FileCheck,
-} from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { cn } from '@/utils/cn';
-import { formatDateTimeExact } from '@/utils/formatDateTime';
-import { getUserDisplay } from '@/utils/userDisplay';
-
-// Mock data types
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  status: 'active' | 'inactive' | 'suspended';
-  lastLogin?: Date;
-  createdAt: Date;
-}
-
-interface Role {
-  id: string;
-  name: string;
-  description: string;
-  permissions: string[];
-  userCount: number;
-}
-
-interface Permission {
-  id: string;
-  name: string;
-  resource: string;
-  action: string;
-}
-
-interface AuditEntry {
-  id: string;
-  userId: string;
-  userName: string;
-  action: string;
-  resource: string;
-  timestamp: Date;
-  ip?: string;
-  details?: string;
-}
-
-interface Session {
-  id: string;
-  userId: string;
-  userName: string;
-  email: string;
-  ipAddress: string;
-  userAgent: string;
-  createdAt: Date;
-  lastActivity: Date;
-  isActive: boolean;
-}
-
-// Mock organisation mapping for users (userId -> organisation name)
-const mockUserOrganisation: Record<string, string> = {
-  '1': 'Acme Corp',
-  '2': 'Globex',
-  '3': 'Initech',
-};
-
-function formatDateTimeDDMMYYYYHHMMSS(date: Date): string {
-  const two = (n: number) => n.toString().padStart(2, '0');
-  const day = two(date.getDate());
-  const month = two(date.getMonth() + 1);
-  const year = date.getFullYear();
-  const hours = two(date.getHours());
-  const minutes = two(date.getMinutes());
-  const seconds = two(date.getSeconds());
-  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-}
-
-function formatDateDDMMYYYY(date: Date): string {
-  const two = (n: number) => n.toString().padStart(2, '0');
-  const day = two(date.getDate());
-  const month = two(date.getMonth() + 1);
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-function formatTimeHHMMSS(date: Date): string {
-  const two = (n: number) => n.toString().padStart(2, '0');
-  const hours = two(date.getHours());
-  const minutes = two(date.getMinutes());
-  const seconds = two(date.getSeconds());
-  return `${hours}:${minutes}:${seconds}`;
-}
-
-function getAuditUserDisplay(userId: string) {
-  const user = mockUsers.find((u) => u.id === userId);
-  return getUserDisplay(user);
-}
-
-// Map audit actions to standardized badge presets for consistent color/size
-function actionToPreset(action: string): PresetKey {
-  switch (action) {
-    case 'created':
-    case 'accepted':
-    case 'succeeded':
-    case 'completed':
-      return 'success.soft';
-    case 'updated':
-    case 'started':
-    case 'stopped':
-    case 'role_changed':
-      return 'info.soft';
-    case 'deleted':
-    case 'failed':
-    case 'rejected':
-    case 'cancelled':
-      return 'danger.soft';
-    case 'invited':
-    case 'snoozed':
-      return 'warning.soft';
-    default:
-      return 'outline';
-  }
-}
-
-// Mock data
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'owner@example.com',
-    name: 'Owner User',
-    role: 'owner',
-    status: 'active',
-    lastLogin: new Date('2025-01-27T10:30:00Z'),
-    createdAt: new Date('2024-01-01T09:00:00Z'),
-  },
-  {
-    id: '2',
-    email: 'admin@example.com',
-    name: 'Admin User',
-    role: 'admin',
-    status: 'active',
-    lastLogin: new Date('2025-01-27T09:15:00Z'),
-    createdAt: new Date('2024-01-15T11:00:00Z'),
-  },
-  {
-    id: '3',
-    email: 'admin2@example.com',
-    name: 'Admin User 2',
-    role: 'admin',
-    status: 'active',
-    lastLogin: new Date('2025-01-26T16:45:00Z'),
-    createdAt: new Date('2024-02-10T14:30:00Z'),
-  },
-  {
-    id: '4',
-    email: 'user.pro@example.com',
-    name: 'Pro User',
-    role: 'std-pro',
-    status: 'active',
-    lastLogin: new Date('2025-01-27T08:00:00Z'),
-    createdAt: new Date('2024-03-20T10:00:00Z'),
-  },
-  {
-    id: '5',
-    email: 'user.basic@example.com',
-    name: 'Basic User',
-    role: 'std-basic',
-    status: 'active',
-    lastLogin: new Date('2025-01-26T14:20:00Z'),
-    createdAt: new Date('2024-04-15T09:30:00Z'),
-  },
-];
-
-const mockRoles: Role[] = [
-  {
-    id: '1',
-    name: 'Admin',
-    description: 'Full system access',
-    permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles'],
-    userCount: 2,
-  },
-  {
-    id: '2',
-    name: 'Manager',
-    description: 'Team management access',
-    permissions: ['read', 'write', 'manage_team'],
-    userCount: 5,
-  },
-  {
-    id: '3',
-    name: 'User',
-    description: 'Standard user access',
-    permissions: ['read', 'write'],
-    userCount: 45,
-  },
-];
-
-const mockAuditEntries: AuditEntry[] = [
-  {
-    id: '1',
-    userId: '1',
-    userName: 'Admin User',
-    action: 'create',
-    resource: 'user',
-    timestamp: new Date('2025-01-27T10:30:00Z'),
-    ip: '192.168.1.1',
-    details: 'Created new user account',
-  },
-  {
-    id: '2',
-    userId: '2',
-    userName: 'Regular User',
-    action: 'update',
-    resource: 'record',
-    timestamp: new Date('2025-01-27T09:15:00Z'),
-    ip: '192.168.1.2',
-    details: 'Updated record #123',
-  },
-  {
-    id: '3',
-    userId: '1',
-    userName: 'Admin User',
-    action: 'delete',
-    resource: 'role',
-    timestamp: new Date('2025-01-26T16:20:00Z'),
-    ip: '192.168.1.1',
-    details: 'Deleted role assignment',
-  },
-];
-
-// Admin/Owner Email Whitelist Mock Data
-interface AdminWhitelist {
-  id: string;
-  email: string;
-  role: 'admin' | 'owner';
-  requires2FA: boolean;
-  twoFactorEnabled: boolean;
-  verified: boolean;
-  addedBy: string;
-  addedAt: string;
-  lastLogin: Date | null;
-}
-
-const mockAdminWhitelist: AdminWhitelist[] = [
-  {
-    id: '1',
-    email: 'owner@example.com',
-    role: 'owner',
-    requires2FA: true,
-    twoFactorEnabled: true,
-    verified: true,
-    addedBy: 'system',
-    addedAt: '2024-01-01',
-    lastLogin: new Date('2025-01-27T09:00:00Z'),
-  },
-  {
-    id: '2',
-    email: 'admin@example.com',
-    role: 'admin',
-    requires2FA: true,
-    twoFactorEnabled: true,
-    verified: true,
-    addedBy: 'owner@example.com',
-    addedAt: '2024-01-15',
-    lastLogin: new Date('2025-01-27T10:30:00Z'),
-  },
-  {
-    id: '3',
-    email: 'admin2@example.com',
-    role: 'admin',
-    requires2FA: true,
-    twoFactorEnabled: false,
-    verified: true,
-    addedBy: 'owner@example.com',
-    addedAt: '2024-02-10',
-    lastLogin: new Date('2025-01-26T16:45:00Z'),
-  },
-];
-
-const mockSessions: Session[] = [
-  {
-    id: '1',
-    userId: '1',
-    userName: 'Admin User',
-    email: 'admin@example.com',
-    ipAddress: '192.168.1.1',
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    createdAt: new Date('2025-01-27T08:00:00Z'),
-    lastActivity: new Date('2025-01-27T10:30:00Z'),
-    isActive: true,
-  },
-  {
-    id: '2',
-    userId: '2',
-    userName: 'Regular User',
-    email: 'user@example.com',
-    ipAddress: '192.168.1.2',
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
-    createdAt: new Date('2025-01-27T07:30:00Z'),
-    lastActivity: new Date('2025-01-27T09:15:00Z'),
-    isActive: true,
-  },
-];
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Spinner } from '@/components/ui/spinner';
+import { useOrg } from '@/contexts/OrgContext';
+import { useSession } from '@/hooks/useSession';
 
 export default function ConsoleSecurityPage() {
+  const { currentOrgId, isLoading: orgLoading } = useOrg();
+  const { user, loading: sessionLoading } = useSession();
+  const currentUserId = user?.id ?? '';
   const [activeTab, setActiveTab] = useState<'users' | 'access-control' | 'audit-trail' | 'sessions'>('users');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | User['status']>('all');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
-  const [isCreateRoleOpen, setIsCreateRoleOpen] = useState(false);
-  const [isAddAdminOpen, setIsAddAdminOpen] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(true);
-  const [showGrantedOnly, setShowGrantedOnly] = useState(false);
-  const [matrixScope, setMatrixScope] = useState<'application' | 'console'>('application');
-  const [selectedResource, setSelectedResource] = useState<'' | 'Users' | 'Records' | 'Roles' | 'Audit Logs'>('');
-  const [selectedAction, setSelectedAction] = useState<'' | 'read' | 'write' | 'delete' | 'manage'>('');
-  const [selectedUserRole, setSelectedUserRole] = useState<string>('');
-  const [newAdminEmail, setNewAdminEmail] = useState('');
-  const [newAdminRole, setNewAdminRole] = useState<'admin' | 'owner'>('admin');
-
-  // Fixed role taxonomy: 3-tier structure (Standard, Admin, Owner)
-  const ROLE_GROUPS = useMemo(() => ({
-    standard: {
-      label: 'Standard Users',
-      description: 'Application access only',
-      roles: [
-        { id: 'std-free', name: 'Standard User Free', description: 'Limited access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read'], userCount: 15 },
-        { id: 'std-basic', name: 'Standard User Basic', description: 'Basic access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read'], userCount: 25 },
-        { id: 'std-pro', name: 'Standard User Pro', description: 'Pro access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 8 },
-        { id: 'std-enterprise', name: 'Standard User Enterprise', description: 'Enterprise access', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 2 },
-      ],
-    },
-    admin: {
-      label: 'Admin Users',
-      description: 'Can manage Standard Users (App + Console access, Email-only auth, 2FA required)',
-      roles: [
-        { id: 'admin', name: 'Admin User', description: 'Can manage Standard Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 3 },
-      ],
-    },
-    owner: {
-      label: 'Owner Users (Super Admins)',
-      description: 'Can manage all users (App + Console access, Email-only auth, 2FA required)',
-      roles: [
-        { id: 'owner', name: 'Owner User', description: 'Can manage all users including Admin Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles', 'manage_admins'], userCount: 1 },
-      ],
-    },
-  }), []);
-
-  const ALL_ROLES_ORDERED = useMemo(() => (
-    [
-      ...ROLE_GROUPS.standard.roles,
-      ...ROLE_GROUPS.admin.roles,
-      ...ROLE_GROUPS.owner.roles,
-    ]
-  ), [ROLE_GROUPS]);
-
-  // All user types for Access Control table - show all three main user types
-  const ALL_USER_TYPES = useMemo(() => ([
-    { id: 'standard', name: 'Standard User', description: 'Application access only', access: 'app', authMethod: 'any', requires2FA: false, permissions: ['read', 'write'], userCount: 0 },
-    { id: 'admin', name: 'Admin User', description: 'Can manage Standard Users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users'], userCount: 0 },
-    { id: 'owner', name: 'Owner User', description: 'Can manage all users', access: 'app+console', authMethod: 'email', requires2FA: true, permissions: ['read', 'write', 'delete', 'manage_users', 'manage_roles', 'manage_admins'], userCount: 0 },
-  ]), []);
-
-  // Both scopes show all user types
-  const APPLICATION_ROLES = ALL_USER_TYPES;
-  const CONSOLE_ROLES = ALL_USER_TYPES;
-
-  const RESOURCES = useMemo(() => (
-    ['Users', 'Records', 'Roles', 'Audit Logs'] as const
-  ), []);
-
-  const ACTIONS = useMemo(() => (
-    ['read', 'write', 'delete', 'manage'] as const
-  ), []);
+  const [currentUserRole, setCurrentUserRole] = useState<OrgRole | null>(null);
   
-  // State for managing user status (for toggling)
-  const [userStatusMap, setUserStatusMap] = useState<Map<string, User['status']>>(new Map());
+  // Dialogs state
+  const [selectedMember, setSelectedMember] = useState<OrgMember | null>(null);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<OrgMember | null>(null);
+  
+  // Invite form state
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<'admin' | 'editor' | 'viewer'>('viewer');
+  const [isInviting, setIsInviting] = useState(false);
 
-  const filteredUsers = useMemo(() => {
-    let filtered = mockUsers;
+  // Security settings
+  const [securitySettings, setSecuritySettings] = useState<SecuritySettings>({
+    require2FA: false,
+    passwordPolicy: {
+      minLength: 8,
+      requireUppercase: true,
+      requireLowercase: true,
+      requireNumbers: true,
+      requireSpecialChars: false,
+      expirationDays: null,
+      preventReuse: 3,
+    },
+  });
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(u => u.status === statusFilter);
+  // Fetch security data
+  const {
+    members,
+    sessions,
+    events,
+    stats,
+    isLoadingMembers,
+    isLoadingSessions,
+    isLoadingEvents,
+    membersError,
+    sessionsError,
+    eventsError,
+    refreshMembers,
+    refreshSessions,
+    refreshEvents,
+    refreshAll,
+  } = useSecurityData({
+    orgId: currentOrgId ?? '',
+    autoRefreshSessions: true,
+    sessionRefreshInterval: 30000,
+  });
+
+  // Find current user's role from members
+  useEffect(() => {
+    if (currentUserId && members.length > 0) {
+      const currentMember = members.find(m => m.user_id === currentUserId);
+      if (currentMember) {
+        setCurrentUserRole(currentMember.role);
+      }
     }
+  }, [currentUserId, members]);
 
-    if (roleFilter !== 'all') {
-      filtered = filtered.filter(u => u.role === roleFilter);
+  if (orgLoading || sessionLoading) {
+    return (
+      <div className="flex h-full items-center justify-center py-12 text-muted-foreground">
+        <Spinner />
+        <span className="ml-3">Loading organization context…</span>
+      </div>
+    );
+  }
+
+  if (!currentOrgId) {
+    return (
+      <div className="rounded-lg border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
+        Join or create an organization to manage security.
+      </div>
+    );
+  }
+
+  // Handlers
+  const handleEditRole = (member: OrgMember) => {
+    setSelectedMember(member);
+    setIsRoleDialogOpen(true);
+  };
+
+  const handleConfirmRoleChange = async (newRole: OrgRole) => {
+    if (!selectedMember || !currentOrgId) return;
+
+    const result = await updateMemberRole({
+      orgId: currentOrgId,
+      userId: selectedMember.user_id,
+      newRole,
+    });
+
+    if (result.success) {
+      await refreshMembers();
+      setIsRoleDialogOpen(false);
+      setSelectedMember(null);
+    } else {
+      throw new Error(result.error || 'Failed to update role');
     }
+  };
 
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(u => 
-        u.email.toLowerCase().includes(query) ||
-        u.name.toLowerCase().includes(query)
-      );
+  const handleRemoveMember = (member: OrgMember) => {
+    setMemberToRemove(member);
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!memberToRemove || !currentOrgId) return;
+
+    const result = await removeMember({
+      orgId: currentOrgId,
+      userId: memberToRemove.user_id,
+    });
+
+    if (result.success) {
+      await refreshMembers();
+      setMemberToRemove(null);
+    } else {
+      console.error('Failed to remove member:', result.error);
     }
+  };
 
-    return filtered;
-  }, [searchQuery, statusFilter, roleFilter]);
+  const handleInviteMember = () => {
+    setIsInviteDialogOpen(true);
+  };
 
-  const filteredAuditEntries = useMemo(() => {
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return mockAuditEntries.filter(e =>
-        e.userName.toLowerCase().includes(query) ||
-        e.action.toLowerCase().includes(query) ||
-        e.resource.toLowerCase().includes(query)
-      );
+  const handleConfirmInvite = async () => {
+    if (!currentOrgId || !inviteEmail) return;
+
+    setIsInviting(true);
+    try {
+      const result = await inviteMember({
+        orgId: currentOrgId,
+        email: inviteEmail,
+        role: inviteRole,
+      });
+
+      if (result.success) {
+        setIsInviteDialogOpen(false);
+        setInviteEmail('');
+        setInviteRole('viewer');
+        await refreshMembers();
+      } else {
+        console.error('Failed to invite member:', result.error);
+      }
+    } finally {
+      setIsInviting(false);
     }
-    return mockAuditEntries;
-  }, [searchQuery]);
+  };
 
-  const filteredSessions = useMemo(() => {
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      return mockSessions.filter(s =>
-        s.userName.toLowerCase().includes(query) ||
-        s.email.toLowerCase().includes(query) ||
-        s.ipAddress.toLowerCase().includes(query)
-      );
+  const handleRevokeSession = async (sessionId: string, userId: string) => {
+    const result = await revokeSession({ sessionId, userId });
+    if (result.success) {
+      await refreshSessions();
+    } else {
+      throw new Error(result.error || 'Failed to revoke session');
     }
-    return mockSessions;
-  }, [searchQuery]);
+  };
+
+  const handleSaveSecuritySettings = async (settings: SecuritySettings) => {
+    if (!currentOrgId) return;
+
+    // Save 2FA setting
+    const twoFAResult = await enforce2FA({
+      orgId: currentOrgId,
+      enabled: settings.require2FA,
+    });
+
+    // Save password policy
+    const policyResult = await updatePasswordPolicy({
+      orgId: currentOrgId,
+      policy: settings.passwordPolicy,
+    });
+
+    if (twoFAResult.success && policyResult.success) {
+      setSecuritySettings(settings);
+      await refreshEvents(); // Refresh to show the audit log entries
+    } else {
+      throw new Error('Failed to save security settings');
+    }
+  };
 
   // Calculate stats
-  const stats = useMemo(() => {
-    const totalUsers = mockUsers.length;
-    const activeUsers = mockUsers.filter(u => u.status === 'active').length;
-    const totalRoles = mockRoles.length;
-    const activeSessions = mockSessions.filter(s => s.isActive).length;
-    
-    return { totalUsers, activeUsers, totalRoles, activeSessions };
-  }, []);
-
-  const getStatusBadge = (status: User['status']) => {
-    switch (status) {
-      case 'active':
-        return <Badge className={getBadgeClasses('security.active')}>Active</Badge>;
-      case 'inactive':
-        return <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>;
-      case 'suspended':
-        return <Badge className={getBadgeClasses('security.suspended')}>Suspended</Badge>;
-    }
-  };
-
-  const getUserStatus = (user: User): User['status'] => {
-    return userStatusMap.get(user.id) ?? user.status;
-  };
-
-  const toggleUserStatus = (userId: string, currentStatus: User['status']) => {
-    setUserStatusMap(prev => {
-      const newMap = new Map(prev);
-      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-      newMap.set(userId, newStatus);
-      return newMap;
-    });
-  };
+  const totalUsers = members.length;
+  const activeUsers = members.filter(m => m.isActive).length;
+  const activeSessions = sessions.length;
+  const recentEvents = events.length;
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8 px-2 sm:px-0">
-      {/* Controls */}
-      <div className="flex items-center justify-end gap-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span>Live monitoring</span>
-        </div>
-        <button
-          onClick={() => setAutoRefresh(!autoRefresh)}
-          className="flex items-center gap-2 px-3 py-2 text-sm border rounded-lg hover:bg-accent transition-colors"
-        >
-          <RefreshCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
-          {autoRefresh ? 'Auto-refresh' : 'Manual'}
-        </button>
-      </div>
-
-      {/* Overview Stats Cards - Shown on all tabs */}
+      {/* Overview Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
@@ -527,8 +248,8 @@ export default function ConsoleSecurityPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers}</div>
-            <p className="text-xs text-muted-foreground mt-1">{stats.activeUsers} active</p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-muted-foreground mt-1">{activeUsers} active</p>
           </CardContent>
         </Card>
 
@@ -536,12 +257,12 @@ export default function ConsoleSecurityPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 !flex-row">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4 text-primary flex-shrink-0" />
-              <CardTitle className="text-sm font-medium">Roles</CardTitle>
+              <CardTitle className="text-sm font-medium">Security Events</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalRoles}</div>
-            <p className="text-xs text-muted-foreground mt-1">Access roles defined</p>
+            <div className="text-2xl font-bold">{stats?.last24h || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">Last 24 hours</p>
           </CardContent>
         </Card>
 
@@ -553,7 +274,7 @@ export default function ConsoleSecurityPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.activeSessions}</div>
+            <div className="text-2xl font-bold text-green-600">{activeSessions}</div>
             <p className="text-xs text-muted-foreground mt-1">Currently logged in</p>
           </CardContent>
         </Card>
@@ -566,8 +287,8 @@ export default function ConsoleSecurityPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockAuditEntries.length}</div>
-            <p className="text-xs text-muted-foreground mt-1">Last 24 hours</p>
+            <div className="text-2xl font-bold">{recentEvents}</div>
+            <p className="text-xs text-muted-foreground mt-1">Recent activity</p>
           </CardContent>
         </Card>
       </div>
@@ -605,673 +326,155 @@ export default function ConsoleSecurityPage() {
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
             {/* User Management Tab */}
             <TabsContent value="users" className="space-y-4 mt-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search users..."
-                    className="pl-9"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+              {membersError ? (
+                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <p>{membersError}</p>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
-                    <SelectTrigger className="w-full sm:w-40">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="suspended">Suspended</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={roleFilter} onValueChange={setRoleFilter}>
-                    <SelectTrigger className="w-full sm:w-40">
-                      <SelectValue placeholder="Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Roles</SelectItem>
-                      {mockRoles.map(role => (
-                        <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={() => setIsCreateUserOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add User
-                  </Button>
-                </div>
-              </div>
-
-              <TableContainer id="security-users-table" height="lg">
-                <Table className="min-w-[1400px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHeadText className="min-w-0 max-w-[20%]">User</TableHeadText>
-                      <TableHeadText className="w-48">Role</TableHeadText>
-                      <TableHeadText className="w-40">Access</TableHeadText>
-                      <TableHeadText className="w-32">Auth Method</TableHeadText>
-                      <TableHeadText className="w-24">2FA</TableHeadText>
-                      <TableHeadStatus className="w-28">Status</TableHeadStatus>
-                      <TableHeadText className="w-40">Last Login</TableHeadText>
-                      <TableHeadAction className="w-32">Actions</TableHeadAction>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUsers.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                          No users found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredUsers.map((user) => {
-                        const roleInfo = ALL_ROLES_ORDERED.find(r => r.id === user.role);
-                        return (
-                          <TableRow key={user.id}>
-                            <TableCellText className="min-w-0 max-w-[20%]">
-                              <UserOrgCell
-                                primary={getUserDisplay({ name: user.name, email: user.email }).primary}
-                                secondary={getUserDisplay({ name: user.name, email: user.email }).secondary}
-                              />
-                            </TableCellText>
-                            <TableCellText className="w-48">
-                              <span className="text-sm text-zinc-700 dark:text-zinc-300 block truncate whitespace-nowrap">
-                                {roleInfo?.name || user.role}
-                              </span>
-                            </TableCellText>
-                            <TableCellText className="w-40">
-                              <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                                {roleInfo?.access === 'app+console' ? 'App + Console' : 'App Only'}
-                              </span>
-                            </TableCellText>
-                            <TableCellText className="w-32">
-                              <span className="text-sm text-zinc-700 dark:text-zinc-300 capitalize">
-                                {roleInfo?.authMethod === 'email' ? 'Email Only' : 'Any'}
-                              </span>
-                            </TableCellText>
-                            <TableCellText className="w-24">
-                              <Badge variant={roleInfo?.requires2FA ? 'destructive' : 'outline'} className="text-xs">
-                                {roleInfo?.requires2FA ? 'Required' : 'Optional'}
-                              </Badge>
-                            </TableCellText>
-                            <TableCellStatus className="w-28">
-                              {getStatusBadge(getUserStatus(user))}
-                            </TableCellStatus>
-                            <TableCellText className="whitespace-nowrap w-40">
-                              {user.lastLogin ? (
-                                <DateTimeCell date={user.lastLogin} />
-                              ) : (
-                                '—'
-                              )}
-                            </TableCellText>
-                            <TableCellAction className="w-32">
-                              <ActionIconsCell>
-                                <Button variant="ghost" size="icon">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              <Button variant="ghost" size="icon">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </ActionIconsCell>
-                          </TableCellAction>
-                        </TableRow>
-                        );
-                      })
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              ) : (
+                <UserManagementTable
+                  members={members}
+                  currentUserRole={currentUserRole}
+                  currentUserId={currentUserId}
+                  onEditRole={handleEditRole}
+                  onRemoveMember={handleRemoveMember}
+                  onInviteMember={handleInviteMember}
+                  isLoading={isLoadingMembers}
+                />
+              )}
             </TabsContent>
 
             {/* Access Control Tab */}
-            <TabsContent value="access-control" className="space-y-4 mt-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 w-full sm:w-auto">
-                  <Select value={matrixScope} onValueChange={(v) => setMatrixScope(v as typeof matrixScope)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="App" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="application">User Application</SelectItem>
-                      <SelectItem value="console">Console</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={selectedResource} onValueChange={(v) => setSelectedResource(v as typeof selectedResource)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Resource" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RESOURCES.map(r => (
-                        <SelectItem key={r} value={r}>{r}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={selectedAction} onValueChange={(v) => setSelectedAction(v as typeof selectedAction)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Action" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ACTIONS.map(a => (
-                        <SelectItem key={a} value={a}>{a}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={selectedUserRole} onValueChange={(v) => setSelectedUserRole(v)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="User" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
-                        <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={() => setIsCreateRoleOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Role
-                </Button>
-              </div>
-
-              {/* Roles Grid removed per request */}
-
-              {/* Permissions Matrix */}
-              <Card>
-                <CardHeader>
-                  {/* Header removed per request */}
-                </CardHeader>
-                <CardContent>
-                  <TableContainer id="security-permissions-matrix-table" height="md">
-                    <Table className="min-w-[800px] [&_th]:px-3 [&_td]:px-3 [&_th]:py-3 [&_td]:py-4">
-                      <TableColgroup columns={[
-                        { width: 'sm' },
-                        { width: 'sm' },
-                        ...(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(() => ({ width: 'sm' as const })),
-                      ]} />
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="sticky left-0 z-20 bg-background w-28">Resource</TableHead>
-                          <TableHead className="sticky left-[112px] z-20 bg-background w-20">Action</TableHead>
-                          {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES).map(role => (
-                            <TableHeadAction key={role.id} className="whitespace-nowrap w-28">{role.name}</TableHeadAction>
-                          ))}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {RESOURCES.map((resource) => ({ resource, actions: (resource === 'Audit Logs' ? ['read'] : ['read', 'write', ...(resource === 'Records' || resource === 'Users' || resource === 'Roles' ? ['delete'] : []), ...(resource === 'Users' || resource === 'Roles' ? ['manage'] : [])]) as string[] }))
-                          .flatMap((item) => {
-                          const matchesQuery = (key: string) => key.toLowerCase().includes(searchQuery.toLowerCase());
-                          const displayedRoles = (matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES);
-                          const actionRows = item.actions
-                            .filter(a => (selectedResource === '' || item.resource === selectedResource))
-                            .filter(a => (selectedAction === '' || a === selectedAction))
-                            .filter(a => matchesQuery(item.resource) || matchesQuery(a) || searchQuery === '')
-                            .filter(a => {
-                              if (!showGrantedOnly) return true;
-                              // Keep action row only if any displayed role has the permission
-                              return displayedRoles.some(role => {
-                                const has = role.permissions.includes(a) ||
-                                  role.permissions.includes(`${a}_${item.resource.toLowerCase()}`) ||
-                                  (role.name.includes('Senior Admin') && a !== 'manage_users');
-                                return has;
-                              });
-                            })
-                            .map((action, actionIdx, arr) => {
-                              return (
-                                <TableRow key={`${item.resource}-${action}`} className={actionIdx % 2 === 1 ? 'bg-muted/30' : ''}>
-                                  {actionIdx === 0 && (
-                                    <TableCell rowSpan={arr.length} className="font-medium align-middle sticky left-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-28">
-                                      {item.resource}
-                                    </TableCell>
-                                  )}
-                                  <TableCell className="text-xs sm:text-sm text-muted-foreground sticky left-[112px] z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-20">
-                                    <Badge variant="outline" className="px-1.5 py-0 text-[10px] sm:text-[11px]">{action}</Badge>
-                                  </TableCell>
-                                  {(matrixScope === 'application' ? APPLICATION_ROLES : CONSOLE_ROLES)
-                                    .filter(role => (selectedUserRole === '' || role.name === selectedUserRole))
-                                    .map(role => {
-                                    const hasPermission = role.permissions.includes(action) ||
-                                      role.permissions.includes(`${action}_${item.resource.toLowerCase()}`) ||
-                                      (role.name.includes('Senior Admin') && action !== 'manage_users');
-                                    // optional: show-only-granted could hide denied cells; keeping all visible for clarity
-                                    return (
-                                      <TableCell key={role.id} className="text-center w-28">
-                                        {hasPermission ? (
-                                          <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 mx-auto" />
-                                        ) : (
-                                          <XCircle className={cn('h-4 w-4 sm:h-5 sm:w-5 mx-auto text-red-600 dark:text-red-400', showGrantedOnly ? 'opacity-20' : '')} />
-                                        )}
-                                      </TableCell>
-                                    );
-                                  })}
-                                </TableRow>
-                              );
-                            });
-                          return actionRows;
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-
-              {/* Admin/Owner Email Whitelist Section */}
-              <Card className="mt-6">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        Admin & Owner Email Whitelist
-                      </CardTitle>
-                      <CardDescription>
-                        Manage authorized emails for Admin and Owner access. Only Owner Users can add/remove entries.
-                      </CardDescription>
-                    </div>
-                    <Button onClick={() => setIsAddAdminOpen(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Email
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <TableContainer id="admin-whitelist-table" height="md">
-                    <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHeadText className="min-w-0 max-w-[30%]">Email</TableHeadText>
-                          <TableHeadText className="hidden md:table-cell w-32">Role</TableHeadText>
-                          <TableHeadStatus className="hidden lg:table-cell w-28">2FA Status</TableHeadStatus>
-                          <TableHeadText className="hidden lg:table-cell w-48">Added By</TableHeadText>
-                          <TableHeadText className="hidden md:table-cell w-40">Last Login</TableHeadText>
-                          <TableHeadAction className="w-32">Actions</TableHeadAction>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {mockAdminWhitelist.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                              No whitelisted emails
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          mockAdminWhitelist.map((admin) => (
-                            <TableRow key={admin.id}>
-                              <TableCellText className="min-w-0 max-w-[30%]">
-                                <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate">
-                                  {admin.email}
-                                </span>
-                              </TableCellText>
-                              <TableCellText className="hidden md:table-cell w-32">
-                                <span className="text-sm capitalize text-zinc-700 dark:text-zinc-300">
-                                  {admin.role}
-                                </span>
-                              </TableCellText>
-                              <TableCellStatus className="hidden lg:table-cell w-28">
-                                <Badge className={getBadgeClasses(admin.twoFactorEnabled ? 'success.soft' : 'danger.soft')}>
-                                  {admin.twoFactorEnabled ? 'Enabled' : 'Required'}
-                                </Badge>
-                              </TableCellStatus>
-                              <TableCellText className="hidden lg:table-cell w-48">
-                                <span className="text-sm text-muted-foreground">
-                                  {admin.addedBy}
-                                </span>
-                              </TableCellText>
-                              <TableCellText className="hidden md:table-cell whitespace-nowrap w-40">
-                                {admin.lastLogin ? (
-                                  <DateTimeCell date={admin.lastLogin} />
-                                ) : (
-                                  <span className="text-muted-foreground">Never</span>
-                                )}
-                              </TableCellText>
-                              <TableCellAction className="w-32">
-                                <ActionIconsCell>
-                                  <Button variant="ghost" size="icon" disabled={admin.role === 'owner'}>
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </ActionIconsCell>
-                              </TableCellAction>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
+            <TabsContent value="access-control" className="space-y-6 mt-0">
+              <PermissionsMatrix highlightRole={currentUserRole || undefined} />
+              <PasswordPolicyEditor
+                currentUserRole={currentUserRole}
+                settings={securitySettings}
+                onSave={handleSaveSecuritySettings}
+              />
             </TabsContent>
 
             {/* Audit Trail Tab */}
             <TabsContent value="audit-trail" className="space-y-4 mt-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search audit trail..."
-                    className="pl-9"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+              {eventsError ? (
+                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <p>{eventsError}</p>
+                  </div>
                 </div>
-                <Select defaultValue="24h">
-                  <SelectTrigger className="w-full sm:w-40">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1h">Last hour</SelectItem>
-                    <SelectItem value="24h">Last 24 hours</SelectItem>
-                    <SelectItem value="7d">Last 7 days</SelectItem>
-                    <SelectItem value="30d">Last 30 days</SelectItem>
-                    <SelectItem value="all">All time</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <TableContainer id="security-audit-table" height="lg">
-                <Table className="min-w-[940px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHeadText className="hidden md:table-cell w-40">Timestamp</TableHeadText>
-                      <TableHeadText className="min-w-0">User</TableHeadText>
-                      <TableHeadStatus className="hidden lg:table-cell w-36">Action</TableHeadStatus>
-                      <TableHeadText className="hidden lg:table-cell w-36">Resource</TableHeadText>
-                      <TableHeadText className="hidden md:table-cell w-36">IP Address</TableHeadText>
-                      <TableHeadAction className="w-36">Details</TableHeadAction>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredAuditEntries.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                          No audit entries found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredAuditEntries.map((entry) => {
-                        const d = getAuditUserDisplay(entry.userId);
-                        return (
-                          <TableRow key={entry.id}>
-                            <TableCellText className="hidden md:table-cell w-40">
-                              <DateTimeCell 
-                                date={entry.timestamp instanceof Date ? entry.timestamp : new Date(entry.timestamp)}
-                              />
-                            </TableCellText>
-                            <TableCellText className="min-w-0">
-                              <UserOrgCell primary={d.primary} secondary={`@${d.secondary}`} />
-                            </TableCellText>
-                            <TableCellStatus className="hidden lg:table-cell w-36">
-                              <Badge className={getBadgeClasses(actionToPreset(entry.action)) + ' capitalize'}>
-                                {entry.action}
-                              </Badge>
-                            </TableCellStatus>
-                            <TableCellText className="hidden lg:table-cell w-36">
-                              <span className="text-sm capitalize">{entry.resource}</span>
-                            </TableCellText>
-                            <TableCellText className="hidden md:table-cell text-sm text-muted-foreground w-36">
-                              {entry.ip}
-                            </TableCellText>
-                            <TableCellAction className="w-36">
-                              <ActionIconsCell>
-                                <Button variant="ghost" size="icon">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                              </ActionIconsCell>
-                            </TableCellAction>
-                          </TableRow>
-                        );
-                      })
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              ) : (
+                <SecurityEventsList
+                  events={events}
+                  isLoading={isLoadingEvents}
+                />
+              )}
             </TabsContent>
 
             {/* Sessions Tab */}
             <TabsContent value="sessions" className="space-y-4 mt-0">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search sessions..."
-                    className="pl-9"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+              {sessionsError ? (
+                <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <p>{sessionsError}</p>
+                  </div>
                 </div>
-                <Button variant="outline">
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh
-                </Button>
-              </div>
-
-              <TableContainer id="security-sessions-table" height="lg">
-                <Table className="min-w-[980px] [&_th]:px-4 [&_td]:px-4 [&_th]:py-3 [&_td]:py-4">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHeadText className="min-w-0 max-w-[25%]">User</TableHeadText>
-                      <TableHeadText className="hidden md:table-cell w-36">IP Address</TableHeadText>
-                      <TableHeadText className="hidden lg:table-cell w-40">User Agent</TableHeadText>
-                      <TableHeadText className="hidden md:table-cell w-40">Created</TableHeadText>
-                      <TableHeadText className="hidden lg:table-cell w-40">Last Activity</TableHeadText>
-                      <TableHeadStatus className="w-36">Status</TableHeadStatus>
-                      <TableHeadAction className="w-36">Actions</TableHeadAction>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSessions.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                          No sessions found
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredSessions.map((session) => {
-                        const userDisplay = getUserDisplay({ name: session.userName, email: session.email });
-                        const uaMain = session.userAgent.match(/^([^()]+)/)?.[1]?.trim() || session.userAgent;
-                        const uaParen = session.userAgent.match(/\(([^)]+)\)/)?.[1]?.trim() || '';
-                        return (
-                          <TableRow key={session.id}>
-                            <TableCellText className="min-w-0 max-w-[25%]">
-                              <UserOrgCell 
-                                primary={userDisplay.primary} 
-                                secondary={`@${userDisplay.secondary}`}
-                              />
-                            </TableCellText>
-                            <TableCellText className="hidden md:table-cell text-sm text-muted-foreground w-36">
-                              <div className="truncate whitespace-nowrap">{session.ipAddress}</div>
-                            </TableCellText>
-                            <TableCellText className="hidden lg:table-cell w-40">
-                              <div className="leading-tight line-clamp-2">
-                                <div className="text-sm truncate whitespace-nowrap">{uaMain}</div>
-                                {uaParen && (
-                                  <div className="text-xs text-muted-foreground truncate whitespace-nowrap">{uaParen}</div>
-                                )}
-                              </div>
-                            </TableCellText>
-                            <TableCellText className="hidden md:table-cell w-40">
-                              <DateTimeCell date={session.createdAt} />
-                            </TableCellText>
-                            <TableCellText className="hidden lg:table-cell w-40">
-                              <DateTimeCell date={session.lastActivity} />
-                            </TableCellText>
-                            <TableCellStatus className="w-36">
-                              {session.isActive ? (
-                                <Badge className={getBadgeClasses('security.active')}>Active</Badge>
-                              ) : (
-                                <Badge className={getBadgeClasses('security.inactive')}>Inactive</Badge>
-                              )}
-                            </TableCellStatus>
-                            <TableCellAction className="w-36">
-                              <ActionIconsCell>
-                                <Button variant="ghost" size="icon">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </ActionIconsCell>
-                            </TableCellAction>
-                          </TableRow>
-                        );
-                      })
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              ) : (
+                <ActiveSessionsList
+                  sessions={sessions}
+                  currentUserId={currentUserId}
+                  onRevokeSession={handleRevokeSession}
+                  onRefresh={refreshSessions}
+                  isLoading={isLoadingSessions}
+                />
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
 
-      {/* Create User Dialog */}
-      <Dialog open={isCreateUserOpen} onOpenChange={setIsCreateUserOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New User</DialogTitle>
-            <DialogDescription>
-              Add a new user to the system
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="user-email">Email</Label>
-              <Input id="user-email" type="email" placeholder="user@example.com" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="user-name">Name</Label>
-              <Input id="user-name" placeholder="User Name" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="user-role">Role</Label>
-              <Select>
-                <SelectTrigger id="user-role">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockRoles.map(role => (
-                    <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsCreateUserOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsCreateUserOpen(false)}>
-              Create User
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Role Assignment Dialog */}
+      <RoleAssignmentDialog
+        open={isRoleDialogOpen}
+        onOpenChange={setIsRoleDialogOpen}
+        member={selectedMember}
+        currentRole={currentUserRole || 'viewer'}
+        onConfirm={handleConfirmRoleChange}
+      />
 
-      {/* Create Role Dialog */}
-      <Dialog open={isCreateRoleOpen} onOpenChange={setIsCreateRoleOpen}>
+      {/* Invite Member Dialog */}
+      <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Role</DialogTitle>
+            <DialogTitle>Invite Member</DialogTitle>
             <DialogDescription>
-              Define a new role with specific permissions
+              Send an invitation to join the organization
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="role-name">Role Name</Label>
-              <Input id="role-name" placeholder="Role Name" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="role-description">Description</Label>
-              <Input id="role-description" placeholder="Role description" />
-            </div>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsCreateRoleOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsCreateRoleOpen(false)}>
-              Create Role
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Admin/Owner Email Dialog */}
-      <Dialog open={isAddAdminOpen} onOpenChange={setIsAddAdminOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Admin/Owner Email</DialogTitle>
-            <DialogDescription>
-              Add an authorized email for Admin or Owner access. 2FA will be required for this user.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="admin-email">Email Address</Label>
-              <Input 
-                id="admin-email" 
-                type="email" 
-                placeholder="admin@example.com" 
-                value={newAdminEmail}
-                onChange={(e) => setNewAdminEmail(e.target.value)}
+              <Label htmlFor="invite-email">Email Address</Label>
+              <Input
+                id="invite-email"
+                type="email"
+                placeholder="user@example.com"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                This email will be whitelisted for console access
-              </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="admin-role">Role</Label>
-              <Select value={newAdminRole} onValueChange={(v) => setNewAdminRole(v as 'admin' | 'owner')}>
-                <SelectTrigger id="admin-role">
-                  <SelectValue placeholder="Select role" />
+              <Label htmlFor="invite-role">Role</Label>
+              <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as typeof inviteRole)}>
+                <SelectTrigger id="invite-role">
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Admin User</SelectItem>
-                  <SelectItem value="owner">Owner User (Super Admin)</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
+                  <SelectItem value="viewer">Viewer</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                {newAdminRole === 'admin' 
-                  ? 'Can manage Standard Users' 
-                  : 'Can manage all users including Admin Users'}
-              </p>
-            </div>
-            <div className="rounded-md bg-amber-50 dark:bg-amber-950/20 p-3 border border-amber-200 dark:border-amber-800">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500 mt-0.5" />
-                <div className="text-xs text-amber-800 dark:text-amber-200">
-                  <p className="font-medium mb-1">Important:</p>
-                  <ul className="list-disc list-inside space-y-0.5">
-                    <li>Email-only authentication (magic link)</li>
-                    <li>Two-factor authentication (2FA) required</li>
-                    <li>Access to both App and Console</li>
-                  </ul>
-                </div>
-              </div>
             </div>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => {
-              setIsAddAdminOpen(false);
-              setNewAdminEmail('');
-              setNewAdminRole('admin');
-            }}>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInviteDialogOpen(false)} disabled={isInviting}>
               Cancel
             </Button>
-            <Button onClick={() => {
-              // Mock: Add admin to whitelist
-              console.log('Adding admin:', { email: newAdminEmail, role: newAdminRole });
-              setIsAddAdminOpen(false);
-              setNewAdminEmail('');
-              setNewAdminRole('admin');
-            }}>
-              Add to Whitelist
+            <Button onClick={handleConfirmInvite} disabled={!inviteEmail || isInviting}>
+              {isInviting ? 'Sending...' : 'Send Invite'}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Remove Member Confirmation */}
+      <AlertDialog open={!!memberToRemove} onOpenChange={(open) => !open && setMemberToRemove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Member?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {memberToRemove && (
+                <>
+                  This will remove <strong>{memberToRemove.user?.full_name || memberToRemove.user?.email}</strong> from the organization.
+                  They will lose access to all organization resources.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmRemove}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Remove Member
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

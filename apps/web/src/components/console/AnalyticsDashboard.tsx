@@ -8,7 +8,7 @@ import { AnalyticsMetricCard } from './AnalyticsMetricCard';
 import { AnalyticsChart } from './AnalyticsChart';
 import { formatBytes, formatDuration } from '@/lib/analytics/formatters';
 
-export function AnalyticsDashboard() {
+export function AnalyticsDashboard({ orgId }: { orgId?: string }) {
   const {
     dateRange,
     setDateRange,
@@ -19,7 +19,7 @@ export function AnalyticsDashboard() {
     featureMetrics,
     refresh,
     exportData,
-  } = useAnalytics(); // No orgId passed means Platform Analytics
+  } = useAnalytics(orgId); // Passing orgId scopes analytics to the selected organization
 
   return (
     <div className="space-y-6">

@@ -8,7 +8,7 @@ import { requireAdmin, getUser } from '@/lib/auth/server';
 import { env } from '@/env';
 import type { Database } from '@/types/database.types';
 
-type Severity = 'critical' | 'error' | 'warning' | 'info';
+export type Severity = 'critical' | 'error' | 'warning' | 'info';
 
 export type ErrorLogRecord = {
   id: string;
@@ -34,13 +34,6 @@ export type ErrorLogRecord = {
 };
 
 type ListSort = 'newest' | 'oldest' | 'severity' | 'occurrences';
-
-const severityRank: Record<Severity, number> = {
-  critical: 4,
-  error: 3,
-  warning: 2,
-  info: 1,
-};
 
 let serviceRoleClient: SupabaseClient<Database> | null = null;
 
@@ -105,7 +98,7 @@ const statsInputSchema = z.object({
   orgId: z.string().uuid(),
 });
 
-function sanitizeMetadata(meta: unknown): Record<string, any> {
+export function sanitizeMetadata(meta: unknown): Record<string, any> {
   if (!meta || typeof meta !== 'object') return {};
   const forbidden = /(password|token|secret|authorization|cookie|apikey|api_key)/i;
 
@@ -132,7 +125,7 @@ function sanitizeMetadata(meta: unknown): Record<string, any> {
   return recurse(meta);
 }
 
-function sanitizeStackTrace(stack?: string | null): string | null {
+export function sanitizeStackTrace(stack?: string | null): string | null {
   if (!stack) return null;
   // Remove absolute paths and query params
   return stack
@@ -141,13 +134,13 @@ function sanitizeStackTrace(stack?: string | null): string | null {
     .slice(0, 8000);
 }
 
-function computeGroupingHash(message: string, stack?: string | null, componentStack?: string | null) {
+export function computeGroupingHash(message: string, stack?: string | null, componentStack?: string | null) {
   const basis = `${message}|${stack ?? ''}|${componentStack ?? ''}`;
   return crypto.createHash('sha256').update(basis).digest('hex').slice(0, 24);
 }
 
 const rateBuckets = new Map<string, { count: number; resetAt: number }>();
-function checkRateLimit(key: string, windowMs = 60_000, max = 30) {
+export function checkRateLimit(key: string, windowMs = 60_000, max = 30) {
   const now = Date.now();
   const bucket = rateBuckets.get(key);
   if (!bucket || now > bucket.resetAt) {
@@ -159,6 +152,11 @@ function checkRateLimit(key: string, windowMs = 60_000, max = 30) {
   }
   bucket.count += 1;
   return { allowed: true };
+}
+
+// Testing utility to reset rate limit buckets
+export function __resetRateLimits() {
+  rateBuckets.clear();
 }
 
 function mapSortToOrder(sort: ListSort): { column: string; ascending: boolean } {
@@ -198,7 +196,7 @@ export async function logError(input: z.input<typeof logInputSchema>) {
   // Capture user context (best effort)
   const user = await getUser().catch(() => null);
   const userId = user?.id ?? null;
-  const orgId = payload.orgId ?? env.NEXT_PUBLIC_DEFAULT_ORG_ID;
+  const orgId = payload.orgId;
 
   if (!orgId) {
     return { success: false, error: 'orgId is required for logging' };

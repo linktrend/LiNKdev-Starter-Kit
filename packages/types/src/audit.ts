@@ -96,6 +96,38 @@ export const ExportAuditLogsInput = z.object({
 })
 
 /**
+ * tRPC input schema for getting a single audit log by ID.
+ */
+export const GetAuditLogByIdInput = z.object({
+  logId: z.string().uuid('Invalid log ID'),
+  orgId: z.string().uuid('Invalid organization ID'),
+})
+
+/**
+ * tRPC input schema for searching audit logs.
+ */
+export const SearchAuditLogsInput = z.object({
+  orgId: z.string().uuid('Invalid organization ID'),
+  query: z.string().min(1, 'Search query is required'),
+  entityType: z.string().optional(),
+  action: z.string().optional(),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
+  cursor: z.string().optional(),
+  limit: z.number().min(1).max(100).default(50),
+})
+
+/**
+ * tRPC input schema for getting activity summary.
+ */
+export const GetActivitySummaryInput = z.object({
+  orgId: z.string().uuid('Invalid organization ID'),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
+  groupBy: z.enum(['hour', 'day', 'week']).default('day'),
+})
+
+/**
  * Paged audit log response payload.
  */
 export interface AuditLogsResponse {
@@ -114,6 +146,27 @@ export interface AuditStatsResponse {
   by_actor: Record<string, number>
   total: number
   window: string
+}
+
+/**
+ * Activity summary response with timeline and breakdowns.
+ */
+export interface ActivitySummaryResponse {
+  timeline: Array<{
+    timestamp: string
+    count: number
+  }>
+  by_action: Record<string, number>
+  by_entity_type: Record<string, number>
+  top_actors: Array<{
+    actor_id: string
+    count: number
+  }>
+  total: number
+  period: {
+    from: string
+    to: string
+  }
 }
 
 /**

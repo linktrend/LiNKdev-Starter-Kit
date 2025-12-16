@@ -1,20 +1,7 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import SuperJSON from 'superjson';
 import type { UsageLogPayload } from '@starter/types';
-
-// Define the context type that will be provided by the consuming application
-export type UsageLogger = (payload: UsageLogPayload) => void | Promise<void>;
-
-export interface TRPCContext {
-  supabase: any;
-  user: any;
-  posthog?: any;
-  headers?: Headers;
-  usageLogger?: UsageLogger;
-  // RBAC context - populated by accessGuard middleware
-  userRole?: string;
-  orgId?: string;
-}
+import type { TRPCContext, UsageLogger } from './context';
 
 function safeUsageLog(logger: UsageLogger | undefined, payload: UsageLogPayload) {
   if (!logger) return;

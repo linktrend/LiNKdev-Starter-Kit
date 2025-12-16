@@ -8,15 +8,17 @@ import { OrgRole } from '@starter/types';
 
 // Role hierarchy with numeric values for comparison
 export const ROLE_HIERARCHY: Record<OrgRole, number> = {
-  owner: 3,
-  member: 2,
+  owner: 4,
+  admin: 3,
+  editor: 2,
   viewer: 1,
 } as const;
 
 // Role permissions mapping
 export const ROLE_PERMISSIONS = {
   owner: ['manage_org', 'manage_members', 'manage_invites', 'manage_billing', 'view_content', 'edit_content'],
-  member: ['manage_members', 'manage_invites', 'view_content', 'edit_content'],
+  admin: ['manage_members', 'manage_invites', 'manage_billing', 'view_content', 'edit_content'],
+  editor: ['view_content', 'edit_content'],
   viewer: ['view_content'],
 } as const;
 
@@ -49,14 +51,14 @@ export function isRoleHigher(role1: OrgRole, role2: OrgRole): boolean {
  * Check if user can manage members (owner or admin)
  */
 export function canManageMembers(userRole: OrgRole | null): boolean {
-  return userRole === 'owner' || userRole === 'member';
+  return userRole === 'owner' || userRole === 'admin';
 }
 
 /**
  * Check if user can manage invites (owner or admin)
  */
 export function canManageInvites(userRole: OrgRole | null): boolean {
-  return userRole === 'owner' || userRole === 'member';
+  return userRole === 'owner' || userRole === 'admin';
 }
 
 /**
@@ -70,7 +72,7 @@ export function canManageOrg(userRole: OrgRole | null): boolean {
  * Check if user can manage billing (owner or admin)
  */
 export function canManageBilling(userRole: OrgRole | null): boolean {
-  return userRole === 'owner';
+  return userRole === 'owner' || userRole === 'admin';
 }
 
 /**

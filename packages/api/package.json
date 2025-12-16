@@ -15,7 +15,8 @@
   "scripts": {
     "build": "tsup && node scripts/build-types.js",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
   },
   "dependencies": {
     "@starter/types": "workspace:*",
@@ -25,8 +26,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
+    "@vitest/coverage-v8": "^3.2.4",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "next": "14.2.3",

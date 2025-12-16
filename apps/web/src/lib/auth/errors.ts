@@ -24,12 +24,13 @@ export interface AuthError {
  */
 export function parseAuthError(error: any): AuthError {
   const errorMessage = error?.message || error?.error_description || String(error);
-  const errorCode = error?.code || error?.error;
+  const errorMessageLower = errorMessage.toLowerCase?.() ?? String(errorMessage).toLowerCase();
+  const errorCode = (error?.code || error?.error || '').toLowerCase?.() ?? '';
 
   // User cancelled OAuth flow
   if (
-    errorMessage.includes('cancelled') ||
-    errorMessage.includes('denied') ||
+    errorMessageLower.includes('cancelled') ||
+    errorMessageLower.includes('denied') ||
     errorCode === 'access_denied'
   ) {
     return {
@@ -43,8 +44,8 @@ export function parseAuthError(error: any): AuthError {
 
   // Rate limiting
   if (
-    errorMessage.includes('rate limit') ||
-    errorMessage.includes('too many requests') ||
+    errorMessageLower.includes('rate limit') ||
+    errorMessageLower.includes('too many requests') ||
     errorCode === 'rate_limit_exceeded'
   ) {
     return {
@@ -58,9 +59,9 @@ export function parseAuthError(error: any): AuthError {
 
   // Network errors
   if (
-    errorMessage.includes('network') ||
-    errorMessage.includes('fetch') ||
-    errorMessage.includes('connection') ||
+    errorMessageLower.includes('network') ||
+    errorMessageLower.includes('fetch') ||
+    errorMessageLower.includes('connection') ||
     error instanceof TypeError
   ) {
     return {
@@ -74,8 +75,8 @@ export function parseAuthError(error: any): AuthError {
 
   // Provider-specific errors
   if (
-    errorMessage.includes('provider') ||
-    errorMessage.includes('oauth') ||
+    errorMessageLower.includes('provider') ||
+    errorMessageLower.includes('oauth') ||
     errorCode === 'oauth_error'
   ) {
     return {
@@ -89,9 +90,9 @@ export function parseAuthError(error: any): AuthError {
 
   // Invalid session or token errors
   if (
-    errorMessage.includes('session') ||
-    errorMessage.includes('token') ||
-    errorMessage.includes('invalid') ||
+    errorMessageLower.includes('session') ||
+    errorMessageLower.includes('token') ||
+    errorMessageLower.includes('invalid') ||
     errorCode === 'invalid_grant'
   ) {
     return {
@@ -105,9 +106,9 @@ export function parseAuthError(error: any): AuthError {
 
   // Configuration errors (missing env vars, etc)
   if (
-    errorMessage.includes('Missing') ||
-    errorMessage.includes('configuration') ||
-    errorMessage.includes('environment')
+    errorMessageLower.includes('missing') ||
+    errorMessageLower.includes('configuration') ||
+    errorMessageLower.includes('environment')
   ) {
     return {
       type: 'configuration_error',

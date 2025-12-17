@@ -166,8 +166,12 @@ CREATE TABLE public.org_subscriptions (
     stripe_price_id text,
     current_period_start timestamptz DEFAULT now(),
     current_period_end timestamptz DEFAULT now(),
+    trial_start timestamptz,
     trial_end timestamptz,
     stripe_sub_id text UNIQUE,
+    stripe_subscription_id text,
+    cancel_at_period_end boolean DEFAULT false,
+    canceled_at timestamptz,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
 );
@@ -308,6 +312,7 @@ CREATE INDEX idx_billing_customers_stripe_id ON public.billing_customers(stripe_
 CREATE INDEX idx_org_subscriptions_plan_name ON public.org_subscriptions(plan_name);
 CREATE INDEX idx_org_subscriptions_status ON public.org_subscriptions(status);
 CREATE INDEX idx_org_subscriptions_stripe_sub_id ON public.org_subscriptions(stripe_sub_id);
+CREATE INDEX idx_org_subscriptions_stripe_subscription_id ON public.org_subscriptions(stripe_subscription_id);
 
 -- Plan Features
 CREATE INDEX idx_plan_features_plan_name ON public.plan_features(plan_name);

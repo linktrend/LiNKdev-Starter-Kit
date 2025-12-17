@@ -3,32 +3,44 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { createBillingPortal, cancelSubscription } from '@/app/actions/billing';
-import { useState } from 'react';
+import { createBillingPortal, cancelSubscription, getOrgSubscription } from '@/app/actions/billing';
+import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { OrgSubscription } from '@/types/billing';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface CurrentPlanCardProps {
   subscription: OrgSubscription | null;
   orgId: string;
+  onSubscriptionUpdate?: (subscription: OrgSubscription | null) => void;
 }
 
-export function CurrentPlanCard({ subscription, orgId }: CurrentPlanCardProps) {
+export function CurrentPlanCard({ subscription, orgId, onSubscriptionUpdate }: CurrentPlanCardProps) {
   const [loading, setLoading] = useState(false);
   const [canceling, setCanceling] = useState(false);
 
   const handleManageBilling = async () => {
     setLoading(true);
+    const toastId = toast.loading('Opening billing portal...');
+    
     const result = await createBillingPortal(orgId);
     
     if (result.success && result.url) {
+      toast.success('Redirecting to billing portal...', { id: toastId });
       window.location.href = result.url;
     } else {
-      alert(result.error || 'Failed to open billing portal');
+      toast.error(result.error || 'Failed to open billing portal', { id: toastId });
       setLoading(false);
     }
   };
+
+  const refreshSubscription = useCallback(async () => {
+    const result = await getOrgSubscription(orgId);
+    if (result.success) {
+      onSubscriptionUpdate?.(result.subscription || null);
+    }
+  }, [orgId, onSubscriptionUpdate]);
 
   const handleCancelSubscription = async () => {
     if (!confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
@@ -36,14 +48,22 @@ export function CurrentPlanCard({ subscription, orgId }: CurrentPlanCardProps) {
     }
 
     setCanceling(true);
+    const toastId = toast.loading('Canceling subscription...');
+    
     const result = await cancelSubscription(orgId);
     
     if (result.success) {
-      alert('Subscription will be canceled at the end of the billing period');
-      window.location.reload();
+      toast.success('Subscription will be canceled at the end of the billing period', { 
+        id: toastId,
+        duration: 5000,
+      });
+      
+      // Refresh subscription data without page reload
+      await refreshSubscription();
     } else {
-      alert(result.error || 'Failed to cancel subscription');
+      toast.error(result.error || 'Failed to cancel subscription', { id: toastId });
     }
+    
     setCanceling(false);
   };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useOrg } from '@/contexts/OrgContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getOrgSubscription } from '@/app/actions/billing';
 import type { OrgSubscription } from '@/types/billing';
 import { CurrentPlanCard } from './current-plan-card';
@@ -37,6 +37,10 @@ export function BillingDashboard() {
     loadSubscription();
   }, [currentOrgId]);
 
+  const handleSubscriptionUpdate = useCallback((updatedSubscription: OrgSubscription | null) => {
+    setSubscription(updatedSubscription);
+  }, []);
+
   if (orgLoading || (loading && currentOrgId)) {
     return <BillingDashboardSkeleton />;
   }
@@ -61,7 +65,11 @@ export function BillingDashboard() {
 
   return (
     <div className="space-y-8">
-      <CurrentPlanCard subscription={subscription} orgId={currentOrgId} />
+      <CurrentPlanCard 
+        subscription={subscription} 
+        orgId={currentOrgId} 
+        onSubscriptionUpdate={handleSubscriptionUpdate}
+      />
       <PlanComparison currentPlan={subscription?.plan_name || 'free'} orgId={currentOrgId} />
       {subscription?.stripe_subscription_id && (
         <BillingHistory orgId={currentOrgId} />

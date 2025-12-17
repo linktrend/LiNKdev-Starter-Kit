@@ -1,64 +1,16 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Check } from 'lucide-react';
-import { createSubscriptionCheckout } from '@/app/actions/billing';
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import type { PlanName } from '@/types/billing';
+import { useEffect, useState } from 'react';
+import { Check, Loader2 } from 'lucide-react';
 
-const PLANS = [
-  {
-    name: 'free' as PlanName,
-    displayName: 'Free',
-    price: '$0',
-    interval: 'forever',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_FREE || 'price_free',
-    features: [
-      '100 records',
-      '1,000 API calls/month',
-      '3 automations',
-      '1 GB storage',
-      'Basic support',
-    ],
-  },
-  {
-    name: 'pro' as PlanName,
-    displayName: 'Pro',
-    price: '$29',
-    interval: 'per month',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY!,
-    popular: true,
-    features: [
-      '10,000 records',
-      '100,000 API calls/month',
-      '25 automations',
-      '50 GB storage',
-      'Advanced analytics',
-      'API access',
-      'Priority support',
-    ],
-  },
-  {
-    name: 'business' as PlanName,
-    displayName: 'Business',
-    price: '$99',
-    interval: 'per month',
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS_MONTHLY!,
-    features: [
-      '100,000 records',
-      '1,000,000 API calls/month',
-      '100 automations',
-      '500 GB storage',
-      'All Pro features',
-      'SSO',
-      'Custom branding',
-      'Dedicated support',
-    ],
-  },
-];
+import { getAvailablePlans, createSubscriptionCheckout } from '@/app/actions/billing';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { AvailablePlan, PlanName } from '@/types/billing';
+import { toast } from 'sonner';
 
 interface PlanComparisonProps {
   currentPlan: PlanName;
@@ -66,28 +18,76 @@ interface PlanComparisonProps {
 }
 
 export function PlanComparison({ currentPlan, orgId }: PlanComparisonProps) {
+  const [plans, setPlans] = useState<AvailablePlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadPlans() {
+      setLoading(true);
+      setError(null);
+
+      const result = await getAvailablePlans();
+
+      if (result.success && result.plans) {
+        setPlans(result.plans);
+      } else {
+        setError(result.error || 'Failed to load plans');
+      }
+
+      setLoading(false);
+    }
+
+    loadPlans();
+  }, []);
 
   const handleUpgrade = async (priceId: string, planName: string) => {
     setLoadingPlan(planName);
+    const toastId = toast.loading(`Starting checkout for ${planName} plan...`);
     
     const result = await createSubscriptionCheckout(orgId, priceId);
     
     if (result.success && result.url) {
+      toast.success('Redirecting to checkout...', { id: toastId });
       window.location.href = result.url;
     } else {
-      alert(result.error || 'Failed to start checkout');
+      toast.error(result.error || 'Failed to start checkout', { 
+        id: toastId,
+        description: 'Please try again or contact support if the problem persists.',
+      });
       setLoadingPlan(null);
     }
   };
+
+  if (loading) {
+    return (
+      <div>
+        <h2 className="mb-4 text-2xl font-bold">Available Plans</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-96 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div>
       <h2 className="mb-4 text-2xl font-bold">Available Plans</h2>
       <div className="grid gap-6 md:grid-cols-3">
-        {PLANS.map((plan) => {
+        {plans.map((plan) => {
           const isCurrent = plan.name === currentPlan;
-          const isDowngrade = 
+          const isDowngrade =
             (currentPlan === 'business' && plan.name !== 'business') ||
             (currentPlan === 'pro' && plan.name === 'free');
 

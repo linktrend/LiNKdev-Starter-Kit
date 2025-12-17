@@ -14,6 +14,10 @@ import { TRPCReactProvider } from '@/trpc/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { SupportWidgetWrapper } from '@/components/support-widget-wrapper';
+import { ErrorBoundary } from '@/components/errors/ErrorBoundary';
+import { ErrorTracker } from '@/components/errors/ErrorTracker';
+import { ToastProvider } from '@/components/providers/toast-provider';
+import { env } from '@/env';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -91,6 +95,7 @@ export default async function LocaleLayout({
   params: { locale }
 }: PropsWithChildren<{ params: { locale: string } }>) {
   const messages = await getMessages();
+  const orgId = env.NEXT_PUBLIC_DEFAULT_ORG_ID;
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -106,11 +111,15 @@ export default async function LocaleLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <RootProvider>
             <NextIntlClientProvider messages={messages}>
-              <TRPCReactProvider>
-                {children}
-                <SupportWidgetWrapper />
-                {/* <TailwindIndicator /> */}
-              </TRPCReactProvider>
+              <ErrorBoundary orgId={orgId}>
+                <TRPCReactProvider>
+                  {children}
+                  <SupportWidgetWrapper />
+                  <ToastProvider />
+                  {/* <TailwindIndicator /> */}
+                </TRPCReactProvider>
+              </ErrorBoundary>
+              <ErrorTracker orgId={orgId} />
             </NextIntlClientProvider>
           </RootProvider>
         </ThemeProvider>

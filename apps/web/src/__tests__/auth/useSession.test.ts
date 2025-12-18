@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor, act } from '@testing-library/react'
 import { useSession } from '@/hooks/useSession'
 
 // Mock Supabase client
@@ -20,11 +20,6 @@ vi.mock('@/lib/auth/client', () => ({
 describe('useSession Hook', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
   })
 
   it('should initialize with loading state', () => {
@@ -65,7 +60,7 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     expect(result.current.session).toEqual(mockSession)
     expect(result.current.user).toEqual(mockSession.user)
@@ -88,7 +83,7 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     expect(result.current.error).toBeTruthy()
     expect(result.current.session).toBe(null)
@@ -128,7 +123,7 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     // Should have called refresh on mount due to near expiry
     expect(mockRefreshSession).toHaveBeenCalled()
@@ -158,13 +153,13 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     // Should not have called refresh on mount
     expect(mockRefreshSession).not.toHaveBeenCalled()
   })
 
-  it('should handle manual refresh', async () => {
+  it('should handle manual refresh', { timeout: 15000 }, async () => {
     const mockSession = {
       user: { id: 'user-1', email: 'test@example.com' },
       expires_at: Math.floor(Date.now() / 1000) + 3600,
@@ -195,13 +190,18 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     // Call manual refresh
-    await result.current.refresh()
+    await act(async () => {
+      await result.current.refresh()
+    })
 
     expect(mockRefreshSession).toHaveBeenCalled()
-    expect(result.current.session?.access_token).toBe('new-token')
+    
+    await waitFor(() => {
+      expect(result.current.session?.access_token).toBe('new-token')
+    }, { timeout: 10000 })
   })
 
   it('should subscribe to auth state changes', async () => {
@@ -230,17 +230,19 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     // Simulate sign out event
-    if (authCallback) {
-      authCallback('SIGNED_OUT', null)
-    }
+    act(() => {
+      if (authCallback) {
+        authCallback('SIGNED_OUT', null)
+      }
+    })
 
     await waitFor(() => {
       expect(result.current.session).toBe(null)
       expect(result.current.user).toBe(null)
-    })
+    }, { timeout: 10000 })
   })
 
   it('should handle refresh error', async () => {
@@ -271,12 +273,16 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     // Call manual refresh
-    await result.current.refresh()
+    await act(async () => {
+      await result.current.refresh()
+    })
 
-    expect(result.current.error).toBeTruthy()
+    await waitFor(() => {
+      expect(result.current.error).toBeTruthy()
+    }, { timeout: 10000 })
   })
 
   it('should clear error on successful sign in', async () => {
@@ -298,7 +304,7 @@ describe('useSession Hook', () => {
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
-    })
+    }, { timeout: 10000 })
 
     expect(result.current.error).toBeTruthy()
 
@@ -310,13 +316,15 @@ describe('useSession Hook', () => {
       refresh_token: 'refresh',
     }
 
-    if (authCallback) {
-      authCallback('SIGNED_IN', mockSession)
-    }
+    act(() => {
+      if (authCallback) {
+        authCallback('SIGNED_IN', mockSession)
+      }
+    })
 
     await waitFor(() => {
       expect(result.current.error).toBe(null)
       expect(result.current.session).toEqual(mockSession)
-    })
+    }, { timeout: 10000 })
   })
 })

@@ -69,7 +69,7 @@ describe('Middleware - Token Refresh', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     await middleware(request)
@@ -98,7 +98,7 @@ describe('Middleware - Token Refresh', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     await middleware(request)
@@ -124,7 +124,7 @@ describe('Middleware - Token Refresh', () => {
       error: { message: 'Refresh failed' },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     await middleware(request)
@@ -145,7 +145,7 @@ describe('Middleware - Route Protection', () => {
       data: { session: null },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     const response = await middleware(request)
@@ -160,7 +160,7 @@ describe('Middleware - Route Protection', () => {
       data: { session: null },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/org/test-org'))
 
     const response = await middleware(request)
@@ -174,7 +174,7 @@ describe('Middleware - Route Protection', () => {
       data: { session: null },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/settings'))
 
     const response = await middleware(request)
@@ -188,7 +188,7 @@ describe('Middleware - Route Protection', () => {
       data: { session: null },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const publicRoutes = [
       'http://localhost:3000/en/',
       'http://localhost:3000/en/login',
@@ -215,7 +215,7 @@ describe('Middleware - Route Protection', () => {
       },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/login'))
 
     const response = await middleware(request)
@@ -236,7 +236,7 @@ describe('Middleware - Route Protection', () => {
       },
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/signup'))
 
     const response = await middleware(request)
@@ -273,7 +273,7 @@ describe('Middleware - Onboarding Redirect', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     const response = await middleware(request)
@@ -302,7 +302,7 @@ describe('Middleware - Onboarding Redirect', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/dashboard'))
 
     const response = await middleware(request)
@@ -330,7 +330,7 @@ describe('Middleware - Onboarding Redirect', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/onboarding'))
 
     const response = await middleware(request)
@@ -366,7 +366,7 @@ describe('Middleware - Console Admin Check', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/console'))
 
     const response = await middleware(request)
@@ -394,7 +394,7 @@ describe('Middleware - Console Admin Check', () => {
       }),
     })
 
-    const { middleware } = await import('../../middleware')
+    const { middleware } = await import('../../../middleware')
     const request = new NextRequest(new URL('http://localhost:3000/en/console'))
 
     const response = await middleware(request)

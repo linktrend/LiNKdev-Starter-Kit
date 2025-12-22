@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 // import { cache } from "react"; // Not available in React 18
 
 import { createCaller, appRouter } from "@starter/api";
+import type { AppRouter } from "./types";
 import { createTRPCContext } from "@/server/api/trpc";
 import { createQueryClient } from "./query-client";
 
@@ -25,6 +26,6 @@ const getQueryClient = createQueryClient;
 const caller = createCaller(createContext);
 
 // Create tRPC React hooks for server-side usage
-const api = createTRPCReact<typeof appRouter>();
+const api = createTRPCReact<AppRouter>();
 
 export { api, caller };

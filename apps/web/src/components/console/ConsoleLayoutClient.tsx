@@ -4,6 +4,10 @@ import { useState, type PropsWithChildren } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import { ConsoleSidebar } from '@/components/navigation/ConsoleSidebar';
 import { ConsoleTopbar } from '@/components/navigation/ConsoleTopbar';
+import { OrgProvider, useOrg } from '@/contexts/OrgContext';
+import { OrgSwitcher } from '@/components/console/OrgSwitcher';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 const getScreenName = (pathname: string): string => {
   // Handle nested config routes first (most specific)
@@ -32,19 +36,52 @@ const getScreenName = (pathname: string): string => {
   return 'Overview';
 };
 
-export default function ConsoleLayoutClient({ children }: PropsWithChildren) {
-  const pathname = usePathname();
-  const params = useParams();
-  const locale = params.locale as string || 'en';
+function ConsoleLayoutShell({
+  children,
+  pathname,
+  locale,
+}: PropsWithChildren<{ pathname: string; locale: string }>) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const screenName = getScreenName(pathname);
-
-  // Don't show sidebar/topbar on login page
-  if (pathname?.includes('/console/login')) {
-    return <>{children}</>;
-  }
+  const { isLoading, currentOrgId, refresh, organizations } = useOrg();
 
   const sidebarWidth = isSidebarCollapsed ? 80 : 280;
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex h-full items-center justify-center py-12">
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <Spinner />
+            <span>Loading organizations…</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (!currentOrgId) {
+      return (
+        <div className="flex h-full flex-col items-center justify-center gap-3 py-12 text-center">
+          <p className="text-lg font-semibold">No organizations available</p>
+          <p className="text-sm text-muted-foreground">
+            You are not a member of any organizations yet.
+          </p>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={() => refresh()}>
+              Retry
+            </Button>
+            {organizations.length === 0 && (
+              <span className="text-xs text-muted-foreground">
+                Contact an admin to be added to an organization.
+              </span>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return children;
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -62,11 +99,29 @@ export default function ConsoleLayoutClient({ children }: PropsWithChildren) {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <ConsoleTopbar locale={locale} screenName={screenName} />
+        <ConsoleTopbar locale={locale} screenName={screenName} orgSwitcher={<OrgSwitcher />} />
         <main className="flex-1 p-8 min-w-0 overflow-y-auto">
-          {children}
+          {renderContent()}
         </main>
       </div>
     </div>
+  );
+}
+
+export default function ConsoleLayoutClient({ children }: PropsWithChildren) {
+  const pathname = usePathname() || '/';
+  const params = useParams();
+  const locale = (params.locale as string) || 'en';
+
+  if (pathname?.includes('/console/login')) {
+    return <>{children}</>;
+  }
+
+  return (
+    <OrgProvider>
+      <ConsoleLayoutShell pathname={pathname} locale={locale}>
+        {children}
+      </ConsoleLayoutShell>
+    </OrgProvider>
   );
 }

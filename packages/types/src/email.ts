@@ -20,6 +20,8 @@ export type EmailTemplate =
   | 'password-reset'
   | 'invoice'
   | 'profile-update'
+  | 'payment-receipt'
+  | 'payment-failed'
   | 'test';
 
 /**
@@ -61,6 +63,27 @@ export interface TestEmailData {
   [key: string]: unknown;
 }
 
+export interface PaymentReceiptEmailData {
+  orgName: string;
+  amount: string;
+  currency: string;
+  paidAt: string;
+  invoiceUrl?: string;
+  invoicePdf?: string;
+  periodStart: string;
+  periodEnd: string;
+  [key: string]: unknown;
+}
+
+export interface PaymentFailedEmailData {
+  orgName: string;
+  amount: string;
+  currency: string;
+  reason?: string;
+  billingUrl: string;
+  [key: string]: unknown;
+}
+
 /**
  * Type-safe email payload for specific templates
  */
@@ -89,6 +112,16 @@ export type TestEmailPayload = Omit<EmailPayload, 'templateData'> & {
   templateData: TestEmailData;
 };
 
+export type PaymentReceiptEmailPayload = Omit<EmailPayload, 'templateData'> & {
+  templateName: 'payment-receipt';
+  templateData: PaymentReceiptEmailData;
+};
+
+export type PaymentFailedEmailPayload = Omit<EmailPayload, 'templateData'> & {
+  templateName: 'payment-failed';
+  templateData: PaymentFailedEmailData;
+};
+
 /**
  * Union type for all typed email payloads
  */
@@ -97,6 +130,8 @@ export type TypedEmailPayload =
   | PasswordResetEmailPayload
   | InvoiceEmailPayload
   | ProfileUpdateEmailPayload
+  | PaymentReceiptEmailPayload
+  | PaymentFailedEmailPayload
   | TestEmailPayload;
 
 /**

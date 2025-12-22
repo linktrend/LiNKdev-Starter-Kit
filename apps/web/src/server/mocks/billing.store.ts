@@ -26,18 +26,20 @@ class InMemoryBillingStore {
     const mockCustomer: BillingCustomer = {
       org_id: 'org-1',
       stripe_customer_id: 'cus_mock_123',
+      billing_email: null,
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     const mockSubscription: BillingSubscription = {
       org_id: 'org-1',
-      plan: 'pro',
+      plan_name: 'pro',
       status: 'active',
       current_period_start: new Date().toISOString(),
       current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
       stripe_sub_id: 'sub_mock_123',
       updated_at: new Date().toISOString(),
-    };
+    } as any;
 
     this.store.customers.set('org-1', mockCustomer);
     this.store.subscriptions.set('org-1', mockSubscription);
@@ -51,7 +53,9 @@ class InMemoryBillingStore {
       customer = {
         org_id: orgId,
         stripe_customer_id: `cus_mock_${Math.random().toString(36).substr(2, 9)}`,
+        billing_email: null,
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
       this.store.customers.set(orgId, customer);
     }
@@ -75,13 +79,13 @@ class InMemoryBillingStore {
   ): Promise<BillingSubscription> {
     const subscription: BillingSubscription = {
       org_id: orgId,
-      plan,
+      plan_name: plan,
       status: 'active',
       current_period_start: new Date().toISOString(),
       current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      stripe_sub_id: stripeSubId,
+      stripe_sub_id: stripeSubId ?? null,
       updated_at: new Date().toISOString(),
-    };
+    } as any;
     
     this.store.subscriptions.set(orgId, subscription);
     return subscription;
@@ -217,7 +221,8 @@ class InMemoryBillingStore {
     const subscription = await this.getSubscription(orgId);
     if (!subscription) return true; // No subscription = exceeded
 
-    const plan = getPlanById(subscription.plan);
+    const planName = (subscription as any).plan_name || (subscription as any).plan;
+    const plan = getPlanById(planName);
     if (!plan) return true; // No plan = exceeded
 
     const limit = (plan.entitlements as any)[featureKey];
@@ -236,7 +241,8 @@ class InMemoryBillingStore {
       return getPlanById('free') || null;
     }
 
-    return getPlanById(subscription.plan) || getPlanById('free') || null;
+    const planName = (subscription as any).plan_name || (subscription as any).plan;
+    return getPlanById(planName) || getPlanById('free') || null;
   }
 
   // Invoice management

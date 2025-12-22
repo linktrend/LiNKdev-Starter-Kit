@@ -3,13 +3,17 @@ import { OrgRole } from '@starter/types';
 export const ORG_ROLES: OrgRole[] = ['owner', 'member', 'viewer'];
 
 export const ROLE_HIERARCHY: Record<OrgRole, number> = {
-  owner: 3,
-  member: 2,
+  owner: 4,
+  admin: 3,
+  editor: 2,
+  member: 1,
   viewer: 1,
 };
 
 export const ROLE_PERMISSIONS = {
   owner: ['manage_org', 'manage_members', 'manage_invites', 'view_content'],
+  admin: ['manage_members', 'manage_invites', 'view_content'],
+  editor: ['view_content', 'edit_content'],
   member: ['manage_members', 'manage_invites', 'view_content'],
   viewer: ['view_content'],
 } as const;
@@ -36,15 +40,14 @@ export function isRoleHigher(role1: OrgRole, role2: OrgRole): boolean {
 }
 
 export function canChangeRole(fromRole: OrgRole, toRole: OrgRole, actorRole: OrgRole): boolean {
+  // Only owners can change roles
   if (actorRole !== 'owner') return false;
 
+  // Cannot change owner role
   if (fromRole === 'owner') return false;
 
-  if (toRole === 'owner' && actorRole !== 'owner') return false;
-
-  if (isRoleHigher(toRole, actorRole)) return false;
-
-  if (!isRoleHigher(actorRole, fromRole)) return false;
+  // Cannot promote to owner
+  if (toRole === 'owner') return false;
 
   return true;
 }

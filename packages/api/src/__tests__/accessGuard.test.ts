@@ -7,11 +7,14 @@ import { TRPCError } from '@trpc/server';
 import { createAccessGuard, requireAdmin, requireMember, requireOwner } from '../middleware/accessGuard';
 import { getUserOrgRole } from '../rbac';
 
-// Mock the getUserOrgRole function
-vi.mock('../rbac', () => ({
-  getUserOrgRole: vi.fn(),
-  roleIsSufficient: vi.fn(),
-}));
+// Mock the getUserOrgRole function but keep other exports
+vi.mock('../rbac', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../rbac')>();
+  return {
+    ...actual,
+    getUserOrgRole: vi.fn(),
+  };
+});
 
 describe('AccessGuard Middleware', () => {
   const mockSupabase = {};
@@ -25,9 +28,9 @@ describe('AccessGuard Middleware', () => {
   describe('createAccessGuard', () => {
     it('should allow access when user has sufficient role', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('member');
+      mockGetUserOrgRole.mockResolvedValue('admin');
 
-      const middleware = createAccessGuard('member', {
+      const middleware = createAccessGuard('admin', {
         orgIdSource: 'input',
         orgIdField: 'orgId',
       });
@@ -48,7 +51,7 @@ describe('AccessGuard Middleware', () => {
       expect(mockGetUserOrgRole).toHaveBeenCalledWith(mockOrgId, mockUser.id, mockSupabase);
       expect(mockNext).toHaveBeenCalledWith({
         ctx: expect.objectContaining({
-          userRole: 'member',
+          userRole: 'admin',
           orgId: mockOrgId,
         }),
         input: mockInput,
@@ -60,7 +63,7 @@ describe('AccessGuard Middleware', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('viewer');
 
-      const middleware = createAccessGuard('member', {
+      const middleware = createAccessGuard('admin', {
         orgIdSource: 'input',
         orgIdField: 'orgId',
       });
@@ -136,9 +139,9 @@ describe('AccessGuard Middleware', () => {
 
     it('should get orgId from context when orgIdSource is context', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
-      mockGetUserOrgRole.mockResolvedValue('member');
+      mockGetUserOrgRole.mockResolvedValue('admin');
 
-      const middleware = createAccessGuard('member', {
+      const middleware = createAccessGuard('admin', {
         orgIdSource: 'context',
       });
 
@@ -160,9 +163,9 @@ describe('AccessGuard Middleware', () => {
     });
 
     it('should use custom role resolver when provided', async () => {
-      const customRoleResolver = vi.fn().mockResolvedValue('member');
+      const customRoleResolver = vi.fn().mockResolvedValue('admin');
 
-      const middleware = createAccessGuard('member', {
+      const middleware = createAccessGuard('admin', {
         orgIdSource: 'input',
         orgIdField: 'orgId',
         customRoleResolver,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Bell, Moon, Sun, Sparkles } from 'lucide-react';
 import { NotificationsModal } from '@/components/ui/notifications-modal';
@@ -8,9 +8,10 @@ import { NotificationsModal } from '@/components/ui/notifications-modal';
 interface ConsoleTopbarProps {
   locale?: string;
   screenName?: string;
+  orgSwitcher?: React.ReactNode;
 }
 
-export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: ConsoleTopbarProps) {
+export function ConsoleTopbar({ locale = 'en', screenName = 'Overview', orgSwitcher }: ConsoleTopbarProps) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -49,6 +50,7 @@ export function ConsoleTopbar({ locale = 'en', screenName = 'Overview' }: Consol
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          {orgSwitcher}
           <Button
             variant="ghost"
             size="icon"

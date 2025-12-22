@@ -1,35 +1,151 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
-import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
-import { cookies } from 'next/headers';
+import { logUsage } from '@/lib/usage/server';
+import { parseAuthError } from '@/lib/auth/errors';
 
 export async function GET(request: NextRequest) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
   // by the `@supabase/ssr` package. It exchanges an auth code for the user's session.
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+  const type = requestUrl.searchParams.get('type'); // 'recovery' for password reset
+  const error = requestUrl.searchParams.get('error');
+  const error_code = requestUrl.searchParams.get('error_code');
+  const error_description = requestUrl.searchParams.get('error_description');
+  
+  // Handle OAuth errors from provider
+  if (error || error_description) {
+    const errorObj = {
+      code: error_code,
+      error: error,
+      message: error_description || error,
+    };
+    
+    const parsedError = parseAuthError(errorObj);
+    
+    // Log error for monitoring
+    console.error('OAuth callback error:', {
+      error,
+      error_code,
+      error_description,
+      type: parsedError.type,
+    });
+    
+    // Redirect with user-friendly error message (prefer provider description when available)
+    const redirectMessage = error_description || parsedError.message;
+    return NextResponse.redirect(
+      `${requestUrl.origin}/login?error=${encodeURIComponent(redirectMessage)}&error_type=${parsedError.type}`
+    );
+  }
+  
   if (code) {
-    const supabase = createClient({ cookies });
+    try {
+      const supabase = createClient();
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+      // Exchange code for session
+      const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (error) {
+      if (exchangeError) {
+        const parsedError = parseAuthError(exchangeError);
+        console.error('Session exchange error:', exchangeError);
+        
+        return NextResponse.redirect(
+          `${requestUrl.origin}/login?error=${encodeURIComponent(parsedError.message)}&error_type=${parsedError.type}`
+        );
+      }
+
+      if (!data?.session || !data?.user) {
+        return NextResponse.redirect(
+          `${requestUrl.origin}/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`
+        );
+      }
+
+      const user = data.user;
+      const session = data.session;
+
+      // Check if user record exists in users table
+      const { data: existingUser, error: userFetchError } = await supabase
+        .from('users')
+        .select('id, onboarding_completed, profile_completed')
+        .eq('id', user.id)
+        .single();
+
+      // Create user record if it doesn't exist (new OAuth user)
+      if (!existingUser && userFetchError?.code === 'PGRST116') {
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+            avatar_url: user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null,
+            onboarding_completed: false,
+            profile_completed: false,
+            account_type: 'user',
+          } as any);
+
+        if (insertError) {
+          console.error('Error creating user record:', insertError);
+          // Continue anyway - user can complete profile later
+        }
+
+        // Log new user signup (best effort, but don't break the flow)
+        try {
+          await logUsage({
+            userId: user.id,
+            eventType: 'user_signup' as any,
+            metadata: {
+              method: 'oauth',
+              provider: user.app_metadata?.provider || 'unknown',
+            },
+          });
+        } catch (err) {
+          console.error('Error logging signup usage:', err);
+        }
+
+        // Redirect new users to onboarding
+        return NextResponse.redirect(`${requestUrl.origin}/onboarding`);
+      }
+
+      // Log OAuth sign-in for existing users
+      try {
+        await logUsage({
+          userId: user.id,
+          eventType: 'user_active',
+          metadata: {
+            method: 'oauth',
+            provider: user.app_metadata?.provider || 'unknown',
+          },
+        });
+      } catch (err) {
+        console.error('Error logging login usage:', err);
+      }
+
+      // Redirect based on type
+      if (type === 'recovery') {
+        return NextResponse.redirect(`${requestUrl.origin}/auth/reset-password`);
+      }
+
+      // Check if user needs to complete onboarding
+      type UserOnboardingResult = { onboarding_completed: boolean; profile_completed: boolean };
+      const typedUser = existingUser as UserOnboardingResult | null;
+      if (typedUser && !typedUser.onboarding_completed) {
+        return NextResponse.redirect(`${requestUrl.origin}/onboarding`);
+      }
+
+      // Default redirect to dashboard for returning users
+      return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
+    } catch (err) {
+      console.error('Unexpected error in OAuth callback:', err);
+      const parsedError = parseAuthError(err);
+      
       return NextResponse.redirect(
-        getErrorRedirect(
-          `${requestUrl.origin}/signin`,
-          error.name,
-          "Sorry, we weren't able to log you in. Please try again."
-        )
+        `${requestUrl.origin}/login?error=${encodeURIComponent(parsedError.message)}`
       );
     }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(
-    getStatusRedirect(
-      `${requestUrl.origin}/dashboard/account`,
-      'Success!'
-    )
-  );
+  // No code provided, redirect to login
+  return NextResponse.redirect(`${requestUrl.origin}/login?error=${encodeURIComponent('No authentication code provided')}`);
 }

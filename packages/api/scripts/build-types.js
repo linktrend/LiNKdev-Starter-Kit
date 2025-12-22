@@ -9,8 +9,8 @@ const __dirname = path.dirname(__filename);
 console.log('Generating TypeScript declarations...');
 
 try {
-  // Use TypeScript compiler to generate declarations
-  execSync('npx tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir dist', {
+  // Use TypeScript compiler to generate declarations with build config
+  execSync('npx tsc --project tsconfig.build.json', {
     cwd: path.join(__dirname, '..'),
     stdio: 'inherit'
   });

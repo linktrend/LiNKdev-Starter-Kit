@@ -10,6 +10,7 @@ import {
 } from '@/lib/validation/profile'
 import { routing } from '@/i18n/routing'
 import type { Database } from '@/types/database.types'
+import { createPersonalOrganization } from './onboarding'
 
 type UserUpdate = Database['public']['Tables']['users']['Update']
 
@@ -94,7 +95,9 @@ export async function completeOnboardingStep2(formData: FormData) {
 
   const validated = validation.data
 
-  const usernameCheck = await checkUsernameAvailability(validated.username)
+  const usernameCheck = await checkUsernameAvailability(validated.username, {
+    excludeUserId: user.id,
+  })
   if (!usernameCheck.available) {
     return {
       error: {
@@ -103,23 +106,23 @@ export async function completeOnboardingStep2(formData: FormData) {
     }
   }
 
-  const onboardingUpdate: UserUpdate = {
-    username: validated.username,
-    first_name: validated.first_name,
-    last_name: validated.last_name,
-    display_name: validated.display_name,
-    full_name: `${validated.first_name} ${validated.last_name}`.trim(),
-    profile_completed: true,
-    onboarding_completed: true,
-    updated_at: new Date().toISOString(),
-  }
-
   const usersTable = supabase.from('users') as any
 
-  const { error } = await usersTable.update(onboardingUpdate).eq('id', user.id)
+  // Update user profile with profile_completed flag
+  const { error: updateError } = await usersTable
+    .update({
+      username: validated.username,
+      first_name: validated.first_name,
+      last_name: validated.last_name,
+      display_name: validated.display_name,
+      full_name: `${validated.first_name} ${validated.last_name}`.trim(),
+      profile_completed: true,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', user.id)
 
-  if (error) {
-    console.error('Error updating profile:', error)
+  if (updateError) {
+    console.error('Error updating profile:', updateError)
     return {
       error: {
         form: ['Failed to update profile. Please try again.'],
@@ -127,10 +130,35 @@ export async function completeOnboardingStep2(formData: FormData) {
     }
   }
 
+  // Create personal organization
+  const orgResult = await createPersonalOrganization()
+
+  if (orgResult.error) {
+    return {
+      error: {
+        form: [orgResult.error],
+      } satisfies FieldErrors,
+    }
+  }
+
+  // Mark onboarding complete
+  const { error: onboardingError } = await usersTable
+    .update({
+      onboarding_completed: true,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', user.id)
+
+  if (onboardingError) {
+    console.error('Error marking onboarding complete:', onboardingError)
+    // Don't fail the request, just log the error
+  }
+
   await revalidateProfileViews(locale)
 
   return {
     success: true,
+    redirectTo: `/${locale}/dashboard`,
   }
 }
 

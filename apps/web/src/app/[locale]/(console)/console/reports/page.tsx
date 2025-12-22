@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -254,7 +254,7 @@ export default function ConsoleReportsPage() {
 
   // Analytics mock data generation
   type SeriesPoint = { date: string; value: number };
-  function generateSeries(days: number, base: number, variance: number, trend: number = 0): SeriesPoint[] {
+  const generateSeries = useCallback((days: number, base: number, variance: number, trend: number = 0): SeriesPoint[] => {
     const today = new Date();
     const series: SeriesPoint[] = [];
     for (let i = days - 1; i >= 0; i--) {
@@ -265,7 +265,7 @@ export default function ConsoleReportsPage() {
       series.push({ date: d.toISOString().slice(0, 10), value: val });
     }
     return series;
-  }
+  }, []);
 
   const analyticsData = useMemo(() => {
     const days = analyticsRange;
@@ -305,7 +305,7 @@ export default function ConsoleReportsPage() {
     ];
 
     return { dau, wau, mau, activeOrgs, sessions, signups, churnRate, retention, featureAdoption, funnel, latencyP95, errorRate, apiVolume, mrr, planMix };
-  }, [analyticsRange, analyticsPlan, analyticsSegment, generateSeries]);
+  }, [analyticsRange, generateSeries]);
 
   function sumSeries(series: SeriesPoint[]) {
     return series.reduce((s, p) => s + p.value, 0);

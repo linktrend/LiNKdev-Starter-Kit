@@ -39,6 +39,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { useOrg } from '@/contexts/OrgContext';
 import {
   Settings,
   Terminal,
@@ -271,6 +272,7 @@ export function ConfigScreen({
   const router = useRouter();
   const params = useParams();
   const locale = (params?.locale as string) ?? 'en';
+  const { currentOrgId } = useOrg();
   const buildPath = useCallback(
     (path: string) => buildLocalePath(locale, path),
     [locale]
@@ -883,7 +885,7 @@ export function ConfigScreen({
 
                 {/* Jobs/Queue Sub-tab - Development Tasks */}
                 <TabsContent value="jobs" className="space-y-4 sm:space-y-6 lg:space-y-8 mt-0">
-                  <DevelopmentTasksSection orgId={process.env.NEXT_PUBLIC_DEFAULT_ORG_ID || ''} />
+                  <DevelopmentTasksSection orgId={currentOrgId || ''} />
                 </TabsContent>
 
                 {/* Deployment Sub-tab */}

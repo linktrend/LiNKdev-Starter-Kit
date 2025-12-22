@@ -1,21 +1,85 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    NEXT_PUBLIC_APP_URL?: string;
+    NODE_ENV?: "development" | "test" | "production";
+    PORT?: string;
     VERCEL_URL?: string;
 
-    NEXT_PUBLIC_SUPABASE_URL?: string;
-    NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
+    NEXT_PUBLIC_APP_URL?: string;
+    NEXT_PUBLIC_SITE_URL?: string;
+    NEXT_PUBLIC_VERCEL_URL?: string;
 
-    STRIPE_SECRET_KEY?: string;
-    STRIPE_WEBHOOK_SECRET?: string;
+    NEXT_PUBLIC_SUPABASE_URL: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    SUPABASE_SERVICE_ROLE_KEY: string;
+    SUPABASE_URL?: string;
+    DATABASE_URL?: string;
+
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: string;
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE?: string;
+    STRIPE_SECRET_KEY: string;
+    STRIPE_SECRET_KEY_LIVE?: string;
+    STRIPE_WEBHOOK_SECRET: string;
+    STRIPE_PRO_MONTHLY_PLAN_ID?: string;
+    STRIPE_PRO_MONTHLY_PRICE_ID?: string;
+    STRIPE_PRO_YEARLY_PRICE_ID?: string;
+    STRIPE_ENTERPRISE_MONTHLY_PRICE_ID?: string;
+    STRIPE_ENTERPRISE_YEARLY_PRICE_ID?: string;
+    STRIPE_PRICE_FREE?: string;
+    STRIPE_FREE_PRICE_ID?: string;
+    STRIPE_PRICE_PRO_MONTHLY: string;
+    STRIPE_PRICE_PRO_ANNUAL: string;
+    STRIPE_PRICE_BUSINESS_MONTHLY: string;
+    STRIPE_PRICE_BUSINESS_ANNUAL: string;
+    STRIPE_PRICE_ENTERPRISE: string;
+    BILLING_OFFLINE?: "1" | "0";
+    TEMPLATE_OFFLINE?: "1" | "0";
 
     NEXT_PUBLIC_POSTHOG_KEY?: string;
     NEXT_PUBLIC_POSTHOG_HOST?: string;
 
+    NEXT_PUBLIC_SENTRY_DSN?: string;
     SENTRY_DSN?: string;
+    SENTRY_ENVIRONMENT?: string;
 
     TURNSTILE_SITE_KEY?: string;
     TURNSTILE_SECRET_KEY?: string;
+
+    FILES_BUCKET?: string;
+    STORAGE_SIGNED_URL_TTL?: string;
+    STORAGE_OFFLINE?: string;
+    STORAGE_MAX_FILE_SIZE_MB?: string;
+    STORAGE_ALLOWED_TYPES?: string;
+
+    N8N_WEBHOOK_URL?: string;
+    N8N_WEBHOOK_SECRET?: string;
+    WEBHOOK_TOLERANCE_SEC?: string;
+    CRON_SECRET?: string;
+
+    RESEND_API_KEY?: string;
+
+    RATE_LIMIT_DEFAULT_PER_MIN?: string;
+    RATE_LIMIT_WINDOW_MS?: string;
+
+    NEXT_PUBLIC_ENABLE_LABS?: "true" | "false";
+    NEXT_PUBLIC_DEFAULT_ORG_ID?: string;
+    NEXT_PUBLIC_SUPPORT_ENABLED?: "true" | "false";
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID?: string;
+    NEXT_PUBLIC_GITHUB_CLIENT_ID?: string;
+
+    SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN?: string;
+    SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID?: string;
+    SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET?: string;
+    SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI?: string;
+    SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID?: string;
+    SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET?: string;
+    SUPABASE_AUTH_EXTERNAL_GOOGLE_REDIRECT_URI?: string;
+
+    S3_HOST?: string;
+    S3_REGION?: string;
+    S3_ACCESS_KEY?: string;
+    S3_SECRET_KEY?: string;
+
+    FIGMA_ACCESS_TOKEN?: string;
   }
 }
 export {};

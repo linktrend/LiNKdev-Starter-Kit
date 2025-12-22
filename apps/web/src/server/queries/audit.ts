@@ -38,14 +38,25 @@ export async function listRecentOrgActivity(orgId: string, limit: number = 5): P
       return [];
     }
 
-    return (activities || []).map(activity => ({
+    type ActivityResult = {
+      id: string;
+      action: string;
+      entity_type: string;
+      entity_id: string;
+      details: Record<string, any> | null;
+      created_at: string;
+      user_id: string | null;
+    };
+    const typedActivities = (activities as ActivityResult[]) || [];
+
+    return typedActivities.map(activity => ({
       id: activity.id,
       action: activity.action,
       entity_type: activity.entity_type,
       entity_id: activity.entity_id,
       details: activity.details,
       created_at: activity.created_at,
-      user_id: activity.user_id,
+      user_id: activity.user_id || '',
     }));
   } catch (error) {
     console.error('Error listing org activity:', error);

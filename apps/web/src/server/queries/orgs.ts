@@ -35,7 +35,10 @@ export async function getOrgSummary(orgId: string): Promise<OrgSummary | null> {
       .eq('id', orgId)
       .single();
 
-    if (orgError || !org) {
+    type OrgResult = { id: string; name: string };
+    const typedOrg = org as OrgResult | null;
+
+    if (orgError || !typedOrg) {
       return null;
     }
 
@@ -51,8 +54,8 @@ export async function getOrgSummary(orgId: string): Promise<OrgSummary | null> {
     }
 
     return {
-      id: org.id,
-      name: org.name,
+      id: typedOrg.id,
+      name: typedOrg.name,
       members: memberCount || 0,
     };
   } catch (error) {
@@ -80,11 +83,14 @@ export async function getUserOrgRole(orgId: string, userId: string): Promise<Use
       .eq('user_id', userId)
       .single();
 
-    if (error || !membership) {
+    type MembershipResult = { role: string };
+    const typedMembership = membership as MembershipResult | null;
+
+    if (error || !typedMembership) {
       return null;
     }
 
-    return membership.role as UserOrgRole;
+    return typedMembership.role as UserOrgRole;
   } catch (error) {
     console.error('Error fetching user org role:', error);
     return null;
@@ -125,7 +131,8 @@ export async function listUserMemberships(userId: string): Promise<Array<{org_id
       return [];
     }
 
-    return memberships || [];
+    type MembershipResult = { org_id: string; role: string };
+    return (memberships as MembershipResult[]) || [];
   } catch (error) {
     console.error('Error listing user memberships:', error);
     return [];
@@ -154,7 +161,9 @@ export async function getDefaultOrgId(userId: string): Promise<string | null> {
       return null;
     }
 
-    return memberships?.[0]?.org_id || null;
+    type OrgIdResult = { org_id: string };
+    const typedMemberships = (memberships as OrgIdResult[]) || [];
+    return typedMemberships[0]?.org_id || null;
   } catch (error) {
     console.error('Error getting default org ID:', error);
     return null;

@@ -35,9 +35,16 @@ export async function listOrgRecords(orgId: string, limit: number = 10): Promise
       return [];
     }
 
-    return (records || []).map(record => ({
+    type RecordResult = {
+      id: string;
+      created_at: string;
+      record_types: { key: string } | null;
+    };
+    const typedRecords = (records as RecordResult[]) || [];
+
+    return typedRecords.map(record => ({
       id: record.id,
-      type: (record.record_types as any)?.key || 'unknown',
+      type: record.record_types?.key || 'unknown',
       created_at: record.created_at,
     }));
   } catch (error) {

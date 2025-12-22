@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, CheckCircle, AlertCircle, XCircle, Loader2, Clock } from 'lucide-react';
+import { getClient } from '@/lib/auth/client';
 
 interface MagicLinkPageProps {
   params: { locale: string };
@@ -40,27 +41,30 @@ export default function MagicLinkPage({ params: { locale } }: MagicLinkPageProps
     }
   }, [timeRemaining]);
 
-  // Verify magic link
+  // Check authentication status
   useEffect(() => {
-    if (!token || !expires) {
-      setStatus('invalid');
-      return;
-    }
-
-    const expiryTime = parseInt(expires);
-    const now = Date.now();
-
-    // Mock verification logic
-    setTimeout(() => {
-      if (now > expiryTime) {
-        setStatus('expired');
-      } else if (token === 'used') {
-        setStatus('used');
-      } else {
+    const checkAuth = async () => {
+      const supabase = getClient();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (session) {
+        // User is authenticated, redirect to dashboard
         setStatus('success');
+      } else if (error) {
+        // Error occurred
+        if (error.message.includes('expired')) {
+          setStatus('expired');
+        } else {
+          setStatus('invalid');
+        }
+      } else {
+        // No session and no error - link may be invalid or already used
+        setStatus('invalid');
       }
-    }, 1500);
-  }, [token, expires]);
+    };
+    
+    checkAuth();
+  }, []);
 
   // Countdown for redirect
   useEffect(() => {

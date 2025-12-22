@@ -54,6 +54,21 @@ pnpm dev:web
 pnpm dev:mobile
 ```
 
+## 🛠️ Environment Setup
+
+1. Copy the example file and fill in your values:
+   ```bash
+   cp .env.example .env
+   ```
+2. Gather credentials:
+   - Supabase: Project URL + anon key + service role key from **Project Settings → API**.
+   - Stripe: Secret key(s), publishable key(s), price IDs, and webhook signing secret from **Stripe Dashboard → Developers (API keys/Webhooks)**.
+   - Resend: API key from **https://resend.com/api-keys**.
+   - n8n/cron: Webhook URL/secret and cron bearer token you control.
+3. Validate by starting the app (`pnpm dev:web`); the env validator fails fast if anything required is missing.
+
+See the detailed guide in [`apps/web/docs/ENVIRONMENT_SETUP.md`](apps/web/docs/ENVIRONMENT_SETUP.md) for service-by-service instructions and example values.
+
 ### Quality Gates
 
 ```bash

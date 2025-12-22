@@ -1,5 +1,5 @@
 import type { UsageLogPayload } from '@starter/types';
-import type { TRPCContext } from '../trpc';
+import type { TRPCContext } from '../context';
 
 export function logUsageEvent(ctx: Pick<TRPCContext, 'usageLogger'>, payload: UsageLogPayload) {
   if (!ctx.usageLogger) return;

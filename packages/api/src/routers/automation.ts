@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { logUsageEvent } from '../utils/usage';
+import { auditCreate } from '../middleware/audit';
 
 // Note: These utility functions will need to be provided by the consuming application
 declare const enqueueEvent: (orgId: string, event: string, payload: any) => Promise<string>;
@@ -18,6 +19,7 @@ export const automationRouter = createTRPCRouter({
       payload: z.record(z.any()),
       orgId: z.string().uuid('Invalid organization ID'),
     }))
+    .use(auditCreate('automation', (result) => result.eventId, { orgIdField: 'orgId' }))
     .mutation(async ({ input }) => {
       try {
         const eventId = await enqueueEvent(input.orgId, input.event, input.payload);

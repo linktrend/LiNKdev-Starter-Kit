@@ -34,7 +34,7 @@ export const GET = withErrorHandling(
 
     try {
       // Call tRPC procedure
-      const orgs = await caller.org.listOrgs();
+      const orgs = await (caller as any).organization.listOrgs();
       
       // Transform to REST response format
       const response: ListOrgsResponse = orgs.map((org: any) => ({
@@ -81,7 +81,7 @@ export const POST = withErrorHandling(
 
     try {
       // Call tRPC procedure
-      const org = await caller.org.createOrg({
+      const org = await (caller as any).organization.createOrg({
         name: body.name,
       });
 

@@ -6,10 +6,19 @@ import {
   UpdateReminderInput,
   UpdateScheduleInput
 } from '@starter/types';
+import { auditCreate, auditUpdate, auditDelete } from '../middleware/audit';
 
 // Note: These utility functions and stores will need to be provided by the consuming application
 declare const schedulingStore: any;
-declare const emitReminderEvent: (ctx: any, orgId: string, event: string, id: string, title: string, priority: string, dueAt?: string) => Promise<void>;
+declare const emitReminderEvent: (
+  ctx: any,
+  orgId: string,
+  event: string,
+  id: string,
+  title: string,
+  priority: string | null,
+  dueAt?: string | null,
+) => Promise<void>;
 declare const emitScheduleEvent: (ctx: any, orgId: string, event: string, id: string, name: string) => Promise<void>;
 declare const emitDueRemindersEvent: (ctx: any, orgId: string, count: number) => Promise<void>;
 
@@ -26,6 +35,7 @@ export const schedulingRouter = createTRPCRouter({
       due_at: z.string().datetime().optional(),
       priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
     }))
+    .use(auditCreate('reminder', (result) => result.id, { orgIdField: 'org_id' }))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const reminder = schedulingStore.createReminder(input, ctx.user.id);
@@ -168,6 +178,7 @@ export const schedulingRouter = createTRPCRouter({
       priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
       status: z.enum(['pending', 'sent', 'completed', 'snoozed', 'cancelled']).optional(),
     }))
+    .use(auditUpdate('reminder', 'id'))
     .mutation(async ({ ctx, input }) => {
       const { id, ...updates } = input;
       
@@ -336,6 +347,7 @@ export const schedulingRouter = createTRPCRouter({
 
   deleteReminder: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(auditDelete('reminder', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         return schedulingStore.deleteReminder(input.id);
@@ -366,6 +378,7 @@ export const schedulingRouter = createTRPCRouter({
       cron: z.string().optional(),
       rule: z.record(z.any()).optional(),
     }))
+    .use(auditCreate('schedule', (result) => result.id, { orgIdField: 'org_id' }))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const schedule = schedulingStore.createSchedule(input, ctx.user.id);
@@ -458,6 +471,7 @@ export const schedulingRouter = createTRPCRouter({
       rule: z.record(z.any()).optional(),
       active: z.boolean().optional(),
     }))
+    .use(auditUpdate('schedule', 'id'))
     .mutation(async ({ ctx, input }) => {
       const { id, ...updates } = input;
       
@@ -510,6 +524,7 @@ export const schedulingRouter = createTRPCRouter({
 
   deleteSchedule: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
+    .use(auditDelete('schedule', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const schedule = schedulingStore.getSchedule(input.id);

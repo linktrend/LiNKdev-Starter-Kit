@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { MainNavItem } from '@starter/types';
 import { cn } from '@/lib/utils';
-import { MobileNav } from '@/components/mobile-nav';
+// import { MobileNav } from '@/components/mobile-nav';
 import { icons as Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { buttonVariants } from '@/components/ui/button';
@@ -68,7 +68,8 @@ export default function CircularNavigation({
       </div>
       {showMobileMenu && items && (
         <div className="absolute top-full left-0 right-0 w-full md:hidden mt-2">
-          <MobileNav items={items}>{children}</MobileNav>
+          {/* <MobileNav items={items}>{children}</MobileNav> */}
+          <div className="md:hidden">{children}</div>
         </div>
       )}
     </nav>

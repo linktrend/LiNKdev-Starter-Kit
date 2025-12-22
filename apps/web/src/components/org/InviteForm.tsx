@@ -31,12 +31,16 @@ interface InviteFormProps {
 
 const ROLE_LABELS: Record<OrgRole, string> = {
   owner: 'Owner',
+  admin: 'Admin',
+  editor: 'Editor',
   member: 'Member',
   viewer: 'Viewer',
 };
 
 const ROLE_DESCRIPTIONS: Record<OrgRole, string> = {
   owner: 'Full access to organization and all features',
+  admin: 'Can manage members and organization settings',
+  editor: 'Can edit content and manage projects',
   member: 'Can manage content and invite teammates',
   viewer: 'Can only view content, cannot make changes',
 };

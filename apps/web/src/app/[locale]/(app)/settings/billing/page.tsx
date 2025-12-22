@@ -76,7 +76,7 @@ export default function BillingSettingsPage() {
   }
 
   const subscription = subscriptionData?.subscription;
-  const currentPlan = plansData?.plans.find((p: any) => p.id === subscription?.plan) || plansData?.plans[0];
+  const currentPlan = plansData?.plans.find((p: any) => p.name === subscription?.plan_name) || plansData?.plans[0];
 
   const getStatusIcon = (status?: string) => {
     switch (status) {

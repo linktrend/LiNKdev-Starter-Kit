@@ -26,6 +26,12 @@ export const navConfig: NavItem[] = [
     label: "Notifications"
   },
   {
+    title: "Billing",
+    href: "/billing",
+    icon: "CreditCard",
+    label: "Billing"
+  },
+  {
     title: "Settings",
     href: "/dashboard/settings",
     icon: "Settings",
@@ -56,6 +62,7 @@ export const iconComponents = {
   MessageCircleIcon: icons.MessageCircle,
   Component: icons.Component,
   CircleUser: icons.CircleUser,
+  CreditCard: icons.CreditCard,
 };
 
 export default dashboardConfig;

@@ -1,20 +1,7 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import SuperJSON from 'superjson';
 import type { UsageLogPayload } from '@starter/types';
-
-// Define the context type that will be provided by the consuming application
-export type UsageLogger = (payload: UsageLogPayload) => void | Promise<void>;
-
-export interface TRPCContext {
-  supabase: any;
-  user: any;
-  posthog?: any;
-  headers?: Headers;
-  usageLogger?: UsageLogger;
-  // RBAC context - populated by accessGuard middleware
-  userRole?: string;
-  orgId?: string;
-}
+import type { TRPCContext, UsageLogger } from './context';
 
 function safeUsageLog(logger: UsageLogger | undefined, payload: UsageLogPayload) {
   if (!logger) return;
@@ -39,7 +26,8 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 // Protected procedure that requires authentication
-export const protectedProcedure = t.procedure
+// Note: Type assertion ensures ctx.user is non-null after auth check
+export const protectedProcedure = publicProcedure
   .use(({ ctx, next }) => {
     if (!ctx.user) {
       throw new TRPCError({
@@ -50,7 +38,7 @@ export const protectedProcedure = t.procedure
     return next({
       ctx: {
         ...ctx,
-        user: ctx.user,
+        user: ctx.user as NonNullable<typeof ctx.user>,
       },
     });
   })

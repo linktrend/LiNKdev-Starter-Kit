@@ -44,6 +44,7 @@ const defaultLinks: SidebarLink[] = [
 
 const bottomLinks: SidebarLink[] = [
   { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/billing', label: 'Billing', icon: CreditCard },
   { href: '/switch-account', label: 'Switch Account', icon: UserRoundCog },
   { href: '/logout', label: 'Logout', icon: LogOut },
 ];

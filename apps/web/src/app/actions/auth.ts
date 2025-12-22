@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { createClient } from '@/lib/auth/server'
 import { logUsage } from '@/lib/usage/server'
 import { routing } from '@/i18n/routing'
+import { isValidEmail, isValidE164Phone } from '@/lib/auth/validation'
 
 type FormErrors = Record<string, string[]>
 
@@ -120,6 +121,8 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
   }
 
   const { email, password } = validated.data
+  const rememberMe = formData.get('rememberMe') === 'on'
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -132,17 +135,32 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
   }
 
   if (data?.user) {
+    // Check onboarding status
+    const { data: userProfile } = await supabase
+      .from('users')
+      .select('onboarding_completed, profile_completed')
+      .eq('id', data.user.id)
+      .single()
+
     logUsage({
       userId: data.user.id,
       eventType: 'user_active',
-      metadata: { method: 'password' },
+      metadata: { method: 'password', remember_me: rememberMe },
     }).catch(() => {
       // best effort
     })
+
+    revalidatePath('/', 'layout')
+
+    // Redirect to onboarding if not completed
+    const profile = userProfile as { onboarding_completed: boolean; profile_completed: boolean } | null;
+    if (profile && !profile.onboarding_completed) {
+      redirect(`/${locale}/onboarding?step=2`)
+    }
+
+    redirect(`/${locale}/dashboard`)
   }
 
-  revalidatePath('/', 'layout')
-  redirect(`/${locale}/dashboard`)
   return {}
 }
 
@@ -218,4 +236,87 @@ export async function updatePassword(
     success: true,
     message: 'Password updated successfully.',
   } satisfies AuthFormState
+}
+
+export async function sendMagicLink(
+  _: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  const supabase = createClient()
+  const locale = resolveLocale(formData)
+
+  const email = formData.get('email') as string
+
+  if (!email || !isValidEmail(email)) {
+    return {
+      error: { email: ['Invalid email address'] },
+    } satisfies AuthFormState
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${getSiteUrl()}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    return {
+      error: { form: [error.message] },
+    } satisfies AuthFormState
+  }
+
+  return {
+    success: true,
+    message: 'Check your email for the magic link.',
+  } satisfies AuthFormState
+}
+
+export async function sendPhoneOTP(
+  _: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  const supabase = createClient()
+
+  const phone = formData.get('phone') as string
+
+  if (!phone || !isValidE164Phone(phone)) {
+    return {
+      error: { phone: ['Invalid phone number format'] },
+    } satisfies AuthFormState
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({ phone })
+
+  if (error) {
+    return {
+      error: { form: [error.message] },
+    } satisfies AuthFormState
+  }
+
+  return {
+    success: true,
+    message: 'OTP sent to your phone.',
+  } satisfies AuthFormState
+}
+
+export async function verifyPhoneOTP(
+  phone: string,
+  token: string
+): Promise<AuthFormState> {
+  const supabase = createClient()
+
+  const { error } = await supabase.auth.verifyOtp({
+    phone,
+    token,
+    type: 'sms',
+  })
+
+  if (error) {
+    return {
+      error: { form: [error.message] },
+    } satisfies AuthFormState
+  }
+
+  return { success: true } satisfies AuthFormState
 }

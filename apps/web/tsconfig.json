@@ -33,6 +33,18 @@
       ],
       "@/map": [
         "./map"
+      ],
+      "@starter/api": [
+        "../packages/api/src"
+      ],
+      "@starter/api/*": [
+        "../packages/api/src/*"
+      ],
+      "@starter/types": [
+        "../packages/types/src"
+      ],
+      "@starter/types/*": [
+        "../packages/types/src/*"
       ]
     },
     "incremental": true,

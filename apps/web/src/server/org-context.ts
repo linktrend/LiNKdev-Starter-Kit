@@ -121,7 +121,9 @@ async function getDefaultOrgId(userId: string): Promise<string | null> {
       return null;
     }
 
-    return memberships?.[0]?.org_id || null;
+    type OrgIdResult = { org_id: string };
+    const typedMemberships = (memberships as OrgIdResult[]) || [];
+    return typedMemberships[0]?.org_id || null;
   } catch (error) {
     console.error('Error getting default org ID:', error);
     return null;

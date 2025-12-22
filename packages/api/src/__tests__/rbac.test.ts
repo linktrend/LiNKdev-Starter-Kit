@@ -12,42 +12,45 @@ import {
   canManageOrg,
   canManageBilling,
   canChangeRole,
+  getUserOrgRole,
   ROLE_HIERARCHY,
   ROLE_PERMISSIONS,
 } from '../rbac';
 import { OrgRole } from '@starter/types';
+import { createSupabaseMock } from './helpers/supabaseMock';
 
 describe('RBAC Utilities', () => {
   describe('roleIsSufficient', () => {
     it('should return true when user role is sufficient', () => {
       expect(roleIsSufficient('viewer', 'owner')).toBe(true);
-      expect(roleIsSufficient('viewer', 'member')).toBe(true);
+      expect(roleIsSufficient('viewer', 'editor')).toBe(true);
       expect(roleIsSufficient('viewer', 'viewer')).toBe(true);
-      expect(roleIsSufficient('member', 'owner')).toBe(true);
-      expect(roleIsSufficient('member', 'member')).toBe(true);
+      expect(roleIsSufficient('editor', 'owner')).toBe(true);
+      expect(roleIsSufficient('admin', 'owner')).toBe(true);
     });
 
     it('should return false when user role is insufficient', () => {
-      expect(roleIsSufficient('member', 'viewer')).toBe(false);
-      expect(roleIsSufficient('owner', 'member')).toBe(false);
+      expect(roleIsSufficient('admin', 'editor')).toBe(false);
+      expect(roleIsSufficient('owner', 'admin')).toBe(false);
     });
 
     it('should return false when user role is null', () => {
       expect(roleIsSufficient('viewer', null)).toBe(false);
-      expect(roleIsSufficient('member', null)).toBe(false);
+      expect(roleIsSufficient('admin', null)).toBe(false);
     });
   });
 
   describe('hasPermission', () => {
     it('should return true when user has permission', () => {
       expect(hasPermission('owner', 'manage_org')).toBe(true);
-      expect(hasPermission('member', 'manage_members')).toBe(true);
-      expect(hasPermission('member', 'edit_content')).toBe(true);
+      expect(hasPermission('admin', 'manage_members')).toBe(true);
+      expect(hasPermission('admin', 'manage_invites')).toBe(true);
+      expect(hasPermission('editor', 'edit_content')).toBe(true);
       expect(hasPermission('viewer', 'view_content')).toBe(true);
     });
 
     it('should return false when user lacks permission', () => {
-      expect(hasPermission('member', 'manage_org')).toBe(false);
+      expect(hasPermission('editor', 'manage_org')).toBe(false);
       expect(hasPermission('viewer', 'manage_members')).toBe(false);
       expect(hasPermission('viewer', 'edit_content')).toBe(false);
     });
@@ -59,22 +62,23 @@ describe('RBAC Utilities', () => {
 
   describe('isRoleHigher', () => {
     it('should correctly compare role hierarchy', () => {
-      expect(isRoleHigher('owner', 'member')).toBe(true);
-      expect(isRoleHigher('member', 'viewer')).toBe(true);
+      expect(isRoleHigher('owner', 'admin')).toBe(true);
+      expect(isRoleHigher('admin', 'editor')).toBe(true);
+      expect(isRoleHigher('editor', 'viewer')).toBe(true);
       expect(isRoleHigher('owner', 'viewer')).toBe(true);
     });
 
     it('should return false for equal or lower roles', () => {
-      expect(isRoleHigher('member', 'member')).toBe(false);
-      expect(isRoleHigher('member', 'owner')).toBe(false);
-      expect(isRoleHigher('viewer', 'member')).toBe(false);
+      expect(isRoleHigher('admin', 'admin')).toBe(false);
+      expect(isRoleHigher('editor', 'owner')).toBe(false);
+      expect(isRoleHigher('viewer', 'admin')).toBe(false);
     });
   });
 
   describe('canManageMembers', () => {
-    it('should return true for owner and member', () => {
+    it('should return true for owner and admin', () => {
       expect(canManageMembers('owner')).toBe(true);
-      expect(canManageMembers('member')).toBe(true);
+      expect(canManageMembers('admin')).toBe(true);
     });
 
     it('should return false for viewer', () => {
@@ -87,9 +91,9 @@ describe('RBAC Utilities', () => {
   });
 
   describe('canManageInvites', () => {
-    it('should return true for owner and member', () => {
+    it('should return true for owner and admin', () => {
       expect(canManageInvites('owner')).toBe(true);
-      expect(canManageInvites('member')).toBe(true);
+      expect(canManageInvites('admin')).toBe(true);
     });
 
     it('should return false for viewer', () => {
@@ -110,37 +114,39 @@ describe('RBAC Utilities', () => {
   });
 
   describe('canManageBilling', () => {
-    it('should return true only for owner', () => {
+    it('should return true for owner and admin', () => {
       expect(canManageBilling('owner')).toBe(true);
+      expect(canManageBilling('admin')).toBe(true);
     });
 
-    it('should return false for member and viewer', () => {
-      expect(canManageBilling('member')).toBe(false);
+    it('should return false for editor and viewer', () => {
+      expect(canManageBilling('editor')).toBe(false);
       expect(canManageBilling('viewer')).toBe(false);
     });
   });
 
   describe('canChangeRole', () => {
     it('should allow owner to change non-owner roles', () => {
-      expect(canChangeRole('member', 'viewer', 'owner')).toBe(true);
-      expect(canChangeRole('viewer', 'member', 'owner')).toBe(true);
+      expect(canChangeRole('admin', 'viewer', 'owner')).toBe(true);
+      expect(canChangeRole('editor', 'admin', 'owner')).toBe(true);
       expect(canChangeRole('owner', 'member', 'owner')).toBe(false);
     });
 
     it('should not allow members or viewers to change roles', () => {
-      expect(canChangeRole('viewer', 'member', 'member')).toBe(false);
-      expect(canChangeRole('viewer', 'member', 'viewer')).toBe(false);
+      expect(canChangeRole('viewer', 'admin', 'admin' as OrgRole)).toBe(false);
+      expect(canChangeRole('editor', 'admin', 'admin' as OrgRole)).toBe(false);
     });
 
     it('should return false for null actor role', () => {
-      expect(canChangeRole('viewer', 'member', null)).toBe(false);
+      expect(canChangeRole('viewer', 'admin', null)).toBe(false);
     });
   });
 
   describe('Role Hierarchy Constants', () => {
     it('should have correct hierarchy values', () => {
-      expect(ROLE_HIERARCHY.owner).toBe(3);
-      expect(ROLE_HIERARCHY.member).toBe(2);
+      expect(ROLE_HIERARCHY.owner).toBe(4);
+      expect(ROLE_HIERARCHY.admin).toBe(3);
+      expect(ROLE_HIERARCHY.editor).toBe(2);
       expect(ROLE_HIERARCHY.viewer).toBe(1);
     });
   });
@@ -152,12 +158,49 @@ describe('RBAC Utilities', () => {
       expect(ROLE_PERMISSIONS.owner).toContain('manage_invites');
       expect(ROLE_PERMISSIONS.owner).toContain('manage_billing');
 
-      expect(ROLE_PERMISSIONS.member).toContain('manage_members');
-      expect(ROLE_PERMISSIONS.member).toContain('manage_invites');
-      expect(ROLE_PERMISSIONS.member).not.toContain('manage_org');
+      expect(ROLE_PERMISSIONS.admin).toContain('manage_members');
+      expect(ROLE_PERMISSIONS.admin).toContain('manage_invites');
+      expect(ROLE_PERMISSIONS.admin).toContain('manage_billing');
+      expect(ROLE_PERMISSIONS.admin).not.toContain('manage_org');
 
+      expect(ROLE_PERMISSIONS.editor).toContain('edit_content');
       expect(ROLE_PERMISSIONS.viewer).toContain('view_content');
       expect(ROLE_PERMISSIONS.viewer).not.toContain('edit_content');
+    });
+  });
+
+  describe('getUserOrgRole', () => {
+    it('returns the membership role when found', async () => {
+      const mock = createSupabaseMock();
+      const members = mock.getTable('organization_members');
+      members.__queueSingleResponse({ data: { role: 'admin' }, error: null });
+
+      const role = await getUserOrgRole('org-1', 'user-1', mock.supabase);
+
+      expect(role).toBe('admin');
+      expect(members.select).toHaveBeenCalledWith('role');
+    });
+
+    it('returns null when membership is missing or errored', async () => {
+      const mock = createSupabaseMock();
+      const members = mock.getTable('organization_members');
+      members.__queueSingleResponse({ data: null, error: { message: 'not found' } });
+
+      const role = await getUserOrgRole('org-1', 'user-1', mock.supabase);
+
+      expect(role).toBeNull();
+    });
+
+    it('returns null when lookup throws', async () => {
+      const supabase = {
+        from: () => {
+          throw new Error('boom');
+        },
+      };
+
+      const role = await getUserOrgRole('org-1', 'user-1', supabase);
+
+      expect(role).toBeNull();
     });
   });
 });

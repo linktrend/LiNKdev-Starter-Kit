@@ -1,5 +1,26 @@
 import { z } from 'zod';
 
+export type PlanName = 'free' | 'pro' | 'business' | 'enterprise';
+export type BillingInterval = 'monthly' | 'annual';
+export type SubscriptionStatus =
+  | 'active'
+  | 'trialing'
+  | 'canceled'
+  | 'past_due'
+  | 'unpaid'
+  | 'incomplete'
+  | 'incomplete_expired';
+
+export interface AvailablePlan {
+  name: PlanName;
+  displayName: string;
+  price: string;
+  interval: string;
+  priceId: string;
+  popular?: boolean;
+  features: string[];
+}
+
 // Plan and Entitlements
 export interface PlanEntitlements {
   max_organizations?: number;
@@ -29,8 +50,10 @@ export interface BillingPlan {
 // Database Types
 export interface BillingCustomer {
   org_id: string;
-  stripe_customer_id?: string;
+  stripe_customer_id: string | null;
+  billing_email?: string | null;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface BillingSubscription {
@@ -41,6 +64,24 @@ export interface BillingSubscription {
   current_period_end: string;
   trial_end?: string;
   stripe_sub_id?: string;
+  updated_at: string;
+}
+
+export interface OrgSubscription {
+  org_id: string;
+  stripe_subscription_id: string | null;
+  stripe_customer_id: string | null;
+  status: SubscriptionStatus;
+  plan_name: PlanName;
+  billing_interval: BillingInterval;
+  seats: number;
+  current_period_start: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  canceled_at: string | null;
+  trial_start: string | null;
+  trial_end: string | null;
+  created_at: string;
   updated_at: string;
 }
 
@@ -74,6 +115,19 @@ export const SimulateEventInput = z.object({
 });
 
 // Response Types
+export interface CheckoutSessionResult {
+  success: boolean;
+  sessionId?: string;
+  url?: string;
+  error?: string;
+}
+
+export interface BillingPortalResult {
+  success: boolean;
+  url?: string;
+  error?: string;
+}
+
 export interface CheckoutResponse {
   sessionId?: string;
   url?: string;

@@ -21,9 +21,9 @@ export function OrgSwitcher({ currentOrg, onOrgChange }: OrgSwitcherProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const { data: orgsData = [], isLoading } = api.org.listOrgs.useQuery();
+  const { data: orgsData = [], isLoading } = (api as any).organization.listOrgs.useQuery();
   const orgs = orgsData as Organization[];
-  const setCurrentMutation = api.org.setCurrent.useMutation({
+  const setCurrentMutation = (api as any).organization.setCurrent.useMutation({
     onSuccess: () => {
       setOpen(false);
     },

@@ -1,68 +1,64 @@
 'use server'
 
 import Stripe from 'stripe'
+import { validateEnvironment } from '@/lib/env/validation'
 
-import { stripe as sharedStripe, validateStripeConfig } from '@/utils/stripe/config'
-
-validateStripeConfig()
-
-export const stripe = sharedStripe
-
-type StripePlanConfig = {
-  name: string
-  priceId?: string
-  interval?: 'month' | 'year'
-  features?: string[]
+// Validate environment variables on module load
+if (process.env.NODE_ENV !== 'test') {
+  validateEnvironment()
 }
 
-function getPriceEnv(...keys: string[]): string | undefined {
-  for (const key of keys) {
-    const value = process.env[key]
-    if (value) {
-      return value
-    }
-  }
-  return undefined
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_SECRET_KEY_LIVE
+
+if (!stripeSecretKey) {
+  throw new Error('STRIPE_SECRET_KEY is not set')
 }
 
-export const STRIPE_PLANS: Record<string, StripePlanConfig> = {
+export const stripe = new Stripe(stripeSecretKey, {
+  apiVersion: '2024-11-20.acacia' as '2023-10-16',
+  typescript: true,
+})
+
+export const STRIPE_PLANS = {
   free: {
     name: 'Free',
-    priceId: getPriceEnv('STRIPE_PRICE_FREE', 'STRIPE_FREE_PRICE_ID'),
+    priceId: process.env.STRIPE_PRICE_FREE || 'price_free',
     features: ['100 records', '1GB storage', 'Basic support'],
   },
   pro_monthly: {
     name: 'Pro (Monthly)',
-    priceId: getPriceEnv('STRIPE_PRICE_PRO_MONTHLY', 'STRIPE_PRO_MONTHLY_PRICE_ID'),
-    interval: 'month',
+    priceId: process.env.STRIPE_PRICE_PRO_MONTHLY!,
+    interval: 'month' as const,
   },
   pro_annual: {
     name: 'Pro (Annual)',
-    priceId: getPriceEnv('STRIPE_PRICE_PRO_ANNUAL', 'STRIPE_PRO_YEARLY_PRICE_ID'),
-    interval: 'year',
+    priceId: process.env.STRIPE_PRICE_PRO_ANNUAL!,
+    interval: 'year' as const,
   },
   business_monthly: {
     name: 'Business (Monthly)',
-    priceId: getPriceEnv('STRIPE_PRICE_BUSINESS_MONTHLY', 'STRIPE_BUSINESS_MONTHLY_PRICE_ID'),
-    interval: 'month',
+    priceId: process.env.STRIPE_PRICE_BUSINESS_MONTHLY!,
+    interval: 'month' as const,
   },
   business_annual: {
     name: 'Business (Annual)',
-    priceId: getPriceEnv('STRIPE_PRICE_BUSINESS_ANNUAL', 'STRIPE_BUSINESS_YEARLY_PRICE_ID'),
-    interval: 'year',
+    priceId: process.env.STRIPE_PRICE_BUSINESS_ANNUAL!,
+    interval: 'year' as const,
   },
   enterprise: {
     name: 'Enterprise',
-    priceId: getPriceEnv('STRIPE_PRICE_ENTERPRISE', 'STRIPE_ENTERPRISE_MONTHLY_PRICE_ID'),
+    priceId: process.env.STRIPE_PRICE_ENTERPRISE!,
   },
 } as const
+
+export type StripePlanKey = keyof typeof STRIPE_PLANS
 
 export async function createStripeCustomer(params: {
   email: string | null
   name: string
   metadata?: Record<string, string>
 }) {
-  return stripe.customers.create({
+  return await stripe.customers.create({
     email: params.email ?? undefined,
     name: params.name,
     metadata: params.metadata,
@@ -77,7 +73,7 @@ export async function createCheckoutSession(params: {
   metadata?: Record<string, string>
   subscriptionData?: Stripe.Checkout.SessionCreateParams.SubscriptionData
 }) {
-  return stripe.checkout.sessions.create({
+  return await stripe.checkout.sessions.create({
     customer: params.customerId,
     mode: 'subscription',
     payment_method_types: ['card'],
@@ -95,16 +91,16 @@ export async function createCheckoutSession(params: {
 }
 
 export async function createBillingPortalSession(params: { customerId: string; returnUrl: string }) {
-  return stripe.billingPortal.sessions.create({
+  return await stripe.billingPortal.sessions.create({
     customer: params.customerId,
     return_url: params.returnUrl,
   })
 }
 
 export async function updateSubscription(subscriptionId: string, params: Stripe.SubscriptionUpdateParams) {
-  return stripe.subscriptions.update(subscriptionId, params)
+  return await stripe.subscriptions.update(subscriptionId, params)
 }
 
 export async function cancelSubscription(subscriptionId: string) {
-  return stripe.subscriptions.cancel(subscriptionId)
+  return await stripe.subscriptions.cancel(subscriptionId)
 }

@@ -82,14 +82,26 @@ export const getUserPlan = cache(async (orgId?: string): Promise<string> => {
     return (subscription as any)?.plan_name || 'free'
   }
 
-  const { data: subscription } = await supabase
-    .from('subscriptions')
-    .select('plan_name, status')
-    .eq('user_id', user.id)
-    .eq('status', 'active')
+  // Find personal org for the user if no orgId is provided
+  const { data: personalOrg } = await supabase
+    .from('organizations')
+    .select('id')
+    .eq('owner_id', user.id)
+    .eq('is_personal', true)
     .maybeSingle()
 
-  return (subscription as any)?.plan_name || 'free'
+  if (personalOrg) {
+    const { data: subscription } = await supabase
+      .from('org_subscriptions')
+      .select('plan_name, status')
+      .eq('org_id', personalOrg.id)
+      .eq('status', 'active')
+      .maybeSingle()
+
+    return (subscription as any)?.plan_name || 'free'
+  }
+
+  return 'free'
 })
 
 /**

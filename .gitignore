@@ -116,3 +116,6 @@ apps/web/test-results/
 after-*.txt
 baseline-*.txt
 final-*.txt
+
+# Git worktrees
+_worktrees/

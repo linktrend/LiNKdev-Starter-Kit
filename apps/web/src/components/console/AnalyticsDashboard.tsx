@@ -73,8 +73,8 @@ export function AnalyticsDashboard({ orgId }: { orgId?: string }) {
           loading={loading}
           xAxisKey="date"
           config={[
-            { dataKey: 'activeUsers', label: 'Active Users', color: '#8884d8' },
-            { dataKey: 'newUsers', label: 'New Users', color: '#82ca9d' },
+            { dataKey: 'activeUsers', label: 'Active Users', color: 'hsl(var(--primary))' },
+            { dataKey: 'newUsers', label: 'New Users', color: 'hsl(var(--success))' },
           ]}
         />
         <AnalyticsChart
@@ -85,7 +85,7 @@ export function AnalyticsDashboard({ orgId }: { orgId?: string }) {
           loading={loading}
           xAxisKey="feature"
           config={[
-            { dataKey: 'usageCount', label: 'Usage Count', color: '#0088FE' },
+            { dataKey: 'usageCount', label: 'Usage Count', color: 'hsl(var(--primary))' },
           ]}
         />
       </div>
@@ -100,8 +100,8 @@ export function AnalyticsDashboard({ orgId }: { orgId?: string }) {
           xAxisKey="endpoint"
           height={400}
           config={[
-            { dataKey: 'calls', label: 'Calls', color: '#00C49F' },
-            { dataKey: 'errors', label: 'Errors', color: '#FF8042' },
+            { dataKey: 'calls', label: 'Calls', color: 'hsl(var(--success))' },
+            { dataKey: 'errors', label: 'Errors', color: 'hsl(var(--danger))' },
           ]}
           tooltipFormatter={(value, name) => [
              value.toLocaleString(),

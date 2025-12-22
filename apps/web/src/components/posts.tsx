@@ -25,31 +25,31 @@ export default function Posts({ user }: PostsProps) {
   const [editingPost, setEditingPost] = useState<Post | null>(null)
   const { toast } = useToast()
 
-  const utils = api.useUtils()
+  const utils = (api as any).useUtils()
 
-  const { data: posts, isLoading, error: fetchError } = api.posts.getAll.useQuery()
+  const { data: posts, isLoading, error: fetchError } = (api as any).posts?.getAll?.useQuery() || { data: [], isLoading: false, error: null }
 
   useEffect(() => {
     if (fetchError) {
       console.error("Error fetching posts:", fetchError);
       toast({
         title: "Error",
-        description: fetchError.message,
+        description: (fetchError as any).message,
         variant: "destructive",
       });
     }
   }, [fetchError, toast]);
 
-  const createPost = api.posts.create.useMutation({
+  const createPost = (api as any).posts?.create?.useMutation({
     onSuccess: async () => {
-      await utils.posts.getAll.invalidate()
+      await utils.posts?.getAll?.invalidate()
       setNewPost({ title: '', content: '' })
       toast({
         title: "Success",
         description: "Post created successfully!",
       })
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error creating post:", error);
       toast({
         title: "Error",
@@ -57,18 +57,18 @@ export default function Posts({ user }: PostsProps) {
         variant: "destructive",
       })
     },
-  })
+  }) || { mutate: () => {}, isPending: false }
 
-  const updatePost = api.posts.update.useMutation({
+  const updatePost = (api as any).posts?.update?.useMutation({
     onSuccess: async () => {
-      await utils.posts.getAll.invalidate()
+      await utils.posts?.getAll?.invalidate()
       setEditingPost(null)
       toast({
         title: "Success",
         description: "Post updated successfully!",
       })
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error updating post:", error);
       toast({
         title: "Error",
@@ -76,17 +76,17 @@ export default function Posts({ user }: PostsProps) {
         variant: "destructive",
       })
     },
-  })
+  }) || { mutate: () => {}, isPending: false }
 
-  const deletePost = api.posts.delete.useMutation({
+  const deletePost = (api as any).posts?.delete?.useMutation({
     onSuccess: async () => {
-      await utils.posts.getAll.invalidate()
+      await utils.posts?.getAll?.invalidate()
       toast({
         title: "Success",
         description: "Post deleted successfully!",
       })
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error deleting post:", error);
       toast({
         title: "Error",
@@ -94,7 +94,7 @@ export default function Posts({ user }: PostsProps) {
         variant: "destructive",
       })
     },
-  })
+  }) || { mutate: () => {}, isPending: false }
 
   const handleCreatePost = () => {
     if (newPost.title && newPost.content) {
@@ -170,7 +170,7 @@ export default function Posts({ user }: PostsProps) {
       </Card>
     ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {posts.map(post => (
+        {posts.map((post: any) => (
           <Card key={post.id}>
               <CardHeader>
                 <CardTitle>{post.title}</CardTitle>

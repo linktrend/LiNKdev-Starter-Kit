@@ -1,175 +1,201 @@
-'use server'
+'use server';
 
-import { createClient as createServiceRoleClient, SupabaseClient } from '@supabase/supabase-js'
+import { revalidatePath } from 'next/cache';
 
-import { createClient, requireAuth } from '@/lib/auth/server'
+import { requireAuth } from '@/lib/auth/server';
+import { createClient } from '@/lib/supabase/server';
 import {
   createBillingPortalSession,
   createCheckoutSession,
   createStripeCustomer,
-} from '@/lib/stripe/server'
-import type { Database } from '@/types/database.types'
-
-type BillingCustomerResult =
-  | { success: true; customerId: string; skipped?: boolean }
-  | { success: true; customerId?: undefined; skipped: true }
-  | { success: false; error: string }
-
-type BillingActionResponse =
-  | { success: true; url?: string; sessionId?: string }
-  | { success: false; error: string }
-
-const BILLING_OFFLINE =
-  process.env.BILLING_OFFLINE === '1' ||
-  (!process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY_LIVE)
-
-let serviceRoleClient: SupabaseClient<Database> | null = null
-
-function getServiceRoleClient() {
-  if (BILLING_OFFLINE) {
-    throw new Error('Billing is disabled')
-  }
-
-  if (serviceRoleClient) return serviceRoleClient
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !serviceKey) {
-    throw new Error('Supabase service role environment variables are not set')
-  }
-
-  serviceRoleClient = createServiceRoleClient<Database>(supabaseUrl, serviceKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
-
-  return serviceRoleClient
-}
+  stripe,
+} from '@/lib/stripe/server';
+import type { AvailablePlan, BillingPortalResult, CheckoutSessionResult, OrgSubscription } from '@/types/billing';
 
 function getSiteUrl() {
   return (
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-  )
+  );
+}
+
+export async function getAvailablePlans(): Promise<{
+  success: boolean;
+  plans?: Array<AvailablePlan>;
+  error?: string;
+}> {
+  try {
+    const plans: AvailablePlan[] = [
+      {
+        name: 'free',
+        displayName: 'Free',
+        price: '$0',
+        interval: 'forever',
+        priceId: process.env.STRIPE_PRICE_FREE || 'price_free',
+        features: [
+          '100 records',
+          '1,000 API calls/month',
+          '3 automations',
+          '1 GB storage',
+          'Basic support',
+        ],
+      },
+      {
+        name: 'pro',
+        displayName: 'Pro',
+        price: '$29',
+        interval: 'per month',
+        priceId: process.env.STRIPE_PRICE_PRO_MONTHLY!,
+        popular: true,
+        features: [
+          '10,000 records',
+          '100,000 API calls/month',
+          '25 automations',
+          '50 GB storage',
+          'Advanced analytics',
+          'API access',
+          'Priority support',
+        ],
+      },
+      {
+        name: 'business',
+        displayName: 'Business',
+        price: '$99',
+        interval: 'per month',
+        priceId: process.env.STRIPE_PRICE_BUSINESS_MONTHLY!,
+        features: [
+          '100,000 records',
+          '1,000,000 API calls/month',
+          '100 automations',
+          '500 GB storage',
+          'All Pro features',
+          'SSO',
+          'Custom branding',
+          'Dedicated support',
+        ],
+      },
+    ];
+
+    return { success: true, plans };
+  } catch (error) {
+    console.error('Error fetching plans:', error);
+    return { success: false, error: 'Failed to load plans' };
+  }
 }
 
 /**
  * Create Stripe customer for organization
+ * Only org owner can create billing customer
  */
-export async function createOrgStripeCustomer(orgId: string): Promise<BillingCustomerResult> {
-  const user = await requireAuth()
-
-  if (!orgId) {
-    return { success: false, error: 'Organization ID is required' }
-  }
-
-  if (BILLING_OFFLINE) {
-    console.info('Billing is disabled; skipping Stripe customer creation for org:', orgId)
-    return { success: true, skipped: true }
-  }
-
-  const supabase = createClient() as any
-
-  const { data: org, error: orgError } = await supabase
-    .from('organizations')
-    .select('id, name, owner_id, slug')
-    .eq('id', orgId)
-    .single()
-
-  if (orgError || !org) {
-    console.error('Organization lookup failed:', orgError)
-    return { success: false, error: 'Organization not found' }
-  }
-
-  if (org.owner_id !== user.id) {
-    return { success: false, error: 'Only the owner can manage billing' }
-  }
-
+export async function createOrgStripeCustomer(
+  orgId: string
+): Promise<{ success: boolean; customerId?: string; error?: string }> {
   try {
-    const adminSupabase = getServiceRoleClient()
+    const user = await requireAuth();
+    const supabase = createClient();
 
-    const { data: existingCustomer } = await adminSupabase
+    const { data: org, error: orgError } = await supabase
+      .from('organizations')
+      .select('id, name, owner_id')
+      .eq('id', orgId)
+      .single();
+
+    type OrgResult = { id: string; name: string; owner_id: string };
+    const typedOrg = org as OrgResult | null;
+
+    if (orgError || !typedOrg) {
+      return { success: false, error: 'Organization not found' };
+    }
+
+    if (typedOrg.owner_id !== user.id) {
+      return { success: false, error: 'Only the owner can manage billing' };
+    }
+
+    const { data: existingCustomer } = await supabase
       .from('billing_customers')
       .select('stripe_customer_id')
       .eq('org_id', orgId)
-      .maybeSingle()
+      .maybeSingle();
 
-    if (existingCustomer?.stripe_customer_id) {
-      return { success: true, customerId: existingCustomer.stripe_customer_id }
+    type CustomerResult = { stripe_customer_id: string | null };
+    const typedCustomer = existingCustomer as CustomerResult | null;
+
+    if (typedCustomer?.stripe_customer_id) {
+      return {
+        success: true,
+        customerId: typedCustomer.stripe_customer_id,
+      };
     }
 
     const customer = await createStripeCustomer({
       email: user.email,
-      name: org.name,
+      name: typedOrg.name,
       metadata: {
         org_id: orgId,
         owner_id: user.id,
-        slug: org.slug ?? undefined,
       },
-    })
+    });
 
-    const { error: insertError } = await adminSupabase.from('billing_customers').insert({
+    const { error: insertError } = await supabase.from('billing_customers').insert({
       org_id: orgId,
       stripe_customer_id: customer.id,
       billing_email: user.email ?? null,
-    })
+    } as any);
 
     if (insertError) {
-      console.error('Error saving billing customer:', insertError)
-      return { success: false, error: 'Failed to save billing customer' }
+      console.error('Error saving customer:', insertError);
+      return { success: false, error: 'Failed to create billing customer' };
     }
 
-    return { success: true, customerId: customer.id }
+    return { success: true, customerId: customer.id };
   } catch (error) {
-    console.error('Error creating Stripe customer:', error)
-    return { success: false, error: 'Failed to create billing customer' }
+    console.error('Error in createOrgStripeCustomer:', error);
+    return { success: false, error: 'An unexpected error occurred' };
   }
 }
 
 /**
  * Create checkout session for subscription
+ * Redirects user to Stripe Checkout
  */
-export async function createSubscriptionCheckout(orgId: string, priceId: string): Promise<BillingActionResponse> {
-  const user = await requireAuth()
-
-  if (!orgId || !priceId) {
-    return { success: false, error: 'Organization and price are required' }
-  }
-
-  if (BILLING_OFFLINE) {
-    return { success: false, error: 'Billing is currently disabled' }
-  }
-
-  const supabase = createClient() as any
-
-  const { data: membership } = await supabase
-    .from('organization_members')
-    .select('role')
-    .eq('org_id', orgId)
-    .eq('user_id', user.id)
-    .single()
-
-  if (!membership || (membership as any)?.role !== 'owner') {
-    return { success: false, error: 'Only the owner can upgrade this organization' }
-  }
-
-  const customerResult = await createOrgStripeCustomer(orgId)
-
-  if (!customerResult.success || !customerResult.customerId) {
-    return { success: false, error: (customerResult as any).error ?? 'Unable to create billing customer' }
-  }
-
+export async function createSubscriptionCheckout(
+  orgId: string,
+  priceId: string
+): Promise<CheckoutSessionResult> {
   try {
-    const siteUrl = getSiteUrl()
+    const user = await requireAuth();
+    const supabase = createClient();
+
+    const { data: org, error: orgError } = await supabase
+      .from('organizations')
+      .select('owner_id')
+      .eq('id', orgId)
+      .single();
+
+    type OrgOwnerResult = { owner_id: string };
+    const typedOrg = org as OrgOwnerResult | null;
+
+    if (orgError || !typedOrg) {
+      return { success: false, error: 'Organization not found' };
+    }
+
+    if (typedOrg.owner_id !== user.id) {
+      return { success: false, error: 'Only the owner can manage billing' };
+    }
+
+    const customerResult = await createOrgStripeCustomer(orgId);
+
+    if (!customerResult.success || !customerResult.customerId) {
+      return { success: false, error: customerResult.error };
+    }
+
+    const siteUrl = getSiteUrl();
     const session = await createCheckoutSession({
       customerId: customerResult.customerId,
       priceId,
-      successUrl: `${siteUrl}/en/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${siteUrl}/en/billing?canceled=true`,
+      successUrl: `${siteUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${siteUrl}/billing?canceled=true`,
       metadata: {
         org_id: orgId,
         user_id: user.id,
@@ -179,102 +205,160 @@ export async function createSubscriptionCheckout(orgId: string, priceId: string)
           org_id: orgId,
         },
       },
-    })
+    });
 
-    if (!session?.id || !session.url) {
-      return { success: false, error: 'Failed to create checkout session' }
-    }
-
-    return { success: true, sessionId: session.id, url: session.url }
+    return { success: true, sessionId: session.id, url: session.url ?? undefined };
   } catch (error) {
-    console.error('Error creating checkout session:', error)
-    return { success: false, error: 'Failed to start checkout session' }
+    console.error('Error in createSubscriptionCheckout:', error);
+    return { success: false, error: 'Failed to create checkout session' };
   }
 }
 
 /**
  * Create billing portal session
+ * Allows user to manage subscription, payment methods, invoices
  */
-export async function createBillingPortal(orgId: string): Promise<BillingActionResponse> {
-  const user = await requireAuth()
-
-  if (!orgId) {
-    return { success: false, error: 'Organization ID is required' }
-  }
-
-  if (BILLING_OFFLINE) {
-    return { success: false, error: 'Billing is currently disabled' }
-  }
-
-  const supabase = createClient() as any
-
-  const { data: membership } = await supabase
-    .from('organization_members')
-    .select('role')
-    .eq('org_id', orgId)
-    .eq('user_id', user.id)
-    .single()
-
-  if (!membership || (membership as any)?.role !== 'owner') {
-    return { success: false, error: 'Only the owner can access billing portal' }
-  }
-
+export async function createBillingPortal(orgId: string): Promise<BillingPortalResult> {
   try {
-    const adminSupabase = getServiceRoleClient()
-    const { data: customer, error } = await adminSupabase
+    const user = await requireAuth();
+    const supabase = createClient();
+
+    const { data: org, error: orgError } = await supabase
+      .from('organizations')
+      .select('owner_id')
+      .eq('id', orgId)
+      .single();
+
+    type OrgOwnerResult = { owner_id: string };
+    const typedOrg = org as OrgOwnerResult | null;
+
+    if (orgError || !typedOrg) {
+      return { success: false, error: 'Organization not found' };
+    }
+
+    if (typedOrg.owner_id !== user.id) {
+      return { success: false, error: 'Only the owner can manage billing' };
+    }
+
+    const { data: customer, error } = await supabase
       .from('billing_customers')
       .select('stripe_customer_id')
       .eq('org_id', orgId)
-      .single()
+      .single();
 
-    if (error || !customer?.stripe_customer_id) {
-      return { success: false, error: 'Billing customer not found' }
+    type CustomerResult = { stripe_customer_id: string | null };
+    const typedCustomer = customer as CustomerResult | null;
+
+    if (error || !typedCustomer?.stripe_customer_id) {
+      return { success: false, error: 'No billing account found' };
     }
 
+    const siteUrl = getSiteUrl();
     const session = await createBillingPortalSession({
-      customerId: customer.stripe_customer_id,
-      returnUrl: `${getSiteUrl()}/en/billing`,
-    })
+      customerId: typedCustomer.stripe_customer_id,
+      returnUrl: `${siteUrl}/billing`,
+    });
 
-    if (!session.url) {
-      return { success: false, error: 'Failed to create billing portal session' }
-    }
-
-    return { success: true, url: session.url }
+    return { success: true, url: session.url };
   } catch (error) {
-    console.error('Error creating billing portal session:', error)
-    return { success: false, error: 'Failed to create billing portal session' }
+    console.error('Error in createBillingPortal:', error);
+    return { success: false, error: 'Failed to create billing portal session' };
   }
 }
 
 /**
  * Get organization subscription
+ * Any org member can view subscription
  */
-export async function getOrgSubscription(orgId: string) {
-  const user = await requireAuth()
-  const supabase = createClient() as any
+export async function getOrgSubscription(orgId: string): Promise<{
+  success: boolean;
+  subscription?: OrgSubscription | null;
+  error?: string;
+}> {
+  try {
+    const user = await requireAuth();
+    const supabase = createClient();
 
-  const { data: membership } = await supabase
-    .from('organization_members')
-    .select('role')
-    .eq('org_id', orgId)
-    .eq('user_id', user.id)
-    .maybeSingle()
+    const { data: membership } = await supabase
+      .from('organization_members')
+      .select('role')
+      .eq('org_id', orgId)
+      .eq('user_id', user.id)
+      .maybeSingle();
 
-  if (!membership) {
-    return { success: false, error: 'Not a member of this organization' }
+    if (!membership) {
+      return { success: false, error: 'Not a member of this organization' };
+    }
+
+    const { data: subscription, error } = await supabase
+      .from('org_subscriptions')
+      .select('*')
+      .eq('org_id', orgId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching subscription:', error);
+      return { success: false, error: 'Failed to fetch subscription' };
+    }
+
+    return { success: true, subscription };
+  } catch (error) {
+    console.error('Error in getOrgSubscription:', error);
+    return { success: false, error: 'An unexpected error occurred' };
   }
+}
 
-  const { data: subscription, error } = await supabase
-    .from('org_subscriptions')
-    .select('*')
-    .eq('org_id', orgId)
-    .maybeSingle()
+/**
+ * Cancel subscription at period end
+ * Only org owner can cancel
+ */
+export async function cancelSubscription(orgId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const user = await requireAuth();
+    const supabase = createClient();
 
-  if (error) {
-    console.error('Error fetching subscription:', error)
-    return { success: false, error: 'Failed to fetch subscription' }
+    const { data: org, error: orgError } = await supabase
+      .from('organizations')
+      .select('owner_id')
+      .eq('id', orgId)
+      .single();
+
+    type OrgOwnerResult = { owner_id: string };
+    const typedOrg = org as OrgOwnerResult | null;
+
+    if (orgError || !typedOrg) {
+      return { success: false, error: 'Organization not found' };
+    }
+
+    if (typedOrg.owner_id !== user.id) {
+      return { success: false, error: 'Only the owner can cancel subscription' };
+    }
+
+    const { data: subscription, error: subError } = await supabase
+      .from('org_subscriptions')
+      .select('stripe_subscription_id')
+      .eq('org_id', orgId)
+      .single();
+
+    type SubscriptionResult = { stripe_subscription_id: string | null };
+    const typedSubscription = subscription as SubscriptionResult | null;
+
+    if (subError || !typedSubscription?.stripe_subscription_id) {
+      return { success: false, error: 'No active subscription found' };
+    }
+
+    await stripe.subscriptions.update(typedSubscription.stripe_subscription_id, {
+      cancel_at_period_end: true,
+    });
+
+    revalidatePath('/billing');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in cancelSubscription:', error);
+    return { success: false, error: 'Failed to cancel subscription' };
   }
-
-  return { success: true, subscription }
 }

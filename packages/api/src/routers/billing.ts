@@ -15,6 +15,7 @@ import {
   BillingAnalyticsEvent,
   BillingAnalyticsPayload
 } from '@starter/types';
+import { createAuditMiddleware } from '../middleware/audit';
 
 // Note: These utility functions and stores will need to be provided by the consuming application
 declare const BILLING_PLANS: any;
@@ -106,6 +107,13 @@ export const billingRouter = createTRPCRouter({
   createCheckout: protectedProcedure
     .use(requireMember({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(CreateCheckoutInput)
+    .use(createAuditMiddleware({
+      action: 'started',
+      entityType: 'subscription',
+      entityIdFromResult: (result) => result.sessionId,
+      orgIdField: 'orgId',
+      captureMetadata: (input) => ({ plan: input.plan }),
+    }))
     .mutation(async ({ input, ctx }) => {
       try {
         const plan = getPlanById(input.plan as string);
@@ -213,6 +221,13 @@ export const billingRouter = createTRPCRouter({
   simulateEvent: protectedProcedure
     .use(requireAdmin({ orgIdSource: 'input', orgIdField: 'orgId' }))
     .input(SimulateEventInput)
+    .use(createAuditMiddleware({
+      action: 'updated',
+      entityType: 'subscription',
+      entityIdField: 'orgId',
+      orgIdField: 'orgId',
+      captureMetadata: (input) => ({ event_type: input.type, simulated: true }),
+    }))
     .mutation(async ({ input, ctx }) => {
       if (!isOfflineMode) {
         throw new TRPCError({
@@ -267,11 +282,11 @@ export const billingRouter = createTRPCRouter({
         // Get current plan
         const { data: subscription } = await ctx.supabase
           .from('org_subscriptions')
-          .select('plan')
-          .eq('org_id', input.orgId as string)
+          .select('plan_name')
+          .eq('org_id', input.orgId)
           .single();
 
-        const plan = getPlanById(subscription?.plan || 'free');
+        const plan = getPlanById(subscription?.plan_name || 'free');
         const entitlements = plan?.entitlements || {};
 
         // TODO: Implement actual usage counting

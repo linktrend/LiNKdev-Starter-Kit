@@ -6,6 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "composite": true,
+    "noEmit": false,
     "skipLibCheck": true
   },
   "include": ["src/**/*"],

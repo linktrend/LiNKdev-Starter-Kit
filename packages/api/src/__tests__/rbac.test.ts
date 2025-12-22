@@ -12,10 +12,12 @@ import {
   canManageOrg,
   canManageBilling,
   canChangeRole,
+  getUserOrgRole,
   ROLE_HIERARCHY,
   ROLE_PERMISSIONS,
 } from '../rbac';
 import { OrgRole } from '@starter/types';
+import { createSupabaseMock } from './helpers/supabaseMock';
 
 describe('RBAC Utilities', () => {
   describe('roleIsSufficient', () => {
@@ -164,6 +166,41 @@ describe('RBAC Utilities', () => {
       expect(ROLE_PERMISSIONS.editor).toContain('edit_content');
       expect(ROLE_PERMISSIONS.viewer).toContain('view_content');
       expect(ROLE_PERMISSIONS.viewer).not.toContain('edit_content');
+    });
+  });
+
+  describe('getUserOrgRole', () => {
+    it('returns the membership role when found', async () => {
+      const mock = createSupabaseMock();
+      const members = mock.getTable('organization_members');
+      members.__queueSingleResponse({ data: { role: 'admin' }, error: null });
+
+      const role = await getUserOrgRole('org-1', 'user-1', mock.supabase);
+
+      expect(role).toBe('admin');
+      expect(members.select).toHaveBeenCalledWith('role');
+    });
+
+    it('returns null when membership is missing or errored', async () => {
+      const mock = createSupabaseMock();
+      const members = mock.getTable('organization_members');
+      members.__queueSingleResponse({ data: null, error: { message: 'not found' } });
+
+      const role = await getUserOrgRole('org-1', 'user-1', mock.supabase);
+
+      expect(role).toBeNull();
+    });
+
+    it('returns null when lookup throws', async () => {
+      const supabase = {
+        from: () => {
+          throw new Error('boom');
+        },
+      };
+
+      const role = await getUserOrgRole('org-1', 'user-1', supabase);
+
+      expect(role).toBeNull();
     });
   });
 });

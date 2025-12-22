@@ -4,7 +4,7 @@ import { userRouter } from '../../routers/user';
 import { createSupabaseMock } from '../helpers/supabaseMock';
 
 describe('userRouter', () => {
-  const user = { id: 'user-123' };
+  const user = { id: '00000000-0000-4000-8000-000000000001' };
   let supabase: ReturnType<typeof createSupabaseMock>['supabase'];
   let getTable: ReturnType<typeof createSupabaseMock>['getTable'];
   let caller: ReturnType<typeof userRouter.createCaller>;
@@ -52,7 +52,7 @@ describe('userRouter', () => {
 
     const result = await caller.deleteAccount();
 
-    expect(result).toEqual({ success: true });
+    expect(result).toEqual({ success: true, userId: user.id });
     expect(users.delete).toHaveBeenCalled();
   });
 });

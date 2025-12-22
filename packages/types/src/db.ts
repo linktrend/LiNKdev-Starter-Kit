@@ -1,7 +1,7 @@
 import type {
   Database as SupabaseDatabase,
   Json as SupabaseJson,
-} from "../../apps/web/src/types/database.types"
+} from './database.types'
 
 export type Database = SupabaseDatabase
 export type Json = SupabaseJson

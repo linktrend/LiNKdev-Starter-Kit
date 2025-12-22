@@ -38,8 +38,11 @@ export async function getUserDetails(): Promise<UserDetails | null> {
   if (process.env.TEMPLATE_OFFLINE === '1') {
     return {
       id: 'test-user-123',
+      email: 'test@example.com',
+      username: 'testuser',
+      display_name: 'Test User',
       full_name: 'Test User',
-      avatar_url: undefined,
+      avatar_url: null,
     };
   }
 
@@ -54,23 +57,39 @@ export async function getUserDetails(): Promise<UserDetails | null> {
     // Get user details from the users table
     const { data: userDetails, error: userError } = await supabase
       .from('users')
-      .select('id, full_name, avatar_url')
+      .select('id, email, username, display_name, full_name, avatar_url')
       .eq('id', user.id)
       .single();
 
-    if (userError || !userDetails) {
+    type UserDetailsResult = {
+      id: string;
+      email: string | null;
+      username: string | null;
+      display_name: string | null;
+      full_name: string | null;
+      avatar_url: string | null;
+    };
+    const typedUserDetails = userDetails as UserDetailsResult | null;
+
+    if (userError || !typedUserDetails) {
       // Fallback to auth user data if users table doesn't have the record
       return {
         id: user.id,
+        email: user.email || null,
+        username: null,
+        display_name: user.user_metadata?.full_name || null,
         full_name: user.user_metadata?.full_name || null,
         avatar_url: user.user_metadata?.avatar_url || null,
       };
     }
 
     return {
-      id: userDetails.id,
-      full_name: userDetails.full_name,
-      avatar_url: userDetails.avatar_url,
+      id: typedUserDetails.id,
+      email: typedUserDetails.email,
+      username: typedUserDetails.username,
+      display_name: typedUserDetails.display_name,
+      full_name: typedUserDetails.full_name,
+      avatar_url: typedUserDetails.avatar_url,
     };
   } catch (error) {
     console.error('Error fetching user details:', error);

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { OnboardingData, EducationEntry, WorkExperienceEntry } from '@/hooks/useOnboarding';
-import { generateUsername, checkUsernameAvailability } from '@/utils/onboarding';
+import { generateUsername, checkUsernameAvailability } from '@/utils/onboarding-client';
 import { completeOnboardingStep2 } from '@/app/actions/profile';
 
 interface Step2Props {
@@ -51,7 +51,7 @@ export function Step2CompleteProfile({ data, updateData, onNext, onBack, onSkip 
       const suggested = generateUsername(data.email, data.phoneNumber);
       updateData({ username: suggested });
     }
-  }, []);
+  }, [data.email, data.phoneNumber, data.username, updateData]);
 
   const toggleSection = (section: keyof typeof sectionsCollapsed) => {
     setSectionsCollapsed(prev => ({

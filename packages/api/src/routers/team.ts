@@ -4,7 +4,6 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { requireAdmin, requireOwner, requireMember } from '../middleware/accessGuard';
 import { ROLE_PERMISSIONS, canChangeRole } from '../rbac';
 import type {
-  TeamInvite,
   SafeTeamInvite,
   AcceptTeamInviteResponse,
   RoleDefinition,
@@ -64,7 +63,7 @@ export const teamRouter = createTRPCRouter({
         .from('organization_members')
         .select('user_id')
         .eq('org_id', input.orgId)
-        .eq('user_id', ctx.supabase.auth.user()?.id)
+        .eq('user_id', ctx.user.id)
         .single();
 
       if (existingMember) {
@@ -214,7 +213,7 @@ export const teamRouter = createTRPCRouter({
       }
 
       // Check if expired
-      if (isInviteExpired && isInviteExpired(invite.expires_at)) {
+      if (isInviteExpired && invite.expires_at && isInviteExpired(invite.expires_at)) {
         // Update status to expired
         await ctx.supabase
           .from('team_invites')
@@ -548,19 +547,19 @@ export const teamRouter = createTRPCRouter({
           id: 'owner',
           name: 'Owner',
           description: 'Full access to organization settings, billing, and members',
-          permissions: ROLE_PERMISSIONS.owner,
+          permissions: [...ROLE_PERMISSIONS.owner],
         },
         {
           id: 'member',
           name: 'Member',
           description: 'Can manage members, invites, and edit content',
-          permissions: ROLE_PERMISSIONS.member,
+          permissions: [...ROLE_PERMISSIONS.member],
         },
         {
           id: 'viewer',
           name: 'Viewer',
           description: 'Read-only access to organization content',
-          permissions: ROLE_PERMISSIONS.viewer,
+          permissions: [...ROLE_PERMISSIONS.viewer],
         },
       ];
 

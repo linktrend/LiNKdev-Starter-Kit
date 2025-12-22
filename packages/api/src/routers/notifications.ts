@@ -18,7 +18,8 @@ declare const notificationsStore: {
   getUnreadCount: (orgId: string, userId: string) => number;
 };
 
-const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
+const isOfflineMode = () =>
+  process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export const notificationsRouter = createTRPCRouter({
   /**
@@ -44,7 +45,7 @@ export const notificationsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }): Promise<NotificationList> => {
-      if (isOfflineMode) {
+      if (isOfflineMode()) {
         const result = notificationsStore.list(input.orgId, ctx.user.id, {
           read: input.read,
           limit: input.limit,
@@ -105,7 +106,7 @@ export const notificationsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      if (isOfflineMode) {
+      if (isOfflineMode()) {
         const success = notificationsStore.markAsRead(input.notificationId, ctx.user.id);
         
         if (!success) {
@@ -152,7 +153,7 @@ export const notificationsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      if (isOfflineMode) {
+      if (isOfflineMode()) {
         const count = notificationsStore.markAllAsRead(input.orgId, ctx.user.id);
         return { success: true, count };
       }
@@ -192,7 +193,7 @@ export const notificationsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      if (isOfflineMode) {
+      if (isOfflineMode()) {
         const success = notificationsStore.delete(input.notificationId, ctx.user.id);
         
         if (!success) {
@@ -239,7 +240,7 @@ export const notificationsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }): Promise<UnreadCountResponse> => {
-      if (isOfflineMode) {
+      if (isOfflineMode()) {
         const count = notificationsStore.getUnreadCount(input.orgId, ctx.user.id);
         return { count };
       }

@@ -43,8 +43,12 @@ const mockTeamStore = {
 global.teamStore = mockTeamStore as any;
 
 describe('Team Router', () => {
-  const mockUser = { id: 'user-123', email: 'user@example.com' };
-  const mockOrgId = 'org-123';
+  const mockUser = { id: '11111111-1111-4111-8111-111111111111', email: 'user@example.com' };
+  const mockOrgId = '22222222-2222-4222-8222-222222222222';
+  const mockInviteId = '33333333-3333-4333-8333-333333333333';
+  const secondInviteId = '33333333-3333-4333-8333-333333333334';
+  const otherUserId = '44444444-4444-4444-8444-444444444444';
+  const newOwnerId = '55555555-5555-4555-8555-555555555555';
 
   let mockSupabase: any;
 
@@ -80,13 +84,20 @@ describe('Team Router', () => {
     };
   });
 
+  const makeCaller = () =>
+    teamRouter.createCaller({
+      user: mockUser,
+      supabase: mockSupabase,
+      orgId: mockOrgId,
+    });
+
   describe('inviteMember', () => {
     it('should create a team invitation', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('member');
 
       const mockInvite = {
-        id: 'invite-1',
+        id: mockInviteId,
         org_id: mockOrgId,
         email: 'newuser@example.com',
         role: 'viewer',
@@ -98,10 +109,7 @@ describe('Team Router', () => {
 
       mockTeamStore.inviteMember.mockReturnValue(mockInvite);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.inviteMember({
         orgId: mockOrgId,
@@ -123,10 +131,7 @@ describe('Team Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('viewer');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.inviteMember({
@@ -145,7 +150,7 @@ describe('Team Router', () => {
 
       const mockInvites = [
         {
-          id: 'invite-1',
+          id: mockInviteId,
           org_id: mockOrgId,
           email: 'user1@example.com',
           role: 'member',
@@ -155,7 +160,7 @@ describe('Team Router', () => {
           created_at: new Date().toISOString(),
         },
         {
-          id: 'invite-2',
+          id: secondInviteId,
           org_id: mockOrgId,
           email: 'user2@example.com',
           role: 'viewer',
@@ -168,10 +173,7 @@ describe('Team Router', () => {
 
       mockTeamStore.listInvites.mockReturnValue(mockInvites);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.listInvites({ orgId: mockOrgId });
 
@@ -184,10 +186,7 @@ describe('Team Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue(null);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.listInvites({ orgId: mockOrgId })
@@ -203,10 +202,7 @@ describe('Team Router', () => {
         role: 'member',
       });
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.acceptInvite({ token: 'valid-token' });
 
@@ -227,10 +223,7 @@ describe('Team Router', () => {
         role: '',
       });
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.acceptInvite({ token: 'invalid-token' })
@@ -245,32 +238,26 @@ describe('Team Router', () => {
 
       mockTeamStore.revokeInvite.mockReturnValue(true);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.revokeInvite({
-        inviteId: 'invite-1',
+        inviteId: mockInviteId,
         orgId: mockOrgId,
       });
 
       expect(result.success).toBe(true);
-      expect(mockTeamStore.revokeInvite).toHaveBeenCalledWith('invite-1', mockOrgId);
+      expect(mockTeamStore.revokeInvite).toHaveBeenCalledWith(mockInviteId, mockOrgId);
     });
 
     it('should deny access to viewers', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('viewer');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.revokeInvite({
-          inviteId: 'invite-1',
+          inviteId: mockInviteId,
           orgId: mockOrgId,
         })
       ).rejects.toThrow(TRPCError);
@@ -287,14 +274,11 @@ describe('Team Router', () => {
 
       mockTeamStore.getUserRole.mockReturnValue('member');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.updateMemberRole({
         orgId: mockOrgId,
-        userId: 'other-user-123',
+        userId: otherUserId,
         role: 'viewer',
       });
 
@@ -305,10 +289,7 @@ describe('Team Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('owner');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.updateMemberRole({
@@ -323,15 +304,12 @@ describe('Team Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('member');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.updateMemberRole({
           orgId: mockOrgId,
-          userId: 'other-user-123',
+          userId: otherUserId,
           role: 'viewer',
         })
       ).rejects.toThrow(TRPCError);
@@ -345,28 +323,22 @@ describe('Team Router', () => {
 
       mockTeamStore.isUserMember.mockReturnValue(true);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.transferOwnership({
         orgId: mockOrgId,
-        newOwnerId: 'new-owner-123',
+        newOwnerId,
       });
 
       expect(result.success).toBe(true);
-      expect(mockTeamStore.isUserMember).toHaveBeenCalledWith(mockOrgId, 'new-owner-123');
+      expect(mockTeamStore.isUserMember).toHaveBeenCalledWith(mockOrgId, newOwnerId);
     });
 
     it('should prevent transferring to self', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('owner');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.transferOwnership({
@@ -382,15 +354,12 @@ describe('Team Router', () => {
 
       mockTeamStore.isUserMember.mockReturnValue(false);
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.transferOwnership({
           orgId: mockOrgId,
-          newOwnerId: 'non-member-123',
+          newOwnerId: otherUserId,
         })
       ).rejects.toThrow('Target user is not a member of this organization');
     });
@@ -399,15 +368,12 @@ describe('Team Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('member');
 
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.transferOwnership({
           orgId: mockOrgId,
-          newOwnerId: 'new-owner-123',
+          newOwnerId,
         })
       ).rejects.toThrow(TRPCError);
     });
@@ -415,10 +381,7 @@ describe('Team Router', () => {
 
   describe('listAvailableRoles', () => {
     it('should return list of available roles', async () => {
-      const caller = teamRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.listAvailableRoles();
 

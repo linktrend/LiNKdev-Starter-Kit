@@ -28,9 +28,14 @@ const mockNotificationsStore = {
 
 global.notificationsStore = mockNotificationsStore as any;
 
+const uuid = (suffix: number) =>
+  `00000000-0000-4000-8000-${suffix.toString(16).padStart(12, '0')}`;
+
 describe('Notifications Router', () => {
-  const mockUser = { id: 'user-123', email: 'user@example.com' };
-  const mockOrgId = 'org-123';
+  const mockUser = { id: uuid(1), email: 'user@example.com' };
+  const mockOrgId = uuid(2);
+  const mockNotificationId = uuid(3);
+  const missingNotificationId = uuid(999);
 
   let mockSupabase: any;
 
@@ -75,6 +80,13 @@ describe('Notifications Router', () => {
     };
   });
 
+  const makeCaller = () =>
+    notificationsRouter.createCaller({
+      user: mockUser,
+      supabase: mockSupabase,
+      orgId: mockOrgId,
+    });
+
   describe('list', () => {
     it('should list notifications for an organization', async () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
@@ -82,7 +94,7 @@ describe('Notifications Router', () => {
 
       const mockNotifications = [
         {
-          id: 'notif-1',
+          id: mockNotificationId,
           org_id: mockOrgId,
           user_id: mockUser.id,
           type: 'info',
@@ -99,10 +111,7 @@ describe('Notifications Router', () => {
         total: 1,
       });
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.list({ orgId: mockOrgId, limit: 50, offset: 0 });
 
@@ -125,10 +134,7 @@ describe('Notifications Router', () => {
         total: 0,
       });
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await caller.list({ orgId: mockOrgId, read: false, limit: 50, offset: 0 });
 
@@ -145,7 +151,7 @@ describe('Notifications Router', () => {
 
       mockNotificationsStore.list.mockReturnValue({
         notifications: new Array(20).fill(null).map((_, i) => ({
-          id: `notif-${i}`,
+          id: uuid(100 + i),
           org_id: mockOrgId,
           user_id: mockUser.id,
           type: 'info',
@@ -158,10 +164,7 @@ describe('Notifications Router', () => {
         total: 100,
       });
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.list({ orgId: mockOrgId, limit: 20, offset: 0 });
 
@@ -173,10 +176,7 @@ describe('Notifications Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue(null);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.list({ orgId: mockOrgId, limit: 50, offset: 0 })
@@ -188,27 +188,21 @@ describe('Notifications Router', () => {
     it('should mark a notification as read', async () => {
       mockNotificationsStore.markAsRead.mockReturnValue(true);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
-      const result = await caller.markAsRead({ notificationId: 'notif-1' });
+      const result = await caller.markAsRead({ notificationId: mockNotificationId });
 
       expect(result.success).toBe(true);
-      expect(mockNotificationsStore.markAsRead).toHaveBeenCalledWith('notif-1', mockUser.id);
+      expect(mockNotificationsStore.markAsRead).toHaveBeenCalledWith(mockNotificationId, mockUser.id);
     });
 
     it('should throw error if notification not found', async () => {
       mockNotificationsStore.markAsRead.mockReturnValue(false);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
-        caller.markAsRead({ notificationId: 'notif-999' })
+        caller.markAsRead({ notificationId: missingNotificationId })
       ).rejects.toThrow('Notification not found or access denied');
     });
   });
@@ -220,10 +214,7 @@ describe('Notifications Router', () => {
 
       mockNotificationsStore.markAllAsRead.mockReturnValue(5);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.markAllAsRead({ orgId: mockOrgId });
 
@@ -236,10 +227,7 @@ describe('Notifications Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue(null);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.markAllAsRead({ orgId: mockOrgId })
@@ -251,27 +239,21 @@ describe('Notifications Router', () => {
     it('should delete a notification', async () => {
       mockNotificationsStore.delete.mockReturnValue(true);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
-      const result = await caller.delete({ notificationId: 'notif-1' });
+      const result = await caller.delete({ notificationId: mockNotificationId });
 
       expect(result.success).toBe(true);
-      expect(mockNotificationsStore.delete).toHaveBeenCalledWith('notif-1', mockUser.id);
+      expect(mockNotificationsStore.delete).toHaveBeenCalledWith(mockNotificationId, mockUser.id);
     });
 
     it('should throw error if notification not found', async () => {
       mockNotificationsStore.delete.mockReturnValue(false);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
-        caller.delete({ notificationId: 'notif-999' })
+        caller.delete({ notificationId: missingNotificationId })
       ).rejects.toThrow('Notification not found or access denied');
     });
   });
@@ -283,10 +265,7 @@ describe('Notifications Router', () => {
 
       mockNotificationsStore.getUnreadCount.mockReturnValue(10);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.getUnreadCount({ orgId: mockOrgId });
 
@@ -298,10 +277,7 @@ describe('Notifications Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue(null);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.getUnreadCount({ orgId: mockOrgId })
@@ -314,10 +290,7 @@ describe('Notifications Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('member');
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       const result = await caller.subscribe({ orgId: mockOrgId });
 
@@ -330,10 +303,7 @@ describe('Notifications Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue(null);
 
-      const caller = notificationsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller();
 
       await expect(
         caller.subscribe({ orgId: mockOrgId })

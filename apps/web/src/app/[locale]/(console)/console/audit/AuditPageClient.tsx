@@ -30,7 +30,7 @@ export function AuditPageClient() {
     exporting,
     exportCsv,
     searchMode,
-  } = useAuditLogs({ orgId: currentOrgId });
+  } = useAuditLogs({ orgId: currentOrgId ?? undefined });
 
   const pageCount = useMemo(
     () => Math.max(1, Math.ceil((total || logs.length || AUDIT_PAGE_SIZE) / AUDIT_PAGE_SIZE)),

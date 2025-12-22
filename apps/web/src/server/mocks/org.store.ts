@@ -171,7 +171,7 @@ class InMemoryOrgStore {
     this.addMember(sampleOrg.id, 'sample-user-4', 'viewer');
     
     // Add sample invite
-    const sampleInvite: Invite = {
+    const sampleInvite: any = {
       id: 'sample-invite-1',
       org_id: sampleOrg.id,
       email: 'invite@example.com',
@@ -181,6 +181,8 @@ class InMemoryOrgStore {
       created_by: userId,
       created_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      invite_type: 'email',
+      expires_single_use: false,
     };
     
     this.createInvite(sampleInvite);

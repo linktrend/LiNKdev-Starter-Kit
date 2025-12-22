@@ -19,7 +19,8 @@ import {
 declare const auditStore: any;
 declare const emitAnalyticsEvent: (userId: string, event: AuditAnalyticsEvent, payload: AuditAnalyticsPayload) => Promise<void>;
 
-const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
+const isOfflineMode = () =>
+  process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export const auditRouter = createTRPCRouter({
   /**
@@ -38,7 +39,7 @@ export const auditRouter = createTRPCRouter({
           metadata: input.metadata || {},
         };
 
-        if (isOfflineMode) {
+        if (isOfflineMode()) {
           const result = await auditStore.appendLog(auditLog);
           
           // Emit analytics event
@@ -91,7 +92,7 @@ export const auditRouter = createTRPCRouter({
     .input(ListAuditLogsInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        if (isOfflineMode()) {
           const result = await auditStore.listLogs({
             ...input,
             orgId: input.orgId as string,
@@ -216,10 +217,12 @@ export const auditRouter = createTRPCRouter({
     .input(AuditStatsInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await auditStore.getStats({
             ...input,
-            orgId: input.orgId as string,
+            orgId,
             window: input.window || 'day',
           });
           
@@ -227,11 +230,10 @@ export const auditRouter = createTRPCRouter({
         }
 
         // Use the database function for statistics
-        const { data, error } = await ctx.supabase
-          .rpc('get_audit_stats', {
-            p_org_id: input.orgId as string,
-            p_window: input.window,
-          });
+        const { data, error } = await ctx.supabase.rpc('get_audit_stats', {
+          p_org_id: orgId,
+          p_window: input.window,
+        });
 
         if (error) {
           throw new TRPCError({
@@ -240,12 +242,18 @@ export const auditRouter = createTRPCRouter({
           });
         }
 
-        const stats = data?.[0] || {
-          by_action: {},
-          by_entity_type: {},
-          by_actor: {},
-          total: 0,
-        };
+        const stats =
+          (data as Array<{
+            by_action?: Record<string, number>;
+            by_entity_type?: Record<string, number>;
+            by_actor?: Record<string, number>;
+            total?: number;
+          }> | null)?.[0] || {
+            by_action: {},
+            by_entity_type: {},
+            by_actor: {},
+            total: 0,
+          };
 
         return {
           by_action: stats.by_action || {},
@@ -270,8 +278,11 @@ export const auditRouter = createTRPCRouter({
     .input(GetAuditLogByIdInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
-          const log = await auditStore.getLogById(input.logId, input.orgId);
+        const orgId = input.orgId!;
+        const logId = input.logId!;
+
+        if (isOfflineMode()) {
+          const log = await auditStore.getLogById(input.logId, orgId);
           
           if (!log) {
             throw new TRPCError({
@@ -287,7 +298,7 @@ export const auditRouter = createTRPCRouter({
         const { data: membership } = await ctx.supabase
           .from('organization_members')
           .select('role')
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('user_id', ctx.user.id)
           .single();
 
@@ -302,8 +313,8 @@ export const auditRouter = createTRPCRouter({
         const { data: log, error } = await ctx.supabase
           .from('audit_logs')
           .select('*')
-          .eq('id', input.logId)
-          .eq('org_id', input.orgId)
+          .eq('id', logId)
+          .eq('org_id', orgId)
           .single();
 
         if (error || !log) {
@@ -333,10 +344,12 @@ export const auditRouter = createTRPCRouter({
     .input(SearchAuditLogsInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await auditStore.searchLogs({
             ...input,
-            orgId: input.orgId,
+            orgId,
             limit: input.limit || 50,
           });
           
@@ -347,7 +360,7 @@ export const auditRouter = createTRPCRouter({
         let query = ctx.supabase
           .from('audit_logs')
           .select('*', { count: 'exact' })
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .order('created_at', { ascending: false });
 
         // Apply full-text search across multiple fields
@@ -432,10 +445,12 @@ export const auditRouter = createTRPCRouter({
     .input(GetActivitySummaryInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await auditStore.getActivitySummary({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           
           return result;
@@ -450,7 +465,7 @@ export const auditRouter = createTRPCRouter({
         const { data: logs, error } = await ctx.supabase
           .from('audit_logs')
           .select('*')
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .gte('created_at', from.toISOString())
           .lte('created_at', to.toISOString())
           .order('created_at', { ascending: true });
@@ -557,7 +572,7 @@ export const auditRouter = createTRPCRouter({
     .input(ExportAuditLogsInput)
     .mutation(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        if (isOfflineMode()) {
           const csv = await auditStore.exportCsv({
             ...input,
             orgId: input.orgId as string,

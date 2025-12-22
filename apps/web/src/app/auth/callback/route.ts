@@ -32,9 +32,10 @@ export async function GET(request: NextRequest) {
       type: parsedError.type,
     });
     
-    // Redirect with user-friendly error message
+    // Redirect with user-friendly error message (prefer provider description when available)
+    const redirectMessage = error_description || parsedError.message;
     return NextResponse.redirect(
-      `${requestUrl.origin}/login?error=${encodeURIComponent(parsedError.message)}&error_type=${parsedError.type}`
+      `${requestUrl.origin}/login?error=${encodeURIComponent(redirectMessage)}&error_type=${parsedError.type}`
     );
   }
   
@@ -77,45 +78,49 @@ export async function GET(request: NextRequest) {
           .insert({
             id: user.id,
             email: user.email,
-            full_name: user.user_metadata?.full_name || user.user_metadata?.name,
-            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+            full_name: user.user_metadata?.full_name ?? user.user_metadata?.name ?? null,
+            avatar_url: user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null,
             onboarding_completed: false,
             profile_completed: false,
             account_type: 'user',
-          });
+          } as any);
 
         if (insertError) {
           console.error('Error creating user record:', insertError);
           // Continue anyway - user can complete profile later
         }
 
-        // Log new user signup
-        logUsage({
-          userId: user.id,
-          eventType: 'user_signup',
-          metadata: {
-            method: 'oauth',
-            provider: user.app_metadata?.provider || 'unknown',
-          },
-        }).catch((err) => {
+        // Log new user signup (best effort, but don't break the flow)
+        try {
+          await logUsage({
+            userId: user.id,
+            eventType: 'user_signup' as any,
+            metadata: {
+              method: 'oauth',
+              provider: user.app_metadata?.provider || 'unknown',
+            },
+          });
+        } catch (err) {
           console.error('Error logging signup usage:', err);
-        });
+        }
 
         // Redirect new users to onboarding
         return NextResponse.redirect(`${requestUrl.origin}/onboarding`);
       }
 
       // Log OAuth sign-in for existing users
-      logUsage({
-        userId: user.id,
-        eventType: 'user_active',
-        metadata: {
-          method: 'oauth',
-          provider: user.app_metadata?.provider || 'unknown',
-        },
-      }).catch((err) => {
+      try {
+        await logUsage({
+          userId: user.id,
+          eventType: 'user_active',
+          metadata: {
+            method: 'oauth',
+            provider: user.app_metadata?.provider || 'unknown',
+          },
+        });
+      } catch (err) {
         console.error('Error logging login usage:', err);
-      });
+      }
 
       // Redirect based on type
       if (type === 'recovery') {
@@ -123,7 +128,9 @@ export async function GET(request: NextRequest) {
       }
 
       // Check if user needs to complete onboarding
-      if (existingUser && !existingUser.onboarding_completed) {
+      type UserOnboardingResult = { onboarding_completed: boolean; profile_completed: boolean };
+      const typedUser = existingUser as UserOnboardingResult | null;
+      if (typedUser && !typedUser.onboarding_completed) {
         return NextResponse.redirect(`${requestUrl.origin}/onboarding`);
       }
 

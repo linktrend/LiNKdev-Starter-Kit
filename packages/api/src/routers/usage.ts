@@ -20,19 +20,20 @@ import {
   ActiveUsersResponse,
   StorageUsageResponse,
   UsageLimitsResponse,
+  UsageEventType,
 } from '@starter/types';
 import {
   getApiUsageStats,
   getActiveUsersCount,
   calculateStorageUsage,
-  checkUsageLimits,
   trackFeatureUsage,
 } from '../lib/usage-tracker';
 
 // Note: These stores will need to be provided by the consuming application
 declare const usageStore: any;
 
-const isOfflineMode = process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
+const isOfflineMode = () =>
+  process.env.TEMPLATE_OFFLINE === '1' || !process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 export const usageRouter = createTRPCRouter({
   /**
@@ -43,10 +44,12 @@ export const usageRouter = createTRPCRouter({
     .input(GetApiUsageInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await usageStore.getApiUsage({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           return result;
         }
@@ -57,7 +60,7 @@ export const usageRouter = createTRPCRouter({
         const to = input.to ? new Date(input.to) : now;
 
         // Get API usage stats from database function
-        const stats = await getApiUsageStats(ctx.supabase, input.orgId, from, to);
+        const stats = await getApiUsageStats(ctx.supabase, orgId, from, to);
 
         // Filter by endpoint/method if specified
         let filteredStats = stats;
@@ -110,10 +113,13 @@ export const usageRouter = createTRPCRouter({
     .input(GetFeatureUsageInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+        const eventType = input.eventType as UsageEventType | undefined;
+
+        if (isOfflineMode()) {
           const result = await usageStore.getFeatureUsage({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           return result;
         }
@@ -127,12 +133,12 @@ export const usageRouter = createTRPCRouter({
         let query = ctx.supabase
           .from('usage_events')
           .select('event_type, user_id, quantity, created_at')
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .gte('created_at', from.toISOString())
           .lte('created_at', to.toISOString());
 
-        if (input.eventType) {
-          query = query.eq('event_type', input.eventType);
+        if (eventType) {
+          query = query.eq('event_type', eventType);
         }
 
         const { data: events, error } = await query;
@@ -225,10 +231,12 @@ export const usageRouter = createTRPCRouter({
     .input(GetActiveUsersInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await usageStore.getActiveUsers({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           return result;
         }
@@ -241,7 +249,7 @@ export const usageRouter = createTRPCRouter({
           const { data: events, error } = await ctx.supabase
             .from('usage_events')
             .select('user_id, created_at')
-            .eq('org_id', input.orgId)
+            .eq('org_id', orgId)
             .eq('event_type', 'user_active')
             .gte('created_at', from.toISOString())
             .lte('created_at', to.toISOString());
@@ -284,7 +292,7 @@ export const usageRouter = createTRPCRouter({
 
         // Use database function for single period
         const referenceDate = input.from ? new Date(input.from) : new Date();
-        const result = await getActiveUsersCount(ctx.supabase, input.orgId, input.period, referenceDate);
+        const result = await getActiveUsersCount(ctx.supabase, orgId, input.period, referenceDate);
 
         if (!result) {
           return {
@@ -318,15 +326,17 @@ export const usageRouter = createTRPCRouter({
     .input(GetStorageUsageInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await usageStore.getStorageUsage({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           return result;
         }
 
-        const result = await calculateStorageUsage(ctx.supabase, input.orgId);
+        const result = await calculateStorageUsage(ctx.supabase, orgId);
 
         return {
           total_bytes: result.totalBytes,
@@ -351,10 +361,12 @@ export const usageRouter = createTRPCRouter({
     .input(GetUsageLimitsInput)
     .query(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+
+        if (isOfflineMode()) {
           const result = await usageStore.getUsageLimits({
             ...input,
-            orgId: input.orgId,
+            orgId,
           });
           return result;
         }
@@ -363,7 +375,7 @@ export const usageRouter = createTRPCRouter({
         const { data: subscription, error: subError } = await ctx.supabase
           .from('org_subscriptions')
           .select('plan_name')
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('status', 'active')
           .single();
 
@@ -403,7 +415,8 @@ export const usageRouter = createTRPCRouter({
 
         for (const feature of features || []) {
           if (feature.feature_key in limits) {
-            limits[feature.feature_key] = feature.feature_value?.limit ?? -1;
+            const featureValue = feature.feature_value as { limit?: number } | null;
+            limits[feature.feature_key] = featureValue?.limit ?? -1;
           }
         }
 
@@ -415,53 +428,56 @@ export const usageRouter = createTRPCRouter({
         const { count: recordsCount } = await ctx.supabase
           .from('usage_events')
           .select('*', { count: 'exact', head: true })
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('event_type', 'record_created');
 
         // Count API calls this month
         const { count: apiCallsCount } = await ctx.supabase
           .from('api_usage')
           .select('*', { count: 'exact', head: true })
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .gte('created_at', monthStart.toISOString());
 
         // Count automations
         const { count: automationsCount } = await ctx.supabase
           .from('usage_events')
           .select('*', { count: 'exact', head: true })
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('event_type', 'automation_run');
 
         // Get storage
-        const storage = await calculateStorageUsage(ctx.supabase, input.orgId);
+        const storage = await calculateStorageUsage(ctx.supabase, orgId);
         const storageGb = storage.totalBytes / (1024 * 1024 * 1024);
 
         // Get MAU
-        const mauResult = await getActiveUsersCount(ctx.supabase, input.orgId, 'month');
+        const mauResult = await getActiveUsersCount(ctx.supabase, orgId, 'month');
         const mau = mauResult?.activeUsers || 0;
 
         // Count schedules
         const { count: schedulesCount } = await ctx.supabase
           .from('usage_events')
           .select('*', { count: 'exact', head: true })
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('event_type', 'schedule_executed');
 
         // Count AI tokens this month
         const { data: aiTokens } = await ctx.supabase
           .from('usage_events')
           .select('quantity')
-          .eq('org_id', input.orgId)
+          .eq('org_id', orgId)
           .eq('event_type', 'ai_tokens_used')
           .gte('created_at', monthStart.toISOString());
 
-        const aiTokensSum = aiTokens?.reduce((sum, e) => sum + Number(e.quantity || 0), 0) || 0;
+        const aiTokensSum = (aiTokens ?? []).reduce<number>(
+          (sum, e: { quantity: number | null }) => sum + Number(e.quantity ?? 0),
+          0,
+        );
 
         // Count seats (org members)
         const { count: seatsCount } = await ctx.supabase
           .from('organization_members')
           .select('*', { count: 'exact', head: true })
-          .eq('org_id', input.orgId);
+          .eq('org_id', orgId);
 
         const currentUsage = {
           records: recordsCount || 0,
@@ -479,8 +495,8 @@ export const usageRouter = createTRPCRouter({
         const approachingLimits: string[] = [];
         const exceededLimits: string[] = [];
 
-        for (const [key, limit] of Object.entries(limits)) {
-          const usageKey = key.replace('max_', '').replace('_per_month', '');
+        for (const [key, limit] of Object.entries(limits) as Array<[keyof typeof limits, number]>) {
+          const usageKey = String(key).replace('max_', '').replace('_per_month', '');
           const current = currentUsage[usageKey as keyof typeof currentUsage] || 0;
 
           if (limit === -1) {
@@ -524,18 +540,23 @@ export const usageRouter = createTRPCRouter({
     .input(RecordUsageEventInput)
     .mutation(async ({ input, ctx }) => {
       try {
-        if (isOfflineMode) {
+        const orgId = input.orgId!;
+        const eventType: UsageEventType = input.eventType!;
+
+        if (isOfflineMode()) {
           await usageStore.recordEvent({
             ...input,
             userId: ctx.user.id,
+            orgId,
+            eventType,
           });
           return { success: true };
         }
 
         await trackFeatureUsage(ctx.supabase, {
-          orgId: input.orgId,
+          orgId,
           userId: ctx.user.id,
-          eventType: input.eventType,
+          eventType,
           quantity: input.quantity,
           metadata: input.metadata,
         });

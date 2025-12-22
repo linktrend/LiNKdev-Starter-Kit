@@ -40,7 +40,14 @@ interface AnalyticsChartProps {
   loading?: boolean;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+const COLORS = [
+  'hsl(var(--primary))',
+  'hsl(var(--success))',
+  'hsl(var(--warning))',
+  'hsl(var(--danger))',
+  'hsl(var(--accent))',
+  'hsl(var(--foreground))',
+];
 
 export function AnalyticsChart({
   title,
@@ -190,10 +197,10 @@ export function AnalyticsChart({
                 cy="50%"
                 labelLine={false}
                 outerRadius={80}
-                fill="#8884d8"
+                fill="hsl(var(--primary))"
                 dataKey={config[0].dataKey}
                 nameKey={xAxisKey}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
               >
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={config[0].color || COLORS[index % COLORS.length]} />

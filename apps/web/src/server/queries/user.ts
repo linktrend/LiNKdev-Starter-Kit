@@ -43,7 +43,15 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
       .eq('id', user.id)
       .single();
 
-    if (userError || !userDetails) {
+    type UserDetailsResult = {
+      id: string;
+      full_name: string | null;
+      avatar_url: string | null;
+      created_at: string | null;
+    };
+    const typedUserDetails = userDetails as UserDetailsResult | null;
+
+    if (userError || !typedUserDetails) {
       // Fallback to auth user data if users table doesn't have the record
       return {
         id: user.id,
@@ -57,9 +65,9 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
     return {
       id: user.id,
       email: user.email || '',
-      full_name: userDetails.full_name,
-      avatar_url: userDetails.avatar_url,
-      created_at: userDetails.created_at || user.created_at || new Date().toISOString(),
+      full_name: typedUserDetails.full_name,
+      avatar_url: typedUserDetails.avatar_url,
+      created_at: typedUserDetails.created_at || user.created_at || new Date().toISOString(),
     };
   } catch (error) {
     console.error('Error fetching user profile:', error);

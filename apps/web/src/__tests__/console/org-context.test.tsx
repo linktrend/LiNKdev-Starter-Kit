@@ -28,11 +28,14 @@ function createWrapper() {
     defaultOptions: { queries: { retry: false } },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>
       <OrgProvider>{children}</OrgProvider>
     </QueryClientProvider>
   );
+  Wrapper.displayName = 'OrgContextTestWrapper';
+
+  return Wrapper;
 }
 
 describe('OrgContext', () => {

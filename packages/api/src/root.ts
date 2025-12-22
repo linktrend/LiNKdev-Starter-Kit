@@ -18,7 +18,7 @@ import { teamRouter } from './routers/team';
 // Note: Email dispatcher will be imported by the consuming application
 declare const sendTestEmail: (to: string, data: any) => Promise<void>;
 
-export const appRouter = createTRPCRouter({
+const _appRouter = createTRPCRouter({
   status: publicProcedure.query(() => ({ ok: true })),
   organization: organizationRouter,
   user: userRouter,
@@ -61,8 +61,11 @@ export const appRouter = createTRPCRouter({
   }),
 });
 
+// Export the router with explicit type annotation to help declaration generation
+export const appRouter: typeof _appRouter = _appRouter;
+
 // Export the router type explicitly to avoid type collision issues
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof _appRouter;
 
 // Create caller for server-side usage
 export const createCaller = (ctx: any): ReturnType<typeof appRouter.createCaller> => appRouter.createCaller(ctx);

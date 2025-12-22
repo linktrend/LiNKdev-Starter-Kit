@@ -95,6 +95,7 @@ export async function getUser() {
       bio: null,
       education: [],
       work_experience: [],
+      preferences: null,
       business_position: null,
       business_company: null,
       business_apt_suite: null,
@@ -106,7 +107,6 @@ export async function getUser() {
       business_country: null,
       billing_address: null,
       payment_method: null,
-      last_sign_in_at: session.user.last_sign_in_at ?? null,
       account_type: 'user',
       profile_completed: null,
       onboarding_completed: null,
@@ -119,7 +119,7 @@ export async function getUser() {
 
   return {
     ...userRecord,
-    email: userRecord.email ?? session.user.email ?? null,
+    email: userRecord.email ?? session.user.email ?? '',
   }
 }
 
@@ -133,7 +133,7 @@ export async function requireAuth() {
 
 export async function requireAdmin() {
   const user = await requireAuth()
-  if (!['super_admin', 'admin'].includes(user.account_type)) {
+  if (!['super_admin', 'admin'].includes(user.account_type || '')) {
     throw new Error('Forbidden: Admin access required')
   }
   return user
@@ -156,7 +156,7 @@ export async function checkRole(requiredRole: Role) {
   }
 
   if (requiredRole === 'admin') {
-    return ['super_admin', 'admin'].includes(user.account_type)
+    return ['super_admin', 'admin'].includes(user.account_type || '')
   }
 
   return true

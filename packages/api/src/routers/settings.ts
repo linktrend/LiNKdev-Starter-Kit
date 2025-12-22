@@ -2,13 +2,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { requireMember, requireOwner } from '../middleware/accessGuard';
-import type {
-  UserSettings,
-  OrgSettings,
-  DEFAULT_USER_SETTINGS,
-  DEFAULT_ORG_SETTINGS,
-  ThemePreference,
-} from '@starter/types';
+import type { UserSettings, OrgSettings } from '@starter/types';
 
 // Mock store for offline mode
 declare const settingsStore: {
@@ -169,9 +163,14 @@ export const settingsRouter = createTRPCRouter({
           .eq('user_id', ctx.user.id)
           .single();
         
+        const currentEmail = (current?.email_notifications as Record<string, unknown> | null) ??
+          defaultUserSettings.email_notifications;
+
+        const emailPatch = (input.emailNotifications as Record<string, unknown>) ?? {};
+
         updateData.email_notifications = {
-          ...(current?.email_notifications || defaultUserSettings.email_notifications),
-          ...input.emailNotifications,
+          ...(currentEmail as Record<string, unknown>),
+          ...emailPatch,
         };
       }
       
@@ -183,9 +182,14 @@ export const settingsRouter = createTRPCRouter({
           .eq('user_id', ctx.user.id)
           .single();
         
+        const currentPush = (current?.push_notifications as Record<string, unknown> | null) ??
+          defaultUserSettings.push_notifications;
+
+        const pushPatch = (input.pushNotifications as Record<string, unknown>) ?? {};
+
         updateData.push_notifications = {
-          ...(current?.push_notifications || defaultUserSettings.push_notifications),
-          ...input.pushNotifications,
+          ...(currentPush as Record<string, unknown>),
+          ...pushPatch,
         };
       }
 
@@ -307,8 +311,9 @@ export const settingsRouter = createTRPCRouter({
         .single();
 
       // Deep merge settings
+      const existingSettings = (current?.settings as Record<string, unknown> | null) ?? defaultOrgSettings;
       const mergedSettings = {
-        ...(current?.settings || defaultOrgSettings),
+        ...existingSettings,
         ...input.settings,
       };
 

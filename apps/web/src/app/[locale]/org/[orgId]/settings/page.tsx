@@ -62,7 +62,7 @@ export default async function OrgSettingsPage({ params }: OrgSettingsPageProps) 
     .eq('user_id', user.id)
     .single();
 
-  const userRole = membership?.role || 'viewer';
+  const userRole = (membership as { role: string } | null)?.role || 'viewer';
 
   return (
     <div className="space-y-6">

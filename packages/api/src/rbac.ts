@@ -10,6 +10,7 @@ import { OrgRole } from '@starter/types';
 export const ROLE_HIERARCHY: Record<OrgRole, number> = {
   owner: 4,
   admin: 3,
+  member: 3,
   editor: 2,
   viewer: 1,
 } as const;
@@ -18,6 +19,7 @@ export const ROLE_HIERARCHY: Record<OrgRole, number> = {
 export const ROLE_PERMISSIONS = {
   owner: ['manage_org', 'manage_members', 'manage_invites', 'manage_billing', 'view_content', 'edit_content'],
   admin: ['manage_members', 'manage_invites', 'manage_billing', 'view_content', 'edit_content'],
+  member: ['manage_members', 'manage_invites', 'view_content', 'edit_content'],
   editor: ['view_content', 'edit_content'],
   viewer: ['view_content'],
 } as const;

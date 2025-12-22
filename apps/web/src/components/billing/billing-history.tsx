@@ -15,7 +15,7 @@ export function BillingHistory({ orgId }: BillingHistoryProps) {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground">
-          Use the "Manage Billing" button above to view your complete billing history in the Stripe portal.
+          Use the Manage Billing button above to view your complete billing history in the Stripe portal.
         </p>
       </CardContent>
     </Card>

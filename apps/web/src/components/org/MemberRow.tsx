@@ -25,6 +25,8 @@ interface MemberRowProps {
 
 const ROLE_LABELS: Record<OrgRole, string> = {
   owner: 'Owner',
+  admin: 'Admin',
+  editor: 'Editor',
   member: 'Member',
   viewer: 'Viewer',
 };
@@ -110,10 +112,10 @@ export function MemberRow({
       <div className="flex items-center justify-between p-4 border rounded-lg">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-            {member.user?.user_metadata?.avatar_url ? (
+            {member.user?.avatar_url ? (
               <Image
-                src={member.user.user_metadata.avatar_url}
-                alt={member.user.email}
+                src={member.user.avatar_url}
+                alt={member.user.email || 'User'}
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded-full"

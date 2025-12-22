@@ -247,16 +247,20 @@ export async function getUserMetrics(orgId: string | undefined, range: DateRange
       
     if (members) {
       for (const m of members) {
-        const day = m.created_at.split('T')[0];
-        dailyNew.set(day, (dailyNew.get(day) || 0) + 1);
+        if (m.created_at) {
+          const day = m.created_at.split('T')[0];
+          dailyNew.set(day, (dailyNew.get(day) || 0) + 1);
+        }
       }
     }
   } else {
     const { data: users } = await usersQuery;
     if (users) {
       for (const u of users) {
-        const day = u.created_at.split('T')[0];
-        dailyNew.set(day, (dailyNew.get(day) || 0) + 1);
+        if (u.created_at) {
+          const day = u.created_at.split('T')[0];
+          dailyNew.set(day, (dailyNew.get(day) || 0) + 1);
+        }
       }
     }
   }

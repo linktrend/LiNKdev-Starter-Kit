@@ -117,8 +117,8 @@ export default async function AccountPage() {
               <div className="flex flex-col gap-2">
                 <Label htmlFor="amount">Amount</Label>
                 <div className="text-muted-foreground">
-                  {subscription?.prices?.[0]?.unit_amount
-                    ? `$${(subscription.prices[0].unit_amount / 100).toFixed(2)} / ${subscription.prices[0].interval || 'month'}`
+                  {subscription?.price?.unit_amount
+                    ? `$${(subscription.price.unit_amount / 100).toFixed(2)} / ${subscription.price.interval || 'month'}`
                     : 'N/A'}
                 </div>
               </div>

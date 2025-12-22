@@ -77,7 +77,11 @@ export function OrgProvider({ children }: PropsWithChildren) {
     if (nextId !== currentOrgId) {
       setCurrentOrgId(nextId);
       if (typeof window !== 'undefined') {
-        nextId ? localStorage.setItem(STORAGE_KEY, nextId) : localStorage.removeItem(STORAGE_KEY);
+        if (nextId) {
+          localStorage.setItem(STORAGE_KEY, nextId);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
       }
     }
   }, [hydrated, orgs, currentOrgId]);
@@ -102,8 +106,8 @@ export function OrgProvider({ children }: PropsWithChildren) {
 
   const contextValue: OrgContextType = {
     currentOrgId: currentOrgId ?? null,
-    currentOrg,
-    organizations: orgs,
+    currentOrg: currentOrg as any,
+    organizations: orgs as any,
     switchOrg,
     refresh: () => {
       void refetch();

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { logUsageEvent } from '../utils/usage';
+import { auditCreate, auditUpdate, auditDelete } from '../middleware/audit';
 // Note: Type imports removed as they're not used in this file
 
 // Note: These utility functions and stores will need to be provided by the consuming application
@@ -47,6 +48,7 @@ export const recordsRouter = createTRPCRouter({
         }).optional(),
       }),
     }))
+    .use(auditCreate('record_type', (result) => result.id))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const recordType = recordsStore.createRecordType(input, ctx.user.id);
@@ -201,6 +203,7 @@ export const recordsRouter = createTRPCRouter({
         }).optional(),
       }).optional(),
     }))
+    .use(auditUpdate('record_type', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const updates = {
@@ -237,6 +240,7 @@ export const recordsRouter = createTRPCRouter({
 
   deleteRecordType: protectedProcedure
     .input(z.object({ id: z.string() }))
+    .use(auditDelete('record_type', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         return recordsStore.deleteRecordType(input.id);
@@ -267,6 +271,7 @@ export const recordsRouter = createTRPCRouter({
       user_id: z.string().optional(),
       data: z.record(z.any()),
     }))
+    .use(auditCreate('record', (result) => result.id, { orgIdField: 'org_id' }))
     .mutation(async ({ ctx, input }) => {
       // Check entitlements for record creation
       if (input.org_id) {
@@ -451,6 +456,7 @@ export const recordsRouter = createTRPCRouter({
       id: z.string(),
       data: z.record(z.any()),
     }))
+    .use(auditUpdate('record', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const record = recordsStore.updateRecord(input.id, input);
@@ -499,6 +505,7 @@ export const recordsRouter = createTRPCRouter({
 
   deleteRecord: protectedProcedure
     .input(z.object({ id: z.string() }))
+    .use(auditDelete('record', 'id'))
     .mutation(async ({ ctx, input }) => {
       if (isOfflineMode) {
         const success = recordsStore.deleteRecord(input.id);

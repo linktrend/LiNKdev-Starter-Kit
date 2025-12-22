@@ -4,11 +4,12 @@ import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SuperJSON from "superjson";
 
 import { createQueryClient } from "./query-client";
 import { type AppRouter } from "./types";
+import { logClientError } from "@/lib/errors/client-logger";
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -38,6 +39,29 @@ export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
+
+  useEffect(() => {
+    const defaults = queryClient.getDefaultOptions();
+    queryClient.setDefaultOptions({
+      ...defaults,
+      queries: {
+        ...defaults.queries,
+        onError: (error: any) => {
+          void logClientError(error, {
+            metadata: { source: 'query' },
+          });
+        },
+      },
+      mutations: {
+        ...defaults.mutations,
+        onError: (error: any) => {
+          void logClientError(error, {
+            metadata: { source: 'mutation' },
+          });
+        },
+      },
+    });
+  }, [queryClient]);
 
   const [trpcClient] = useState(() =>
     api.createClient({

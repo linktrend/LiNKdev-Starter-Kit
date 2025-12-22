@@ -57,7 +57,7 @@ export function useEntitlement({ orgId, featureKey }: UseEntitlementOptions): En
     };
   }
 
-  const plan = subscriptionData.subscription.plan;
+  const plan = (subscriptionData.subscription as any).plan_name || (subscriptionData.subscription as any).plan;
   
   // Get plan details to check entitlements
   const { data: plansData } = api.billing.getPlans.useQuery();

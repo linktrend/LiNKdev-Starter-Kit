@@ -7,6 +7,9 @@ import { TRPCError } from '@trpc/server';
 import { settingsRouter } from '../../routers/settings';
 import { getUserOrgRole } from '../../rbac';
 
+const uuid = (suffix: number) =>
+  `00000000-0000-4000-8000-${suffix.toString(16).padStart(12, '0')}`;
+
 // Mock the RBAC functions
 vi.mock('../../rbac', () => ({
   getUserOrgRole: vi.fn(),
@@ -30,8 +33,9 @@ const mockSettingsStore = {
 global.settingsStore = mockSettingsStore as any;
 
 describe('Settings Router', () => {
-  const mockUser = { id: 'user-123', email: 'user@example.com' };
-  const mockOrgId = 'org-123';
+  const mockUser = { id: uuid(1), email: 'user@example.com' };
+  const mockOrgId = uuid(2);
+  const otherUserId = uuid(99);
 
   let mockSupabase: any;
 
@@ -55,6 +59,14 @@ describe('Settings Router', () => {
     };
   });
 
+  const makeCaller = (role: 'owner' | 'member' = 'owner') =>
+    settingsRouter.createCaller({
+      user: mockUser,
+      supabase: mockSupabase,
+      orgId: mockOrgId,
+      userRole: role,
+    });
+
   describe('getUserSettings', () => {
     it('should return user settings', async () => {
       const mockSettings = {
@@ -70,10 +82,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.getUserSettings.mockReturnValue(mockSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.getUserSettings();
 
@@ -84,10 +93,7 @@ describe('Settings Router', () => {
     it('should return defaults if settings not found', async () => {
       mockSettingsStore.getUserSettings.mockReturnValue(null);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.getUserSettings();
 
@@ -98,13 +104,10 @@ describe('Settings Router', () => {
     });
 
     it('should deny access to other users settings', async () => {
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       await expect(
-        caller.getUserSettings({ userId: 'other-user-123' })
+        caller.getUserSettings({ userId: otherUserId })
       ).rejects.toThrow('You can only access your own settings');
     });
   });
@@ -124,10 +127,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.updateUserSettings.mockReturnValue(updatedSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.updateUserSettings({
         theme: 'dark',
@@ -157,10 +157,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.updateUserSettings.mockReturnValue(updatedSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.updateUserSettings({ theme: 'light' });
 
@@ -181,10 +178,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.updateUserSettings.mockReturnValue(updatedSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.updateUserSettings({
         emailNotifications: { marketing: false },
@@ -208,10 +202,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.getOrgSettings.mockReturnValue(mockSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.getOrgSettings({ orgId: mockOrgId });
 
@@ -225,10 +216,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.getOrgSettings.mockReturnValue(null);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       const result = await caller.getOrgSettings({ orgId: mockOrgId });
 
@@ -243,6 +231,7 @@ describe('Settings Router', () => {
       const caller = settingsRouter.createCaller({
         user: mockUser,
         supabase: mockSupabase,
+        orgId: mockOrgId,
       });
 
       await expect(
@@ -265,10 +254,7 @@ describe('Settings Router', () => {
 
       mockSettingsStore.updateOrgSettings.mockReturnValue(updatedSettings);
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('owner');
 
       const result = await caller.updateOrgSettings({
         orgId: mockOrgId,
@@ -286,10 +272,7 @@ describe('Settings Router', () => {
       const mockGetUserOrgRole = vi.mocked(getUserOrgRole);
       mockGetUserOrgRole.mockResolvedValue('member');
 
-      const caller = settingsRouter.createCaller({
-        user: mockUser,
-        supabase: mockSupabase,
-      });
+      const caller = makeCaller('member');
 
       await expect(
         caller.updateOrgSettings({

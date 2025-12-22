@@ -4,6 +4,8 @@ import { stripe } from '@/lib/stripe/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import type { Database } from '@/types/database.types';
+import { sendPaymentReceiptEmail, sendPaymentFailedEmail } from '@/utils/communication/email-dispatcher';
+import { format } from 'date-fns';
 
 // Use service role for webhooks (bypasses RLS)
 const supabaseAdmin = createClient<Database>(
@@ -212,12 +214,79 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
   console.log(`[Webhook] Invoice paid: ${invoice.id}`);
-  // TODO: Update payment history, send receipt email
+
+  // Get org_id from subscription metadata
+  let orgId: string | undefined;
+  if (invoice.subscription) {
+    const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string);
+    orgId = subscription.metadata?.org_id;
+  }
+
+  if (!orgId) {
+    console.warn('[Webhook] No org_id found for invoice, skipping storage');
+    return;
+  }
+
+  // Store invoice in database
+  const { error: invoiceError } = await supabaseAdmin.from('billing_invoices').upsert(
+    {
+      org_id: orgId,
+      stripe_invoice_id: invoice.id,
+      stripe_customer_id: invoice.customer as string,
+      amount_paid: invoice.amount_paid,
+      amount_due: invoice.amount_due,
+      currency: invoice.currency,
+      status: invoice.status || 'paid',
+      hosted_invoice_url: invoice.hosted_invoice_url,
+      invoice_pdf: invoice.invoice_pdf,
+      period_start: new Date(invoice.period_start * 1000).toISOString(),
+      period_end: new Date(invoice.period_end * 1000).toISOString(),
+      paid_at: invoice.status_transitions?.paid_at 
+        ? new Date(invoice.status_transitions.paid_at * 1000).toISOString()
+        : new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      onConflict: 'stripe_invoice_id',
+    }
+  );
+
+  if (invoiceError) {
+    console.error('[Webhook] Error storing invoice:', invoiceError);
+  } else {
+    console.log(`[Webhook] Invoice stored successfully: ${invoice.id}`);
+  }
+
+  // Send receipt email
+  if (invoice.customer_email) {
+    try {
+      const { data: org } = await supabaseAdmin
+        .from('organizations')
+        .select('name')
+        .eq('id', orgId)
+        .single();
+
+      const emailData = {
+        orgName: org?.name || 'Customer',
+        amount: `$${(invoice.amount_paid / 100).toFixed(2)}`,
+        currency: invoice.currency,
+        paidAt: format(new Date(invoice.status_transitions?.paid_at ? invoice.status_transitions.paid_at * 1000 : Date.now()), 'MMMM d, yyyy'),
+        invoiceUrl: invoice.hosted_invoice_url || undefined,
+        invoicePdf: invoice.invoice_pdf || undefined,
+        periodStart: format(new Date(invoice.period_start * 1000), 'MMM d, yyyy'),
+        periodEnd: format(new Date(invoice.period_end * 1000), 'MMM d, yyyy'),
+      };
+
+      await sendPaymentReceiptEmail(invoice.customer_email, emailData);
+      console.log(`[Webhook] Receipt email sent to: ${invoice.customer_email}`);
+    } catch (emailError) {
+      console.warn(`[Webhook] Failed to send receipt email:`, emailError);
+    }
+  }
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log(`[Webhook] Invoice payment failed: ${invoice.id}`);
-  // TODO: Send payment failure notification email
 
   // Update subscription status to past_due
   if (invoice.subscription) {
@@ -231,6 +300,40 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
 
     if (error) {
       console.error('[Webhook] Error updating past_due status:', error);
+    }
+  }
+
+  // Send failure notification email
+  if (invoice.customer_email) {
+    try {
+      const subscription = invoice.subscription 
+        ? await stripe.subscriptions.retrieve(invoice.subscription as string)
+        : null;
+      
+      const orgId = subscription?.metadata?.org_id;
+      let orgName = 'Customer';
+
+      if (orgId) {
+        const { data: org } = await supabaseAdmin
+          .from('organizations')
+          .select('name')
+          .eq('id', orgId)
+          .single();
+        orgName = org?.name || orgName;
+      }
+
+      const emailData = {
+        orgName,
+        amount: `$${(invoice.amount_due / 100).toFixed(2)}`,
+        currency: invoice.currency,
+        reason: invoice.last_finalization_error?.message,
+        billingUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/billing`,
+      };
+
+      await sendPaymentFailedEmail(invoice.customer_email, emailData);
+      console.log(`[Webhook] Payment failure email sent to: ${invoice.customer_email}`);
+    } catch (emailError) {
+      console.warn(`[Webhook] Failed to send payment failure email:`, emailError);
     }
   }
 }

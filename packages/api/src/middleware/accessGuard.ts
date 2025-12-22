@@ -46,17 +46,24 @@ export function createAccessGuard(
         orgId = ctx.params.orgId;
       }
 
+      // Fallback to context orgId if not provided directly in input/params
+      if (!orgId && ctx.orgId) {
+        orgId = ctx.orgId;
+      }
+
       if (!orgId) {
         throw createRBACError('Organization ID is required for this operation');
       }
 
       // Get user's role in the organization
-      let userRole: OrgRole | null = null;
+      let userRole: OrgRole | null = (ctx as any).userRole ?? null;
       
-      if (customRoleResolver) {
-        userRole = await customRoleResolver(ctx, input);
-      } else {
-        userRole = await getUserOrgRole(orgId, ctx.user.id, ctx.supabase);
+      if (!userRole) {
+        if (customRoleResolver) {
+          userRole = await customRoleResolver(ctx, input);
+        } else {
+          userRole = await getUserOrgRole(orgId, ctx.user.id, ctx.supabase);
+        }
       }
 
       // Check if user has sufficient role

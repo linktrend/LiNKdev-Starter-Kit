@@ -1,5 +1,5 @@
 import type { Tables } from './db';
-import type { OrgRole } from './org';
+import type { OrgRole, UpdateMemberRoleInput as OrgUpdateMemberRoleInput } from './org';
 
 /**
  * Team invite status enum
@@ -60,11 +60,7 @@ export interface RevokeInviteInput {
 /**
  * Input for updating a member's role
  */
-export interface UpdateMemberRoleInput {
-  orgId: string;
-  userId: string;
-  role: OrgRole;
-}
+export type UpdateTeamMemberRoleInput = OrgUpdateMemberRoleInput;
 
 /**
  * Input for transferring organization ownership

@@ -34,11 +34,14 @@ export async function createPersonalOrganization() {
       is_personal: true,
       org_type: 'personal',
       slug,
-    })
+    } as any)
     .select()
     .single()
   
-  if (orgError) {
+  type OrgResult = { id: string; name: string; owner_id: string; slug: string | null };
+  const typedOrg = org as OrgResult | null;
+
+  if (orgError || !typedOrg) {
     console.error('Error creating organization:', orgError)
     return { error: 'Failed to create organization' }
   }
@@ -47,15 +50,15 @@ export async function createPersonalOrganization() {
   const { error: memberError } = await supabase
     .from('organization_members')
     .insert({
-      org_id: org.id,
+      org_id: typedOrg.id,
       user_id: user.id,
       role: 'owner',
-    })
+    } as any)
   
   if (memberError) {
     console.error('Error adding user as organization owner:', memberError)
     // Rollback org creation
-    await supabase.from('organizations').delete().eq('id', org.id)
+    await supabase.from('organizations').delete().eq('id', typedOrg.id)
     return { error: 'Failed to add user as organization owner' }
   }
   
@@ -63,22 +66,22 @@ export async function createPersonalOrganization() {
   const { error: subscriptionError } = await supabase
     .from('org_subscriptions')
     .insert({
-      org_id: org.id,
+      org_id: typedOrg.id,
       plan_name: 'free',
       status: 'active',
       billing_interval: 'monthly',
       seats: 1,
       current_period_start: new Date().toISOString(),
       current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
-    })
+    } as any)
   
   if (subscriptionError) {
     console.error('Error creating subscription:', subscriptionError)
     // Rollback org and membership
-    await supabase.from('organization_members').delete().eq('org_id', org.id).eq('user_id', user.id)
-    await supabase.from('organizations').delete().eq('id', org.id)
+    await supabase.from('organization_members').delete().eq('org_id', typedOrg.id).eq('user_id', user.id)
+    await supabase.from('organizations').delete().eq('id', typedOrg.id)
     return { error: 'Failed to create organization subscription' }
   }
   
-  return { success: true, organization: org }
+  return { success: true, organization: typedOrg }
 }

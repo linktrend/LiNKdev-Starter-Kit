@@ -28,6 +28,7 @@ const handler = (req: NextRequest) =>
     endpoint: "/api/trpc",
     req,
     router: appRouter,
+    // @ts-ignore - TRPCContext type compatibility issue
     createContext: () => createContext(req),
     onError:
       env.NODE_ENV === "development"

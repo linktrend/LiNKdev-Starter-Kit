@@ -37,15 +37,16 @@ export const GET = withErrorHandling(
       }
 
       // Transform to REST response format
+      const sub = subscription.subscription as any;
       const response: SubscriptionResponse = {
-        org_id: subscription.subscription.org_id,
-        plan: subscription.subscription.plan,
-        status: subscription.subscription.status,
-        current_period_start: subscription.subscription.current_period_start,
-        current_period_end: subscription.subscription.current_period_end,
-        trial_end: subscription.subscription.trial_end || null,
-        stripe_sub_id: subscription.subscription.stripe_sub_id || null,
-        updated_at: subscription.subscription.updated_at,
+        org_id: sub.org_id,
+        plan: sub.plan_name || sub.plan,
+        status: sub.status,
+        current_period_start: sub.current_period_start || '',
+        current_period_end: sub.current_period_end || '',
+        trial_end: sub.trial_end || null,
+        stripe_sub_id: sub.stripe_sub_id || null,
+        updated_at: sub.updated_at || '',
       };
 
       return createSuccessResponse(response);

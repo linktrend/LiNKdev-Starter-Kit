@@ -53,7 +53,7 @@ export function HealthConsoleClient() {
     return () => clearInterval(id)
   }, [autoRefresh])
 
-  const services = data?.services ?? []
+  const services = useMemo(() => data?.services ?? [], [data])
   const overallStatus = data?.overallStatus ?? 'degraded'
   const lastChecked = data?.checkedAt ? new Date(data.checkedAt).toLocaleTimeString() : '—'
 

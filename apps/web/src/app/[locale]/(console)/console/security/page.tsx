@@ -133,6 +133,7 @@ export default function ConsoleSecurityPage() {
   };
 
   const handleConfirmRoleChange = async (newRole: OrgRole) => {
+    if (newRole === 'member') return;
     if (!selectedMember || !currentOrgId) return;
 
     const result = await updateMemberRole({

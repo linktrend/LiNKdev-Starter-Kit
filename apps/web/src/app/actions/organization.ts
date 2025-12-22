@@ -12,6 +12,7 @@ import {
   updateMemberRoleSchema,
   updateOrganizationSchema,
 } from '@/lib/validation/organization'
+import type { OrgRole } from '@starter/types'
 
 type FieldErrors = Record<string, string[]>
 type OrganizationOption = {
@@ -435,7 +436,7 @@ export async function removeMember(orgId: string, userId: string) {
 export async function updateMemberRole(
   orgId: string,
   userId: string,
-  newRole: 'owner' | 'member' | 'viewer'
+  newRole: OrgRole
 ) {
   const validation = updateMemberRoleSchema.safeParse({ org_id: orgId, user_id: userId, new_role: newRole })
   if (!validation.success) {

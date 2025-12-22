@@ -168,7 +168,7 @@ export function useAuditLogs({ orgId }: UseAuditLogsOptions) {
     }
   );
 
-  const membersQuery = api.org.listMembers.useQuery(
+  const membersQuery = api.organization.listMembers.useQuery(
     { orgId: orgId || '' },
     { enabled: !!orgId, staleTime: 5 * 60 * 1000 }
   );

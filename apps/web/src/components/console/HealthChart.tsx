@@ -40,7 +40,7 @@ export function HealthChart({ services }: Props) {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="responseTime" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="responseTime" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -59,7 +59,7 @@ export function HealthChart({ services }: Props) {
               <YAxis domain={[0, 100]} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="uptime" fill="#22c55e" />
+              <Bar dataKey="uptime" fill="hsl(var(--success))" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

@@ -202,7 +202,7 @@ async function markAsProcessed(eventId: string, eventType: string): Promise<void
         event_id: eventId,
         event_type: eventType,
         metadata: { processed_at: new Date().toISOString() },
-      });
+      } as any);
   } catch (error) {
     // Fallback to in-memory set if DB not available
     console.warn('WEBHOOK: Database idempotency insert failed, using in-memory fallback', {

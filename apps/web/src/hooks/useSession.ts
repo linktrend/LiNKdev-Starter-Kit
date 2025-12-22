@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { Session, User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/auth/client'
 
@@ -26,6 +26,7 @@ export function useSession(): UseSessionReturn {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+  const sessionRef = useRef<Session | null>(null)
 
   const supabase = createClient()
 
@@ -41,6 +42,7 @@ export function useSession(): UseSessionReturn {
       
       if (data.session) {
         setSession(data.session)
+        sessionRef.current = data.session
         setUser(data.session.user)
       }
     } catch (err) {
@@ -64,7 +66,12 @@ export function useSession(): UseSessionReturn {
   // Initialize session
   useEffect(() => {
     let mounted = true
-    let refreshInterval: NodeJS.Timeout | null = null
+    const refreshInterval = setInterval(() => {
+      const current = sessionRef.current
+      if (current && shouldRefreshSession(current)) {
+        void refresh()
+      }
+    }, 60000) // Check every minute
 
     const initSession = async () => {
       try {
@@ -76,6 +83,7 @@ export function useSession(): UseSessionReturn {
 
         if (mounted) {
           setSession(data.session)
+          sessionRef.current = data.session
           setUser(data.session?.user ?? null)
           setLoading(false)
 
@@ -99,36 +107,31 @@ export function useSession(): UseSessionReturn {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      if (mounted) {
-        setSession(currentSession)
-        setUser(currentSession?.user ?? null)
-        setLoading(false)
+      if (!mounted) return
+      setSession(currentSession)
+      sessionRef.current = currentSession
+      setUser(currentSession?.user ?? null)
+      setLoading(false)
 
-        // Clear any errors on successful auth change
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          setError(null)
-        }
+      // Clear any errors on successful auth change
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setError(null)
+      }
 
-        // Handle sign out
-        if (event === 'SIGNED_OUT') {
-          setSession(null)
-          setUser(null)
-          setError(null)
-        }
+      // Handle sign out
+      if (event === 'SIGNED_OUT') {
+        setSession(null)
+        sessionRef.current = null
+        setUser(null)
+        setError(null)
       }
     })
 
-    // Set up periodic refresh check (every minute)
-    refreshInterval = setInterval(() => {
-      if (session && shouldRefreshSession(session)) {
-        refresh()
-      }
-    }, 60000) // Check every minute
-
     // Refresh on window focus
     const handleFocus = () => {
-      if (session && shouldRefreshSession(session)) {
-        refresh()
+      const current = sessionRef.current
+      if (current && shouldRefreshSession(current)) {
+        void refresh()
       }
     }
 
@@ -137,12 +140,10 @@ export function useSession(): UseSessionReturn {
     return () => {
       mounted = false
       subscription.unsubscribe()
-      if (refreshInterval) {
-        clearInterval(refreshInterval)
-      }
+      clearInterval(refreshInterval)
       window.removeEventListener('focus', handleFocus)
     }
-  }, [supabase, refresh, shouldRefreshSession, session])
+  }, [supabase, refresh, shouldRefreshSession])
 
   return {
     session,

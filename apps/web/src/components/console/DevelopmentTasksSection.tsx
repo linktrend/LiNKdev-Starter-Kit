@@ -92,7 +92,7 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
     sort_order: 'desc',
   });
 
-  const tasks = tasksData?.tasks || [];
+  const tasks = useMemo(() => tasksData?.tasks ?? [], [tasksData]);
   const taskTotal = tasksData?.total || 0;
 
   // Create mutation
@@ -265,10 +265,11 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
     const uniqueAssignees = new Map<string, { id: string; name: string; email?: string }>();
     tasks.forEach((task: Task) => {
       if (task.assignee_id && task.assignee) {
+        const assignee = task.assignee as any;
         uniqueAssignees.set(task.assignee_id, {
           id: task.assignee_id,
-          name: task.assignee.raw_user_meta_data?.full_name || task.assignee.email || 'Unknown',
-          email: task.assignee.email,
+          name: assignee.raw_user_meta_data?.full_name || assignee.email || 'Unknown',
+          email: assignee.email,
         });
       }
     });
@@ -316,7 +317,8 @@ export function DevelopmentTasksSection({ orgId }: DevelopmentTasksSectionProps)
 
   const formatAssignee = (task: Task) => {
     if (!task.assignee_id || !task.assignee) return 'Unassigned';
-    return task.assignee.raw_user_meta_data?.full_name || task.assignee.email || 'Unknown';
+    const assignee = task.assignee as any;
+    return assignee.raw_user_meta_data?.full_name || assignee.email || 'Unknown';
   };
 
   return (

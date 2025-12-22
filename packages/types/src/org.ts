@@ -3,7 +3,7 @@ import type { Tables } from './db'
 /**
  * Organization-level role values enforced by `organization_members.role` CHECK constraint.
  */
-export type OrgRole = 'owner' | 'admin' | 'editor' | 'viewer'
+export type OrgRole = 'owner' | 'admin' | 'editor' | 'member' | 'viewer'
 
 /**
  * Persistent organization profile from `public.organizations`.

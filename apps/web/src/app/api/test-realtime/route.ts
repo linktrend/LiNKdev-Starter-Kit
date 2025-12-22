@@ -11,11 +11,14 @@ export async function POST(req: NextRequest) {
       .select('id')
       .limit(1);
     
-    if (!orgs || orgs.length === 0) {
+    type OrgIdResult = { id: string };
+    const typedOrgs = (orgs as OrgIdResult[]) || [];
+    
+    if (typedOrgs.length === 0) {
       return NextResponse.json({ error: 'No organizations found' }, { status: 400 });
     }
     
-    const orgId = orgs[0].id;
+    const orgId = typedOrgs[0].id;
     
     // Insert a test audit log
     const { data, error } = await supabase
@@ -27,7 +30,7 @@ export async function POST(req: NextRequest) {
         entity_id: 'test-' + Date.now(),
         metadata: { test: true, timestamp: new Date().toISOString() },
         actor_id: null, // System action
-      })
+      } as any)
       .select()
       .single();
     

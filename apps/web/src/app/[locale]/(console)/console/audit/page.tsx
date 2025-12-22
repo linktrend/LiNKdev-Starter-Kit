@@ -1,13 +1,10 @@
 import { Metadata } from 'next';
+import { AuditPageClient } from './AuditPageClient';
 
 export const metadata: Metadata = {
-  title: 'Console - Audit Logs'
+  title: 'Console - Audit Logs',
 };
 
 export default function ConsoleAuditPage() {
-  return (
-    <div>
-      <h1>Console - Audit Logs (stub)</h1>
-    </div>
-  );
+  return <AuditPageClient />;
 }

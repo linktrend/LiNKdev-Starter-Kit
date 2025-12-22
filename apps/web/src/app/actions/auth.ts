@@ -126,11 +126,6 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
-    options: {
-      data: {
-        remember_me: rememberMe,
-      },
-    },
   })
 
   if (error) {
@@ -158,7 +153,8 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
     revalidatePath('/', 'layout')
 
     // Redirect to onboarding if not completed
-    if (userProfile && !userProfile.onboarding_completed) {
+    const profile = userProfile as { onboarding_completed: boolean; profile_completed: boolean } | null;
+    if (profile && !profile.onboarding_completed) {
       redirect(`/${locale}/onboarding?step=2`)
     }
 

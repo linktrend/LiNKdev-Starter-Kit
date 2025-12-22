@@ -30,9 +30,13 @@ vi.mock('@supabase/supabase-js', () => ({
 
 const mockStatus = vi.fn().mockResolvedValue({ ok: true })
 
-vi.mock('@starter/api', () => ({
-  createCaller: vi.fn(() => ({ status: mockStatus })),
-}))
+vi.mock(
+  '@starter/api',
+  () => ({
+    createCaller: vi.fn(() => ({ status: mockStatus })),
+  }),
+  { virtual: true }
+)
 
 vi.mock('@/server/api/trpc', () => ({
   createTRPCContext: vi.fn(async () => ({})),

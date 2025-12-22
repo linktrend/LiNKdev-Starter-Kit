@@ -21,12 +21,14 @@ export interface AuditLog {
 export type AuditEntityType =
   | 'org'
   | 'record'
+  | 'record_type'
   | 'reminder'
   | 'subscription'
   | 'member'
   | 'invite'
   | 'schedule'
   | 'automation'
+  | 'user'
 
 /**
  * Enumerates core audit actions for consistency across services.

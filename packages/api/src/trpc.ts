@@ -26,7 +26,8 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 // Protected procedure that requires authentication
-export const protectedProcedure = t.procedure
+// Note: Type assertion ensures ctx.user is non-null after auth check
+export const protectedProcedure = publicProcedure
   .use(({ ctx, next }) => {
     if (!ctx.user) {
       throw new TRPCError({
@@ -37,7 +38,7 @@ export const protectedProcedure = t.procedure
     return next({
       ctx: {
         ...ctx,
-        user: ctx.user,
+        user: ctx.user as NonNullable<typeof ctx.user>,
       },
     });
   })

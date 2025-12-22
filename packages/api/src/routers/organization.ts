@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { OrgRole } from '@starter/types';
+import type { Database, OrgRole } from '@starter/types';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { fromSupabase, forbiddenError, notFoundError } from '../lib/errors';
 import {
@@ -9,6 +9,7 @@ import {
   requireOrgRole,
 } from '../lib/permissions';
 import { isRoleHigher } from '../rbac';
+import { auditCreate, auditUpdate, auditDelete, auditRoleChange } from '../middleware/audit';
 
 const orgTypeSchema = z.enum(['personal', 'business', 'family', 'education', 'other']).optional();
 
@@ -79,7 +80,13 @@ export const organizationRouter = createTRPCRouter({
       throw fromSupabase(error, 'Failed to fetch organizations');
     }
 
-    return (data ?? []).map((membership) => ({
+    const memberships =
+      (data ?? []) as Array<{
+        role: OrgRole | null;
+        organizations: Database['public']['Tables']['organizations']['Row'] | null;
+      }>;
+
+    return memberships.map((membership) => ({
       ...(membership.organizations ?? {}),
       role: membership.role as OrgRole,
     }));
@@ -119,9 +126,14 @@ export const organizationRouter = createTRPCRouter({
         throw notFoundError('Organization not found or inaccessible');
       }
 
+      const orgData = data as {
+        role: OrgRole | null;
+        organizations: Database['public']['Tables']['organizations']['Row'] | null;
+      };
+
       return {
-        ...(data.organizations ?? {}),
-        role: data.role as OrgRole,
+        ...(orgData.organizations ?? {}),
+        role: orgData.role as OrgRole,
       };
     }),
 
@@ -130,6 +142,7 @@ export const organizationRouter = createTRPCRouter({
    */
   create: protectedProcedure
     .input(createOrgInput)
+    .use(auditCreate('org', (result) => result.id))
     .mutation(async ({ ctx, input }) => {
       const slug = slugify(input.name);
 
@@ -175,6 +188,7 @@ export const organizationRouter = createTRPCRouter({
    */
   update: protectedProcedure
     .input(updateOrgInput)
+    .use(auditUpdate('org', 'orgId'))
     .mutation(async ({ ctx, input }) => {
       await requireOrgRole(ctx.supabase, input.orgId, ctx.user.id, 'admin');
 
@@ -263,6 +277,7 @@ export const organizationRouter = createTRPCRouter({
    */
   addMember: protectedProcedure
     .input(addMemberInput)
+    .use(auditCreate('member', (result) => result.user_id, { orgIdField: 'orgId' }))
     .mutation(async ({ ctx, input }) => {
       await ensureCanManageMembers(ctx.supabase, input.orgId, ctx.user.id);
 
@@ -291,6 +306,7 @@ export const organizationRouter = createTRPCRouter({
    */
   removeMember: protectedProcedure
     .input(memberInput)
+    .use(auditDelete('member', 'userId', { orgIdField: 'orgId' }))
     .mutation(async ({ ctx, input }) => {
       const actorRole = await ensureCanManageMembers(ctx.supabase, input.orgId, ctx.user.id);
 
@@ -331,6 +347,7 @@ export const organizationRouter = createTRPCRouter({
    */
   updateMemberRole: protectedProcedure
     .input(updateMemberRoleInput)
+    .use(auditRoleChange('member', 'userId', { orgIdField: 'orgId' }))
     .mutation(async ({ ctx, input }) => {
       const { data: target, error: targetError } = await ctx.supabase
         .from('organization_members')

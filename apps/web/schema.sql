@@ -178,6 +178,26 @@ CREATE TABLE public.org_subscriptions (
 
 ALTER TABLE public.org_subscriptions ENABLE ROW LEVEL SECURITY;
 
+CREATE TABLE public.billing_invoices (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    org_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+    stripe_invoice_id text UNIQUE NOT NULL,
+    stripe_customer_id text,
+    amount_paid integer NOT NULL,
+    amount_due integer NOT NULL,
+    currency text NOT NULL DEFAULT 'usd',
+    status text NOT NULL CHECK (status IN ('draft', 'open', 'paid', 'void', 'uncollectible')),
+    hosted_invoice_url text,
+    invoice_pdf text,
+    period_start timestamptz NOT NULL,
+    period_end timestamptz NOT NULL,
+    paid_at timestamptz,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.billing_invoices ENABLE ROW LEVEL SECURITY;
+
 -- =====================================================
 -- 6. FEATURES & LIMITS
 -- =====================================================
@@ -313,6 +333,11 @@ CREATE INDEX idx_org_subscriptions_plan_name ON public.org_subscriptions(plan_na
 CREATE INDEX idx_org_subscriptions_status ON public.org_subscriptions(status);
 CREATE INDEX idx_org_subscriptions_stripe_sub_id ON public.org_subscriptions(stripe_sub_id);
 CREATE INDEX idx_org_subscriptions_stripe_subscription_id ON public.org_subscriptions(stripe_subscription_id);
+CREATE INDEX idx_billing_invoices_org_id ON public.billing_invoices(org_id);
+CREATE INDEX idx_billing_invoices_stripe_invoice_id ON public.billing_invoices(stripe_invoice_id);
+CREATE INDEX idx_billing_invoices_status ON public.billing_invoices(status);
+CREATE INDEX idx_billing_invoices_paid_at ON public.billing_invoices(paid_at DESC);
+CREATE INDEX idx_billing_invoices_org_paid ON public.billing_invoices(org_id, paid_at DESC);
 
 -- Plan Features
 CREATE INDEX idx_plan_features_plan_name ON public.plan_features(plan_name);
@@ -404,6 +429,11 @@ CREATE POLICY "Organization members can view subscription" ON public.org_subscri
   EXISTS (SELECT 1 FROM public.organization_members WHERE organization_members.org_id = org_subscriptions.org_id AND organization_members.user_id = auth.uid())
 );
 CREATE POLICY "Server can manage subscriptions" ON public.org_subscriptions FOR ALL USING (false);
+
+CREATE POLICY "Organization members can view invoices" ON public.billing_invoices FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.organization_members WHERE organization_members.org_id = billing_invoices.org_id AND organization_members.user_id = auth.uid())
+);
+CREATE POLICY "Server can manage invoices" ON public.billing_invoices FOR ALL USING (false);
 
 CREATE POLICY "Server can manage processed events" ON public.processed_events FOR ALL USING (false);
 

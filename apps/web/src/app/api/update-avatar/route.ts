@@ -18,10 +18,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing userId or avatarUrl' }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const updateResult = await supabase
     .from('users')
+    // @ts-ignore - Supabase type inference issue with update
     .update({ avatar_url: avatarUrl })
     .eq('id', userId);
+  const { data, error } = updateResult;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

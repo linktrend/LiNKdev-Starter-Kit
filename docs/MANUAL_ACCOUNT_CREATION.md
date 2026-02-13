@@ -131,4 +131,3 @@ Once the accounts are created:
 2. Test login as test user → should NOT see "Admin Console" link
 3. Test signup flow with a new email
 4. Test password reset flow
-

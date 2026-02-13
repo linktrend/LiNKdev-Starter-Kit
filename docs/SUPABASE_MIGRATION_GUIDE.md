@@ -1,7 +1,7 @@
 # Supabase Database Migration Guide
 
-**Project:** linktrend-starter-kit  
-**Project ID:** YOUR_PROJECT_REF  
+**Project:** linkdev-starter-kit  
+**Project Ref:** YOUR_PROJECT_REF  
 **Date:** December 18, 2024
 
 ---

@@ -710,4 +710,3 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ---
 
 **End of Migration Testing & Verification Guide**
-

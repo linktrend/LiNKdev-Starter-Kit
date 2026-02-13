@@ -29,6 +29,9 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 
+# Local machine workspace notes
+COMPUTER_*_WORKSPACE_PATHS.txt
+
 # Logs
 *.log
 npm-debug.log*

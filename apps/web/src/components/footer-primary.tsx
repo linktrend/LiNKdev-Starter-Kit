@@ -29,15 +29,11 @@ export default function FooterPrimary() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const { error } = await supabase
-        .from('user_email_list')
-        .insert([{ email }])
-      
-      if (error) throw error
-
+      // Template-safe default: don't write to a database table that may not exist.
+      // App teams can wire this to Resend/ConvertKit/Supabase later.
       toast({
-        title: "Subscribed! 🎉",
-        description: "Thank you for subscribing! You will get an email when the app comes out.",
+        title: "Subscribed",
+        description: "Thanks. (Template demo) Hook this form up to your newsletter provider.",
       })
       setEmail('')
     } catch (error) {
@@ -58,23 +54,13 @@ export default function FooterPrimary() {
             <h3 className="text-lg font-bold mb-4">Work</h3>
             <ul className="space-y-2">
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit" className="text-primary">
+                <AnimatedUnderline href="https://github.com/linktrend/LiNKdev-Starter-Kit" className="text-primary">
                   LiNKdev Starter Kit
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://supacrawler.com" className="text-primary">
-                  Supacrawler
-                </AnimatedUnderline>
-              </li>
-              <li>
-                <AnimatedUnderline href="https://github.com/antoineross/Autogen-UI" className="text-primary">
-                  Autogen UI
-                </AnimatedUnderline>
-              </li>
-              <li>
-                <AnimatedUnderline href="#" className="text-primary">
-                  See all →
+                <AnimatedUnderline href="https://github.com/linktrend" className="text-primary">
+                  LiNKtrend on GitHub
                 </AnimatedUnderline>
               </li>
             </ul>
@@ -88,12 +74,12 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit/tree/main/docs" className="text-primary">
+                <AnimatedUnderline href="https://github.com/linktrend/LiNKdev-Starter-Kit/tree/main/docs" className="text-primary">
                   Documentation
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="mailto:hello@antoineross.com" className="text-primary">
+                <AnimatedUnderline href="mailto:hello@example.com" className="text-primary">
                   Contact us
                 </AnimatedUnderline>
               </li>
@@ -103,17 +89,17 @@ export default function FooterPrimary() {
             <h3 className="text-lg font-bold mb-4">Connect</h3>
             <ul className="space-y-2">
               <li>
-                <AnimatedUnderline href="https://x.com/antoineross__" className="text-primary">
+                <AnimatedUnderline href="https://x.com/YOUR_HANDLE" className="text-primary">
                   X
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://linkedin.com/in/antoineross" className="text-primary">
+                <AnimatedUnderline href="https://www.linkedin.com/company/YOUR_COMPANY" className="text-primary">
                   LinkedIn
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit" className="text-primary">
+                <AnimatedUnderline href="https://github.com/linktrend/LiNKdev-Starter-Kit" className="text-primary">
                   GitHub
                 </AnimatedUnderline>
               </li>
@@ -157,7 +143,7 @@ export default function FooterPrimary() {
             <LogInIcon className="h-6 w-6" />
             <span className="text-xl font-bold">LiNKdev Starter Kit.</span>
           </div>
-          <p className="text-gray-500 mt-4 md:mt-0">© LiNKdev Starter Kit Inc. 2024</p>
+          <p className="text-gray-500 mt-4 md:mt-0">© LiNKdev Starter Kit</p>
         </div>
       </div>
     </footer>

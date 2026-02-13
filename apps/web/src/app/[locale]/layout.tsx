@@ -62,11 +62,11 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: 'antoineross',
-      url: 'https://antoineross.com'
+      name: 'LiNKtrend',
+      url: 'https://github.com/linktrend'
     }
   ],
-  creator: 'antoineross',
+  creator: 'LiNKtrend',
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [`${siteConfig.url}/og.jpg`],
-    creator: '@antoineross'
+    creator: '@YOUR_HANDLE'
   },
   icons: {
     icon: '/favicon.ico',

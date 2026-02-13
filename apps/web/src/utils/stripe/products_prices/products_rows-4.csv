@@ -1,4 +1,4 @@
 id,active,name,description,image,metadata
-prod_QrmuZPiFIkAj9e,true,Starter,Kickstart your journey with essential templates and community access.,,"{""index"":""0""}"
-prod_QrmurjpbDzidkD,true,Pro,For those who need advanced templates and enhanced community engagement.,,"{""index"":""1""}"
-prod_QrmutCdmepcTuJ,true,Enterprise,For organizations that require comprehensive templates and dedicated support.,,"{""index"":""3""}"
+prod_example_free,true,Free,Entry tier for getting started.,,"{""index"":""0""}"
+prod_example_pro,true,Pro,For growing teams that need more features.,,"{""index"":""1""}"
+prod_example_business,true,Business,For organizations that need advanced controls and support.,,"{""index"":""2""}"

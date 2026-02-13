@@ -76,17 +76,17 @@ Go to your GitHub repository settings and add these secrets:
 
 1. **SUPABASE_URL**
    ```
-   https://YOUR_PROJECT_REF.supabase.co
+   https://your-project.supabase.co
    ```
 
 2. **SUPABASE_ANON_KEY**
    ```
-   sb_publishable_***REDACTED***
+   your-anon-key
    ```
 
 3. **SUPABASE_SERVICE_ROLE_KEY**
    ```
-   sb_secret_***REDACTED***
+   your-service-role-key
    ```
 
 **How to add GitHub secrets:**

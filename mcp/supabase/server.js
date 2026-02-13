@@ -29,48 +29,23 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Load environment variables from project root
-// Try multiple paths to find the .env file
-const possiblePaths = [
-  '/Users/carlossalas/Projects/linkdev-starter-kit/.env',
-  join(__dirname, '../../.env'),
-  join(process.cwd(), '.env'),
-];
-
-let loaded = false;
-for (const envPath of possiblePaths) {
-  console.error('Trying .env from:', envPath);
-  const result = dotenv.config({ path: envPath });
-  if (!result.error) {
-    console.error('.env loaded successfully from:', envPath);
-    loaded = true;
-    break;
-  } else {
-    console.error('Failed:', result.error.message);
-  }
+// Load environment variables from common locations (optional convenience).
+// Credentials must come from the environment; never hardcode keys in-repo.
+for (const envPath of [join(__dirname, '../../.env'), join(process.cwd(), '.env')]) {
+  dotenv.config({ path: envPath });
 }
 
-if (!loaded) {
-  console.error('WARNING: Could not load .env file from any location');
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('Missing required environment variables for Supabase MCP server:');
+  console.error('- SUPABASE_URL');
+  console.error('- SUPABASE_SERVICE_ROLE_KEY');
+  process.exit(1);
 }
 
-// Fallback to hardcoded values if env vars not loaded
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://YOUR_PROJECT_REF.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'JWT_***REDACTED***';
-
-console.error('SUPABASE_URL:', SUPABASE_URL ? 'SET' : 'NOT SET');
-console.error('SUPABASE_SERVICE_ROLE_KEY:', SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'NOT SET');
-
-// Initialize Supabase client (will be null if env vars not set)
-let supabase = null;
-
-if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-  try {
-    supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  } catch (error) {
-    console.error('Failed to initialize Supabase client:', error.message);
-  }
-}
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // Create MCP server
 const server = new Server(
@@ -396,5 +371,4 @@ main().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });
-
 

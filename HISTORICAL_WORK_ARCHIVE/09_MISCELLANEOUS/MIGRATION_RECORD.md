@@ -78,7 +78,7 @@ Successfully migrated the LiNKdev Starter Kit project from `/Users/carlossalas/P
 **File:** `.cursor/mcp.json`
 
 - **SupabaseMCP:** Uses hardcoded credentials (app-specific)
-  - URL: `https://YOUR_PROJECT_REF.supabase.co`
+  - URL: `https://your-project.supabase.co`
   - Service Role Key: Configured
   
 - **StripeMCP:** Uses environment variable `${STRIPE_SECRET_KEY}`
@@ -95,16 +95,16 @@ Successfully migrated the LiNKdev Starter Kit project from `/Users/carlossalas/P
 **Shell Profile (`~/.zshrc`):**
 ```bash
 # Shared Stripe account (same for all apps)
-export STRIPE_SECRET_KEY=sk_***REDACTED***
+export STRIPE_SECRET_KEY="YOUR_STRIPE_SECRET_KEY"
 
 # Shared Figma account (same for all apps)
-export FIGMA_ACCESS_TOKEN=figd_***REDACTED***
+export FIGMA_ACCESS_TOKEN="YOUR_FIGMA_ACCESS_TOKEN"
 ```
 
 **Application `.env` file:**
 ```bash
-SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ---

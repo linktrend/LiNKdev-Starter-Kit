@@ -9,7 +9,7 @@ echo "════════════════════════�
 echo ""
 
 # Supabase URL (found in .env.local)
-SUPABASE_URL="https://YOUR_PROJECT_REF.supabase.co"
+SUPABASE_URL="https://your-project.supabase.co"
 
 echo "✓ Found Supabase URL: $SUPABASE_URL"
 echo ""
@@ -34,7 +34,6 @@ echo "2. Relaunch Cursor"
 echo "3. Test with: call SupabaseMCP.ping"
 echo ""
 echo "════════════════════════════════════════════════════════════"
-
 
 
 

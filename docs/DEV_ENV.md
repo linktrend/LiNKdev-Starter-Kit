@@ -32,7 +32,7 @@ Single source of truth for **environment variables**, **secret handling**, and *
 ## Local Setup (Dev)
 1. Copy `.env.example` → `.env.local`.  
 2. Fill values from Supabase project:
-   - `NEXT_PUBLIC_SUPABASE_URL = https://YOUR_PROJECT_REF.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_URL = https://your-project.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY = <anon key>`
    - `SUPABASE_SERVICE_ROLE_KEY = <service role key>`
 3. Run app: `pnpm dev` (or repo script).

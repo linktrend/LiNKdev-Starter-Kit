@@ -105,8 +105,8 @@ This project includes Model Context Protocol (MCP) servers for enhanced Cursor I
    ```bash
    export SUPABASE_URL="https://your-project.supabase.co"
    export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-   export STRIPE_SECRET_KEY="sk_test_..."
-   export FIGMA_ACCESS_TOKEN="figd_..."
+   export STRIPE_SECRET_KEY="your_stripe_secret_key"
+   export FIGMA_ACCESS_TOKEN="your_figma_access_token"
    ```
 
 3. **Restart Cursor** completely (Cmd+Q, then relaunch)

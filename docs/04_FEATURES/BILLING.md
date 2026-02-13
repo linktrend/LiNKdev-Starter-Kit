@@ -178,9 +178,9 @@ sequenceDiagram
 
 ```bash
 # Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 
 # Stripe Price IDs (optional - will use mock data if not provided)
 STRIPE_PRO_MONTHLY_PRICE_ID=price_your_pro_monthly_price_id

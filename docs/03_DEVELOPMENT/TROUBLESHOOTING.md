@@ -111,10 +111,10 @@
 2. **Check key types:**
    ```bash
    # Public (anon) key - safe for browser:
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
    
    # Service role key - SERVER-SIDE ONLY:
-   SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
    ```
 
 3. **Verify keys in Supabase Dashboard:**
@@ -164,23 +164,23 @@
 1. **Verify key types:**
    ```bash
    # Secret key (server-side only):
-   STRIPE_SECRET_KEY=sk_test_...  # Test mode
-   STRIPE_SECRET_KEY=sk_live_...  # Live mode
+   STRIPE_SECRET_KEY=your_stripe_secret_key_test  # Test mode (sk_test_...)
+   STRIPE_SECRET_KEY=your_stripe_secret_key_live  # Live mode (sk_live_...)
    
    # Publishable key (client-side):
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...  # Test mode
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...  # Live mode
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_test  # Test mode (pk_test_...)
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_live  # Live mode (pk_live_...)
    ```
 
 2. **Ensure matching modes:**
    ```bash
    # ✅ Correct - both test:
-   STRIPE_SECRET_KEY=sk_test_...
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   STRIPE_SECRET_KEY=your_stripe_secret_key_test
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_test
    
    # ❌ Wrong - mixed modes:
-   STRIPE_SECRET_KEY=sk_test_...
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+   STRIPE_SECRET_KEY=your_stripe_secret_key_test
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_live
    ```
 
 3. **Set webhook secret:**
@@ -188,7 +188,7 @@
    # For local development:
    # Run: stripe listen --forward-to localhost:3000/api/webhooks/stripe
    # Copy webhook secret from output:
-   STRIPE_WEBHOOK_SECRET=whsec_...
+   STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
    ```
 
 4. **Verify keys in Stripe Dashboard:**
@@ -915,7 +915,7 @@ the compiler will serialize. An explicit type annotation is needed.
 
 2. **Copy webhook secret:**
    - From Stripe CLI output: `whsec_...`
-   - Add to `.env.local`: `STRIPE_WEBHOOK_SECRET=whsec_...`
+   - Add to `.env.local`: `STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret`
 
 3. **Restart dev server:**
    ```bash
@@ -1077,8 +1077,8 @@ the compiler will serialize. An explicit type annotation is needed.
    ```bash
    # Add to ~/.zshrc or ~/.bashrc:
    export SUPABASE_URL=https://xxx.supabase.co
-   export SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...
-   export STRIPE_SECRET_KEY=sk_test_...
+   export SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   export STRIPE_SECRET_KEY=your_stripe_secret_key_test
    ```
 
 2. **Restart Cursor completely:**

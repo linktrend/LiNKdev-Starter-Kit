@@ -155,9 +155,9 @@ Add to your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 export SUPABASE_URL="https://your-project.supabase.co"
-export SUPABASE_SERVICE_ROLE_KEY="eyJ..."
-export STRIPE_SECRET_KEY="sk_test_..."
-export FIGMA_ACCESS_TOKEN="figd_..."
+export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 ```
 
 Reload shell: `source ~/.zshrc`
@@ -346,4 +346,3 @@ For questions or issues, refer to:
 1. `mcp/SETUP_GUIDE.md` for quick setup
 2. `mcp/README.md` for detailed documentation
 3. `.cursor/rules/mcp.rules` for usage guidelines
-

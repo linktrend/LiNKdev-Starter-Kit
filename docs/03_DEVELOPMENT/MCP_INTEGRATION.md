@@ -202,13 +202,13 @@ Add to your `~/.zshrc` or `~/.bashrc`:
 ```bash
 # Supabase
 export SUPABASE_URL="https://your-project.supabase.co"
-export SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
 # Stripe
-export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
 
 # Figma
-export FIGMA_ACCESS_TOKEN="figd_..."
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 ```
 
 Then reload your shell:
@@ -222,8 +222,8 @@ source ~/.zshrc  # or ~/.bashrc
 ```bash
 export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-export STRIPE_SECRET_KEY="sk_test_..."
-export FIGMA_ACCESS_TOKEN="figd_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 
 # Launch Cursor from this shell
 open -a Cursor  # macOS
@@ -318,9 +318,9 @@ To modify server configuration:
 | Variable | Server | Description | Example |
 |----------|--------|-------------|---------|
 | `SUPABASE_URL` | SupabaseMCP | Supabase project URL | `https://xxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | SupabaseMCP | Service role key (bypasses RLS) | `eyJhbGciOiJIUzI1NiIs...` |
-| `STRIPE_SECRET_KEY` | StripeMCP | Stripe secret key | `sk_test_51...` |
-| `FIGMA_ACCESS_TOKEN` | FigmaMCP | Figma personal access token | `figd_...` |
+| `SUPABASE_SERVICE_ROLE_KEY` | SupabaseMCP | Service role key (bypasses RLS) | `your-service-role-key` |
+| `STRIPE_SECRET_KEY` | StripeMCP | Stripe secret key | `your_stripe_secret_key` |
+| `FIGMA_ACCESS_TOKEN` | FigmaMCP | Figma personal access token | `your_figma_access_token` |
 
 ### Where to Get API Keys
 

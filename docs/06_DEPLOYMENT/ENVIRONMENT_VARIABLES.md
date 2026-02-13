@@ -45,16 +45,16 @@ Environment variables are validated in `apps/web/src/lib/env/validation.ts`:
 | Variable | Description | Example | Where to Find |
 |----------|-------------|---------|---------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | `https://xxxxx.supabase.co` | Project Settings → API → Project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anonymous/public API key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | Project Settings → API → Project API keys → anon public |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server-only) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` | Project Settings → API → Service role key |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anonymous/public API key | `your-anon-key` | Project Settings → API → Project API keys → anon public |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server-only) | `your-service-role-key` | Project Settings → API → Service role key |
 
 **Security Note:** `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS and should **never** be exposed to the browser.
 
 **Example:**
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ---
@@ -74,9 +74,9 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **Example:**
 ```bash
-STRIPE_SECRET_KEY=sk_live_51AbCdEf...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_51AbCdEf...
-STRIPE_WEBHOOK_SECRET=whsec_***REDACTED***...
+STRIPE_SECRET_KEY=your_stripe_secret_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 STRIPE_PRICE_PRO_MONTHLY=price_1AbCdEf...
 STRIPE_PRICE_PRO_ANNUAL=price_1AbCdEf...
 STRIPE_PRICE_BUSINESS_MONTHLY=price_1AbCdEf...
@@ -306,13 +306,13 @@ STORAGE_OFFLINE=true
 ```bash
 # Supabase (test project)
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Stripe (test mode)
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_SECRET_KEY=your_stripe_secret_key_test
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_test
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 
 # Application
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -329,8 +329,8 @@ SENTRY_ENVIRONMENT=development
 **Vercel Environment Variables → Preview:**
 ```bash
 # Use test Stripe keys
-STRIPE_SECRET_KEY=sk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=your_stripe_secret_key_test
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_test
 
 # Use preview URL
 NEXT_PUBLIC_SITE_URL=https://your-app-git-branch.vercel.app
@@ -344,8 +344,8 @@ SENTRY_ENVIRONMENT=preview
 **Vercel Environment Variables → Production:**
 ```bash
 # Use live Stripe keys
-STRIPE_SECRET_KEY=sk_live_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_SECRET_KEY=your_stripe_secret_key_live
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_live
 
 # Use production URL
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com

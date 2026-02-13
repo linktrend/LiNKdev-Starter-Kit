@@ -34,13 +34,13 @@ Add these to your `~/.zshrc` or `~/.bashrc`:
 ```bash
 # Supabase
 export SUPABASE_URL="https://your-project.supabase.co"
-export SUPABASE_SERVICE_ROLE_KEY="eyJ..."
+export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
 # Stripe
-export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
 
 # Figma
-export FIGMA_ACCESS_TOKEN="figd_..."
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 ```
 
 Then reload your shell:
@@ -151,4 +151,3 @@ call ShadcnMCP.getComponent {"name": "button"}
 ---
 
 **Need Help?** See [README.md](README.md) for comprehensive troubleshooting.
-

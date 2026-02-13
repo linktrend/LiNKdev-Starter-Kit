@@ -329,7 +329,7 @@ pnpm typecheck
 # Add to ~/.zshrc
 export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="your-key"
-export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
 
 # Reload shell
 source ~/.zshrc

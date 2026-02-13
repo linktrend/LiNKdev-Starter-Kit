@@ -146,10 +146,10 @@ export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
 # Stripe
-export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
 
 # Figma
-export FIGMA_ACCESS_TOKEN="figd_..."
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 ```
 
 Then reload your shell:
@@ -163,8 +163,8 @@ source ~/.zshrc  # or ~/.bashrc
 ```bash
 export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-export STRIPE_SECRET_KEY="sk_test_..."
-export FIGMA_ACCESS_TOKEN="figd_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
+export FIGMA_ACCESS_TOKEN="your_figma_access_token"
 
 # Launch Cursor from this shell
 open -a Cursor
@@ -368,4 +368,3 @@ For issues with:
 
 **Last Updated:** 2025-01-13  
 **Maintained By:** LiNKdev Starter Kit Team
-

@@ -163,7 +163,7 @@ for dir in mcp/*/; do echo "$dir:" && ls "$dir/node_modules" | wc -l; done
 ```bash
 export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-export STRIPE_SECRET_KEY="sk_test_..."
+export STRIPE_SECRET_KEY="your_stripe_secret_key"
 export FIGMA_ACCESS_TOKEN="figd_..."
 ```
 

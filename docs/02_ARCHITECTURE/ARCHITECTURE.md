@@ -1,6 +1,6 @@
 # System Architecture
 
-**LTM Starter Kit - Complete Architecture Overview**
+**LiNKdev Starter Kit - Complete Architecture Overview**
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## System Overview
 
-The LTM Starter Kit is a **production-ready SaaS starter template** built with modern web technologies. It provides a complete foundation for building multi-tenant, subscription-based applications.
+The LiNKdev Starter Kit is a **production-ready SaaS starter template** built with modern web technologies. It provides a complete foundation for building multi-tenant, subscription-based applications.
 
 ### Key Characteristics
 

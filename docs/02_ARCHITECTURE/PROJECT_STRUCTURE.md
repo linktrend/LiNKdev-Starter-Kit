@@ -3,7 +3,7 @@
 ## Monorepo Layout
 
 ```
-LTM-Starter-Kit/
+linkdev-starter-kit/
 ├── apps/
 │   ├── web/                    # Next.js web application
 │   └── mobile/                 # React Native mobile application

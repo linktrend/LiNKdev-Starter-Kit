@@ -40,7 +40,7 @@ const _appRouter = createTRPCRouter({
     sendTest: protectedProcedure
       .input(z.object({
         to: z.string().email('Invalid email address'),
-        message: z.string().optional().default('Hello from LTM Starter Kit!'),
+        message: z.string().optional().default('Hello from LiNKdev Starter Kit!'),
       }))
       .mutation(async ({ input }) => {
         try {

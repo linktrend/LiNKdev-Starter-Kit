@@ -8,7 +8,7 @@
 
 ## Overview
 
-The LTM Starter Kit includes a comprehensive usage metering system to track customer consumption of various resources. This enables:
+The LiNKdev Starter Kit includes a comprehensive usage metering system to track customer consumption of various resources. This enables:
 
 - **Plan enforcement** - Block actions when limits are reached
 - **Billing calculations** - Charge for usage-based features

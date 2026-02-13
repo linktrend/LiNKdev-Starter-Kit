@@ -8,7 +8,7 @@
 
 ## Overview
 
-Successfully migrated the LTM Starter Kit project from `/Users/carlossalas/Projects/LTM-Starter-Kit` to `/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit`.
+Successfully migrated the LiNKdev Starter Kit project from `/Users/carlossalas/Projects/linkdev-starter-kit` to `/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit`.
 
 ---
 
@@ -16,17 +16,17 @@ Successfully migrated the LTM Starter Kit project from `/Users/carlossalas/Proje
 
 ### Source Location
 ```
-/Users/carlossalas/Projects/LTM-Starter-Kit
+/Users/carlossalas/Projects/linkdev-starter-kit
 ```
 
 ### Destination Location
 ```
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit
 ```
 
 ### Archive Location
 ```
-/Users/carlossalas/Projects/LTM-Starter-Kit-old
+/Users/carlossalas/Projects/linkdev-starter-kit-old
 ```
 
 ---
@@ -36,13 +36,13 @@ Successfully migrated the LTM Starter Kit project from `/Users/carlossalas/Proje
 ### ✅ Phase 1: Configuration Updates
 
 #### 1. Updated `.cursor/mcp.json`
-- Changed absolute paths to relative paths (`mcp/supabase/server.js` instead of `/Users/carlossalas/Projects/LTM-Starter-Kit/mcp/...`)
+- Changed absolute paths to relative paths (`mcp/supabase/server.js` instead of `/Users/carlossalas/Projects/linkdev-starter-kit/mcp/...`)
 - Changed command from `/opt/homebrew/bin/node` to `node` (uses system PATH)
 - Added Supabase environment variables (hardcoded, app-specific)
 - Configured Stripe and Figma to use environment variables from shell
 
 #### 2. Created `.env` file
-- Location: `/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/.env`
+- Location: `/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/.env`
 - Contains Supabase credentials (app-specific)
 - File is gitignored (as expected)
 
@@ -54,18 +54,18 @@ Successfully migrated the LTM Starter Kit project from `/Users/carlossalas/Proje
 ### ✅ Phase 2: Git/GitHub Migration
 
 #### 1. Verified new location Git remotes
-- `origin`: `https://github.com/linktrendmedia/LTM-Starter-Kit.git` ✅
+- `origin`: `https://github.com/linktrendmedia/linkdev-starter-kit.git` ✅
 - `upstream`: `https://github.com/antoineross/Hikari.git` ✅
 
 #### 2. Unlinked original location
-- Removed `origin` remote from `/Users/carlossalas/Projects/LTM-Starter-Kit`
-- Removed `upstream` remote from `/Users/carlossalas/Projects/LTM-Starter-Kit`
+- Removed `origin` remote from `/Users/carlossalas/Projects/linkdev-starter-kit`
+- Removed `upstream` remote from `/Users/carlossalas/Projects/linkdev-starter-kit`
 - Prevents accidental pushes from old location
 
 ### ✅ Phase 3: Archive Original
 
 #### 1. Renamed original folder
-- `/Users/carlossalas/Projects/LTM-Starter-Kit` → `/Users/carlossalas/Projects/LTM-Starter-Kit-old`
+- `/Users/carlossalas/Projects/linkdev-starter-kit` → `/Users/carlossalas/Projects/linkdev-starter-kit-old`
 - Original folder preserved as backup
 - Can be safely deleted after verification period
 
@@ -117,10 +117,10 @@ source ~/.zshrc
 ```
 
 ### 2. Close Old Workspace in Cursor
-- Close the workspace at `/Users/carlossalas/Projects/LTM-Starter-Kit-old` (if still open)
+- Close the workspace at `/Users/carlossalas/Projects/linkdev-starter-kit-old` (if still open)
 
 ### 3. Open New Workspace
-- Open `/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit` in Cursor
+- Open `/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit` in Cursor
 - **Important:** Restart Cursor completely (Cmd+Q) to load new environment variables
 
 ### 4. Verify MCP Servers
@@ -137,13 +137,13 @@ All should return `{"status": "ok", ...}`
 
 ### 5. Verify Git Status
 ```bash
-cd /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit
+cd /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit
 git remote -v
 git status
 ```
 
 Should show:
-- `origin` pointing to `https://github.com/linktrendmedia/LTM-Starter-Kit.git`
+- `origin` pointing to `https://github.com/linktrendmedia/linkdev-starter-kit.git`
 - `upstream` pointing to `https://github.com/antoineross/Hikari.git`
 - Clean working directory (or your current branch state)
 
@@ -152,7 +152,7 @@ Should show:
 ## Important Notes
 
 ### About the Old Location
-- The original folder has been renamed to `LTM-Starter-Kit-old`
+- The original folder has been renamed to `linkdev-starter-kit-old`
 - Git remotes have been removed (prevents accidental pushes)
 - You can safely delete it after verifying everything works in the new location
 
@@ -183,7 +183,7 @@ Should show:
 3. Ensure you have network access
 
 ### If you need to rollback:
-1. The original folder is at `/Users/carlossalas/Projects/LTM-Starter-Kit-old`
+1. The original folder is at `/Users/carlossalas/Projects/linkdev-starter-kit-old`
 2. You can restore Git remotes if needed
 3. All configurations are preserved
 
@@ -218,7 +218,7 @@ Should show:
 
 ## Conclusion
 
-The migration was completed successfully with no issues. The new primary location is `/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit`, and all systems are operational.
+The migration was completed successfully with no issues. The new primary location is `/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit`, and all systems are operational.
 
 **Status:** ✅ COMPLETE  
 **Quality:** Successful Migration  
@@ -226,4 +226,4 @@ The migration was completed successfully with no issues. The new primary locatio
 
 ---
 
-**Archive Note:** This document records the successful migration of the LTM Starter Kit project to its new location. The migration was completed without data loss or service interruption.
+**Archive Note:** This document records the successful migration of the LiNKdev Starter Kit project to its new location. The migration was completed without data loss or service interruption.

@@ -1,6 +1,6 @@
 # Environment Setup Guide
 
-**Complete guide to configuring all environment variables for the LTM Starter Kit**
+**Complete guide to configuring all environment variables for the LiNKdev Starter Kit**
 
 ---
 

@@ -8,7 +8,7 @@ test.describe('App Boot Check', () => {
     await page.waitForLoadState('networkidle');
     
     // Check for key elements that should be present
-    await expect(page.getByText('LTM Starter Kit')).toBeVisible();
+    await expect(page.getByText('LiNKdev Starter Kit')).toBeVisible();
     await expect(page.getByText(/A complete & open-source Next.js 14 SaaS template/)).toBeVisible();
     
     // Check for pricing section
@@ -24,10 +24,10 @@ test.describe('App Boot Check', () => {
     await page.goto('/');
     
     // Check page title
-    await expect(page).toHaveTitle(/LTM Starter Kit/);
+    await expect(page).toHaveTitle(/LiNKdev Starter Kit/);
     
     // Check for basic HTML structure
-    await expect(page.locator('h1')).toContainText('LTM Starter Kit');
+    await expect(page.locator('h1')).toContainText('LiNKdev Starter Kit');
   });
 
   test('responsive layout works', async ({ page }) => {
@@ -35,10 +35,10 @@ test.describe('App Boot Check', () => {
     
     // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await expect(page.getByText('LTM Starter Kit')).toBeVisible();
+    await expect(page.getByText('LiNKdev Starter Kit')).toBeVisible();
     
     // Test desktop viewport
     await page.setViewportSize({ width: 1280, height: 720 });
-    await expect(page.getByText('LTM Starter Kit')).toBeVisible();
+    await expect(page.getByText('LiNKdev Starter Kit')).toBeVisible();
   });
 });

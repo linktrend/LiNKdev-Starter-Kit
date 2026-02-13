@@ -63,7 +63,7 @@ jobs:
           body: |
             ## Alpha Release ${{ inputs.version }}
             
-            This is an alpha release of the LTM Starter Kit.
+            This is an alpha release of the LiNKdev Starter Kit.
             
             ### What's Included
             - Web application (Next.js)

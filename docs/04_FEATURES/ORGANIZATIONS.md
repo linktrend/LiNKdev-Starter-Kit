@@ -19,7 +19,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses **organization-scoped resources** where all data belongs to an organization. The organization context resolver provides a single, priority-based system for determining which organization a user is working with across different routes and scenarios.
+The LiNKdev Starter Kit uses **organization-scoped resources** where all data belongs to an organization. The organization context resolver provides a single, priority-based system for determining which organization a user is working with across different routes and scenarios.
 
 ### Key Concepts
 

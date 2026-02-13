@@ -10,7 +10,7 @@
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd ltm-starter-kit
+cd linkdev-starter-kit
 
 # Install dependencies
 pnpm install

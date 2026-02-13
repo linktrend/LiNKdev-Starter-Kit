@@ -196,7 +196,7 @@ export default function MagicLinkPage({ params: { locale } }: MagicLinkPageProps
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">
-              LTM Starter Kit
+              LiNKdev Starter Kit
             </h1>
           </div>
         </div>

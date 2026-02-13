@@ -1,6 +1,6 @@
 # Troubleshooting Guide
 
-**Comprehensive troubleshooting guide for common issues in the LTM Starter Kit**
+**Comprehensive troubleshooting guide for common issues in the LiNKdev Starter Kit**
 
 ---
 

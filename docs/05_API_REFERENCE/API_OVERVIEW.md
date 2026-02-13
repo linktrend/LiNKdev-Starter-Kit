@@ -1,6 +1,6 @@
 # API Overview
 
-**LTM Starter Kit - Complete API Architecture Documentation**
+**LiNKdev Starter Kit - Complete API Architecture Documentation**
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## API Architecture
 
-The LTM Starter Kit provides a **dual API architecture** combining:
+The LiNKdev Starter Kit provides a **dual API architecture** combining:
 
 - **tRPC** - Type-safe, end-to-end TypeScript API for internal use
 - **REST API** - Standard HTTP endpoints for external integrations

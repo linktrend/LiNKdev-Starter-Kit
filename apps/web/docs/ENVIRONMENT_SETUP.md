@@ -1,6 +1,6 @@
 # Environment Setup
 
-This guide explains how to configure all environment variables for the LTM Starter Kit, where to get each credential, and how validation works.
+This guide explains how to configure all environment variables for the LiNKdev Starter Kit, where to get each credential, and how validation works.
 
 ## Quick start
 

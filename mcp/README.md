@@ -1,6 +1,6 @@
-# MCP Servers - LTM Starter Kit
+# MCP Servers - LiNKdev Starter Kit
 
-This directory contains all Model Context Protocol (MCP) servers for the LTM Starter Kit. Each server is a standalone Node.js module that provides tools for interacting with external services through Cursor's MCP integration.
+This directory contains all Model Context Protocol (MCP) servers for the LiNKdev Starter Kit. Each server is a standalone Node.js module that provides tools for interacting with external services through Cursor's MCP integration.
 
 ## Directory Structure
 
@@ -198,7 +198,7 @@ After setting environment variables and configuring MCP servers:
 
 1. **Quit Cursor completely** (Cmd+Q on macOS)
 2. Launch Cursor from a shell with environment variables set
-3. Open the LTM Starter Kit project
+3. Open the LiNKdev Starter Kit project
 
 ## How Cursor Attaches to MCP Servers
 
@@ -367,5 +367,5 @@ For issues with:
 ---
 
 **Last Updated:** 2025-01-13  
-**Maintained By:** LTM Starter Kit Team
+**Maintained By:** LiNKdev Starter Kit Team
 

@@ -8,7 +8,7 @@
 
 ## Overview
 
-Comprehensive database schema expansion and migration work to support the full feature set of the LTM Starter Kit, including user profiles, organization-based billing, usage metering, and feature gating infrastructure.
+Comprehensive database schema expansion and migration work to support the full feature set of the LiNKdev Starter Kit, including user profiles, organization-based billing, usage metering, and feature gating infrastructure.
 
 ---
 

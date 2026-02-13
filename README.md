@@ -1,4 +1,4 @@
-# LTM Starter Kit
+# LiNKdev Starter Kit
 
 A production-ready monorepo template for building modern web and mobile applications with a unified design system.
 
@@ -15,7 +15,7 @@ A production-ready monorepo template for building modern web and mobile applicat
 ## 📁 Structure
 
 ```
-LTM-Starter-Kit/
+linkdev-starter-kit/
 ├── apps/
 │   ├── web/                    # Next.js web application
 │   └── mobile/                 # React Native mobile application

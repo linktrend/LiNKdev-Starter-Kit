@@ -2,7 +2,7 @@
 
 ## Overview
 
-The core billing implementation established the foundational Stripe integration for the LTM Starter Kit, including SDK setup, webhook processing, server actions, and UI components. This work created a production-ready subscription management system with proper security, error handling, and user experience.
+The core billing implementation established the foundational Stripe integration for the LiNKdev Starter Kit, including SDK setup, webhook processing, server actions, and UI components. This work created a production-ready subscription management system with proper security, error handling, and user experience.
 
 ## Timeline
 

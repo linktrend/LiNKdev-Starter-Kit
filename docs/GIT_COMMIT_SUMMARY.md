@@ -127,7 +127,7 @@ ef941e5 (main) - Merge cursor-dev to main
 - **Total Pushes**: 6
 - **Total Branches**: 6
 - **Status**: All branches synchronized with remote
-- **Remote URL**: https://github.com/linktrendmedia/LTM-Starter-Kit.git
+- **Remote URL**: https://github.com/linktrendmedia/linkdev-starter-kit.git
 
 ## Verification
 

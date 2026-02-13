@@ -14,7 +14,7 @@ The Automation Bridge provides reliable event delivery to n8n and other external
 
 ```bash
 # n8n Webhook Integration (Optional - Template works without these)
-N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/ltm-starter-kit
+N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/linkdev-starter-kit
 N8N_WEBHOOK_SECRET=your-n8n-webhook-secret
 
 # Cron Security (for automation delivery endpoint)
@@ -185,7 +185,7 @@ When `TEMPLATE_OFFLINE=1` or Supabase is not configured:
 
 ## n8n Workflow Example
 
-Here's a simple n8n workflow to receive LTM Starter Kit events:
+Here's a simple n8n workflow to receive LiNKdev Starter Kit events:
 
 ```json
 {
@@ -194,7 +194,7 @@ Here's a simple n8n workflow to receive LTM Starter Kit events:
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "ltm-starter-kit",
+        "path": "linkdev-starter-kit",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -369,13 +369,13 @@ Look for `AUTOMATION:` prefixed logs in the console.
 ### n8n Integration Steps
 
 1. **Create Webhook Node** in n8n workflow
-2. **Set URL** to your LTM Starter Kit webhook endpoint: `https://your-app.com/api/hooks/n8n`
+2. **Set URL** to your LiNKdev Starter Kit webhook endpoint: `https://your-app.com/api/hooks/n8n`
 3. **Configure Headers** (n8n will receive these automatically):
    - `Content-Type: application/json`
    - `X-LTM-Signature: [auto-generated]`
    - `X-LTM-Timestamp: [auto-generated]`
 4. **Add Response Node** to return `200 OK` status
-5. **Test** with sample payload from LTM Starter Kit
+5. **Test** with sample payload from LiNKdev Starter Kit
 
 **Minimal n8n Response Node Configuration:**
 ```json

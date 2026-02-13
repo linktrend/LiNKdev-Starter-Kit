@@ -1,6 +1,6 @@
-# LTM Starter Kit Documentation
+# LiNKdev Starter Kit Documentation
 
-**Complete documentation for the LTM Starter Kit - A production-ready SaaS starter template**
+**Complete documentation for the LiNKdev Starter Kit - A production-ready SaaS starter template**
 
 ---
 
@@ -244,7 +244,7 @@ For code-related issues:
 
 ## 🎉 Welcome!
 
-Thank you for using the LTM Starter Kit! This documentation is designed to help you build amazing products quickly and efficiently.
+Thank you for using the LiNKdev Starter Kit! This documentation is designed to help you build amazing products quickly and efficiently.
 
 **Start your journey:**
 1. Read [AGENT_ONBOARDING.md](./01_GETTING_STARTED/AGENT_ONBOARDING.md)

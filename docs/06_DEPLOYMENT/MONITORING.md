@@ -1,6 +1,6 @@
 # Monitoring & Observability
 
-**Complete guide to monitoring, error tracking, analytics, and observability in the LTM Starter Kit**
+**Complete guide to monitoring, error tracking, analytics, and observability in the LiNKdev Starter Kit**
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Overview
 
-The LTM Starter Kit includes comprehensive monitoring and observability tools to help you track errors, analyze user behavior, monitor performance, and maintain system health.
+The LiNKdev Starter Kit includes comprehensive monitoring and observability tools to help you track errors, analyze user behavior, monitor performance, and maintain system health.
 
 ### Monitoring Stack
 

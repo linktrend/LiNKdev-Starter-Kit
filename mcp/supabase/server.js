@@ -32,7 +32,7 @@ const __dirname = dirname(__filename);
 // Load environment variables from project root
 // Try multiple paths to find the .env file
 const possiblePaths = [
-  '/Users/carlossalas/Projects/LTM-Starter-Kit/.env',
+  '/Users/carlossalas/Projects/linkdev-starter-kit/.env',
   join(__dirname, '../../.env'),
   join(process.cwd(), '.env'),
 ];

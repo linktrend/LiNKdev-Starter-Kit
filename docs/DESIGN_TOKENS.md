@@ -1,6 +1,6 @@
 # Design Tokens Reference
 
-This document provides a comprehensive reference for the design tokens used throughout the LTM Starter Kit application.
+This document provides a comprehensive reference for the design tokens used throughout the LiNKdev Starter Kit application.
 
 ## Overview
 

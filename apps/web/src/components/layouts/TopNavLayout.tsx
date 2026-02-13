@@ -28,7 +28,7 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
               <Eclipse className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">LTM Starter Kit</span>
+              <span className="text-xl font-bold">LiNKdev Starter Kit</span>
             </Link>
           </div>
 
@@ -68,7 +68,7 @@ export function TopNavLayout({ children, links = [] }: TopNavLayoutProps) {
                 <div className="flex flex-col gap-4 mt-8">
                   <div className="flex items-center gap-2 px-2">
                     <Eclipse className="h-6 w-6 text-primary" />
-                    <span className="text-lg font-semibold">LTM Starter Kit</span>
+                    <span className="text-lg font-semibold">LiNKdev Starter Kit</span>
                   </div>
                   
                   <nav className="flex flex-col gap-2">

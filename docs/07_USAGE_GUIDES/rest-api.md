@@ -1,6 +1,6 @@
 # REST API Usage Guide
 
-Public REST API for LTM Starter Kit - A comprehensive starter kit for web applications.
+Public REST API for LiNKdev Starter Kit - A comprehensive starter kit for web applications.
 
 ## Quickstart
 
@@ -14,12 +14,12 @@ All API requests require:
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
      -H "X-Org-ID: org-123" \
      -H "Content-Type: application/json" \
-     https://api.ltm-starter-kit.dev/v1/orgs
+     https://api.linkdev-starter-kit.dev/v1/orgs
 ```
 
 ### Base URL
 
-- **Production**: `https://api.ltm-starter-kit.dev/v1`
+- **Production**: `https://api.linkdev-starter-kit.dev/v1`
 - **Development**: `http://localhost:3000/api/v1`
 
 ## Authentication
@@ -51,7 +51,7 @@ Every request must include the organization ID in the `X-Org-ID` header:
 
 ```bash
 curl -H "X-Org-ID: org-123" \
-     https://api.ltm-starter-kit.dev/v1/records
+     https://api.linkdev-starter-kit.dev/v1/records
 ```
 
 ## Rate Limiting
@@ -83,7 +83,7 @@ curl -X POST \
      -H "Authorization: Bearer YOUR_TOKEN" \
      -H "X-Org-ID: org-123" \
      -d '{"name": "New Organization"}' \
-     https://api.ltm-starter-kit.dev/v1/orgs
+     https://api.linkdev-starter-kit.dev/v1/orgs
 ```
 
 **Important**: Use the same idempotency key for retries to ensure the operation is only performed once.
@@ -94,10 +94,10 @@ List endpoints support cursor-based pagination:
 
 ```bash
 # First page
-curl "https://api.ltm-starter-kit.dev/v1/records?limit=50"
+curl "https://api.linkdev-starter-kit.dev/v1/records?limit=50"
 
 # Next page using cursor
-curl "https://api.ltm-starter-kit.dev/v1/records?limit=50&cursor=next-cursor-value"
+curl "https://api.linkdev-starter-kit.dev/v1/records?limit=50&cursor=next-cursor-value"
 ```
 
 ### Pagination Parameters
@@ -279,8 +279,8 @@ POST /api/v1/billing/checkout
 {
   "org_id": "org-123",
   "plan": "pro",
-  "success_url": "https://app.ltm-starter-kit.dev/success",
-  "cancel_url": "https://app.ltm-starter-kit.dev/cancel"
+  "success_url": "https://app.linkdev-starter-kit.dev/success",
+  "cancel_url": "https://app.linkdev-starter-kit.dev/cancel"
 }
 ```
 
@@ -371,7 +371,7 @@ class LTMStarterKitAPI {
   constructor(private token: string, private orgId: string) {}
 
   private async request(endpoint: string, options: RequestInit = {}) {
-    const response = await fetch(`https://api.ltm-starter-kit.dev/v1${endpoint}`, {
+    const response = await fetch(`https://api.linkdev-starter-kit.dev/v1${endpoint}`, {
       ...options,
       headers: {
         'Authorization': `Bearer ${this.token}`,
@@ -418,7 +418,7 @@ import requests
 from typing import Optional, Dict, Any
 
 class LTMStarterKitAPI:
-    def __init__(self, token: str, org_id: str, base_url: str = "https://api.ltm-starter-kit.dev/v1"):
+    def __init__(self, token: str, org_id: str, base_url: str = "https://api.linkdev-starter-kit.dev/v1"):
         self.token = token
         self.org_id = org_id
         self.base_url = base_url
@@ -488,10 +488,10 @@ The API supports webhooks for real-time updates. Configure webhook endpoints in 
 
 ## OpenAPI Specification
 
-The complete API specification is available at `/openapi.yml` or view it online at [Swagger UI](https://api.ltm-starter-kit.dev/docs).
+The complete API specification is available at `/openapi.yml` or view it online at [Swagger UI](https://api.linkdev-starter-kit.dev/docs).
 
 ## Support
 
-- **Documentation**: [docs.ltm-starter-kit.dev](https://docs.ltm-starter-kit.dev)
-- **Support**: [support@ltm-starter-kit.dev](mailto:support@ltm-starter-kit.dev)
-- **GitHub**: [github.com/ltm-starter-kit/ltm-starter-kit](https://github.com/ltm-starter-kit/ltm-starter-kit)
+- **Documentation**: [docs.linkdev-starter-kit.dev](https://docs.linkdev-starter-kit.dev)
+- **Support**: [support@linkdev-starter-kit.dev](mailto:support@linkdev-starter-kit.dev)
+- **GitHub**: [github.com/linkdev-starter-kit/linkdev-starter-kit](https://github.com/linkdev-starter-kit/linkdev-starter-kit)

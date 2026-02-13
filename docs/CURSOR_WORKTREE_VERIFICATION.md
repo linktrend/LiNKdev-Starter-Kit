@@ -3,7 +3,7 @@
 **Date**: Monday, December 22, 2025  
 **Phase**: 2 of 3 (Cross-Verification from Worktree)  
 **Executed By**: Cursor Worktree Agent  
-**Worktree**: /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/cursor
+**Worktree**: /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/cursor
 
 ## Executive Summary
 
@@ -173,7 +173,7 @@ Git history is complete and consistent. All work from the cursor-dev branch (SHA
 
 ### Local Configuration
 
-The worktree uses a git file reference: `gitdir: /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/.git/worktrees/cursor`
+The worktree uses a git file reference: `gitdir: /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/.git/worktrees/cursor`
 
 This is standard for git worktrees - the actual git configuration is in the main repository's `.git/worktrees/cursor/` directory, not in the worktree itself.
 
@@ -354,7 +354,7 @@ All conditions met:
 
 ```bash
 # From main repository root
-cd /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit
+cd /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit
 
 # Remove the cursor worktree
 git worktree remove cursor

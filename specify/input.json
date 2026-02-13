@@ -1,5 +1,5 @@
 {
-  "app": "LTM Starter Kit",
+  "app": "LiNKdev Starter Kit",
   "type": "web + mobile (Next.js + Expo)",
   "backend": "Supabase",
   "payments": "Stripe (web), RevenueCat (mobile)",

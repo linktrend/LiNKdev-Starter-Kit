@@ -39,7 +39,7 @@ export function Step4Welcome({ data, onBack }: Step4Props) {
       icon: BookOpen,
       title: 'Getting Started Guide',
       description: 'Learn the basics in 5 minutes',
-      link: 'https://github.com/antoineross/ltm-starter-kit/tree/main/docs',
+      link: 'https://github.com/antoineross/linkdev-starter-kit/tree/main/docs',
       external: true,
     },
     {
@@ -53,7 +53,7 @@ export function Step4Welcome({ data, onBack }: Step4Props) {
       icon: FileText,
       title: 'Documentation',
       description: 'Comprehensive guides and references',
-      link: 'https://github.com/antoineross/ltm-starter-kit/tree/main/docs',
+      link: 'https://github.com/antoineross/linkdev-starter-kit/tree/main/docs',
       external: true,
     },
     {

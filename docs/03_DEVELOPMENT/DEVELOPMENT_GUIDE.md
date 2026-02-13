@@ -1,6 +1,6 @@
 # Development Guide
 
-**Complete guide to developing with the LTM Starter Kit**
+**Complete guide to developing with the LiNKdev Starter Kit**
 
 ---
 
@@ -32,7 +32,7 @@
 ```bash
 # Clone repository
 git clone <repository-url>
-cd ltm-starter-kit
+cd linkdev-starter-kit
 
 # Install dependencies
 pnpm install
@@ -151,7 +151,7 @@ pnpm clean                         # Clean all build artifacts
 ### Monorepo Structure
 
 ```
-ltm-starter-kit/
+linkdev-starter-kit/
 ├── apps/
 │   ├── web/                    # Next.js web application
 │   └── mobile/                 # React Native mobile app

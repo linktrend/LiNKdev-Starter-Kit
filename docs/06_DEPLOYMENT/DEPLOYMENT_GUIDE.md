@@ -1,6 +1,6 @@
 # Deployment Guide
 
-**Complete guide to deploying the LTM Starter Kit to production**
+**Complete guide to deploying the LiNKdev Starter Kit to production**
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## Overview
 
-The LTM Starter Kit is designed to deploy seamlessly to **Vercel** with automatic builds, preview deployments, and production releases. This guide covers the complete deployment process from initial setup to production operations.
+The LiNKdev Starter Kit is designed to deploy seamlessly to **Vercel** with automatic builds, preview deployments, and production releases. This guide covers the complete deployment process from initial setup to production operations.
 
 ### Deployment Architecture
 

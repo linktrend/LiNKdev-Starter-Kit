@@ -20,7 +20,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'https://api.ltm-starter-kit.dev/v1',
+    BASE: 'https://api.linkdev-starter-kit.dev/v1',
     VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',

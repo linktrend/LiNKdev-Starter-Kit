@@ -25,13 +25,13 @@ Successfully reorganized worktrees to support parallel agent workflow. Removed 3
 
 ### Worktree List
 ```
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit                       1e1f2da [main]
-/Users/carlossalas/.cursor/worktrees/ltm-starter-kit/L3wNo                           ef36a77 (detached HEAD)
-/Users/carlossalas/.cursor/worktrees/ltm-starter-kit/vcTQX                           55e1a9f (detached HEAD)
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/callisto   073eec4 [callisto-cur-mb]
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/enceladus  116d999 [enceladus-ag-mm]
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/europa     073eec4 [europa-ag-mb]
-/Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/titan      073eec4 [titan-cur-mm]
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit                       1e1f2da [main]
+/Users/carlossalas/.cursor/worktrees/linkdev-starter-kit/L3wNo                           ef36a77 (detached HEAD)
+/Users/carlossalas/.cursor/worktrees/linkdev-starter-kit/vcTQX                           55e1a9f (detached HEAD)
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/callisto   073eec4 [callisto-cur-mb]
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/enceladus  116d999 [enceladus-ag-mm]
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/europa     073eec4 [europa-ag-mb]
+/Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/titan      073eec4 [titan-cur-mm]
 ```
 
 ### Directory Structure
@@ -63,13 +63,13 @@ All agent worktrees: ✅ Clean
 ### Command Reference
 ```bash
 # Main repository
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit
 
 # Agent worktrees
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/callisto
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/europa
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/titan
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/enceladus
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/callisto
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/europa
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/titan
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/enceladus
 ```
 
 ## Benefits

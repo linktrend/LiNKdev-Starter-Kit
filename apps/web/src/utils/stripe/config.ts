@@ -23,9 +23,9 @@ export const stripe = new Stripe(
     // Register this as an official Stripe plugin.
     // https://stripe.com/docs/building-plugins#setappinfo
     appInfo: {
-      name: 'LTM Starter Kit',
+      name: 'LiNKdev Starter Kit',
       version: '1.0.0',
-      url: 'https://github.com/your-org/ltm-starter-kit'
+      url: 'https://github.com/your-org/linkdev-starter-kit'
     }
   }
 );

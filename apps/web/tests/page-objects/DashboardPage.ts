@@ -14,6 +14,6 @@ export class DashboardPage {
   }
 
   async expectLoaded() {
-    await expect(this.page.getByText(/Welcome to LTM Starter Kit/i)).toBeVisible({ timeout: 15_000 });
+    await expect(this.page.getByText(/Welcome to LiNKdev Starter Kit/i)).toBeVisible({ timeout: 15_000 });
   }
 }

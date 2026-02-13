@@ -1,6 +1,6 @@
 # Authentication
 
-**Complete guide to authentication in the LTM Starter Kit**
+**Complete guide to authentication in the LiNKdev Starter Kit**
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses **Supabase Auth** for authentication, providing multiple authentication methods:
+The LiNKdev Starter Kit uses **Supabase Auth** for authentication, providing multiple authentication methods:
 
 - **Social OAuth** - Google, Apple, Microsoft
 - **Email Magic Links** - Passwordless email authentication

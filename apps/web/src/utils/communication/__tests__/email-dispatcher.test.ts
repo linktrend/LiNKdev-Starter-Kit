@@ -35,7 +35,7 @@ describe('Email Dispatcher', () => {
 
       expect(mockSendEmail).toHaveBeenCalledWith({
         to: 'test@example.com',
-        subject: 'Test Email - LTM Starter Kit',
+        subject: 'Test Email - LiNKdev Starter Kit',
         templateName: 'test',
         templateData: testData,
       });
@@ -55,7 +55,7 @@ describe('Email Dispatcher', () => {
 
       expect(mockSendEmail).toHaveBeenCalledWith({
         to: 'user@example.com',
-        subject: 'Profile Updated - LTM Starter Kit',
+        subject: 'Profile Updated - LiNKdev Starter Kit',
         templateName: 'profile-update',
         templateData: profileData,
       });
@@ -73,7 +73,7 @@ describe('Email Dispatcher', () => {
 
       expect(mockSendEmail).toHaveBeenCalledWith({
         to: 'welcome@example.com',
-        subject: 'Welcome to LTM Starter Kit!',
+        subject: 'Welcome to LiNKdev Starter Kit!',
         templateName: 'welcome',
         templateData: welcomeData,
       });

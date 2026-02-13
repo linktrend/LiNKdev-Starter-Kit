@@ -1,4 +1,4 @@
-export const defaultMetadata = { title: "LTM Starter Kit" };
+export const defaultMetadata = { title: "LiNKdev Starter Kit" };
 
 export function createMetadata(metadata: any) {
   return metadata;

@@ -6,7 +6,7 @@
 ## Worktree Structure
 
 ```
-ltm-starter-kit/                    # Main repository (main branch)
+linkdev-starter-kit/                    # Main repository (main branch)
 └── _worktrees/
     ├── callisto/                   # callisto-cur-mb branch
     ├── europa/                     # europa-ag-mb branch
@@ -18,35 +18,35 @@ ltm-starter-kit/                    # Main repository (main branch)
 
 ### Main Repository (Orchestrator/Architect Work)
 ```bash
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit
 ```
 - Branch: `main` (can switch to any branch)
 - Use for: Orchestrator work, merging, releases
 
 ### Callisto Agent Workspace
 ```bash
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/callisto
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/callisto
 ```
 - Branch: `callisto-cur-mb` (locked)
 - Use for: Callisto agent tasks
 
 ### Europa Agent Workspace
 ```bash
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/europa
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/europa
 ```
 - Branch: `europa-ag-mb` (locked)
 - Use for: Europa agent tasks
 
 ### Titan Agent Workspace
 ```bash
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/titan
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/titan
 ```
 - Branch: `titan-cur-mm` (locked)
 - Use for: Titan agent tasks
 
 ### Enceladus Agent Workspace
 ```bash
-cursor /Users/carlossalas/Projects/Dev_Apps/templates/ltm-starter-kit/_worktrees/enceladus
+cursor /Users/carlossalas/Projects/Dev_Apps/templates/linkdev-starter-kit/_worktrees/enceladus
 ```
 - Branch: `enceladus-ag-mm` (locked)
 - Use for: Enceladus agent tasks

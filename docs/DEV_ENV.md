@@ -1,4 +1,4 @@
-# DEV Environment & Secrets — LTM Starter Kit
+# DEV Environment & Secrets — LiNKdev Starter Kit
 
 ## Purpose
 Single source of truth for **environment variables**, **secret handling**, and **rotation**. This doc is for local dev, CI, and preview/prod.

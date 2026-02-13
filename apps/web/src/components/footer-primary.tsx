@@ -58,8 +58,8 @@ export default function FooterPrimary() {
             <h3 className="text-lg font-bold mb-4">Work</h3>
             <ul className="space-y-2">
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit" className="text-primary">
-                  LTM Starter Kit
+                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit" className="text-primary">
+                  LiNKdev Starter Kit
                 </AnimatedUnderline>
               </li>
               <li>
@@ -88,7 +88,7 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit/tree/main/docs" className="text-primary">
+                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit/tree/main/docs" className="text-primary">
                   Documentation
                 </AnimatedUnderline>
               </li>
@@ -113,7 +113,7 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://github.com/antoineross/ltm-starter-kit" className="text-primary">
+                <AnimatedUnderline href="https://github.com/antoineross/linkdev-starter-kit" className="text-primary">
                   GitHub
                 </AnimatedUnderline>
               </li>
@@ -124,7 +124,7 @@ export default function FooterPrimary() {
               Sign up for our newsletter
             </h3>
             <p className="text-primary mb-4">
-              LTM Starter Kit is a growing project. Subscribe to get the latest design news, articles, resources, updates and
+              LiNKdev Starter Kit is a growing project. Subscribe to get the latest design news, articles, resources, updates and
               inspiration.
             </p>
             <form onSubmit={handleSubmit} className="flex">
@@ -155,9 +155,9 @@ export default function FooterPrimary() {
         <div className="border-t mt-10 pt-6 flex flex-col items-center md:flex-row justify-between">
           <div className="flex items-center space-x-2">
             <LogInIcon className="h-6 w-6" />
-            <span className="text-xl font-bold">LTM Starter Kit.</span>
+            <span className="text-xl font-bold">LiNKdev Starter Kit.</span>
           </div>
-          <p className="text-gray-500 mt-4 md:mt-0">© LTM Starter Kit Inc. 2024</p>
+          <p className="text-gray-500 mt-4 md:mt-0">© LiNKdev Starter Kit Inc. 2024</p>
         </div>
       </div>
     </footer>

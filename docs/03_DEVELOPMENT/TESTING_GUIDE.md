@@ -1,6 +1,6 @@
 # Testing Guide
 
-**Comprehensive guide to testing in the LTM Starter Kit**
+**Comprehensive guide to testing in the LiNKdev Starter Kit**
 
 ---
 

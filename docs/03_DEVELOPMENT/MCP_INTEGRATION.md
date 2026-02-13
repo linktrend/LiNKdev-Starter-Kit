@@ -1,6 +1,6 @@
 # MCP Integration Guide
 
-**Complete guide to Model Context Protocol (MCP) integration in the LTM Starter Kit**
+**Complete guide to Model Context Protocol (MCP) integration in the LiNKdev Starter Kit**
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## MCP Overview
 
-The **Model Context Protocol (MCP)** enables Cursor to interact with external services through standardized tools. The LTM Starter Kit includes four MCP servers that provide seamless integration with Supabase, Stripe, Figma, and Shadcn/UI.
+The **Model Context Protocol (MCP)** enables Cursor to interact with external services through standardized tools. The LiNKdev Starter Kit includes four MCP servers that provide seamless integration with Supabase, Stripe, Figma, and Shadcn/UI.
 
 ### What is MCP?
 
@@ -274,7 +274,7 @@ The MCP configuration file is located at `.cursor/mcp.json` (gitignored). It sho
 
 1. **Quit Cursor completely** (Cmd+Q on macOS, not just close window)
 2. Launch Cursor from a shell with environment variables set
-3. Open the LTM Starter Kit project
+3. Open the LiNKdev Starter Kit project
 4. Wait 10-15 seconds for MCP servers to initialize
 
 ---
@@ -999,4 +999,4 @@ Update `mcp/README.md` with:
 ---
 
 **Last Updated:** 2025-01-17  
-**Maintained By:** LTM Starter Kit Team
+**Maintained By:** LiNKdev Starter Kit Team

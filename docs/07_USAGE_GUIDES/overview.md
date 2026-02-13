@@ -1,6 +1,6 @@
 # Organizations & Invitations Module Usage Guide
 
-This guide explains how to use the Organizations & Invitations module in your LTM Starter Kit-based application.
+This guide explains how to use the Organizations & Invitations module in your LiNKdev Starter Kit-based application.
 
 ## 🚀 Quick Start
 

@@ -24,7 +24,7 @@
     "playwright:install": "playwright install --with-deps",
     "verify": "pnpm -s typecheck && pnpm -s lint --fix && pnpm -s build && pnpm -s test && pnpm -s verify:routes",
     "env:check": "tsx ../../scripts/env-check.ts",
-    "verify:routes": "npx tsx scripts/verify-routes.ts",
+    "verify:routes": "tsx scripts/verify-routes.ts",
     "generate:api": "openapi --input openapi.yml --output src/api/rest --client axios --name ApiClient"
   },
   "dependencies": {

@@ -73,8 +73,8 @@ export function verifySignature(
 export function createWebhookHeaders(signedPayload: SignedPayload): Record<string, string> {
   return {
     'Content-Type': 'application/json',
-    'X-LTM-Signature': signedPayload.signature,
-    'X-LTM-Timestamp': signedPayload.timestamp,
-    'User-Agent': 'LTM-Automation-Bridge/1.0',
+    'X-LINKDEV-Signature': signedPayload.signature,
+    'X-LINKDEV-Timestamp': signedPayload.timestamp,
+    'User-Agent': 'LiNKdev-Automation-Bridge/1.0',
   };
 }

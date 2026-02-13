@@ -8,7 +8,7 @@
 
 ## 🎯 Quick Overview
 
-The **LTM Starter Kit** is a production-ready SaaS starter template built with:
+The **LiNKdev Starter Kit** is a production-ready SaaS starter template built with:
 - **Frontend:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS
 - **Backend:** tRPC, Next.js Server Actions
 - **Database:** Supabase (PostgreSQL with RLS)

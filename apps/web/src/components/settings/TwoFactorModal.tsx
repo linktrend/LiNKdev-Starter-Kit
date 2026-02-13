@@ -426,7 +426,7 @@ export function TwoFactorModal({ isOpen, onClose }: TwoFactorModalProps) {
                 <div className="text-center">
                   <QrCode className="h-24 w-24 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm text-gray-500">QR Code would appear here</p>
-                  <p className="text-xs text-gray-400 mt-1">otpauth://totp/LTMStarterKit:user@example.com?secret={setupKey}&issuer=LTMStarterKit</p>
+                  <p className="text-xs text-gray-400 mt-1">otpauth://totp/LiNKdevStarterKit:user@example.com?secret={setupKey}&issuer=LiNKdevStarterKit</p>
                 </div>
               </div>
 

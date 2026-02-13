@@ -2,7 +2,7 @@
   "name": "stripe-mcp-server",
   "version": "1.0.0",
   "type": "module",
-  "description": "Stripe MCP Server for LTM Starter Kit",
+  "description": "Stripe MCP Server for LiNKdev Starter Kit",
   "main": "server.js",
   "dependencies": {
     "stripe": "^14.0.0",

@@ -21,7 +21,7 @@
 
 ## Overview
 
-The LTM Starter Kit includes a comprehensive feature gating system that controls access to features based on subscription plans. This enables:
+The LiNKdev Starter Kit includes a comprehensive feature gating system that controls access to features based on subscription plans. This enables:
 
 - **Plan differentiation** - Free vs Pro vs Business vs Enterprise features
 - **Upsell opportunities** - Show upgrade prompts when users hit limits

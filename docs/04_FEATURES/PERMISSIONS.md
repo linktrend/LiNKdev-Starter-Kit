@@ -1,6 +1,6 @@
 # Permissions
 
-**Complete guide to permissions and authorization in the LTM Starter Kit**
+**Complete guide to permissions and authorization in the LiNKdev Starter Kit**
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses a hybrid **RBAC (Role-Based Access Control)** and **ABAC (Attribute-Based Access Control)** system. This provides:
+The LiNKdev Starter Kit uses a hybrid **RBAC (Role-Based Access Control)** and **ABAC (Attribute-Based Access Control)** system. This provides:
 
 - **Platform-level** access control for global administrative features
 - **Organization-level** access control for workspace resources

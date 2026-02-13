@@ -1,6 +1,6 @@
 # Environment Variables Reference
 
-**Complete reference for all environment variables in the LTM Starter Kit**
+**Complete reference for all environment variables in the LiNKdev Starter Kit**
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses environment variables for configuration. All variables are validated on application startup using Zod schemas. Missing required variables will cause the application to fail fast with clear error messages.
+The LiNKdev Starter Kit uses environment variables for configuration. All variables are validated on application startup using Zod schemas. Missing required variables will cause the application to fail fast with clear error messages.
 
 ### Variable Naming Convention
 

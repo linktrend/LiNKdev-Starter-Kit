@@ -39,8 +39,8 @@ const providers: Record<string, ProviderHandler> = {
   // N8N handler (migrated from existing route)
   n8n: async (req: NextRequest) => {
     const body = await req.text();
-    const signature = req.headers.get('X-LTM-Signature');
-    const timestamp = req.headers.get('X-LTM-Timestamp');
+    const signature = req.headers.get('X-LINKDEV-Signature');
+    const timestamp = req.headers.get('X-LINKDEV-Timestamp');
     
     if (!signature || !timestamp) {
       return NextResponse.json({ error: 'Missing signature or timestamp' }, { status: 400 });

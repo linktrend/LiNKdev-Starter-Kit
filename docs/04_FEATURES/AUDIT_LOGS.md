@@ -1,6 +1,6 @@
 # Audit Logs
 
-**Complete guide to audit logging and compliance in the LTM Starter Kit**
+**Complete guide to audit logging and compliance in the LiNKdev Starter Kit**
 
 ---
 

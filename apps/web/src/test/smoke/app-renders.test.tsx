@@ -37,7 +37,7 @@ describe("App Smoke Tests", () => {
     render(<SimpleHomepage />);
     
     // Check for key elements that should be present
-    expect(screen.getByText("LTM Starter Kit")).toBeTruthy();
+    expect(screen.getByText("LiNKdev Starter Kit")).toBeTruthy();
     expect(screen.getByText(/A complete & open-source Next.js 14 SaaS template/)).toBeTruthy();
     expect(screen.getByText("Pricing")).toBeTruthy();
   });

@@ -4,7 +4,7 @@
 
 ### 1. Start the Development Server
 ```bash
-cd /Users/carlossalas/Projects/LTM-Starter-Kit
+cd /Users/carlossalas/Projects/linkdev-starter-kit
 pnpm dev
 ```
 

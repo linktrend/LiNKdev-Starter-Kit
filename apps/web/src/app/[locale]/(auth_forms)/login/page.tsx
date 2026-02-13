@@ -332,7 +332,7 @@ export default function LoginPage({ params: { locale } }: LoginPageProps) {
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">
-              Welcome to LTM Starter Kit
+              Welcome to LiNKdev Starter Kit
             </h1>
           </div>
           <p className="text-muted-foreground">Log in to your account</p>

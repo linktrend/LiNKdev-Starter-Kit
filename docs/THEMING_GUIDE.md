@@ -1,6 +1,6 @@
 # Theming Guide 🎨
 
-This guide explains how to customize the appearance of both the web and mobile applications in the LTM Starter Kit monorepo.
+This guide explains how to customize the appearance of both the web and mobile applications in the LiNKdev Starter Kit monorepo.
 
 ## Overview
 

@@ -3,7 +3,7 @@
 ## 🚀 How to Run
 
 ```bash
-cd /Users/carlossalas/Projects/LTM-Starter-Kit/apps/web
+cd /Users/carlossalas/Projects/linkdev-starter-kit/apps/web
 pnpm dev
 ```
 

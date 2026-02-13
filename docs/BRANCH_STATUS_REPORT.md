@@ -1,8 +1,8 @@
 # Branch Status Report
 
 **Date**: December 22, 2025
-**Repository**: LTM-Starter-Kit
-**Remote**: https://github.com/linktrendmedia/LTM-Starter-Kit.git
+**Repository**: linkdev-starter-kit
+**Remote**: https://github.com/linktrendmedia/linkdev-starter-kit.git
 
 ## Active Branches
 
@@ -148,8 +148,8 @@ All agent branches are synchronized with main and include:
 ### Agent Workflow
 1. **Clone Repository**:
    ```bash
-   git clone https://github.com/linktrendmedia/LTM-Starter-Kit.git
-   cd LTM-Starter-Kit
+   git clone https://github.com/linktrendmedia/linkdev-starter-kit.git
+   cd linkdev-starter-kit
    ```
 
 2. **Checkout Agent Branch**:

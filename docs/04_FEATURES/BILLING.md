@@ -1,6 +1,6 @@
 # Billing
 
-**Complete guide to billing and subscriptions in the LTM Starter Kit**
+**Complete guide to billing and subscriptions in the LiNKdev Starter Kit**
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses **organization-scoped billing** with Stripe integration. All subscriptions are managed at the organization level, enabling:
+The LiNKdev Starter Kit uses **organization-scoped billing** with Stripe integration. All subscriptions are managed at the organization level, enabling:
 
 - **Multi-user organizations** with seat-based pricing
 - **Feature gating** based on subscription plans

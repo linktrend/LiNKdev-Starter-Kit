@@ -23,18 +23,18 @@ import { emailService } from '../../server/services/email.service';
  */
 const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
   welcome: {
-    subject: 'Welcome to LTM Starter Kit!',
+    subject: 'Welcome to LiNKdev Starter Kit!',
     getBody: (data: WelcomeEmailData) => `
       <h1>Welcome, ${data.userName}!</h1>
-      <p>Thank you for joining LTM Starter Kit. We're excited to have you on board!</p>
+      <p>Thank you for joining LiNKdev Starter Kit. We're excited to have you on board!</p>
       <p>You can now access your account by clicking the link below:</p>
       <a href="${data.loginUrl}">Access Your Account</a>
       <p>If you have any questions, feel free to reach out to our support team.</p>
-      <p>Best regards,<br>The LTM Starter Kit Team</p>
+      <p>Best regards,<br>The LiNKdev Starter Kit Team</p>
     `,
   },
   'password-reset': {
-    subject: 'Reset Your Password - LTM Starter Kit',
+    subject: 'Reset Your Password - LiNKdev Starter Kit',
     getBody: (data: PasswordResetEmailData) => `
       <h1>Password Reset Request</h1>
       <p>Hello ${data.userName},</p>
@@ -42,11 +42,11 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
       <a href="${data.resetUrl}">Reset Password</a>
       <p>This link will expire in ${data.expiresIn}.</p>
       <p>If you didn't request this password reset, please ignore this email.</p>
-      <p>Best regards,<br>The LTM Starter Kit Team</p>
+      <p>Best regards,<br>The LiNKdev Starter Kit Team</p>
     `,
   },
   invoice: {
-    subject: `Invoice #{{invoiceNumber}} - LTM Starter Kit`,
+    subject: `Invoice #{{invoiceNumber}} - LiNKdev Starter Kit`,
     getBody: (data: InvoiceEmailData) => `
       <h1>Invoice #${data.invoiceNumber}</h1>
       <p>Hello ${data.userName},</p>
@@ -56,11 +56,11 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
       <p>You can view and pay your invoice by clicking the link below:</p>
       <a href="${data.invoiceUrl}">View Invoice</a>
       <p>Thank you for your business!</p>
-      <p>Best regards,<br>The LTM Starter Kit Team</p>
+      <p>Best regards,<br>The LiNKdev Starter Kit Team</p>
     `,
   },
   'profile-update': {
-    subject: 'Profile Updated - LTM Starter Kit',
+    subject: 'Profile Updated - LiNKdev Starter Kit',
     getBody: (data: ProfileUpdateEmailData) => `
       <h1>Profile Update Confirmation</h1>
       <p>Hello ${data.userName},</p>
@@ -70,11 +70,11 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
       <p>You can view your updated profile by clicking the link below:</p>
       <a href="${data.profileUrl}">View Profile</a>
       <p>If you didn't make this change, please contact our support team immediately.</p>
-      <p>Best regards,<br>The LTM Starter Kit Team</p>
+      <p>Best regards,<br>The LiNKdev Starter Kit Team</p>
     `,
   },
   test: {
-    subject: 'Test Email - LTM Starter Kit',
+    subject: 'Test Email - LiNKdev Starter Kit',
     getBody: (data: TestEmailData) => `
       <h1>Test Email</h1>
       <p>This is a test email sent at ${data.timestamp}.</p>
@@ -83,7 +83,7 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
     `,
   },
   'payment-receipt': {
-    subject: 'Payment Receipt - LTM Starter Kit',
+    subject: 'Payment Receipt - LiNKdev Starter Kit',
     getBody: (data: PaymentReceiptEmailData) => `
       <!DOCTYPE html>
       <html>
@@ -124,7 +124,7 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
             <p>If you have any questions about this payment, please don't hesitate to contact our support team.</p>
           </div>
           <div class="footer">
-            <p>This is an automated receipt from LTM Starter Kit.</p>
+            <p>This is an automated receipt from LiNKdev Starter Kit.</p>
           </div>
         </div>
       </body>
@@ -171,7 +171,7 @@ const emailTemplates: Record<string, EmailTemplateConfig<any>> = {
             <p>If you believe this is an error or need assistance, please contact our support team.</p>
           </div>
           <div class="footer">
-            <p>This is an automated notification from LTM Starter Kit.</p>
+            <p>This is an automated notification from LiNKdev Starter Kit.</p>
           </div>
         </div>
       </body>

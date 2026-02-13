@@ -18,7 +18,7 @@ async function demoEmailService() {
     // Demo 1: Test Email
     console.log('📧 Demo 1: Sending Test Email');
     await sendTestEmail('demo@example.com', {
-      message: 'This is a demo of the LTM Starter Kit email service!',
+      message: 'This is a demo of the LiNKdev Starter Kit email service!',
       timestamp: new Date().toISOString(),
     });
 
@@ -26,7 +26,7 @@ async function demoEmailService() {
     console.log('\n📧 Demo 2: Sending Welcome Email');
     await sendWelcomeEmail('newuser@example.com', {
       userName: 'John Doe',
-      loginUrl: 'https://app.ltm-starter-kit.com/login',
+      loginUrl: 'https://app.linkdev-starter-kit.com/login',
     });
 
     // Demo 3: Profile Update Email
@@ -35,14 +35,14 @@ async function demoEmailService() {
       userName: 'Jane Smith',
       updatedField: 'Organization Name',
       newValue: 'Acme Corporation',
-      profileUrl: 'https://app.ltm-starter-kit.com/org/settings',
+      profileUrl: 'https://app.linkdev-starter-kit.com/org/settings',
     });
 
     // Demo 4: Password Reset Email
     console.log('\n📧 Demo 4: Sending Password Reset Email');
     await sendPasswordResetEmail('reset@example.com', {
       userName: 'Bob Johnson',
-      resetUrl: 'https://app.ltm-starter-kit.com/reset-password?token=abc123',
+      resetUrl: 'https://app.linkdev-starter-kit.com/reset-password?token=abc123',
       expiresIn: '1 hour',
     });
 
@@ -53,7 +53,7 @@ async function demoEmailService() {
       invoiceNumber: 'INV-2024-001',
       amount: '$99.00',
       dueDate: 'February 15, 2024',
-      invoiceUrl: 'https://app.ltm-starter-kit.com/billing/invoices/INV-2024-001',
+      invoiceUrl: 'https://app.linkdev-starter-kit.com/billing/invoices/INV-2024-001',
     });
 
     console.log('\n✅ Email Service Demo Complete!');

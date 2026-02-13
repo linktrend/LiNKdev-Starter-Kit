@@ -1,6 +1,6 @@
-# Contributing to LTM Starter Kit
+# Contributing to LiNKdev Starter Kit
 
-Thank you for your interest in contributing to the LTM Starter Kit! This document provides guidelines for contributing to this project.
+Thank you for your interest in contributing to the LiNKdev Starter Kit! This document provides guidelines for contributing to this project.
 
 ## 🚀 Getting Started
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to the LTM Starter Kit! This documen
 1. **Fork** the repository on GitHub
 2. **Clone** your fork locally:
    ```bash
-   git clone https://github.com/your-username/LTM-Starter-Kit.git
-   cd LTM-Starter-Kit
+   git clone https://github.com/your-username/linkdev-starter-kit.git
+   cd linkdev-starter-kit
    ```
 3. **Install** dependencies:
    ```bash
@@ -265,4 +265,4 @@ By contributing to this project, you agree that your contributions will be licen
 
 ---
 
-Thank you for contributing to LTM Starter Kit! 🎉
+Thank you for contributing to LiNKdev Starter Kit! 🎉

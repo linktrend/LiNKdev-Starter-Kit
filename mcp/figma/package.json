@@ -2,7 +2,7 @@
   "name": "figma-mcp-server",
   "version": "1.0.0",
   "type": "module",
-  "description": "Figma MCP Server for LTM Starter Kit",
+  "description": "Figma MCP Server for LiNKdev Starter Kit",
   "main": "server.js",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.3",

@@ -410,7 +410,7 @@ export function ConfigScreen({
   };
 
   const [appConfig, setAppConfig] = useState({
-    appName: 'LTM Starter Kit',
+    appName: 'LiNKdev Starter Kit',
     appVersion: '2.1.0',
     description: 'Enterprise SaaS application platform',
     timezone: 'America/New_York',

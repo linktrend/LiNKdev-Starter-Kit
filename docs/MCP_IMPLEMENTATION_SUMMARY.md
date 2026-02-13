@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully implemented a complete MCP (Model Context Protocol) infrastructure for the LTM Starter Kit, consolidating all MCP servers into a unified `/mcp` directory with standardized implementations, secure environment variable handling, and comprehensive documentation.
+Successfully implemented a complete MCP (Model Context Protocol) infrastructure for the LiNKdev Starter Kit, consolidating all MCP servers into a unified `/mcp` directory with standardized implementations, secure environment variable handling, and comprehensive documentation.
 
 ## What Was Implemented
 
@@ -166,7 +166,7 @@ Reload shell: `source ~/.zshrc`
 
 1. Quit Cursor completely (Cmd+Q)
 2. Launch from terminal with env vars set
-3. Open LTM Starter Kit project
+3. Open LiNKdev Starter Kit project
 4. Wait 10-15 seconds for initialization
 
 ### 3. Test MCP Servers

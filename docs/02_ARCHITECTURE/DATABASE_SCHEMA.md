@@ -1,6 +1,6 @@
 ## Database Schema Overview
 
-Postgres schema for LTM Starter Kit (Supabase). Production state is migration-driven (`apps/web/supabase/migrations`); `apps/web/schema.sql` is the reference snapshot.
+Postgres schema for LiNKdev Starter Kit (Supabase). Production state is migration-driven (`apps/web/supabase/migrations`); `apps/web/schema.sql` is the reference snapshot.
 
 ### Key Entities
 - `users`: platform profiles linked to `auth.users`.

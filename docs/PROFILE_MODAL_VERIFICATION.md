@@ -4,7 +4,7 @@
 
 ### Prerequisites
 ```bash
-cd /Users/carlossalas/Projects/LTM-Starter-Kit/apps/web
+cd /Users/carlossalas/Projects/linkdev-starter-kit/apps/web
 ```
 
 ### 1. Install Dependencies (if needed)

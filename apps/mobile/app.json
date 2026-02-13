@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "LTM Starter Kit Mobile",
-    "slug": "ltm-starter-kit-mobile",
+    "name": "LiNKdev Starter Kit Mobile",
+    "slug": "linkdev-starter-kit-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -26,6 +26,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "ltm-starter-kit-mobile"
+    "scheme": "linkdev-starter-kit-mobile"
   }
 }

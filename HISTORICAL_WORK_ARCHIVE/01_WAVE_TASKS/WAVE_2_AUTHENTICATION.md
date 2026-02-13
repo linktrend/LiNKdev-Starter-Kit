@@ -2,7 +2,7 @@
 
 ## Overview
 
-Wave 2 implemented comprehensive authentication infrastructure for the LTM Starter Kit, including social OAuth (Google, Apple, Microsoft), email magic links, phone OTP, onboarding database integration, and session management. This wave established secure, production-ready authentication flows with comprehensive error handling and testing.
+Wave 2 implemented comprehensive authentication infrastructure for the LiNKdev Starter Kit, including social OAuth (Google, Apple, Microsoft), email magic links, phone OTP, onboarding database integration, and session management. This wave established secure, production-ready authentication flows with comprehensive error handling and testing.
 
 ## Timeline
 

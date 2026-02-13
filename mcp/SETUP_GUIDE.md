@@ -53,7 +53,7 @@ source ~/.zshrc  # or source ~/.bashrc
 
 1. **Quit Cursor completely** (Cmd+Q on macOS)
 2. Launch Cursor from your terminal (to ensure env vars are loaded)
-3. Open the LTM Starter Kit project
+3. Open the LiNKdev Starter Kit project
 4. Wait 10-15 seconds for MCP servers to initialize
 
 ### Step 4: Test the Setup

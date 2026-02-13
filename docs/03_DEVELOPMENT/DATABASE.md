@@ -1,6 +1,6 @@
 # Database Guide
 
-**Complete guide to database operations in the LTM Starter Kit**
+**Complete guide to database operations in the LiNKdev Starter Kit**
 
 ---
 
@@ -18,7 +18,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses **Supabase (PostgreSQL)** with a **cloud-only** policy. No local database instances are allowed for production data.
+The LiNKdev Starter Kit uses **Supabase (PostgreSQL)** with a **cloud-only** policy. No local database instances are allowed for production data.
 
 ### Key Principles
 

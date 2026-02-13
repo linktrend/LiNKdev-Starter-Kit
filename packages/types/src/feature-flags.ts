@@ -1,5 +1,5 @@
 /**
- * Feature flag types for the LTM Starter Kit
+ * Feature flag types for the LiNKdev Starter Kit
  */
 
 /**

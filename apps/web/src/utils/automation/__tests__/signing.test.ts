@@ -97,9 +97,9 @@ describe('Automation Signing', () => {
       
       expect(headers).toEqual({
         'Content-Type': 'application/json',
-        'X-LTM-Signature': signed.signature,
-        'X-LTM-Timestamp': signed.timestamp,
-        'User-Agent': 'LTM-Automation-Bridge/1.0',
+        'X-LINKDEV-Signature': signed.signature,
+        'X-LINKDEV-Timestamp': signed.timestamp,
+        'User-Agent': 'LiNKdev-Automation-Bridge/1.0',
       });
     });
   });

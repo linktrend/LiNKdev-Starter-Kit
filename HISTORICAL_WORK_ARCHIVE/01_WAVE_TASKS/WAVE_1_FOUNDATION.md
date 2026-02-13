@@ -2,7 +2,7 @@
 
 ## Overview
 
-Wave 1 established the foundational infrastructure for the LTM Starter Kit, focusing on database schema, type synchronization, and environment configuration. This wave laid the groundwork for all subsequent development by ensuring a solid data layer, type safety, and proper configuration management.
+Wave 1 established the foundational infrastructure for the LiNKdev Starter Kit, focusing on database schema, type synchronization, and environment configuration. This wave laid the groundwork for all subsequent development by ensuring a solid data layer, type safety, and proper configuration management.
 
 ## Timeline
 

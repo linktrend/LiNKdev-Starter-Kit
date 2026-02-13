@@ -79,7 +79,7 @@ export default function DashboardPage() {
       {/* Welcome Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Welcome to LTM Starter Kit</CardTitle>
+          <CardTitle>Welcome to LiNKdev Starter Kit</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">

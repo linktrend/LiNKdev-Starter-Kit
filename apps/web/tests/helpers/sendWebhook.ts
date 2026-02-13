@@ -135,8 +135,8 @@ function generateN8nHeaders(
     : createHmac('sha256', secret).update(payload).digest('hex');
   
   return {
-    'X-LTM-Signature': signature,
-    'X-LTM-Timestamp': timestamp.toString(),
+    'X-LINKDEV-Signature': signature,
+    'X-LINKDEV-Timestamp': timestamp.toString(),
   };
 }
 

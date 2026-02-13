@@ -8,7 +8,7 @@
 
 ## Overview
 
-The LTM Starter Kit uses a **unified organization-based billing system**. All subscriptions are managed at the organization level, whether for individual users (personal orgs) or teams (business/family/education orgs).
+The LiNKdev Starter Kit uses a **unified organization-based billing system**. All subscriptions are managed at the organization level, whether for individual users (personal orgs) or teams (business/family/education orgs).
 
 ### Key Principles
 
@@ -269,15 +269,15 @@ org_subscriptions (
 
 **Product Structure:**
 ```
-Product: LTM Starter Kit Pro
+Product: LiNKdev Starter Kit Pro
 ├─ Price: pro_monthly ($29/month, per seat)
 └─ Price: pro_annual ($290/year, per seat)
 
-Product: LTM Starter Kit Business
+Product: LiNKdev Starter Kit Business
 ├─ Price: business_monthly ($99/month base + $8/seat)
 └─ Price: business_annual ($990/year base + $80/seat)
 
-Product: LTM Starter Kit Enterprise
+Product: LiNKdev Starter Kit Enterprise
 └─ Price: Custom (negotiated)
 ```
 

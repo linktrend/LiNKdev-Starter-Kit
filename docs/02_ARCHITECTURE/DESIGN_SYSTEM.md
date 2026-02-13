@@ -1,6 +1,6 @@
 # Design System
 
-**Complete guide to the LTM Starter Kit design system**
+**Complete guide to the LiNKdev Starter Kit design system**
 
 ---
 
@@ -19,7 +19,7 @@
 
 ## Overview
 
-The LTM Starter Kit design system provides a consistent, scalable approach to building user interfaces across web and mobile platforms.
+The LiNKdev Starter Kit design system provides a consistent, scalable approach to building user interfaces across web and mobile platforms.
 
 ### Key Principles
 

@@ -7,7 +7,7 @@
 
 ## Overview
 
-This archive contains consolidated documentation of major work completed during the development of the LTM Starter Kit. The original documentation has been organized into thematic categories for easier reference and historical context.
+This archive contains consolidated documentation of major work completed during the development of the LiNKdev Starter Kit. The original documentation has been organized into thematic categories for easier reference and historical context.
 
 ---
 
@@ -217,7 +217,7 @@ Each archived document should include:
 
 ## Conclusion
 
-This historical archive provides a comprehensive record of the development journey of the LTM Starter Kit. It captures not just what was built, but how it was built, why decisions were made, and what lessons were learned along the way.
+This historical archive provides a comprehensive record of the development journey of the LiNKdev Starter Kit. It captures not just what was built, but how it was built, why decisions were made, and what lessons were learned along the way.
 
 The archive serves as:
 - **Historical Record:** Documentation of completed work

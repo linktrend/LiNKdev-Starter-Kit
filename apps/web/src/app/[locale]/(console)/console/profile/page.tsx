@@ -27,7 +27,7 @@ export default function ConsoleProfilePage() {
     city: 'New York',
     jobTitle: 'Senior System Administrator',
     company: 'TechCorp Solutions',
-    bio: 'Experienced system administrator with over 8 years of experience managing enterprise-level systems and infrastructure. Passionate about security, automation, and ensuring optimal system performance.',
+    bio: 'Experienced system administrator with over 8 years of experience managing large-scale systems and infrastructure. Passionate about security, automation, and ensuring optimal system performance.',
     adminLevel: 'Super Admin',
     permissions: ['User Management', 'System Configuration', 'Database Access', 'Security Settings'],
     lastLogin: '2024-01-27T10:30:00Z',

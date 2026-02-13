@@ -11,7 +11,7 @@ interface FeaturePageLayoutProps {
 
 /**
  * FeaturePageLayout - Layout for Group 2 pages (Sales/Feature Pages)
- * Used by: Pricing, Enterprise, About Us, Contact Us
+ * Used by: Pricing, Business, About Us, Contact Us
  * 
  * Structure:
  * - Section 1a: Title + subtitle (centered)
@@ -90,4 +90,3 @@ export function FeaturePageLayout({
     </div>
   );
 }
-

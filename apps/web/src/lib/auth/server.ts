@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import { cache } from 'react'
 
 import type { Database } from '@/types/database.types'
 
@@ -19,7 +18,7 @@ function getSupabaseEnv() {
   return { supabaseUrl, supabaseAnonKey }
 }
 
-export const createClient = cache((): TypedSupabaseClient => {
+export function createClient(): TypedSupabaseClient {
   const cookieStore = cookies()
   const { supabaseUrl, supabaseAnonKey } = getSupabaseEnv()
 
@@ -36,7 +35,7 @@ export const createClient = cache((): TypedSupabaseClient => {
       },
     },
   })
-})
+}
 
 export async function getSession() {
   const supabase = createClient()

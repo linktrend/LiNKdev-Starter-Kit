@@ -22,7 +22,8 @@ vi.mock('@/lib/auth/server', async () => {
       // Return mock authenticated user
       const users = testState.database.getAll('users');
       if (users.length > 0) {
-        return users[0];
+        // Use the most recently created user as the "current" authed user
+        return users[users.length - 1];
       }
       throw new Error('Unauthorized');
     }),

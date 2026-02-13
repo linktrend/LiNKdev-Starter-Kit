@@ -475,7 +475,7 @@ describe('Usage Router', () => {
     it('should handle unlimited plans', async () => {
       const subscriptions = getTable('org_subscriptions');
       subscriptions.single.mockResolvedValueOnce({
-        data: { plan_name: 'enterprise' },
+        data: { plan_name: 'business' },
         error: null,
       });
 

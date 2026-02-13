@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { Session, User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/auth/client'
 
@@ -28,7 +28,8 @@ export function useSession(): UseSessionReturn {
   const [error, setError] = useState<Error | null>(null)
   const sessionRef = useRef<Session | null>(null)
 
-  const supabase = createClient()
+  // Create once so effects/callbacks don't reinitialize and clobber state on every render.
+  const supabase = useMemo(() => createClient(), [])
 
   // Refresh session manually
   const refresh = useCallback(async () => {

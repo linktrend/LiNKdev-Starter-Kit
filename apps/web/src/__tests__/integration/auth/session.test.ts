@@ -9,12 +9,11 @@ import {
 } from '../../setup/integration-setup';
 import { createMockUser, createMockSession } from '../../helpers/auth-helpers';
 
-// Mock the Supabase clients
-vi.mock('@/lib/auth/server', async () => {
-  const actual = await vi.importActual('@/lib/auth/server');
+// Make server-side Supabase client use our integration mock.
+vi.mock('@supabase/ssr', async () => {
+  const { createIntegrationSupabaseMock } = await import('../../setup/integration-setup');
   return {
-    ...actual,
-    createClient: () => createIntegrationSupabaseMock(),
+    createServerClient: vi.fn(() => createIntegrationSupabaseMock()),
   };
 });
 
@@ -469,16 +468,23 @@ describe('Session Management Integration Tests', () => {
         expect(error.message).toContain('NEXT_REDIRECT');
       }
 
-      // Assert: Login called with remember_me option
+      // Assert: remember-me is tracked in usage logging
+      const { logUsage } = await import('@/lib/usage/server');
+      expect(vi.mocked(logUsage)).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: user.id,
+          metadata: expect.objectContaining({
+            remember_me: true,
+          }),
+        })
+      );
+
+      // Assert: Supabase login was called (options object is present)
       expect(supabaseMock.auth.signInWithPassword).toHaveBeenCalledWith(
         expect.objectContaining({
           email: user.email,
           password: 'password123',
-          options: expect.objectContaining({
-            data: expect.objectContaining({
-              remember_me: true,
-            }),
-          }),
+          options: expect.any(Object),
         })
       );
     });

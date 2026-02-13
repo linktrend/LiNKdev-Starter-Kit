@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export type PlanName = 'free' | 'pro' | 'business' | 'enterprise';
+export type PlanName = 'free' | 'pro' | 'business';
 export type BillingInterval = 'monthly' | 'annual';
 export type SubscriptionStatus =
   | 'active'

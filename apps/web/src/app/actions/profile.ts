@@ -10,7 +10,7 @@ import {
 } from '@/lib/validation/profile'
 import { routing } from '@/i18n/routing'
 import type { Database } from '@/types/database.types'
-import { createPersonalOrganization } from './onboarding'
+import { createPersonalOrganization } from '@/app/actions/onboarding'
 
 type UserUpdate = Database['public']['Tables']['users']['Update']
 

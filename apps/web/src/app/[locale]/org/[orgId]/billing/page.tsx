@@ -286,27 +286,27 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
           <div className="grid gap-4 md:grid-cols-3">
             <Card className="border-2">
               <CardHeader>
-                <CardTitle className="text-lg">Starter</CardTitle>
-                <CardDescription>Perfect for small teams</CardDescription>
-                <div className="text-2xl font-bold">$9<span className="text-sm font-normal">/month</span></div>
+                <CardTitle className="text-lg">Free</CardTitle>
+                <CardDescription>Perfect for getting started</CardDescription>
+                <div className="text-2xl font-bold">$0<span className="text-sm font-normal">/month</span></div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Up to 5 team members</span>
+                    <span className="text-sm">Up to 3 team members</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">1,000 records per month</span>
+                    <span className="text-sm">100 records total</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Basic analytics</span>
+                    <span className="text-sm">Community support</span>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full">
-                  Downgrade
+                  Switch to Free
                 </Button>
               </CardContent>
             </Card>
@@ -341,8 +341,8 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
 
             <Card className="border-2">
               <CardHeader>
-                <CardTitle className="text-lg">Enterprise</CardTitle>
-                <CardDescription>For large organizations</CardDescription>
+                <CardTitle className="text-lg">Business</CardTitle>
+                <CardDescription>For teams that need advanced controls and scale</CardDescription>
                 <div className="text-2xl font-bold">$99<span className="text-sm font-normal">/month</span></div>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -361,7 +361,7 @@ export default async function OrgBillingPage({ params }: OrgBillingPageProps) {
                   </div>
                 </div>
                 <Button className="w-full">
-                  Upgrade
+                  Upgrade to Business
                 </Button>
               </CardContent>
             </Card>

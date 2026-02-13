@@ -25,7 +25,7 @@ export const stripe = new Stripe(
     appInfo: {
       name: 'LiNKdev Starter Kit',
       version: '1.0.0',
-      url: 'https://github.com/your-org/linkdev-starter-kit'
+      url: 'https://github.com/linktrend/LiNKdev-Starter-Kit'
     }
   }
 );

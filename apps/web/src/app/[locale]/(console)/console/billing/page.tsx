@@ -99,7 +99,7 @@ const revenueData = [
 const subscriptionDistribution = [
   { plan: 'Starter', count: 156, percentage: 45.6, color: 'bg-blue-500' },
   { plan: 'Professional', count: 128, percentage: 37.4, color: 'bg-green-500' },
-  { plan: 'Enterprise', count: 45, percentage: 13.2, color: 'bg-purple-500' },
+  { plan: 'Business', count: 45, percentage: 13.2, color: 'bg-purple-500' },
   { plan: 'Trial', count: 28, percentage: 8.2, color: 'bg-orange-500' },
 ];
 
@@ -180,9 +180,9 @@ const mockPlans: Plan[] = [
   },
   {
     id: 'plan-4',
-    name: 'Enterprise',
-    slug: 'enterprise',
-    description: 'For large organizations with custom needs',
+    name: 'Business',
+    slug: 'business',
+    description: 'For teams that need advanced controls and scale',
     status: 'active',
     monthlyPrice: 499,
     yearlyPrice: 4990,
@@ -247,9 +247,9 @@ const mockSubscriptions: Subscription[] = [
   {
     id: 'sub-3',
     organizationId: 'org-3',
-    organizationName: 'Enterprise Solutions',
-    planId: 'plan-3',
-    planName: 'Enterprise',
+    organizationName: 'Business Solutions',
+    planId: 'plan-4',
+    planName: 'Business',
     status: 'active',
     amount: 499,
     billingCycle: 'monthly',
@@ -444,9 +444,9 @@ const mockOrganizations: Organization[] = [
   },
   {
     id: 'org-3',
-    name: 'Enterprise Solutions',
-    email: 'contact@enterprise.com',
-    currentPlan: 'Enterprise',
+    name: 'Business Solutions',
+    email: 'contact@example.com',
+    currentPlan: 'Business',
     planStatus: 'active',
     mrr: 499,
     nextBillingDate: new Date('2025-02-20'),
@@ -495,17 +495,17 @@ export default function ConsoleBillingPage() {
   // Plan -> Feature mapping state (by feature id)
   const planIds = useMemo(() => mockPlans.map((p) => p.id), []);
   const initialPlanFeatures = useMemo(() => {
-    // Seed: Free minimal, Basic ⊇ Free, Pro ⊇ Basic, Enterprise = all
+    // Seed: Free minimal, Basic ⊇ Free, Pro ⊇ Basic, Business = all
     const byId: Record<string, Set<string>> = {};
     const freeFeatureIds = new Set(['f1', 'f2', 'f3', 'f4']);
     const basicFeatureIds = new Set([...freeFeatureIds, 'f5']);
     const proFeatureIds = new Set([...basicFeatureIds, 'f6', 'f7']);
-    const enterpriseFeatureIds = new Set(initialFeatures.map((f) => f.id));
+    const businessFeatureIds = new Set(initialFeatures.map((f) => f.id));
     for (const p of mockPlans) {
       if (p.slug === 'free') byId[p.id] = new Set(freeFeatureIds);
       else if (p.slug === 'basic') byId[p.id] = new Set(basicFeatureIds);
       else if (p.slug === 'pro') byId[p.id] = new Set(proFeatureIds);
-      else if (p.slug === 'enterprise') byId[p.id] = new Set(enterpriseFeatureIds);
+      else if (p.slug === 'business') byId[p.id] = new Set(businessFeatureIds);
       else byId[p.id] = new Set();
     }
     return byId;
@@ -1339,7 +1339,7 @@ export default function ConsoleBillingPage() {
                   <CardContent>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span>Enterprise</span>
+                        <span>Business</span>
                         <span className="font-medium">$22,455</span>
                       </div>
                       <div className="flex justify-between text-sm">
@@ -1968,14 +1968,14 @@ export default function ConsoleBillingPage() {
                   const newId = `f${Date.now()}`;
                   const newFeature = { id: newId, name: newFeatureName.trim(), category: newFeatureCategory };
                   setFeatures((prev) => [...prev, newFeature]);
-                  // Include new features by default in Enterprise
-                  const enterprise = mockPlans.find((p) => p.slug === 'enterprise');
-                  if (enterprise) {
+                  // Include new features by default in Business
+                  const business = mockPlans.find((p) => p.slug === 'business');
+                  if (business) {
                     setPlanFeaturesDraft((prev) => {
                       const next = { ...prev };
-                      const set = new Set(next[enterprise.id] ?? []);
+                      const set = new Set(next[business.id] ?? []);
                       set.add(newId);
-                      next[enterprise.id] = set;
+                      next[business.id] = set;
                       return next;
                     });
                   }

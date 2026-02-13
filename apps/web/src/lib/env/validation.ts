@@ -33,15 +33,29 @@ const ENV_VARS: EnvVar[] = [
   // Stripe
   {
     name: "STRIPE_SECRET_KEY",
-    required: true,
-    description: "Stripe secret key (test or live)",
+    required: false,
+    description: "Stripe secret key (test). Set this OR STRIPE_SECRET_KEY_LIVE.",
     example: "sk_test_...",
   },
   {
+    name: "STRIPE_SECRET_KEY_LIVE",
+    required: false,
+    description: "Stripe secret key (live). Set this OR STRIPE_SECRET_KEY.",
+    example: "sk_live_...",
+  },
+  {
     name: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-    required: true,
-    description: "Stripe publishable key",
+    required: false,
+    description:
+      "Stripe publishable key (test). Set this OR NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE.",
     example: "pk_test_...",
+  },
+  {
+    name: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE",
+    required: false,
+    description:
+      "Stripe publishable key (live). Set this OR NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.",
+    example: "pk_live_...",
   },
   {
     name: "STRIPE_WEBHOOK_SECRET",
@@ -76,12 +90,6 @@ const ENV_VARS: EnvVar[] = [
     example: "price_...",
   },
   {
-    name: "STRIPE_PRICE_ENTERPRISE",
-    required: true,
-    description: "Stripe price ID for Enterprise plan",
-    example: "price_...",
-  },
-  {
     name: "STRIPE_PRICE_FREE",
     required: false,
     description: "Stripe price ID for Free plan (optional)",
@@ -101,6 +109,13 @@ export function validateEnvironment(): void {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  const hasStripeSecret =
+    Boolean(process.env.STRIPE_SECRET_KEY?.trim()) ||
+    Boolean(process.env.STRIPE_SECRET_KEY_LIVE?.trim());
+  const hasStripePublishable =
+    Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim()) ||
+    Boolean(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE?.trim());
+
   for (const envVar of ENV_VARS) {
     const value = process.env[envVar.name];
 
@@ -115,6 +130,17 @@ export function validateEnvironment(): void {
         warnings.push(message);
       }
     }
+  }
+
+  if (!hasStripeSecret) {
+    errors.push(
+      "Missing Stripe secret key: set STRIPE_SECRET_KEY or STRIPE_SECRET_KEY_LIVE"
+    );
+  }
+  if (!hasStripePublishable) {
+    errors.push(
+      "Missing Stripe publishable key: set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY or NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE"
+    );
   }
 
   // Log warnings
@@ -150,8 +176,10 @@ export function getEnv() {
       serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
     },
     stripe: {
-      secretKey: process.env.STRIPE_SECRET_KEY!,
-      publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+      secretKey: process.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_SECRET_KEY_LIVE!,
+      publishableKey:
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ??
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE!,
       webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
       prices: {
         free: process.env.STRIPE_PRICE_FREE || "price_free",
@@ -159,7 +187,6 @@ export function getEnv() {
         proAnnual: process.env.STRIPE_PRICE_PRO_ANNUAL!,
         businessMonthly: process.env.STRIPE_PRICE_BUSINESS_MONTHLY!,
         businessAnnual: process.env.STRIPE_PRICE_BUSINESS_ANNUAL!,
-        enterprise: process.env.STRIPE_PRICE_ENTERPRISE!,
       },
     },
     app: {

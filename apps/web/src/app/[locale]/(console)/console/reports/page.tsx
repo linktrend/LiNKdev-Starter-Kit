@@ -249,8 +249,8 @@ export default function ConsoleReportsPage() {
   const timeRanges = [7, 30, 90, 180, 365] as const;
   type TimeRange = typeof timeRanges[number];
   const [analyticsRange, setAnalyticsRange] = useState<TimeRange>(90);
-  const [analyticsPlan, setAnalyticsPlan] = useState<'all' | 'free' | 'pro' | 'enterprise'>('all');
-  const [analyticsSegment, setAnalyticsSegment] = useState<'all' | 'sm' | 'mid' | 'enterprise'>('all');
+  const [analyticsPlan, setAnalyticsPlan] = useState<'all' | 'free' | 'pro' | 'business'>('all');
+  const [analyticsSegment, setAnalyticsSegment] = useState<'all' | 'sm' | 'mid' | 'business'>('all');
 
   // Analytics mock data generation
   type SeriesPoint = { date: string; value: number };
@@ -301,7 +301,7 @@ export default function ConsoleReportsPage() {
     const planMix = [
       { plan: 'Free', pct: 54 },
       { plan: 'Pro', pct: 34 },
-      { plan: 'Enterprise', pct: 12 },
+      { plan: 'Business', pct: 12 },
     ];
 
     return { dau, wau, mau, activeOrgs, sessions, signups, churnRate, retention, featureAdoption, funnel, latencyP95, errorRate, apiVolume, mrr, planMix };
@@ -718,7 +718,7 @@ export default function ConsoleReportsPage() {
                         <SelectItem value="all">All plans</SelectItem>
                         <SelectItem value="free">Free</SelectItem>
                         <SelectItem value="pro">Pro</SelectItem>
-                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                        <SelectItem value="business">Business</SelectItem>
                       </SelectContent>
                     </Select>
                     <Select value={analyticsSegment} onValueChange={(v) => setAnalyticsSegment(v as typeof analyticsSegment)}>
@@ -729,7 +729,7 @@ export default function ConsoleReportsPage() {
                         <SelectItem value="all">All orgs</SelectItem>
                         <SelectItem value="sm">SMB</SelectItem>
                         <SelectItem value="mid">Mid-market</SelectItem>
-                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                        <SelectItem value="business">Business</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1004,7 +1004,7 @@ export default function ConsoleReportsPage() {
                           {[
                             { plan: 'Free', s: 900, a: 500, p: 120 },
                             { plan: 'Pro', s: 250, a: 180, p: 110 },
-                            { plan: 'Enterprise', s: 80, a: 60, p: 30 },
+                            { plan: 'Business', s: 80, a: 60, p: 30 },
                           ].map((r) => (
                             <TableRow key={r.plan} className="hover:bg-accent">
                               <TableCell className="font-medium text-sm md:whitespace-normal whitespace-nowrap">{r.plan}</TableCell>

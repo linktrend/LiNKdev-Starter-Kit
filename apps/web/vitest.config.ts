@@ -33,6 +33,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Vite sometimes fails to resolve Next.js subpath exports without the .js extension.
+      // next-intl imports `next/navigation`, so we pin it to the actual file path.
+      "next/navigation": path.resolve(__dirname, "./node_modules/next/navigation.js"),
     },
   },
   esbuild: {

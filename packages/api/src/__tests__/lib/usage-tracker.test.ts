@@ -346,7 +346,7 @@ describe('Usage Tracker Library', () => {
               select: vi.fn(() => ({
                 eq: vi.fn(() => ({
                   eq: vi.fn(() => ({
-                    single: vi.fn(() => Promise.resolve({ data: { plan_name: 'enterprise' }, error: null })),
+                    single: vi.fn(() => Promise.resolve({ data: { plan_name: 'business' }, error: null })),
                   })),
                 })),
               })),

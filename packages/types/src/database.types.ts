@@ -337,7 +337,7 @@ export type Database = {
       org_subscriptions: {
         Row: {
           org_id: string
-          plan_name: "free" | "pro" | "business" | "enterprise"
+          plan_name: "free" | "pro" | "business"
           status:
             | "active"
             | "trialing"
@@ -363,7 +363,7 @@ export type Database = {
         }
         Insert: {
           org_id: string
-          plan_name?: "free" | "pro" | "business" | "enterprise"
+          plan_name?: "free" | "pro" | "business"
           status?:
             | "active"
             | "trialing"
@@ -389,7 +389,7 @@ export type Database = {
         }
         Update: {
           org_id?: string
-          plan_name?: "free" | "pro" | "business" | "enterprise"
+          plan_name?: "free" | "pro" | "business"
           status?:
             | "active"
             | "trialing"
@@ -418,7 +418,7 @@ export type Database = {
       plan_features: {
         Row: {
           id: string
-          plan_name: "free" | "pro" | "business" | "enterprise"
+          plan_name: "free" | "pro" | "business"
           feature_key: string
           feature_value: Json
           created_at: string | null
@@ -426,7 +426,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          plan_name: "free" | "pro" | "business" | "enterprise"
+          plan_name: "free" | "pro" | "business"
           feature_key: string
           feature_value?: Json
           created_at?: string | null
@@ -434,7 +434,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          plan_name?: "free" | "pro" | "business" | "enterprise"
+          plan_name?: "free" | "pro" | "business"
           feature_key?: string
           feature_value?: Json
           created_at?: string | null

@@ -10,12 +10,14 @@ vi.mock('next-intl/middleware', () => ({
 const mockGetSession = vi.fn()
 const mockRefreshSession = vi.fn()
 const mockSignOut = vi.fn()
+const mockGetUser = vi.fn()
 const mockFrom = vi.fn()
 
 vi.mock('@supabase/ssr', () => ({
   createServerClient: vi.fn(() => ({
     auth: {
       getSession: mockGetSession,
+      getUser: mockGetUser,
       refreshSession: mockRefreshSession,
       signOut: mockSignOut,
     },
@@ -36,6 +38,9 @@ describe('Middleware - Token Refresh', () => {
     vi.clearAllMocks()
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key'
+
+    // Default: user lookup succeeds when session exists.
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null })
   })
 
   it('should refresh token when expiring within 5 minutes', async () => {

@@ -412,7 +412,7 @@ export function ConfigScreen({
   const [appConfig, setAppConfig] = useState({
     appName: 'LiNKdev Starter Kit',
     appVersion: '2.1.0',
-    description: 'Enterprise SaaS application platform',
+    description: 'SaaS application platform',
     timezone: 'America/New_York',
     locale: 'en-US',
     enableRateLimiting: true,

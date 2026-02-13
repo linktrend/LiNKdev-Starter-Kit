@@ -156,7 +156,7 @@ ALTER TABLE public.billing_customers ENABLE ROW LEVEL SECURITY;
 
 CREATE TABLE public.org_subscriptions (
     org_id uuid PRIMARY KEY REFERENCES public.organizations(id) ON DELETE CASCADE,
-    plan_name text NOT NULL DEFAULT 'free' CHECK (plan_name IN ('free', 'pro', 'business', 'enterprise')),
+    plan_name text NOT NULL DEFAULT 'free' CHECK (plan_name IN ('free', 'pro', 'business')),
     status text NOT NULL DEFAULT 'active' CHECK (status IN (
         'active', 'trialing', 'canceled', 'past_due', 'unpaid', 
         'incomplete', 'incomplete_expired', 'paused'
@@ -204,7 +204,7 @@ ALTER TABLE public.billing_invoices ENABLE ROW LEVEL SECURITY;
 
 CREATE TABLE public.plan_features (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    plan_name text NOT NULL CHECK (plan_name IN ('free', 'pro', 'business', 'enterprise')),
+    plan_name text NOT NULL CHECK (plan_name IN ('free', 'pro', 'business')),
     feature_key text NOT NULL,
     feature_value jsonb NOT NULL DEFAULT '{}'::jsonb,
     created_at timestamptz DEFAULT now(),

@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
   url: siteUrl,
   ogImage: `${siteUrl}/og.jpg`,
   links: {
-    twitter: 'https://x.com/YOUR_HANDLE',
+    twitter: 'https://x.com/linktrend',
     github: 'https://github.com/linktrend/LiNKdev-Starter-Kit'
   },
   mainNav: []

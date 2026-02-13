@@ -92,7 +92,7 @@
       "path": "/v1/products",
       "method": "post",
       "params": {
-        "name": "Enterprise",
+        "name": "Business",
         "description": "For organizations that require comprehensive templates and dedicated support.",
         "metadata": {
           "index": "3"

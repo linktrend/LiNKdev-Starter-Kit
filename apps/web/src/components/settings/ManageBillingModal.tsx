@@ -64,21 +64,20 @@ const MOCK_PLANS = [
     ]
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
+    id: 'business',
+    name: 'Business',
     price_monthly: 99,
     price_yearly: 990,
     popular: false,
     features: [
       'Everything in Pro',
       'Unlimited storage',
-      'Dedicated support',
-      'Custom solutions',
+      'Priority support',
       'Advanced security',
       'SLA guarantees',
       'Custom integrations',
-      'Training & onboarding',
-      'Dedicated account manager'
+      'Team management',
+      'Custom branding'
     ]
   }
 ];
@@ -229,7 +228,7 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
         return Sparkles;
       case 'pro':
         return Zap;
-      case 'enterprise':
+      case 'business':
         return Crown;
       default:
         return Briefcase;
@@ -555,16 +554,15 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
 
               {/* Plans Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-                {/* Display Free, Pro, Enterprise in order */}
+                {/* Display Free, Pro, Business in order */}
                 {[
                   plans.find((p: any) => p.id === 'free'),
                   plans.find((p: any) => p.id === 'pro'),
-                  plans.find((p: any) => p.id === 'enterprise')
+                  plans.find((p: any) => p.id === 'business')
                 ].filter(Boolean).map((plan: any) => {
                   const PlanIcon = getPlanIcon(plan.id);
                   const isPopular = plan.popular;
                   const isCurrentPlan = plan.id === currentPlan;
-                  const isEnterprise = plan.id === 'enterprise';
                   
                   return (
                     <div
@@ -614,20 +612,12 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
                         className={`w-full mb-3 ${
                           isCurrentPlan ? 'border-2 border-border bg-muted text-muted-foreground cursor-not-allowed' : ''
                         }`}
-                        onClick={() => {
-                          if (isEnterprise) {
-                            window.location.href = 'mailto:sales@example.com?subject=Enterprise Plan Inquiry';
-                          } else {
-                            handlePlanSwitch(plan.id);
-                          }
-                        }}
+                        onClick={() => handlePlanSwitch(plan.id)}
                         disabled={isCurrentPlan}
                         variant={isCurrentPlan ? 'outline' : isPopular ? 'default' : 'outline'}
                       >
                         {isCurrentPlan ? (
                           'Current Plan'
-                        ) : isEnterprise ? (
-                          'Contact Sales'
                         ) : createCheckout.isPending ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -639,14 +629,9 @@ export function ManageBillingModal({ isOpen, onClose }: ManageBillingModalProps)
                       </Button>
 
                       {/* Trial Text */}
-                      {!isCurrentPlan && !isEnterprise && plan.id === 'pro' && (
+                      {!isCurrentPlan && plan.id === 'pro' && (
                         <p className="text-center text-sm text-muted-foreground mb-4">
                           Start Free 7-Day Trial
-                        </p>
-                      )}
-                      {!isCurrentPlan && isEnterprise && (
-                        <p className="text-center text-sm text-muted-foreground mb-4">
-                          Start Free 15-Day Trial
                         </p>
                       )}
 

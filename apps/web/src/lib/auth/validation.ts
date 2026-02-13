@@ -9,8 +9,8 @@ export function isValidEmail(email: string): boolean {
 
 export function isValidE164Phone(phone: string): boolean {
   // E.164 format: +[country code][number]
-  // Must start with +, followed by 1-3 digit country code, then 1-14 digits
-  const e164Regex = /^\+[1-9]\d{1,14}$/;
+  // Require a realistic minimum length (8-15 digits total, not including '+')
+  const e164Regex = /^\+[1-9]\d{7,14}$/;
   return e164Regex.test(phone);
 }
 

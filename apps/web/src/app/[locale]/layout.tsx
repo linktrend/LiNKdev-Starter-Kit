@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [`${siteConfig.url}/og.jpg`],
-    creator: '@YOUR_HANDLE'
+    creator: '@linktrend'
   },
   icons: {
     icon: '/favicon.ico',

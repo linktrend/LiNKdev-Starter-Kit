@@ -338,14 +338,13 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   }
 }
 
-function getPlanNameFromPriceId(priceId: string): 'free' | 'pro' | 'business' | 'enterprise' {
-  const priceMap: Record<string, 'free' | 'pro' | 'business' | 'enterprise'> = {
+function getPlanNameFromPriceId(priceId: string): 'free' | 'pro' | 'business' {
+  const priceMap: Record<string, 'free' | 'pro' | 'business'> = {
     [process.env.STRIPE_PRICE_FREE || 'price_free']: 'free',
     [process.env.STRIPE_PRICE_PRO_MONTHLY || '']: 'pro',
     [process.env.STRIPE_PRICE_PRO_ANNUAL || '']: 'pro',
     [process.env.STRIPE_PRICE_BUSINESS_MONTHLY || '']: 'business',
     [process.env.STRIPE_PRICE_BUSINESS_ANNUAL || '']: 'business',
-    [process.env.STRIPE_PRICE_ENTERPRISE || '']: 'enterprise',
   };
 
   return priceMap[priceId] || 'free';

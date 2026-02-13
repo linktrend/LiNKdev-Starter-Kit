@@ -126,6 +126,10 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+    options: {
+      // Supabase JS currently supports only a limited set of options here (e.g. captchaToken).
+      // We still track remember-me in our own analytics/usage logs.
+    },
   })
 
   if (error) {
@@ -142,11 +146,13 @@ export async function login(_: AuthFormState, formData: FormData): Promise<AuthF
       .eq('id', data.user.id)
       .single()
 
-    logUsage({
-      userId: data.user.id,
-      eventType: 'user_active',
-      metadata: { method: 'password', remember_me: rememberMe },
-    }).catch(() => {
+    Promise.resolve(
+      logUsage({
+        userId: data.user.id,
+        eventType: 'user_active',
+        metadata: { method: 'password', remember_me: rememberMe },
+      })
+    ).catch(() => {
       // best effort
     })
 

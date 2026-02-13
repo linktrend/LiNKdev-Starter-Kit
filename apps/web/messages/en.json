@@ -144,7 +144,7 @@
       "solutions": "Solutions",
       "pricing": "Pricing",
       "resources": "Resources",
-      "enterprise": "Enterprise",
+      "enterprise": "Business",
       "login": "Log In",
       "signup": "Sign Up"
     },
@@ -181,7 +181,7 @@
       "subtitle": "Choose the plan that fits your needs.",
       "free": "Free",
       "pro": "Pro",
-      "enterprise": "Enterprise",
+      "enterprise": "Business",
       "popular": "Popular",
       "getStarted": "Get Started",
       "startTrial": "Start Free Trial",

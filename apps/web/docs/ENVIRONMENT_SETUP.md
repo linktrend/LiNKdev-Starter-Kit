@@ -45,10 +45,9 @@ Only needed if you enable the experimental Oriole/S3 storage in `apps/web/supaba
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` / `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE`: publishable keys for the client.
 - `STRIPE_WEBHOOK_SECRET`: signing secret from your webhook endpoint (Developers → Webhooks).
 - Price IDs used by the app:
-  - `STRIPE_PRO_MONTHLY_PRICE_ID`, `STRIPE_PRO_YEARLY_PRICE_ID`
-  - `STRIPE_ENTERPRISE_MONTHLY_PRICE_ID`, `STRIPE_ENTERPRISE_YEARLY_PRICE_ID`
-  - `STRIPE_PRO_MONTHLY_PLAN_ID` (legacy helper in `config/subscriptions.ts`)
-  - Optional helpers: `STRIPE_PRICE_FREE`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_ANNUAL`, `STRIPE_PRICE_BUSINESS_MONTHLY`, `STRIPE_PRICE_BUSINESS_ANNUAL`, `STRIPE_PRICE_ENTERPRISE`
+  - `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_ANNUAL`
+  - `STRIPE_PRICE_BUSINESS_MONTHLY`, `STRIPE_PRICE_BUSINESS_ANNUAL`
+  - Optional: `STRIPE_PRICE_FREE`
 - `BILLING_OFFLINE`: set to `1` to skip Stripe in template/offline mode.
 
 ### Email (Resend)

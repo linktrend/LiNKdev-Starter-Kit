@@ -32,8 +32,8 @@ export const BILLING_PLANS: BillingPlan[] = [
     description: 'Advanced features for growing teams',
     price_monthly: 29,
     price_yearly: 290, // ~$24/month when paid yearly
-    stripe_price_id_monthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID,
-    stripe_price_id_yearly: process.env.STRIPE_PRO_YEARLY_PRICE_ID,
+    stripe_price_id_monthly: process.env.STRIPE_PRICE_PRO_MONTHLY,
+    stripe_price_id_yearly: process.env.STRIPE_PRICE_PRO_ANNUAL,
     entitlements: {
       max_organizations: 5,
       max_members_per_org: 25,
@@ -58,13 +58,13 @@ export const BILLING_PLANS: BillingPlan[] = [
     popular: true,
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'Unlimited everything for large organizations',
+    id: 'business',
+    name: 'Business',
+    description: 'Everything you need for serious teams and scale',
     price_monthly: 99,
     price_yearly: 990, // ~$82/month when paid yearly
-    stripe_price_id_monthly: process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID,
-    stripe_price_id_yearly: process.env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID,
+    stripe_price_id_monthly: process.env.STRIPE_PRICE_BUSINESS_MONTHLY,
+    stripe_price_id_yearly: process.env.STRIPE_PRICE_BUSINESS_ANNUAL,
     entitlements: {
       max_organizations: -1, // unlimited
       max_members_per_org: -1, // unlimited

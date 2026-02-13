@@ -15,6 +15,43 @@ export class InMemoryDatabase {
   }
 
   /**
+   * Compatibility shim: older tests/assertions use different column names
+   * than the current app schema. We store both forms so filters work.
+   */
+  private normalizeRecord(tableName: string, record: any) {
+    const normalized = { ...record };
+
+    if (tableName === 'organizations') {
+      if (normalized.owner_id && normalized.created_by == null) {
+        normalized.created_by = normalized.owner_id;
+      }
+      if (normalized.created_by && normalized.owner_id == null) {
+        normalized.owner_id = normalized.created_by;
+      }
+    }
+
+    if (tableName === 'organization_members') {
+      if (normalized.org_id && normalized.organization_id == null) {
+        normalized.organization_id = normalized.org_id;
+      }
+      if (normalized.organization_id && normalized.org_id == null) {
+        normalized.org_id = normalized.organization_id;
+      }
+    }
+
+    if (tableName === 'org_subscriptions') {
+      if (normalized.org_id && normalized.organization_id == null) {
+        normalized.organization_id = normalized.org_id;
+      }
+      if (normalized.organization_id && normalized.org_id == null) {
+        normalized.org_id = normalized.organization_id;
+      }
+    }
+
+    return normalized;
+  }
+
+  /**
    * Get a table interface for queries
    */
   table(tableName: string) {
@@ -37,7 +74,7 @@ export class InMemoryDatabase {
 
         records.forEach((record) => {
           const id = record.id || `${tableName}-${Math.random().toString(36).substring(7)}`;
-          const fullRecord = { ...record, id };
+          const fullRecord = this.normalizeRecord(tableName, { ...record, id });
           tableData.set(id, fullRecord);
           insertedRecords.push(fullRecord);
         });
@@ -196,18 +233,21 @@ export class InMemoryDatabase {
   seedOrganization(orgData: any) {
     const table = this.tables.get('organizations')!;
     const id = orgData.id || `org-${Math.random().toString(36).substring(7)}`;
+    const createdBy = orgData.created_by ?? orgData.owner_id;
+    const ownerId = orgData.owner_id ?? orgData.created_by;
     const org = {
       id,
       name: orgData.name || 'Test Organization',
       slug: orgData.slug || `org-${id.substring(0, 8)}`,
       is_personal: orgData.is_personal ?? false,
       org_type: orgData.org_type || 'team',
-      created_by: orgData.created_by,
+      created_by: createdBy,
+      owner_id: ownerId,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       ...orgData,
     };
-    table.set(id, org);
+    table.set(id, this.normalizeRecord('organizations', org));
     return org;
   }
 
@@ -217,15 +257,18 @@ export class InMemoryDatabase {
   seedOrganizationMember(memberData: any) {
     const table = this.tables.get('organization_members')!;
     const id = memberData.id || `member-${Math.random().toString(36).substring(7)}`;
+    const organizationId = memberData.organization_id ?? memberData.org_id;
+    const orgId = memberData.org_id ?? memberData.organization_id;
     const member = {
       id,
-      organization_id: memberData.organization_id,
+      organization_id: organizationId,
+      org_id: orgId,
       user_id: memberData.user_id,
       role: memberData.role || 'member',
       created_at: new Date().toISOString(),
       ...memberData,
     };
-    table.set(id, member);
+    table.set(id, this.normalizeRecord('organization_members', member));
     return member;
   }
 

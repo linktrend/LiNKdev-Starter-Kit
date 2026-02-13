@@ -1,13 +1,13 @@
 import { OrgRole } from '@starter/types';
 
-export const ORG_ROLES: OrgRole[] = ['owner', 'member', 'viewer'];
+export const ORG_ROLES: OrgRole[] = ['owner', 'admin', 'editor', 'member', 'viewer'];
 
 export const ROLE_HIERARCHY: Record<OrgRole, number> = {
   owner: 4,
   admin: 3,
   editor: 2,
   member: 1,
-  viewer: 1,
+  viewer: 0,
 };
 
 export const ROLE_PERMISSIONS = {

@@ -35,7 +35,7 @@ export const VALID_ENUMS = {
     'user_active',
   ] as const,
   invoiceStatus: ['draft', 'open', 'paid', 'void', 'uncollectible'] as const,
-  planName: ['free', 'pro', 'business', 'enterprise'] as const,
+  planName: ['free', 'pro', 'business'] as const,
   billingInterval: ['monthly', 'annual'] as const,
 };
 

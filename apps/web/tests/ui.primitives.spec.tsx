@@ -51,7 +51,7 @@ describe('UI Primitives', () => {
 
   describe('Badge', () => {
     it('renders with default variant', () => {
-      render(<Badge>Default</Badge>);
+      render(<Badge variant="default">Default</Badge>);
       const badge = screen.getByText('Default');
       expect(badge).toBeTruthy();
       expect(badge.className).toContain('bg-zinc-900');

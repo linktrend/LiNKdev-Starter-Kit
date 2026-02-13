@@ -1,5 +1,3 @@
-'use server'
-
 import Stripe from 'stripe'
 import { validateEnvironment } from '@/lib/env/validation'
 
@@ -44,10 +42,6 @@ export const STRIPE_PLANS = {
     name: 'Business (Annual)',
     priceId: process.env.STRIPE_PRICE_BUSINESS_ANNUAL!,
     interval: 'year' as const,
-  },
-  enterprise: {
-    name: 'Enterprise',
-    priceId: process.env.STRIPE_PRICE_ENTERPRISE!,
   },
 } as const
 

@@ -79,7 +79,7 @@ export default function FooterPrimary() {
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="mailto:hello@example.com" className="text-primary">
+                <AnimatedUnderline href="https://github.com/linktrend/LiNKdev-Starter-Kit/issues" className="text-primary">
                   Contact us
                 </AnimatedUnderline>
               </li>
@@ -89,12 +89,12 @@ export default function FooterPrimary() {
             <h3 className="text-lg font-bold mb-4">Connect</h3>
             <ul className="space-y-2">
               <li>
-                <AnimatedUnderline href="https://x.com/YOUR_HANDLE" className="text-primary">
+                <AnimatedUnderline href="https://x.com/linktrend" className="text-primary">
                   X
                 </AnimatedUnderline>
               </li>
               <li>
-                <AnimatedUnderline href="https://www.linkedin.com/company/YOUR_COMPANY" className="text-primary">
+                <AnimatedUnderline href="https://www.linkedin.com/company/linktrend" className="text-primary">
                   LinkedIn
                 </AnimatedUnderline>
               </li>

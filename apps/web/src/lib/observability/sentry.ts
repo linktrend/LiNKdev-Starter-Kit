@@ -1,5 +1,5 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from "@sentry/browser";
 
 let inited = false;
 

@@ -37,7 +37,7 @@ export function AdminProfileEditModal({ isOpen, onClose }: AdminProfileEditModal
     professionalState: 'New York',
     professionalPostalCode: '10001',
     professionalCountry: 'United States',
-    bio: 'Experienced system administrator with over 8 years of experience managing enterprise-level systems and infrastructure. Passionate about security, automation, and ensuring optimal system performance.',
+    bio: 'Experienced system administrator with over 8 years of experience managing large-scale systems and infrastructure. Passionate about security, automation, and ensuring optimal system performance.',
   });
 
   const [usernameStatus, setUsernameStatus] = useState<'available' | 'taken' | 'checking' | 'invalid' | null>(null);
@@ -645,4 +645,3 @@ export function AdminProfileEditModal({ isOpen, onClose }: AdminProfileEditModal
     </div>
   );
 }
-

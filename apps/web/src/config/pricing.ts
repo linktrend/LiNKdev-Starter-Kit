@@ -8,33 +8,33 @@ interface ProductWithPrices extends Product {
 
 export const dummyPricing: ProductWithPrices[] = [
   {
-    id: 'dummy-basic',
-    name: 'Basic Plan',
+    id: 'dummy-free',
+    name: 'Free Plan',
     description: 'For individuals just getting started',
     prices: [
       {
-        id: 'dummy-basic-price-month',
+        id: 'dummy-free-price-month',
         currency: 'USD',
-        unit_amount: 999,
+        unit_amount: 0,
         interval: 'month',
         interval_count: 1,
         trial_period_days: null,
         type: 'recurring',
         active: true,
-        product_id: 'dummy-basic',
+        product_id: 'dummy-free',
         description: null,
         metadata: null
       },
       {
-        id: 'dummy-basic-price-year',
+        id: 'dummy-free-price-year',
         currency: 'USD',
-        unit_amount: 9990,
+        unit_amount: 0,
         interval: 'year',
         interval_count: 1,
         trial_period_days: null,
         type: 'recurring',
         active: true,
-        product_id: 'dummy-basic',
+        product_id: 'dummy-free',
         description: null,
         metadata: null
       }
@@ -80,12 +80,12 @@ export const dummyPricing: ProductWithPrices[] = [
     active: null
   },
   {
-    id: 'dummy-enterprise',
-    name: 'Enterprise Plan',
-    description: 'For large organizations',
+    id: 'dummy-business',
+    name: 'Business Plan',
+    description: 'For teams that need advanced controls and scale',
     prices: [
       {
-        id: 'dummy-enterprise-price-month',
+        id: 'dummy-business-price-month',
         currency: 'USD',
         unit_amount: 9999,
         interval: 'month',
@@ -93,12 +93,12 @@ export const dummyPricing: ProductWithPrices[] = [
         trial_period_days: null,
         type: 'recurring',
         active: true,
-        product_id: 'dummy-enterprise',
+        product_id: 'dummy-business',
         description: null,
         metadata: null
       },
       {
-        id: 'dummy-enterprise-price-year',
+        id: 'dummy-business-price-year',
         currency: 'USD',
         unit_amount: 99990,
         interval: 'year',
@@ -106,7 +106,7 @@ export const dummyPricing: ProductWithPrices[] = [
         trial_period_days: null,
         type: 'recurring',
         active: true,
-        product_id: 'dummy-enterprise',
+        product_id: 'dummy-business',
         description: null,
         metadata: null
       }

@@ -9,48 +9,52 @@ import { join } from 'path';
  */
 
 const REQUIRED_ROUTES = [
-  // Marketing
-  'apps/web/src/app/[locale]/(marketing)/page.tsx',
-  'apps/web/src/app/[locale]/(marketing)/pricing/page.tsx',
-  'apps/web/src/app/[locale]/(marketing)/pricing/success/page.tsx',
-  'apps/web/src/app/[locale]/(marketing)/pricing/cancel/page.tsx',
+  // Root
+  'src/app/[locale]/page.tsx',
+  'src/app/[locale]/layout.tsx',
 
   // Auth
-  'apps/web/src/app/[locale]/(auth_forms)/login/page.tsx',
-  'apps/web/src/app/[locale]/(auth_forms)/signup/page.tsx',
-  'apps/web/src/app/[locale]/(auth_forms)/magic_link/page.tsx',
-  'apps/web/src/app/[locale]/(auth_forms)/verify_otp/page.tsx',
-  'apps/web/src/app/[locale]/(auth_forms)/onboarding/page.tsx',
+  'src/app/[locale]/(auth_forms)/login/page.tsx',
+  'src/app/[locale]/(auth_forms)/signup/page.tsx',
+  'src/app/[locale]/(auth_forms)/magic_link/page.tsx',
+  'src/app/[locale]/(auth_forms)/verify_otp/page.tsx',
+  'src/app/[locale]/(auth_forms)/onboarding/page.tsx',
 
   // Dashboard
-  'apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx',
-  'apps/web/src/app/[locale]/(dashboard)/dashboard/settings/page.tsx',
-  'apps/web/src/app/[locale]/(dashboard)/dashboard/help/page.tsx',
+  'src/app/[locale]/(dashboard)/dashboard/page.tsx',
+  'src/app/[locale]/(dashboard)/dashboard/settings/page.tsx',
+  'src/app/[locale]/(dashboard)/dashboard/help/page.tsx',
 
   // Console
-  'apps/web/src/app/[locale]/(console)/console/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/login/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/health/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/database/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/errors/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/billing/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/reports/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/security/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/config/page.tsx',
-  'apps/web/src/app/[locale]/(console)/console/config/application/page.tsx',
+  'src/app/[locale]/(console)/console/page.tsx',
+  'src/app/[locale]/(console)/console/login/page.tsx',
+  'src/app/[locale]/(console)/console/health/page.tsx',
+  'src/app/[locale]/(console)/console/database/page.tsx',
+  'src/app/[locale]/(console)/console/errors/page.tsx',
+  'src/app/[locale]/(console)/console/billing/page.tsx',
+  'src/app/[locale]/(console)/console/reports/page.tsx',
+  'src/app/[locale]/(console)/console/security/page.tsx',
+  'src/app/[locale]/(console)/console/config/page.tsx',
+  'src/app/[locale]/(console)/console/config/application/page.tsx',
 
   // Shared
-  'apps/web/src/app/[locale]/not-found.tsx',
+  'src/app/[locale]/not-found.tsx',
 ];
 
 function verifyRoutes(): void {
   const projectRoot = process.cwd();
+  // Support running from `apps/web` (pnpm filter) or monorepo root.
+  const baseRoot = existsSync(join(projectRoot, 'src/app'))
+    ? projectRoot
+    : existsSync(join(projectRoot, 'apps/web/src/app'))
+      ? join(projectRoot, 'apps/web')
+      : projectRoot;
   const missingRoutes: string[] = [];
   
   console.log('🔍 Verifying required routes...\n');
   
   for (const route of REQUIRED_ROUTES) {
-    const fullPath = join(projectRoot, route);
+    const fullPath = join(baseRoot, route);
     const exists = existsSync(fullPath);
     
     if (exists) {

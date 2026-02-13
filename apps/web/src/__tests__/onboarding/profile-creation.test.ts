@@ -7,7 +7,7 @@ vi.mock('@/lib/auth/server', () => ({
   createClient: vi.fn(),
 }))
 
-vi.mock('./onboarding', () => ({
+vi.mock('@/app/actions/onboarding', () => ({
   createPersonalOrganization: vi.fn(),
 }))
 
@@ -108,7 +108,7 @@ describe('Profile Creation - completeOnboardingStep2', () => {
 
   it('should successfully complete profile with valid data', async () => {
     const { requireAuth, createClient } = await import('@/lib/auth/server')
-    const { createPersonalOrganization } = await import('./onboarding')
+    const { createPersonalOrganization } = await import('@/app/actions/onboarding')
     
     const mockSupabase = {
       from: vi.fn().mockReturnValue({
@@ -163,7 +163,7 @@ describe('Profile Creation - completeOnboardingStep2', () => {
 
   it('should handle org creation failure gracefully', async () => {
     const { requireAuth, createClient } = await import('@/lib/auth/server')
-    const { createPersonalOrganization } = await import('./onboarding')
+    const { createPersonalOrganization } = await import('@/app/actions/onboarding')
     
     const mockSupabase = {
       from: vi.fn().mockReturnValue({

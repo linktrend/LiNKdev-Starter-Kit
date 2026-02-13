@@ -47,18 +47,11 @@ const serverSchema = z.object({
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_SECRET_KEY_LIVE: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  STRIPE_PRO_MONTHLY_PLAN_ID: z.string().optional(),
-  STRIPE_PRO_MONTHLY_PRICE_ID: z.string().optional(),
-  STRIPE_PRO_YEARLY_PRICE_ID: z.string().optional(),
-  STRIPE_ENTERPRISE_MONTHLY_PRICE_ID: z.string().optional(),
-  STRIPE_ENTERPRISE_YEARLY_PRICE_ID: z.string().optional(),
   STRIPE_PRICE_FREE: z.string().optional(),
-  STRIPE_FREE_PRICE_ID: z.string().optional(),
   STRIPE_PRICE_PRO_MONTHLY: z.string().optional(),
   STRIPE_PRICE_PRO_ANNUAL: z.string().optional(),
   STRIPE_PRICE_BUSINESS_MONTHLY: z.string().optional(),
   STRIPE_PRICE_BUSINESS_ANNUAL: z.string().optional(),
-  STRIPE_PRICE_ENTERPRISE: z.string().optional(),
   BILLING_OFFLINE: z.enum(["1", "0"]).optional(),
 
   // Automation / webhooks / cron
@@ -157,38 +150,25 @@ const envSchema = clientSchema.merge(serverSchema).superRefine((env, ctx) => {
         message: "STRIPE_WEBHOOK_SECRET is required unless BILLING_OFFLINE=1",
       });
     }
-    if (!env.STRIPE_PRO_MONTHLY_PRICE_ID || !env.STRIPE_PRO_YEARLY_PRICE_ID) {
+    if (!env.STRIPE_PRICE_PRO_MONTHLY || !env.STRIPE_PRICE_PRO_ANNUAL) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["STRIPE_PRO_MONTHLY_PRICE_ID"],
+        path: ["STRIPE_PRICE_PRO_MONTHLY"],
         message:
-          "Stripe Pro price IDs are required (STRIPE_PRO_MONTHLY_PRICE_ID, STRIPE_PRO_YEARLY_PRICE_ID) unless BILLING_OFFLINE=1",
+          "Stripe Pro price IDs are required (STRIPE_PRICE_PRO_MONTHLY, STRIPE_PRICE_PRO_ANNUAL) unless BILLING_OFFLINE=1",
       });
     }
-    if (
-      !env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID ||
-      !env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID
-    ) {
+    if (!env.STRIPE_PRICE_BUSINESS_MONTHLY || !env.STRIPE_PRICE_BUSINESS_ANNUAL) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["STRIPE_ENTERPRISE_MONTHLY_PRICE_ID"],
+        path: ["STRIPE_PRICE_BUSINESS_MONTHLY"],
         message:
-          "Stripe Enterprise price IDs are required (STRIPE_ENTERPRISE_MONTHLY_PRICE_ID, STRIPE_ENTERPRISE_YEARLY_PRICE_ID) unless BILLING_OFFLINE=1",
+          "Stripe Business price IDs are required (STRIPE_PRICE_BUSINESS_MONTHLY, STRIPE_PRICE_BUSINESS_ANNUAL) unless BILLING_OFFLINE=1",
       });
     }
   }
 
-  if (
-    env.NODE_ENV === "production" &&
-    !isTemplateOffline &&
-    !env.RESEND_API_KEY
-  ) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["RESEND_API_KEY"],
-      message: "RESEND_API_KEY is required in production",
-    });
-  }
+  // RESEND_API_KEY is optional. The app falls back to a mock email service when not configured.
 });
 
 export const env = envSchema.parse(process.env);

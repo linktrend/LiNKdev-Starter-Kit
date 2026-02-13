@@ -87,16 +87,24 @@ describe('Automation Store (Offline)', () => {
 
   describe('deliverEvent', () => {
     it('should simulate successful delivery', async () => {
-      const eventId = automationStore.enqueueEvent('org-1', 'test_event', {});
-      
-      const result = await automationStore.deliverEvent(eventId);
-      
-      expect(result.success).toBe(true);
-      expect(result.latencyMs).toBeGreaterThanOrEqual(0);
-      
-      // Check that event was marked as delivered
-      const events = automationStore.getAllEvents('org-1');
-      expect(events[0].delivered_at).toBeDefined();
+      // Ensure deterministic success (deliverEvent uses Math.random internally)
+      const originalRandom = Math.random;
+      Math.random = () => 0.5;
+
+      try {
+        const eventId = automationStore.enqueueEvent('org-1', 'test_event', {});
+
+        const result = await automationStore.deliverEvent(eventId);
+
+        expect(result.success).toBe(true);
+        expect(result.latencyMs).toBeGreaterThanOrEqual(0);
+
+        // Check that event was marked as delivered
+        const events = automationStore.getAllEvents('org-1');
+        expect(events[0].delivered_at).toBeDefined();
+      } finally {
+        Math.random = originalRandom;
+      }
     });
 
     it('should simulate failed delivery', async () => {

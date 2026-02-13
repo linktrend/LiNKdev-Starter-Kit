@@ -367,7 +367,7 @@ When running in template mode (`TEMPLATE_OFFLINE=1`), the API returns determinis
 ### JavaScript/TypeScript
 
 ```typescript
-class LTMStarterKitAPI {
+class LinkdevStarterKitAPI {
   constructor(private token: string, private orgId: string) {}
 
   private async request(endpoint: string, options: RequestInit = {}) {
@@ -407,7 +407,7 @@ class LTMStarterKitAPI {
 }
 
 // Usage
-const api = new LTMStarterKitAPI('your-jwt-token', 'org-123');
+const api = new LinkdevStarterKitAPI('your-jwt-token', 'org-123');
 const records = await api.listRecords({ type_id: 'contact', limit: 50 });
 ```
 
@@ -417,7 +417,7 @@ const records = await api.listRecords({ type_id: 'contact', limit: 50 });
 import requests
 from typing import Optional, Dict, Any
 
-class LTMStarterKitAPI:
+class LinkdevStarterKitAPI:
     def __init__(self, token: str, org_id: str, base_url: str = "https://api.linkdev-starter-kit.dev/v1"):
         self.token = token
         self.org_id = org_id
@@ -454,7 +454,7 @@ class LTMStarterKitAPI:
         })
 
 # Usage
-api = LTMStarterKitAPI("your-jwt-token", "org-123")
+api = LinkdevStarterKitAPI("your-jwt-token", "org-123")
 records = api.list_records(type_id="contact", limit=50)
 ```
 

@@ -65,7 +65,7 @@ export function Edit2FAModal({ open, onOpenChange, is2FAEnabled = false }: Edit2
   });
 
   // Mock data - in real app, this would come from the server
-  const qrCodeData = 'otpauth://totp/LTM%20Starter%20Kit:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=LTM%20Starter%20Kit';
+  const qrCodeData = 'otpauth://totp/LiNKdev%20Starter%20Kit:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=LiNKdev%20Starter%20Kit';
   const recoveryCodes = [
     'ABCD-EFGH-IJKL',
     'MNOP-QRST-UVWX',

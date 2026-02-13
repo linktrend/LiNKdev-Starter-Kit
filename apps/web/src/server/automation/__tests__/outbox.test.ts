@@ -156,9 +156,9 @@ describe('Automation Outbox', () => {
           method: 'POST',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
-            'X-LTM-Signature': expect.any(String),
-            'X-LTM-Timestamp': expect.any(String),
-            'User-Agent': 'LTM-Automation-Bridge/1.0',
+            'X-LINKDEV-Signature': expect.any(String),
+            'X-LINKDEV-Timestamp': expect.any(String),
+            'User-Agent': 'LiNKdev-Automation-Bridge/1.0',
           }),
           body: expect.stringContaining('"event":"test_event"'),
         })

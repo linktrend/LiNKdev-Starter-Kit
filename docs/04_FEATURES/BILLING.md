@@ -1,5 +1,8 @@
 # Billing
 
+> Current default plan model is `Free/Pro/Business`.  
+> If this file mentions `Enterprise`, treat that content as historical and use `docs/00_OPERATOR_LIBRARY/README.md` for current operations.
+
 **Complete guide to billing and subscriptions in the LiNKdev Starter Kit**
 
 ---

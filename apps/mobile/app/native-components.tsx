@@ -14,6 +14,7 @@ export const Button = React.forwardRef<any, any>(({ children, ...props }, ref) =
     </StyledTouchableOpacity>
   );
 });
+Button.displayName = "Button";
 
 export const Text = React.forwardRef<any, any>(({ children, ...props }, ref) => {
   return (
@@ -22,6 +23,7 @@ export const Text = React.forwardRef<any, any>(({ children, ...props }, ref) => 
     </StyledText>
   );
 });
+Text.displayName = "Text";
 
 export const Input = React.forwardRef<any, any>(({ children, ...props }, ref) => {
   return (
@@ -30,6 +32,7 @@ export const Input = React.forwardRef<any, any>(({ children, ...props }, ref) =>
     </StyledTextInput>
   );
 });
+Input.displayName = "Input";
 
 export const Card = React.forwardRef<any, any>(({ children, ...props }, ref) => {
   return (
@@ -38,3 +41,4 @@ export const Card = React.forwardRef<any, any>(({ children, ...props }, ref) => 
     </StyledView>
   );
 });
+Card.displayName = "Card";

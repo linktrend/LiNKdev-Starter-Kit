@@ -1,5 +1,8 @@
 # Environment Setup Guide
 
+> Current default billing tiers are `Free`, `Pro`, and `Business`.  
+> If this legacy guide mentions `Enterprise`, treat it as historical context and follow `docs/00_OPERATOR_LIBRARY/README.md`.
+
 **Complete guide to configuring all environment variables for the LiNKdev Starter Kit**
 
 ---

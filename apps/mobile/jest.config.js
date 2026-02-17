@@ -4,7 +4,7 @@ module.exports = {
     '^@starter/ui/native$': '<rootDir>/../../packages/ui/src/native-index',
   },
   testMatch: ['**/test/**/*.test.{ts,tsx}'],
-  testPathIgnorePatterns: ['/node_modules/', '/test/tokens.test.tsx'],
+  testPathIgnorePatterns: ['/node_modules/'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },

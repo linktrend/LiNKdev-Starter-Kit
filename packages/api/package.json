@@ -18,9 +18,9 @@
     "dev": "tsup --watch",
     "typecheck": "tsc --project tsconfig.typecheck.json",
     "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
-    "test": "vitest run --coverage",
-    "test:unit": "vitest run src/__tests__/routers --coverage",
-    "test:integration": "vitest run src/__tests__/integration --coverage",
+    "test": "rm -rf coverage/all && vitest run --coverage --coverage.reportsDirectory=coverage/all",
+    "test:unit": "rm -rf coverage/unit && vitest run src/__tests__/routers --coverage --coverage.reportsDirectory=coverage/unit",
+    "test:integration": "rm -rf coverage/integration && vitest run src/__tests__/integration --coverage --coverage.reportsDirectory=coverage/integration",
     "test:watch": "vitest watch",
     "test:integration:watch": "vitest watch src/__tests__/integration"
   },

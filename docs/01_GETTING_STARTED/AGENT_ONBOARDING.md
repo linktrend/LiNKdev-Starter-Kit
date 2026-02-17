@@ -1,5 +1,7 @@
 # Agent Onboarding Guide
 
+> Official operator workflow for generating new independent apps is in `docs/00_OPERATOR_LIBRARY/README.md`.
+
 **Purpose:** Fast onboarding for AI developer agents (Callisto, Europa, Titan, Enceladus)  
 **Time to Read:** 5 minutes  
 **Last Updated:** 2025-12-22

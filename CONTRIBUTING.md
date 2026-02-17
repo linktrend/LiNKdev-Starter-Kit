@@ -77,10 +77,16 @@ Before committing, ensure all quality gates pass:
 pnpm verify:web
 
 # Mobile application
-pnpm test:mobile
+pnpm verify:mobile
+
+# Combined
+pnpm verify:all
 
 # E2E tests (if applicable)
 pnpm e2e:web
+
+# Full release gate
+./scripts/release-readiness.sh
 ```
 
 ### 4. Commit Changes
@@ -106,7 +112,7 @@ Then create a Pull Request on GitHub.
 
 ### Before Submitting
 
-- [ ] All quality gates pass (`pnpm verify:web && pnpm test:mobile`)
+- [ ] All quality gates pass (`pnpm verify:all`)
 - [ ] Code follows project conventions
 - [ ] Tests are added/updated for new functionality
 - [ ] Documentation is updated if needed
@@ -190,9 +196,8 @@ None
 ### Mobile Application
 
 - Write unit tests with Jest
-- Test component rendering and behavior
-- Use React Native Testing Library
-- Test navigation and state management
+- Keep baseline route/component contract tests updated
+- Ensure `pnpm verify:mobile` remains green
 
 ### Test Requirements
 

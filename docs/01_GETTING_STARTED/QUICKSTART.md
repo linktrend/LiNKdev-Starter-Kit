@@ -5,6 +5,8 @@
 
 ---
 
+> For new app creation and handover, use `docs/00_OPERATOR_LIBRARY/README.md` as the official guide.
+
 ## 1. Clone & Install
 
 ```bash
@@ -36,7 +38,6 @@ STRIPE_PRICE_PRO_MONTHLY=price_...
 STRIPE_PRICE_PRO_ANNUAL=price_...
 STRIPE_PRICE_BUSINESS_MONTHLY=price_...
 STRIPE_PRICE_BUSINESS_ANNUAL=price_...
-STRIPE_PRICE_ENTERPRISE=price_...
 
 # Application
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -112,11 +113,11 @@ Expected response: `{"status": "ok", "supabaseUrl": "..."}`
 # Unit tests
 pnpm test
 
-# Integration tests
-pnpm test:integration
+# API integration tests
+pnpm --filter @starter/api test:integration
 
 # E2E tests (requires dev server running)
-pnpm --filter ./apps/web test:e2e
+pnpm --filter ./apps/web e2e
 ```
 
 ---
@@ -128,8 +129,8 @@ pnpm --filter ./apps/web test:e2e
 | `pnpm dev` | Start all apps in development mode |
 | `pnpm --filter ./apps/web dev` | Start web app only |
 | `pnpm build` | Build all apps for production |
-| `pnpm test` | Run all unit tests |
-| `pnpm test:watch` | Run tests in watch mode |
+| `pnpm test` | Run web unit tests |
+| `pnpm --filter @starter/api test:integration` | Run API integration tests |
 | `pnpm lint` | Run ESLint |
 | `pnpm typecheck` | Run TypeScript type checking |
 | `pnpm --filter ./apps/web supabase:types` | Generate database types |
@@ -210,6 +211,7 @@ PORT=3001 pnpm --filter ./apps/web dev
 - **Read:** [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) - Detailed setup guide
 - **Explore:** [../02_ARCHITECTURE/ARCHITECTURE.md](../02_ARCHITECTURE/ARCHITECTURE.md) - System architecture
 - **Learn:** [../03_DEVELOPMENT/DEVELOPMENT_GUIDE.md](../03_DEVELOPMENT/DEVELOPMENT_GUIDE.md) - Development workflow
+- **Operate:** [../00_OPERATOR_LIBRARY/README.md](../00_OPERATOR_LIBRARY/README.md) - Official workflow and governance
 
 ---
 

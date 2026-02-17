@@ -1,5 +1,8 @@
 # Environment Variables Reference
 
+> Current default billing tiers are `Free`, `Pro`, and `Business`.  
+> If this document mentions `Enterprise`, treat it as historical context and follow `docs/00_OPERATOR_LIBRARY/README.md`.
+
 **Complete reference for all environment variables in the LiNKdev Starter Kit**
 
 ---

@@ -27,6 +27,12 @@ module.exports = {
       rules: {
         "no-restricted-imports": "off"
       }
+    },
+    {
+      files: ["apps/mobile/test/**/*.{js,jsx,ts,tsx}"],
+      env: {
+        jest: true
+      }
     }
   ]
 };

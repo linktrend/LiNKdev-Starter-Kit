@@ -2,6 +2,14 @@
 
 A production-ready monorepo template for building modern web and mobile applications with a unified design system.
 
+## 📌 Official Workflow
+
+For operational use (non-technical operator + AI), start here:
+
+- [`docs/00_OPERATOR_LIBRARY/README.md`](docs/00_OPERATOR_LIBRARY/README.md)
+
+This is the official PRD -> independent app repo workflow and handover library.
+
 ## 🚀 Stack
 
 - **Web**: Next.js 14 (App Router) + TypeScript + Tailwind CSS + shadcn/ui
@@ -75,14 +83,20 @@ See the detailed guide in [`apps/web/docs/ENVIRONMENT_SETUP.md`](apps/web/docs/E
 # Verify web application (typecheck, lint, build, test, routes)
 pnpm verify:web
 
-# Run mobile tests
-pnpm test:mobile
+# Verify mobile application (typecheck, lint, tests)
+pnpm verify:mobile
+
+# Verify both web and mobile
+pnpm verify:all
 
 # Run web tests
 pnpm test:web
 
 # Run E2E tests
 pnpm e2e:web
+
+# Run release readiness gate
+./scripts/release-readiness.sh
 ```
 
 ## 🔌 MCP Integration (Cursor IDE)
@@ -131,6 +145,18 @@ This project includes Model Context Protocol (MCP) servers for enhanced Cursor I
 - **Command**: `eas build` (configured in `apps/mobile/`)
 - **Distribution**: App Store and Google Play ready
 
+## 🏗️ New App Generation
+
+Create a brand-new independent app repository from this starter:
+
+```bash
+./scripts/create-app-repo.sh --slug <app-slug> --out <parent-dir> --prd <absolute-prd-path>
+```
+
+Then follow:
+
+- [`docs/00_OPERATOR_LIBRARY/WORKFLOW_PRD_TO_APP_REPO.md`](docs/00_OPERATOR_LIBRARY/WORKFLOW_PRD_TO_APP_REPO.md)
+
 ## 🎨 Design System
 
 The project uses a token-based design system:
@@ -165,10 +191,9 @@ DESIGN_TOKENS.json → tailwind-preset.js → Tailwind CSS → Application Compo
 
 ## 📚 Documentation
 
-- **[Project Structure](docs/structure.md)** - Detailed monorepo layout and routing
-- **[Design System](docs/DESIGN_SYSTEM_V0.md)** - Design tokens and component guidelines
-- **[Database Operations](docs/DB_OPERATIONS.md)** - Supabase setup and migrations
-- **[Development Environment](docs/DEV_ENV.md)** - Local development setup
+- **[Operator Library (Official)](docs/00_OPERATOR_LIBRARY/README.md)** - workflow, governance, handover
+- **[Documentation Index](docs/README.md)** - technical docs map
+- **[Project Structure](docs/02_ARCHITECTURE/PROJECT_STRUCTURE.md)** - architecture-level structure
 
 ## 🔧 Available Scripts
 
@@ -176,10 +201,14 @@ DESIGN_TOKENS.json → tailwind-preset.js → Tailwind CSS → Application Compo
 - `pnpm dev:web` - Start web development server
 - `pnpm dev:mobile` - Start mobile development server
 - `pnpm verify:web` - Run all web quality gates
+- `pnpm verify:mobile` - Run all mobile quality gates
+- `pnpm verify:all` - Run web and mobile quality gates
 - `pnpm test:web` - Run web tests
 - `pnpm test:mobile` - Run mobile tests
 - `pnpm e2e:web` - Run web E2E tests
 - `pnpm release:alpha` - Prepare alpha release
+- `./scripts/create-app-repo.sh` - Create independent app repo from starter
+- `./scripts/release-readiness.sh` - Run release readiness gate
 
 ### Web App (`apps/web/`)
 - `pnpm dev` - Start Next.js dev server
@@ -214,7 +243,7 @@ DESIGN_TOKENS.json → tailwind-preset.js → Tailwind CSS → Application Compo
 1. **Fork** the repository
 2. **Create** a feature branch (`feat/your-feature`)
 3. **Make** your changes following the conventions
-4. **Run** quality gates: `pnpm verify:web && pnpm test:mobile`
+4. **Run** quality gates: `pnpm verify:all`
 5. **Commit** with conventional commits
 6. **Push** and create a Pull Request
 
@@ -226,7 +255,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- **[Project Structure](docs/structure.md)** - Detailed monorepo documentation
+- **[Project Structure](docs/02_ARCHITECTURE/PROJECT_STRUCTURE.md)** - Detailed monorepo documentation
+- **[Operator Library](docs/00_OPERATOR_LIBRARY/README.md)** - Official workflow and governance
 - **[Design System Guide](.cursor/11-webapp-structure.mdc)** - Complete design system rules
 - **[Web App](apps/web/)** - Next.js application
 - **[Mobile App](apps/mobile/)** - React Native application
@@ -234,4 +264,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Ready to build?** Start with `pnpm install && pnpm dev:web` and check out the [Project Structure](docs/structure.md) for detailed guidance.
+**Ready to build?** Start with `pnpm install && pnpm dev:web` and follow the [Operator Library](docs/00_OPERATOR_LIBRARY/README.md).

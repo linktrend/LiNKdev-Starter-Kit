@@ -1,5 +1,8 @@
 # Billing Architecture Documentation
 
+> Current default plan model is `Free/Pro/Business`.  
+> If this file mentions `Enterprise`, treat that content as historical and use `docs/00_OPERATOR_LIBRARY/README.md` for current operations.
+
 **Date:** 2025-11-13  
 **Version:** 1.0  
 **Status:** Production-Ready
@@ -640,4 +643,3 @@ SELECT seats FROM org_subscriptions WHERE org_id = 'org-uuid';
 ---
 
 **End of Billing Architecture Documentation**
-

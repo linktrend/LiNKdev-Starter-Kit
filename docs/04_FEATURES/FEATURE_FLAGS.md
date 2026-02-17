@@ -1,5 +1,8 @@
 # Feature Flags
 
+> Current default plan model is `Free/Pro/Business`.  
+> If this file mentions `Enterprise`, treat that content as historical and use `docs/00_OPERATOR_LIBRARY/README.md` for current operations.
+
 **Complete guide to feature gating and plan-based access control**
 
 ---

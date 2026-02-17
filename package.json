@@ -15,9 +15,13 @@
     "test": "pnpm --filter ./apps/web test",
     "typecheck": "pnpm --filter ./apps/web typecheck",
     "verify:web": "pnpm --filter ./apps/web verify",
+    "verify:mobile": "pnpm --filter ./apps/mobile verify",
+    "verify:all": "pnpm verify:web && pnpm verify:mobile",
     "test:web": "pnpm --filter ./apps/web test",
     "e2e:web": "pnpm --filter ./apps/web e2e",
     "test:mobile": "pnpm --filter ./apps/mobile test",
+    "scaffold:app": "bash ./scripts/create-app-repo.sh",
+    "release:gate": "bash ./scripts/release-readiness.sh",
     "release:alpha": "pnpm build && echo 'Release tag creation TBD'"
   },
   "dependencies": {

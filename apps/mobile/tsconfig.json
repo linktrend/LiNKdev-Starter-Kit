@@ -11,7 +11,7 @@
         "../../packages/ui/src/native-index"
       ]
     },
-    "types": ["jest", "@testing-library/jest-native", "react", "react-native", "nativewind/types"]
+    "types": ["node", "jest", "@testing-library/jest-native", "react", "react-native", "nativewind/types"]
   },
   "include": [
     "app/**/*.ts",

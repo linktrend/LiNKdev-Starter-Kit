@@ -1,5 +1,7 @@
 # Development Guide
 
+> For non-technical operation and app generation flow, start with `docs/00_OPERATOR_LIBRARY/README.md`.
+
 **Complete guide to developing with the LiNKdev Starter Kit**
 
 ---
@@ -98,20 +100,17 @@ pnpm --filter ./apps/web build     # Build web app only
 
 # Testing
 pnpm test                          # Run all tests
-pnpm test:watch                    # Run tests in watch mode
-pnpm test:integration              # Run integration tests
-pnpm --filter ./apps/web test:e2e  # Run E2E tests
+pnpm --filter ./apps/web test:watch # Run web tests in watch mode
+pnpm --filter @starter/api test:integration # Run API integration tests
+pnpm --filter ./apps/web e2e       # Run E2E tests
 
 # Linting & Type Checking
 pnpm lint                          # Run ESLint
-pnpm lint:fix                      # Fix auto-fixable issues
 pnpm typecheck                     # Run TypeScript type checking
 
 # Database
 pnpm --filter ./apps/web supabase:types  # Generate types from database
 
-# Cleaning
-pnpm clean                         # Clean all build artifacts
 ```
 
 ### Development Workflow

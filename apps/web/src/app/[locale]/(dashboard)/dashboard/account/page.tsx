@@ -21,9 +21,17 @@ import {
 } from '@/utils/supabase/queries';
 import { updateName, updateEmail } from '@/utils/auth-helpers/server';
 import { ImageUpload } from './image-upload'; 
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 
-export default async function AccountPage() {
+interface AccountPageProps {
+  params: {
+    locale: string;
+  };
+}
+
+export default async function AccountPage({
+  params: { locale },
+}: AccountPageProps) {
   const supabase = createClient({ cookies });
   const [user, userDetails] = await Promise.all([
     getUser(),
@@ -33,7 +41,7 @@ export default async function AccountPage() {
   const subscription = user ? await getSubscription() : null;
 
   if (!user) {
-    return redirect('/signin'); // Keep this for user redirection
+    return redirect({ href: '/login', locale });
   }
 
   const isSubscribed = subscription?.status === 'active';

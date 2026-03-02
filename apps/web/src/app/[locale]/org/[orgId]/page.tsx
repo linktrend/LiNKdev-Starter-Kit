@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { getCurrentUserProfile } from '@/server/queries/user';
 import { getOrgSummary, getUserOrgRole, hasOrgAccess } from '@/server/queries/orgs';
 import { listRecentOrgActivity } from '@/server/queries/audit';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import Link from 'next/link';
 
 interface OrgDashboardPageProps {
   params: {
+    locale: string;
     orgId: string;
   };
 }
@@ -27,7 +28,7 @@ export default async function OrgDashboardPage({ params }: OrgDashboardPageProps
   const user = await getCurrentUserProfile();
 
   if (!user) {
-    return redirect('/signin');
+    return redirect({ href: '/login', locale: params.locale });
   }
 
   const { orgId } = params;

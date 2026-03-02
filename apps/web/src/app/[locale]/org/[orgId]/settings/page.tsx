@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { getUser } from '@/utils/supabase/queries';
-import { redirect } from 'next/navigation';
+import { redirect } from '@/i18n/routing';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { OrgLoading, OrgEmpty, OrgForbidden } from '@/components/org-states';
 
 interface OrgSettingsPageProps {
   params: {
+    locale: string;
     orgId: string;
   };
 }
@@ -30,7 +31,7 @@ export default async function OrgSettingsPage({ params }: OrgSettingsPageProps) 
   const user = await getUser();
 
   if (!user) {
-    return redirect('/signin');
+    return redirect({ href: '/login', locale: params.locale });
   }
 
   const { orgId } = params;

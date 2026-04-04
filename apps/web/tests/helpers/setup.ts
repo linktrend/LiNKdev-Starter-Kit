@@ -49,8 +49,8 @@ export async function createTestUser(options?: {
   fullName?: string;
 }) {
   const email =
-    options?.email ?? `e2e-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}@example.com`;
-  const password = options?.password ?? `P@ssw0rd-${Math.random().toString(36).slice(2, 8)}!`;
+    options?.email ?? `e2e-${Date.now()}-${crypto.randomInt(0, 1_000_000)}@example.com`;
+  const password = options?.password ?? `P@ssw0rd-${crypto.randomBytes(4).toString('hex')}!`;
   const fullName = options?.fullName ?? 'E2E User';
 
   const { data, error } = await adminClient.auth.admin.createUser({
@@ -172,7 +172,7 @@ export async function addMemberToOrg(orgId: string, userId: string, role: 'owner
 }
 
 export async function createInviteToken(orgId: string, email: string, createdBy: string, role: 'admin' | 'editor' | 'viewer' = 'viewer') {
-  const token = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2);
+  const token = crypto.randomUUID?.() ?? crypto.randomBytes(8).toString('hex');
   const { data, error } = await adminClient
     .from('invites')
     .insert({

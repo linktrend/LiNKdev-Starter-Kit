@@ -49,7 +49,7 @@ export function generateStoragePath(options: PathOptions): string {
  */
 export function generateUniqueFilename(originalFilename: string): string {
   const timestamp = Date.now();
-  const randomSuffix = Math.random().toString(36).substring(2, 8);
+  const randomSuffix = (globalThis.crypto?.randomUUID?.() ?? `${timestamp}`).replace(/-/g, '').slice(0, 6);
   const extension = getFileExtension(originalFilename);
   const nameWithoutExt = originalFilename.replace(/\.[^/.]+$/, '');
   

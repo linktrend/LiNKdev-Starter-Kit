@@ -142,6 +142,13 @@ interface QueueStats {
   total: number;
 }
 
+const secureRandomInt = (maxExclusive: number) => {
+  if (maxExclusive <= 1) return 0;
+  return Math.floor(crypto.getRandomValues(new Uint32Array(1))[0]! / (2 ** 32) * maxExclusive);
+};
+
+const secureRandomBool = (threshold: number) => secureRandomInt(10_000) < Math.floor(threshold * 10_000);
+
 const generateMockJobs = (count: number): Job[] => {
   const statuses: JobStatus[] = ['queued', 'running', 'completed', 'failed', 'cancelled', 'paused'];
   const queues: QueueType[] = ['email', 'notification', 'export', 'cleanup', 'sync', 'analytics'];
@@ -163,19 +170,19 @@ const generateMockJobs = (count: number): Job[] => {
   const now = new Date();
 
   for (let i = 0; i < count; i++) {
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const queue = queues[Math.floor(Math.random() * queues.length)];
-    const priority = priorities[Math.floor(Math.random() * priorities.length)];
-    const createdAt = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000);
-    const startedAt = status !== 'queued' ? new Date(createdAt.getTime() + Math.random() * 60000) : undefined;
+    const status = statuses[secureRandomInt(statuses.length)]!;
+    const queue = queues[secureRandomInt(queues.length)]!;
+    const priority = priorities[secureRandomInt(priorities.length)]!;
+    const createdAt = new Date(now.getTime() - secureRandomInt(24 * 60 * 60 * 1000));
+    const startedAt = status !== 'queued' ? new Date(createdAt.getTime() + secureRandomInt(60_000)) : undefined;
     const completedAt = status === 'completed' || status === 'failed' 
-      ? new Date((startedAt || createdAt).getTime() + Math.random() * 300000)
+      ? new Date((startedAt || createdAt).getTime() + secureRandomInt(300_000))
       : undefined;
     const duration = completedAt && startedAt ? completedAt.getTime() - startedAt.getTime() : undefined;
 
     jobs.push({
       id: `job-${i + 1}`,
-      name: jobNames[Math.floor(Math.random() * jobNames.length)],
+      name: jobNames[secureRandomInt(jobNames.length)]!,
       queue,
       status,
       priority,
@@ -184,18 +191,18 @@ const generateMockJobs = (count: number): Job[] => {
       completedAt,
       duration,
       progress: status === 'running' 
-        ? Math.floor(Math.random() * 100) 
+        ? secureRandomInt(100)
         : status === 'completed' 
         ? 100 
         : 0,
-      attempts: status === 'failed' ? Math.floor(Math.random() * 3) + 1 : 1,
+      attempts: status === 'failed' ? secureRandomInt(3) + 1 : 1,
       maxAttempts: 3,
       error: status === 'failed' ? 'Connection timeout after 30 seconds' : undefined,
       metadata: {
-        userId: Math.random() > 0.5 ? `user-${Math.floor(Math.random() * 1000)}` : undefined,
-        orgId: Math.random() > 0.7 ? `org-${Math.floor(Math.random() * 100)}` : undefined,
+        userId: secureRandomBool(0.5) ? `user-${secureRandomInt(1000)}` : undefined,
+        orgId: secureRandomBool(0.3) ? `org-${secureRandomInt(100)}` : undefined,
       },
-      workerId: status === 'running' ? `worker-${Math.floor(Math.random() * 10) + 1}` : undefined,
+      workerId: status === 'running' ? `worker-${secureRandomInt(10) + 1}` : undefined,
     });
   }
 

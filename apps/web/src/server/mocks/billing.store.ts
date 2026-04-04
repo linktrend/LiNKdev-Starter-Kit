@@ -1,6 +1,7 @@
 // Offline fallback store for Billing module
 // Used when TEMPLATE_OFFLINE=1 or Stripe is not configured
 
+import crypto from 'crypto';
 import { BillingCustomer, BillingSubscription, BillingPlan, BillingInvoice } from '@starter/types';
 import { getPlanById } from '@/config/plans';
 
@@ -52,7 +53,7 @@ class InMemoryBillingStore {
     if (!customer) {
       customer = {
         org_id: orgId,
-        stripe_customer_id: `cus_mock_${Math.random().toString(36).substr(2, 9)}`,
+        stripe_customer_id: `cus_mock_${crypto.randomUUID().replace(/-/g, '').slice(0, 9)}`,
         billing_email: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -131,7 +132,7 @@ class InMemoryBillingStore {
     successUrl: string,
     cancelUrl: string
   ): Promise<{ sessionId: string; url: string }> {
-    const sessionId = `cs_mock_${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `cs_mock_${crypto.randomUUID().replace(/-/g, '').slice(0, 9)}`;
     const url = `https://checkout.stripe.com/mock/${sessionId}`;
     
     return { sessionId, url };
@@ -148,12 +149,12 @@ class InMemoryBillingStore {
 
   // Simulate webhook events
   async simulateEvent(eventType: string, orgId: string): Promise<void> {
-    const eventId = `evt_mock_${Math.random().toString(36).substr(2, 9)}`;
+    const eventId = `evt_mock_${crypto.randomUUID().replace(/-/g, '').slice(0, 9)}`;
     
     switch (eventType) {
       case 'checkout.session.completed':
         // Simulate successful checkout
-        await this.createSubscription(orgId, 'pro', `sub_mock_${Math.random().toString(36).substr(2, 9)}`);
+        await this.createSubscription(orgId, 'pro', `sub_mock_${crypto.randomUUID().replace(/-/g, '').slice(0, 9)}`);
         break;
         
       case 'customer.subscription.created':

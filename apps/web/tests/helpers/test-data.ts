@@ -1,5 +1,7 @@
+import crypto from 'crypto';
+
 export function uniqueSuffix() {
-  return `${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`;
+  return `${Date.now()}-${crypto.randomInt(0, 1_000_000)}`;
 }
 
 export function randomEmail(prefix = 'e2e') {

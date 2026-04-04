@@ -144,7 +144,15 @@ interface QueueStats {
 
 const secureRandomInt = (maxExclusive: number) => {
   if (maxExclusive <= 1) return 0;
-  return Math.floor(crypto.getRandomValues(new Uint32Array(1))[0]! / (2 ** 32) * maxExclusive);
+  const maxUint32 = 0x1_0000_0000;
+  const limit = maxUint32 - (maxUint32 % maxExclusive);
+  const buf = new Uint32Array(1);
+  let candidate = 0;
+  do {
+    crypto.getRandomValues(buf);
+    candidate = buf[0] ?? 0;
+  } while (candidate >= limit);
+  return candidate % maxExclusive;
 };
 
 const secureRandomBool = (threshold: number) => secureRandomInt(10_000) < Math.floor(threshold * 10_000);
